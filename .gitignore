@@ -1,0 +1,53 @@
+# VS Code | Rider | Visual Studio
+.vscode/*
+!.vscode/launch.json
+!.vscode/tasks.json
+.idea/
+_ReSharper*/
+.vs/
+*.suo
+*.sln.docstates
+
+# .NET
+bin/
+obj/
+*.user
+
+# ASP.NET
+artifacts/
+
+# EF Core
+*.db
+*.db-shm
+*.db-wal
+
+# NuGet
+*.nupkg
+*.snupkg
+**/packages/*
+!**/packages/build/
+.nuget/
+
+# Test Results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+*.trx
+*.coverage
+*.coveragexml
+
+# Logs
+Logs/
+*.log
+
+# Docker
+docker-compose.override.yml
+
+# Secrets
+*.pfx
+*.p12
+*.key
+
+# OS-specific
+.DS_Store
+Thumbs.db
+desktop.ini

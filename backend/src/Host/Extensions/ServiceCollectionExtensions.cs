@@ -1,4 +1,6 @@
+using System.Text.Json.Serialization;
 using Students.Application.Extensions;
+using Students.Infrastructure.Postgres.Extensions;
 
 namespace Host.Extensions;
 
@@ -11,6 +13,7 @@ public static class ServiceCollectionExtensions
     {
         services
             .AddModules(configuration)
+            .AddJsonOptions()
             .AddOpenApi();
 
         return services;
@@ -22,7 +25,17 @@ public static class ServiceCollectionExtensions
     )
     {
         services
-            .AddStudentsModule(configuration);
+            .AddStudentsApplication()
+            .AddStudentsInfrastructure(configuration);
+
+        return services;
+    }
+
+    private static IServiceCollection AddJsonOptions(
+    this IServiceCollection services)
+    {
+        services.ConfigureHttpJsonOptions(options =>
+            options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
         return services;
     }

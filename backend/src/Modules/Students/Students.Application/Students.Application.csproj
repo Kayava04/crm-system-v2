@@ -12,7 +12,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Students.Infrastructure.Postgres\Students.Infrastructure.Postgres.csproj" />
+    <ProjectReference Include="../../../Shared/Shared.Kernel/Shared.Kernel.csproj" />
+    <ProjectReference Include="../Students.Domain/Students.Domain.csproj" />
   </ItemGroup>
 
 </Project>

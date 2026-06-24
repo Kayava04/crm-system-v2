@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Shared.Kernel.Abstractions;
-using Students.Domain.Entities;
+using Students.Application.Abstractions;
 using Students.Infrastructure.Postgres.Persistence;
 using Students.Infrastructure.Postgres.Repositories;
 
@@ -10,7 +10,7 @@ namespace Students.Infrastructure.Postgres.Extensions;
 
 public static class InfrastructureExtensions
 {
-    public static IServiceCollection AddInfrastructure(
+    public static IServiceCollection AddStudentsInfrastructure(
         this IServiceCollection services,
         IConfiguration configuration)
     {
@@ -39,7 +39,7 @@ public static class InfrastructureExtensions
     private static IServiceCollection AddRepositories(
         this IServiceCollection services)
     {
-        services.AddScoped<IRepository<Student>, StudentRepository>();
+        services.AddScoped<IStudentRepository, StudentRepository>();
 
         return services;
     }

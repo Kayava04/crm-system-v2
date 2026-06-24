@@ -10,9 +10,11 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="Scalar.AspNetCore" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="../Modules/Students/Students.Infrastructure.Postgres/Students.Infrastructure.Postgres.csproj" />
     <ProjectReference Include="..\Modules\Students\Students.Application\Students.Application.csproj" />
   </ItemGroup>
 

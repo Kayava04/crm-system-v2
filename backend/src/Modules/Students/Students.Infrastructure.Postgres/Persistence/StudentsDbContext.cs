@@ -8,6 +8,9 @@ internal sealed class StudentsDbContext(DbContextOptions<StudentsDbContext> opti
     : DbContext(options), IUnitOfWork
 {
     public DbSet<Student> Students => Set<Student>();
+    public DbSet<StudentPreferences> StudentPreferences => Set<StudentPreferences>();
+    public DbSet<ParentInfo> ParentInfo => Set<ParentInfo>();
+    public DbSet<StudentLanguage> StudentLanguages => Set<StudentLanguage>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

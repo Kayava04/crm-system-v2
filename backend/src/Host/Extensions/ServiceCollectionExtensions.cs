@@ -14,7 +14,7 @@ public static class ServiceCollectionExtensions
         services
             .AddModules(configuration)
             .AddJsonOptions()
-            .AddOpenApi();
+            .AddApiDocumentation();
 
         return services;
     }
@@ -31,11 +31,30 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    private static IServiceCollection AddJsonOptions(
-    this IServiceCollection services)
+    private static IServiceCollection AddJsonOptions(this IServiceCollection services)
     {
         services.ConfigureHttpJsonOptions(options =>
             options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+
+        return services;
+    }
+
+    private static IServiceCollection AddApiDocumentation(this IServiceCollection services)
+    {
+        services.AddOpenApi("v1", options =>
+        {
+            options.AddDocumentTransformer((document, context, ct) =>
+            {
+                document.Info = new()
+                {
+                    Title = "CRM System API",
+                    Version = "v1",
+                    Description = "REST API for managing a foreign language school"
+                };
+
+                return Task.CompletedTask;
+            });
+        });
 
         return services;
     }

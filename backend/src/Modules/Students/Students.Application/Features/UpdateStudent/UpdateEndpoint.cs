@@ -2,6 +2,7 @@ using FluentValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Logging;
 using Shared.Kernel.Abstractions;
 using Students.Application.Abstractions;
 
@@ -72,6 +73,7 @@ public static class UpdateEndpoint
         IValidator<UpdateRequest> validator,
         IStudentRepository repository,
         IUnitOfWork unitOfWork,
+        ILogger<UpdateRequest> logger,
         CancellationToken ct
     )
     {
@@ -81,10 +83,14 @@ public static class UpdateEndpoint
 
         var student = await repository.GetByIdAsync(id, ct);
         if (student is null)
+        {
+            logger.LogWarning("Student with id {StudentId} not found", id);
+
             return Results.Problem(
                 detail: $"Student with id '{id}' not found.",
                 statusCode: StatusCodes.Status404NotFound
             );
+        }
 
         student.Update(
             request.FirstName,
@@ -99,6 +105,8 @@ public static class UpdateEndpoint
 
         await repository.UpdateAsync(student, ct);
         await unitOfWork.SaveChangesAsync(ct);
+
+        logger.LogInformation("Student updated: {StudentId}", id);
 
         return Results.NoContent();
     }

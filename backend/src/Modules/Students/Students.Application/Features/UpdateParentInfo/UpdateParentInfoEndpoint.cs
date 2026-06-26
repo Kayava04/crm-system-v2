@@ -2,6 +2,7 @@ using FluentValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Logging;
 using Shared.Kernel.Abstractions;
 using Students.Application.Abstractions;
 
@@ -60,6 +61,7 @@ public static class UpdateParentInfoEndpoint
         IValidator<UpdateParentInfoRequest> validator,
         IStudentRepository repository,
         IUnitOfWork unitOfWork,
+        ILogger<UpdateParentInfoRequest> logger,
         CancellationToken ct
     )
     {
@@ -69,16 +71,24 @@ public static class UpdateParentInfoEndpoint
 
         var student = await repository.GetByIdAsync(id, ct);
         if (student is null)
+        {
+            logger.LogWarning("Student with id {StudentId} not found", id);
+
             return Results.Problem(
                 detail: $"Student with id '{id}' not found.",
                 statusCode: StatusCodes.Status404NotFound
             );
+        }
 
         if (student.ParentInfo is null)
+        {
+            logger.LogWarning("Parent info not found for student {StudentId}", id);
+
             return Results.Problem(
                 detail: "Parent info not found.",
                 statusCode: StatusCodes.Status404NotFound
             );
+        }
 
         student.ParentInfo.Update(
             request.FirstName,
@@ -90,6 +100,8 @@ public static class UpdateParentInfoEndpoint
 
         await repository.UpdateAsync(student, ct);
         await unitOfWork.SaveChangesAsync(ct);
+
+        logger.LogInformation("Parent info updated for student {StudentId}", id);
 
         return Results.NoContent();
     }

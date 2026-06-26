@@ -2,6 +2,7 @@ using FluentValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Logging;
 using Shared.Kernel.Abstractions;
 using Students.Application.Abstractions;
 using Students.Domain.Entities;
@@ -62,6 +63,7 @@ public static class AddParentInfoEndpoint
         IValidator<AddParentInfoRequest> validator,
         IStudentRepository repository,
         IUnitOfWork unitOfWork,
+        ILogger<AddParentInfoRequest> logger,
         CancellationToken ct
     )
     {
@@ -71,22 +73,34 @@ public static class AddParentInfoEndpoint
 
         var student = await repository.GetByIdAsync(id, ct);
         if (student is null)
+        {
+            logger.LogWarning("Student with id {StudentId} not found", id);
+
             return Results.Problem(
                 detail: $"Student with id '{id}' not found.",
                 statusCode: StatusCodes.Status404NotFound
             );
+        }
 
         if (!student.IsChild)
+        {
+            logger.LogWarning("Cannot add parent info for adult student {StudentId}", id);
+
             return Results.Problem(
                 detail: "Cannot add parent info for adult student.",
                 statusCode: StatusCodes.Status409Conflict
             );
+        }
 
         if (student.ParentInfo is not null)
+        {
+            logger.LogWarning("Parent info already exists for student {StudentId}", id);
+
             return Results.Problem(
                 detail: "Parent info already exists.",
                 statusCode: StatusCodes.Status409Conflict
             );
+        }
 
         var parentInfo = ParentInfo.Create(
             student.Id,
@@ -101,6 +115,8 @@ public static class AddParentInfoEndpoint
 
         await repository.UpdateAsync(student, ct);
         await unitOfWork.SaveChangesAsync(ct);
+
+        logger.LogInformation("Parent info added for student {StudentId}", id);
 
         return Results.Created($"/api/students/{id}/parent-info", null);
     }

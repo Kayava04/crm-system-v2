@@ -2,6 +2,7 @@ using FluentValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Logging;
 using Shared.Kernel.Abstractions;
 using Students.Application.Abstractions;
 using Students.Domain.Enums;
@@ -66,6 +67,7 @@ public static class UpdatePreferencesEndpoint
         IValidator<UpdatePreferencesRequest> validator,
         IStudentRepository repository,
         IUnitOfWork unitOfWork,
+        ILogger<UpdatePreferencesRequest> logger,
         CancellationToken ct
     )
     {
@@ -75,16 +77,24 @@ public static class UpdatePreferencesEndpoint
 
         var student = await repository.GetByIdAsync(id, ct);
         if (student is null)
+        {
+            logger.LogWarning("Student with id {StudentId} not found", id);
+
             return Results.Problem(
                 detail: $"Student with id '{id}' not found.",
                 statusCode: StatusCodes.Status404NotFound
             );
+        }
 
         if (student.Preferences is null)
+        {
+            logger.LogError("Student {StudentId} has no preferences — data integrity issue", id);
+
             return Results.Problem(
                 detail: "Student preferences not found.",
                 statusCode: StatusCodes.Status500InternalServerError
             );
+        }
 
         student.Preferences.Update(
             request.LearningGoal,
@@ -99,6 +109,8 @@ public static class UpdatePreferencesEndpoint
 
         await repository.UpdateAsync(student, ct);
         await unitOfWork.SaveChangesAsync(ct);
+
+        logger.LogInformation("Student preferences updated: {StudentId}", id);
 
         return Results.NoContent();
     }

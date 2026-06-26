@@ -37,6 +37,7 @@ artifacts/
 
 # Logs
 Logs/
+logs/
 *.log
 
 # Docker
@@ -46,6 +47,9 @@ docker-compose.override.yml
 *.pfx
 *.p12
 *.key
+
+# Environment
+.env
 
 # OS-specific
 .DS_Store

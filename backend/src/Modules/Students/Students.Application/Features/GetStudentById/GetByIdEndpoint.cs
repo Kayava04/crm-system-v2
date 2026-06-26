@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Logging;
 using Students.Application.Abstractions;
 using Students.Domain.Enums;
 
@@ -54,6 +55,7 @@ public static class GetByIdEndpoint
     private static async Task<IResult> Handle(
         Guid id,
         IStudentRepository repository,
+        ILogger<StudentDetailResponse> logger,
         CancellationToken ct
     )
     {
@@ -66,10 +68,14 @@ public static class GetByIdEndpoint
             );
 
         if (student.Preferences is null)
+        {
+            logger.LogError("Student {StudentId} has no preferences — data integrity issue", id);
+
             return Results.Problem(
                 detail: "Student preferences not found.",
                 statusCode: StatusCodes.Status500InternalServerError
             );
+        }
 
         var response = new StudentDetailResponse(
             student.Id,

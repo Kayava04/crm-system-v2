@@ -2,6 +2,7 @@ using FluentValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Logging;
 using Shared.Kernel.Abstractions;
 using Students.Application.Abstractions;
 using Students.Domain.Entities;
@@ -117,6 +118,7 @@ public static class CreateEndpoint
         IValidator<CreateRequest> validator,
         IStudentRepository repository,
         IUnitOfWork unitOfWork,
+        ILogger<CreateRequest> logger,
         CancellationToken ct
     )
     {
@@ -126,10 +128,14 @@ public static class CreateEndpoint
 
         var emailExists = await repository.ExistsByEmailAsync(request.Email, ct);
         if (emailExists)
+        {
+            logger.LogWarning("Student with email {Email} already exists", request.Email);
+
             return Results.Problem(
                 detail: $"Student with email '{request.Email}' already exists.",
                 statusCode: StatusCodes.Status409Conflict
             );
+        }
 
         var student = Student.Create(
             // TODO: replace with real UserId from JWT after Identity module
@@ -162,6 +168,8 @@ public static class CreateEndpoint
 
         await repository.AddAsync(student, ct);
         await unitOfWork.SaveChangesAsync(ct);
+
+        logger.LogInformation("Student created: {StudentId}", student.Id);
 
         var response = new CreateResponse(
             student.Id,

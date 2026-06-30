@@ -1,4 +1,5 @@
 using FluentValidation;
+using Identity.Contracts;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -21,6 +22,9 @@ public static class ApplicationExtensions
     {
         // Register FluentValidation
         services.AddValidatorsFromAssembly(typeof(ApplicationExtensions).Assembly);
+
+        // Link user account to student
+        services.AddScoped<IProfileLinker, StudentAccountLinker>();
 
         return services;
     }

@@ -1,5 +1,5 @@
+using Identity.Application.Extensions;
 using Scalar.AspNetCore;
-using Serilog;
 using Students.Application.Extensions;
 
 namespace Host.Extensions;
@@ -8,7 +8,9 @@ public static class WebApplicationExtensions
 {
     public static WebApplication Configure(this WebApplication app)
     {
-        app.UseSerilogRequestLogging();
+        app.UseHttpsRedirection();
+        app.UseAuthentication();
+        app.UseAuthorization();
 
         app
             .MapEndpoints()
@@ -22,6 +24,7 @@ public static class WebApplicationExtensions
     private static WebApplication MapEndpoints(this WebApplication app)
     {
         app.MapStudentsEndpoints();
+        app.MapIdentityEndpoints();
 
         return app;
     }

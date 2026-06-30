@@ -1,4 +1,5 @@
 using FluentValidation;
+using Identity.Contracts.Enums;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -61,6 +62,7 @@ public static class UpdateEndpoint
     {
         group.MapPut("/{id:guid}", Handle)
              .WithName("UpdateStudent")
+             .RequireAuthorization(nameof(SystemPermission.CanManageStudents))
              .WithSummary("Update student")
              .Produces(StatusCodes.Status204NoContent)
              .ProducesValidationProblem()

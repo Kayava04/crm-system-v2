@@ -15,8 +15,7 @@ internal sealed class StudentConfiguration : IEntityTypeConfiguration<Student>
         builder.Property(s => s.Id)
             .ValueGeneratedNever();
 
-        builder.Property(s => s.UserId)
-            .IsRequired();
+        builder.Property(s => s.UserId);
 
         builder.Property(s => s.FirstName)
             .IsRequired()

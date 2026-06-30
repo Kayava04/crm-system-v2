@@ -5,7 +5,7 @@ namespace Students.Domain.Entities;
 
 public sealed class Student : AuditableEntity
 {
-    public Guid UserId { get; private set; }
+    public Guid? UserId { get; private set; }
     public string FirstName { get; private set; } = string.Empty;
     public string LastName { get; private set; } = string.Empty;
     public string? MiddleName { get; private set; }
@@ -24,7 +24,6 @@ public sealed class Student : AuditableEntity
     private Student() { }
 
     public static Student Create(
-        Guid userId,
         string firstName,
         string lastName,
         string? middleName,
@@ -39,7 +38,7 @@ public sealed class Student : AuditableEntity
         return new Student
         {
             Id = Guid.NewGuid(),
-            UserId = userId,
+            UserId = null,
             FirstName = firstName,
             LastName = lastName,
             MiddleName = middleName,
@@ -104,5 +103,10 @@ public sealed class Student : AuditableEntity
     public void RemoveParentInfo()
     {
         ParentInfo = null;
+    }
+
+    public void LinkUserAccount(Guid userId)
+    {
+        UserId = userId;
     }
 }

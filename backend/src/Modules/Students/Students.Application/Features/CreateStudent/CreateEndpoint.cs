@@ -1,4 +1,5 @@
 using FluentValidation;
+using Identity.Contracts.Enums;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -107,6 +108,7 @@ public static class CreateEndpoint
     {
         group.MapPost("/", Handle)
              .WithName("CreateStudent")
+             .RequireAuthorization(nameof(SystemPermission.CanCreateStudents))
              .WithSummary("Create a student")
              .Produces<CreateResponse>(StatusCodes.Status201Created)
              .ProducesValidationProblem()
@@ -138,8 +140,6 @@ public static class CreateEndpoint
         }
 
         var student = Student.Create(
-            // TODO: replace with real UserId from JWT after Identity module
-            Guid.NewGuid(),
             request.FirstName,
             request.LastName,
             request.MiddleName,

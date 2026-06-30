@@ -1,3 +1,4 @@
+using Identity.Contracts.Enums;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -46,6 +47,7 @@ public static class GetByIdEndpoint
     {
         group.MapGet("/{id:guid}", Handle)
              .WithName("GetStudentById")
+             .RequireAuthorization(nameof(SystemPermission.CanViewStudents))
              .WithSummary("Get student by id")
              .Produces<StudentDetailResponse>(StatusCodes.Status200OK)
              .ProducesProblem(StatusCodes.Status404NotFound)

@@ -1,3 +1,4 @@
+using Identity.Contracts.Enums;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -15,6 +16,7 @@ public static class DeleteParentInfoEndpoint
     {
         group.MapDelete("/{id:guid}/parent-info", Handle)
              .WithName("DeleteParentInfo")
+             .RequireAuthorization(nameof(SystemPermission.CanManageStudents))
              .WithSummary("Delete parent info for student")
              .Produces(StatusCodes.Status204NoContent)
              .ProducesProblem(StatusCodes.Status404NotFound);

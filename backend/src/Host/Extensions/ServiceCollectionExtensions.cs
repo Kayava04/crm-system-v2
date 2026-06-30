@@ -1,4 +1,12 @@
+using System.Text;
 using System.Text.Json.Serialization;
+using Identity.Application.Extensions;
+using Identity.Contracts.Enums;
+using Identity.Infrastructure.Jwt;
+using Identity.Infrastructure.Jwt.Extensions;
+using Identity.Infrastructure.Postgres.Extensions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Students.Application.Extensions;
 using Students.Infrastructure.Postgres.Extensions;
 
@@ -13,6 +21,7 @@ public static class ServiceCollectionExtensions
     {
         services
             .AddModules(configuration)
+            .AddAuthentication(configuration)
             .AddJsonOptions()
             .AddApiDocumentation();
 
@@ -26,7 +35,10 @@ public static class ServiceCollectionExtensions
     {
         services
             .AddStudentsApplication()
-            .AddStudentsInfrastructure(configuration);
+            .AddStudentsInfrastructure(configuration)
+            .AddIdentityApplication()
+            .AddIdentityInfrastructure(configuration)
+            .AddJwtInfrastructure(configuration);
 
         return services;
     }
@@ -54,7 +66,47 @@ public static class ServiceCollectionExtensions
 
                 return Task.CompletedTask;
             });
+
+            options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
         });
+
+        return services;
+    }
+
+    private static IServiceCollection AddAuthentication(
+        this IServiceCollection services,
+        IConfiguration configuration
+    )
+    {
+        var jwtSection = configuration.GetSection(JwtOptions.SectionName);
+        var secretKey = jwtSection["SecretKey"]
+            ?? throw new InvalidOperationException("Jwt:SecretKey not found in configuration.");
+
+        services
+            .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = jwtSection["Issuer"],
+                    ValidAudience = jwtSection["Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
+                };
+            });
+
+        var authorizationBuilder = services.AddAuthorizationBuilder();
+
+        foreach (var permission in Enum.GetValues<SystemPermission>())
+        {
+            var permissionName = permission.ToString();
+
+            authorizationBuilder.AddPolicy(permissionName, policy =>
+                policy.RequireClaim("permission", permissionName));
+        }
 
         return services;
     }

@@ -3,4 +3,19 @@
   <Folder Name="/src/Host/">
     <Project Path="src/Host/CrmSystem.Host.csproj" />
   </Folder>
+  <Folder Name="/src/Shared/">
+    <Project Path="src/Shared/Shared.Kernel/Shared.Kernel.csproj" />
+  </Folder>
+  <Folder Name="/src/Modules/Students/">
+    <Project Path="src/Modules/Students/Students.Domain/Students.Domain.csproj" />
+    <Project Path="src/Modules/Students/Students.Application/Students.Application.csproj" />
+    <Project Path="src/Modules/Students/Students.Infrastructure.Postgres/Students.Infrastructure.Postgres.csproj" />
+  </Folder>
+  <Folder Name="/src/Modules/Identity/">
+    <Project Path="src/Modules/Identity/Identity.Domain/Identity.Domain.csproj" />
+    <Project Path="src/Modules/Identity/Identity.Contracts/Identity.Contracts.csproj" />
+    <Project Path="src/Modules/Identity/Identity.Application/Identity.Application.csproj" />
+    <Project Path="src/Modules/Identity/Identity.Infrastructure.Postgres/Identity.Infrastructure.Postgres.csproj" />
+    <Project Path="src/Modules/Identity/Identity.Infrastructure.Jwt/Identity.Infrastructure.Jwt.csproj" />
+  </Folder>
 </Solution>

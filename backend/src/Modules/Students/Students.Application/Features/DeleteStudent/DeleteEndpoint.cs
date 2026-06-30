@@ -1,3 +1,4 @@
+using Identity.Contracts.Enums;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -15,6 +16,7 @@ public static class DeleteEndpoint
     {
         group.MapDelete("/{id:guid}", Handle)
              .WithName("DeleteStudent")
+             .RequireAuthorization(nameof(SystemPermission.CanDeleteStudents))
              .WithSummary("Delete student")
              .Produces(StatusCodes.Status204NoContent)
              .ProducesProblem(StatusCodes.Status404NotFound);

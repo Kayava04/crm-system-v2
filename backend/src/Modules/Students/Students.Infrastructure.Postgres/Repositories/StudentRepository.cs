@@ -93,4 +93,9 @@ internal sealed class StudentRepository(StudentsDbContext context) : IStudentRep
 
         return (students, totalCount);
     }
+
+    public async Task<bool> ExistsByIdAsync(Guid id, CancellationToken ct = default) =>
+        await context.Students
+            .AsNoTracking()
+            .AnyAsync(s => s.Id == id, ct);
 }

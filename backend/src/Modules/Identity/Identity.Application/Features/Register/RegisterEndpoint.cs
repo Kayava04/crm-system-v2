@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
-using Shared.Kernel.Abstractions;
 
 namespace Identity.Application.Features.Register;
 
@@ -76,7 +75,7 @@ public static class RegisterEndpoint
         IRoleRepository roleRepository,
         IIdentityService identityService,
         IEnumerable<IProfileLinker> profileLinkers,
-        IUnitOfWork unitOfWork,
+        IIdentityUnitOfWork unitOfWork,
         ILogger<RegisterRequest> logger,
         CancellationToken ct
     )

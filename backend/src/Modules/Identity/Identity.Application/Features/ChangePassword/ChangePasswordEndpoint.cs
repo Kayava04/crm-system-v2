@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
-using Shared.Kernel.Abstractions;
 
 namespace Identity.Application.Features.ChangePassword;
 
@@ -53,7 +52,7 @@ public static class ChangePasswordEndpoint
         IValidator<ChangePasswordRequest> validator,
         IUserRepository userRepository,
         IIdentityService identityService,
-        IUnitOfWork unitOfWork,
+        IIdentityUnitOfWork unitOfWork,
         ILogger<ChangePasswordRequest> logger,
         CancellationToken ct
     )

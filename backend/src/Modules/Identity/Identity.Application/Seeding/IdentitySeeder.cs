@@ -5,7 +5,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Shared.Kernel.Abstractions;
 
 namespace Identity.Application.Seeding;
 
@@ -23,7 +22,7 @@ public sealed class IdentitySeeder(
         var permissionRepository = scope.ServiceProvider.GetRequiredService<IPermissionRepository>();
         var userRepository = scope.ServiceProvider.GetRequiredService<IUserRepository>();
         var identityService = scope.ServiceProvider.GetRequiredService<IIdentityService>();
-        var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+        var unitOfWork = scope.ServiceProvider.GetRequiredService<IIdentityUnitOfWork>();
 
         await SeedPermissionsAsync(permissionRepository, unitOfWork, ct);
         await SeedRolesAsync(roleRepository, permissionRepository, unitOfWork, ct);
@@ -36,7 +35,7 @@ public sealed class IdentitySeeder(
 
     private static async Task SeedPermissionsAsync(
         IPermissionRepository permissionRepository,
-        IUnitOfWork unitOfWork,
+        IIdentityUnitOfWork unitOfWork,
         CancellationToken ct
     )
     {
@@ -63,7 +62,7 @@ public sealed class IdentitySeeder(
     private static async Task SeedRolesAsync(
         IRoleRepository roleRepository,
         IPermissionRepository permissionRepository,
-        IUnitOfWork unitOfWork,
+        IIdentityUnitOfWork unitOfWork,
         CancellationToken ct
     )
     {
@@ -104,7 +103,7 @@ public sealed class IdentitySeeder(
         IUserRepository userRepository,
         IRoleRepository roleRepository,
         IIdentityService identityService,
-        IUnitOfWork unitOfWork,
+        IIdentityUnitOfWork unitOfWork,
         CancellationToken ct
     )
     {

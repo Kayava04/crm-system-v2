@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
-using Shared.Kernel.Abstractions;
 
 namespace Identity.Application.Features.Login;
 
@@ -52,7 +51,7 @@ public static class LoginEndpoint
         IIdentityService identityService,
         ITokenService tokenService,
         IRefreshTokenRepository refreshTokenRepository,
-        IUnitOfWork unitOfWork,
+        IIdentityUnitOfWork unitOfWork,
         ILogger<LoginRequest> logger,
         CancellationToken ct
     )

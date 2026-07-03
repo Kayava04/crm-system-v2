@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Students.Application.Extensions;
 using Students.Infrastructure.Postgres.Extensions;
+using Teachers.Application.Extensions;
+using Teachers.Infrastructure.Postgres.Extensions;
 
 namespace Host.Extensions;
 
@@ -38,7 +40,9 @@ public static class ServiceCollectionExtensions
             .AddStudentsInfrastructure(configuration)
             .AddIdentityApplication()
             .AddIdentityInfrastructure(configuration)
-            .AddJwtInfrastructure(configuration);
+            .AddJwtInfrastructure(configuration)
+            .AddTeachersApplication()
+            .AddTeachersInfrastructure(configuration);
 
         return services;
     }

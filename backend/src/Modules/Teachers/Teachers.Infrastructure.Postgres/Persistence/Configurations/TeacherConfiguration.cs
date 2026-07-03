@@ -64,5 +64,9 @@ internal sealed class TeacherConfiguration : IEntityTypeConfiguration<Teacher>
             .WithOne()
             .HasForeignKey(sr => sr.TeacherId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Navigation(t => t.SalaryRates)
+            .HasField("_salaryRates")
+            .UsePropertyAccessMode(PropertyAccessMode.Field);
     }
 }

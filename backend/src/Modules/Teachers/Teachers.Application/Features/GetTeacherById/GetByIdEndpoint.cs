@@ -28,6 +28,7 @@ public sealed record TeacherDetailResponse(
     string Country,
     TeacherStatus Status,
     string? Comment,
+    bool HasAccount,
     TeacherSalaryRateResponse? CurrentSalaryRate,
     IReadOnlyList<TeacherSalaryRateResponse> SalaryRates
 );
@@ -90,6 +91,7 @@ public static class GetByIdEndpoint
             teacher.Country,
             teacher.Status,
             teacher.Comment,
+            teacher.UserId is not null,
             currentRate,
             salaryRates
         );

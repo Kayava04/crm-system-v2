@@ -1,3 +1,4 @@
+using Education.Contracts.Enums;
 using FluentValidation;
 using Identity.Contracts.Enums;
 using Microsoft.AspNetCore.Builder;

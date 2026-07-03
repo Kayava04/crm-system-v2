@@ -26,6 +26,8 @@
     <ProjectReference Include="..\Modules\Students\Students.Application\Students.Application.csproj" />
     <ProjectReference Include="../Modules/Teachers/Teachers.Infrastructure.Postgres/Teachers.Infrastructure.Postgres.csproj" />
     <ProjectReference Include="../Modules/Teachers/Teachers.Application/Teachers.Application.csproj" />
+    <ProjectReference Include="../Modules/Courses/Courses.Infrastructure.Postgres/Courses.Infrastructure.Postgres.csproj" />
+    <ProjectReference Include="../Modules/Courses/Courses.Application/Courses.Application.csproj" />
   </ItemGroup>
 
 </Project>

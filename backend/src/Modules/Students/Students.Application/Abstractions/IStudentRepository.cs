@@ -1,6 +1,6 @@
+using Education.Contracts.Enums;
 using Shared.Kernel.Abstractions;
 using Students.Domain.Entities;
-using Students.Domain.Enums;
 
 namespace Students.Application.Abstractions;
 

@@ -77,5 +77,9 @@ internal sealed class StudentConfiguration : IEntityTypeConfiguration<Student>
             .WithOne()
             .HasForeignKey(sl => sl.StudentId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Navigation(s => s.Languages)
+            .HasField("_languages")
+            .UsePropertyAccessMode(PropertyAccessMode.Field);
     }
 }

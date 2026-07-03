@@ -38,6 +38,7 @@ public sealed record StudentDetailResponse(
     bool IsChild,
     string? Comment,
     StudentStatus Status,
+    bool HasAccount,
     StudentPreferencesResponse Preferences,
     IReadOnlyList<Language> Languages,
     ParentInfoResponse? ParentInfo
@@ -116,6 +117,7 @@ public static class GetByIdEndpoint
             student.IsChild,
             student.Comment,
             student.Status,
+            student.UserId is not null,
             preferences,
             languages,
             parentInfo

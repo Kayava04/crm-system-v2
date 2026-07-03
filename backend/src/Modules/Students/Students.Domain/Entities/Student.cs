@@ -1,3 +1,4 @@
+using Education.Contracts.Enums;
 using Shared.Kernel.Primitives;
 using Students.Domain.Enums;
 

@@ -15,6 +15,8 @@ public sealed class Student : AuditableEntity
     public string City { get; private set; } = string.Empty;
     public string Country { get; private set; } = string.Empty;
     public bool IsChild { get; private set; }
+    public StudentStatus Status { get; private set; }
+    public string? Comment { get; private set; }
 
     public StudentPreferences? Preferences { get; private set; }
     public ParentInfo? ParentInfo { get; private set; }
@@ -32,7 +34,8 @@ public sealed class Student : AuditableEntity
         string email,
         string city,
         string country,
-        bool isChild
+        bool isChild,
+        string? comment = null
     )
     {
         return new Student
@@ -48,6 +51,8 @@ public sealed class Student : AuditableEntity
             City = city,
             Country = country,
             IsChild = isChild,
+            Status = StudentStatus.Active,
+            Comment = comment,
             CreatedAt = DateTime.UtcNow
         };
     }
@@ -71,6 +76,18 @@ public sealed class Student : AuditableEntity
         City = city;
         Country = country;
         IsChild = isChild;
+        UpdatedAt = DateTime.UtcNow;
+    }
+
+    public void ChangeStatus(StudentStatus status)
+    {
+        Status = status;
+        UpdatedAt = DateTime.UtcNow;
+    }
+
+    public void UpdateComment(string? comment)
+    {
+        Comment = comment;
         UpdatedAt = DateTime.UtcNow;
     }
 

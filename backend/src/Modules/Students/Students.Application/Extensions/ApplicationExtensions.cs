@@ -5,11 +5,13 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Students.Application.Features.AddParentInfo;
+using Students.Application.Features.ChangeStudentStatus;
 using Students.Application.Features.CreateStudent;
 using Students.Application.Features.DeleteParentInfo;
 using Students.Application.Features.DeleteStudent;
 using Students.Application.Features.GetStudentById;
 using Students.Application.Features.GetStudents;
+using Students.Application.Features.UpdateComment;
 using Students.Application.Features.UpdateParentInfo;
 using Students.Application.Features.UpdateStudent;
 using Students.Application.Features.UpdateStudentPreferences;
@@ -45,6 +47,10 @@ public static class ApplicationExtensions
         AddParentInfoEndpoint.Map(group);
         UpdateParentInfoEndpoint.Map(group);
         DeleteParentInfoEndpoint.Map(group);
+
+        ChangeStudentStatusEndpoint.Map(group);
+
+        UpdateCommentEndpoint.Map(group);
 
         return app;
     }

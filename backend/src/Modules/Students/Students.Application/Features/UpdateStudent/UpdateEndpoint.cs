@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
-using Shared.Kernel.Abstractions;
 using Students.Application.Abstractions;
 
 namespace Students.Application.Features.UpdateStudent;
@@ -74,7 +73,7 @@ public static class UpdateEndpoint
         UpdateRequest request,
         IValidator<UpdateRequest> validator,
         IStudentRepository repository,
-        IUnitOfWork unitOfWork,
+        IStudentUnitOfWork unitOfWork,
         ILogger<UpdateRequest> logger,
         CancellationToken ct
     )
@@ -85,14 +84,10 @@ public static class UpdateEndpoint
 
         var student = await repository.GetByIdAsync(id, ct);
         if (student is null)
-        {
-            logger.LogWarning("Student with id {StudentId} not found", id);
-
             return Results.Problem(
                 detail: $"Student with id '{id}' not found.",
                 statusCode: StatusCodes.Status404NotFound
             );
-        }
 
         student.Update(
             request.FirstName,

@@ -11,8 +11,7 @@ public static class InfrastructureExtensions
         IConfiguration configuration
     )
     {
-        services.Configure<JwtOptions>(
-            configuration.GetSection(JwtOptions.SectionName));
+        services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName));
 
         services.AddScoped<ITokenService, TokenService>();
 

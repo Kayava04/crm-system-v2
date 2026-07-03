@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
-using Shared.Kernel.Abstractions;
 
 namespace Identity.Application.Features.Register;
 
@@ -36,11 +35,6 @@ public sealed class RegisterValidator : AbstractValidator<RegisterRequest>
             .IsInEnum().WithMessage("Invalid role.")
             .NotEqual(SystemRole.SuperAdmin)
             .WithMessage("SuperAdmin cannot be created through registration.");
-
-        RuleFor(x => x.PermissionIds)
-            .Empty()
-            .WithMessage("Permissions can only be assigned when registering an Admin.")
-            .When(x => x.Role != SystemRole.Admin);
 
         RuleFor(x => x.ProfileId)
             .NotNull()
@@ -76,7 +70,7 @@ public static class RegisterEndpoint
         IRoleRepository roleRepository,
         IIdentityService identityService,
         IEnumerable<IProfileLinker> profileLinkers,
-        IUnitOfWork unitOfWork,
+        IIdentityUnitOfWork unitOfWork,
         ILogger<RegisterRequest> logger,
         CancellationToken ct
     )

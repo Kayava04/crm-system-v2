@@ -7,7 +7,6 @@ using Identity.Infrastructure.Postgres.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Shared.Kernel.Abstractions;
 
 namespace Identity.Infrastructure.Postgres.Extensions;
 
@@ -39,8 +38,7 @@ public static class InfrastructureExtensions
         services.AddDbContext<IdentityDbContext>(options =>
             options.UseNpgsql(connectionString));
 
-        services.AddScoped<IUnitOfWork>(sp =>
-            sp.GetRequiredService<IdentityDbContext>());
+        services.AddScoped<IIdentityUnitOfWork>(sp => sp.GetRequiredService<IdentityDbContext>());
 
         services.AddScoped<IIdentityService, IdentityService>();
 

@@ -1,6 +1,7 @@
 using Identity.Application.Extensions;
 using Scalar.AspNetCore;
 using Students.Application.Extensions;
+using Teachers.Application.Extensions;
 
 namespace Host.Extensions;
 
@@ -25,6 +26,7 @@ public static class WebApplicationExtensions
     {
         app.MapStudentsEndpoints();
         app.MapIdentityEndpoints();
+        app.MapTeachersEndpoints();
 
         return app;
     }

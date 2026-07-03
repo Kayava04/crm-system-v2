@@ -1,11 +1,11 @@
 using Microsoft.EntityFrameworkCore;
-using Shared.Kernel.Abstractions;
+using Students.Application.Abstractions;
 using Students.Domain.Entities;
 
 namespace Students.Infrastructure.Postgres.Persistence;
 
 internal sealed class StudentsDbContext(DbContextOptions<StudentsDbContext> options)
-    : DbContext(options), IUnitOfWork
+    : DbContext(options), IStudentUnitOfWork
 {
     public DbSet<Student> Students => Set<Student>();
     public DbSet<StudentPreferences> StudentPreferences => Set<StudentPreferences>();

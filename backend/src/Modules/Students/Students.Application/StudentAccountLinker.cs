@@ -1,12 +1,11 @@
 using Identity.Contracts;
-using Shared.Kernel.Abstractions;
 using Students.Application.Abstractions;
 
 namespace Students.Application;
 
 internal sealed class StudentAccountLinker(
     IStudentRepository repository,
-    IUnitOfWork unitOfWork
+    IStudentUnitOfWork unitOfWork
 ) : IProfileLinker
 {
     public string ProfileType => "Student";

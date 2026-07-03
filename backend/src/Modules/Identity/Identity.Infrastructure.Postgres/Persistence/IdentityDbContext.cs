@@ -1,12 +1,12 @@
+using Identity.Application.Abstractions;
 using Identity.Domain.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Shared.Kernel.Abstractions;
 
 namespace Identity.Infrastructure.Postgres.Persistence;
 
 internal sealed class IdentityDbContext(DbContextOptions<IdentityDbContext> options)
-    : IdentityUserContext<User, Guid>(options), IUnitOfWork
+    : IdentityUserContext<User, Guid>(options), IIdentityUnitOfWork
 {
     public DbSet<Role> Roles => Set<Role>();
     public DbSet<Permission> Permissions => Set<Permission>();

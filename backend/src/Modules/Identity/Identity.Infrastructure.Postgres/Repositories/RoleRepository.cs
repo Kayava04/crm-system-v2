@@ -28,4 +28,10 @@ internal sealed class RoleRepository(IdentityDbContext context) : IRoleRepositor
             .Where(rp => rp.RoleId == roleId)
             .Select(rp => rp.PermissionId)
             .ToListAsync(ct);
+
+    public async Task<IReadOnlyList<Role>> GetAllAsync(CancellationToken ct = default) =>
+        await context.Roles
+            .AsNoTracking()
+            .OrderBy(r => r.Name)
+            .ToListAsync(ct);
 }

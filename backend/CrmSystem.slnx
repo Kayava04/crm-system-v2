@@ -8,6 +8,7 @@
   </Folder>
   <Folder Name="/src/Modules/Students/">
     <Project Path="src/Modules/Students/Students.Domain/Students.Domain.csproj" />
+    <Project Path="src/Modules/Students/Students.Contracts/Students.Contracts.csproj" />
     <Project Path="src/Modules/Students/Students.Application/Students.Application.csproj" />
     <Project Path="src/Modules/Students/Students.Infrastructure.Postgres/Students.Infrastructure.Postgres.csproj" />
   </Folder>
@@ -17,5 +18,10 @@
     <Project Path="src/Modules/Identity/Identity.Application/Identity.Application.csproj" />
     <Project Path="src/Modules/Identity/Identity.Infrastructure.Postgres/Identity.Infrastructure.Postgres.csproj" />
     <Project Path="src/Modules/Identity/Identity.Infrastructure.Jwt/Identity.Infrastructure.Jwt.csproj" />
+  </Folder>
+  <Folder Name="/src/Modules/Teachers/">
+    <Project Path="src/Modules/Teachers/Teachers.Domain/Teachers.Domain.csproj" />
+    <Project Path="src/Modules/Teachers/Teachers.Application/Teachers.Application.csproj" />
+    <Project Path="src/Modules/Teachers/Teachers.Infrastructure.Postgres/Teachers.Infrastructure.Postgres.csproj" />
   </Folder>
 </Solution>

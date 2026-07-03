@@ -15,6 +15,7 @@ using Students.Application.Features.UpdateComment;
 using Students.Application.Features.UpdateParentInfo;
 using Students.Application.Features.UpdateStudent;
 using Students.Application.Features.UpdateStudentPreferences;
+using Students.Contracts;
 
 namespace Students.Application.Extensions;
 
@@ -27,6 +28,8 @@ public static class ApplicationExtensions
 
         // Link user account to student
         services.AddScoped<IProfileLinker, StudentAccountLinker>();
+
+        services.AddScoped<IStudentVerifier, StudentVerifierService>();
 
         return services;
     }

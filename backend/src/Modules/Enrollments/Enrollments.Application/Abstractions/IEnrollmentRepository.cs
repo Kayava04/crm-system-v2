@@ -1,0 +1,23 @@
+using Enrollments.Domain.Entities;
+using Enrollments.Domain.Enums;
+using Shared.Kernel.Abstractions;
+
+namespace Enrollments.Application.Abstractions;
+
+public interface IEnrollmentRepository : IRepository<Enrollment>
+{
+    Task<bool> ExistsByStudentAndCourseAsync(
+        Guid studentId,
+        Guid courseId,
+        CancellationToken ct = default
+    );
+
+    Task<(IReadOnlyList<Enrollment> Enrollments, int TotalCount)> GetAllAsync(
+        Guid? studentId,
+        Guid? courseId,
+        EnrollmentStatus? status,
+        int page,
+        int pageSize,
+        CancellationToken ct = default
+    );
+}

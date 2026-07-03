@@ -1,4 +1,5 @@
 using Courses.Application.Extensions;
+using Enrollments.Application.Extensions;
 using Identity.Application.Extensions;
 using Scalar.AspNetCore;
 using Students.Application.Extensions;
@@ -29,6 +30,7 @@ public static class WebApplicationExtensions
         app.MapStudentsEndpoints();
         app.MapTeachersEndpoints();
         app.MapCoursesEndpoints();
+        app.MapEnrollmentsEndpoints();
 
         return app;
     }

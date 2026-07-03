@@ -29,7 +29,13 @@
   </Folder>
   <Folder Name="/src/Modules/Courses/">
     <Project Path="src/Modules/Courses/Courses.Domain/Courses.Domain.csproj" />
+    <Project Path="src/Modules/Courses/Courses.Contracts/Courses.Contracts.csproj" />
     <Project Path="src/Modules/Courses/Courses.Application/Courses.Application.csproj" />
     <Project Path="src/Modules/Courses/Courses.Infrastructure.Postgres/Courses.Infrastructure.Postgres.csproj" />
+  </Folder>
+  <Folder Name="/src/Modules/Enrollments/">
+    <Project Path="src/Modules/Enrollments/Enrollments.Domain/Enrollments.Domain.csproj" />
+    <Project Path="src/Modules/Enrollments/Enrollments.Application/Enrollments.Application.csproj" />
+    <Project Path="src/Modules/Enrollments/Enrollments.Infrastructure.Postgres/Enrollments.Infrastructure.Postgres.csproj" />
   </Folder>
 </Solution>

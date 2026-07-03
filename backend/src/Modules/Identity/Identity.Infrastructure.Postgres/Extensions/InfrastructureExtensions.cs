@@ -21,6 +21,7 @@ public static class InfrastructureExtensions
             .AddDatabase(configuration)
             .AddIdentityCore()
             .AddRepositories()
+            .AddServices()
             .AddSeeding();
 
         return services;
@@ -35,12 +36,9 @@ public static class InfrastructureExtensions
             ?? throw new InvalidOperationException(
                 "Connection string 'Default' not found in configuration.");
 
-        services.AddDbContext<IdentityDbContext>(options =>
-            options.UseNpgsql(connectionString));
+        services.AddDbContext<IdentityDbContext>(options => options.UseNpgsql(connectionString));
 
         services.AddScoped<IIdentityUnitOfWork>(sp => sp.GetRequiredService<IdentityDbContext>());
-
-        services.AddScoped<IIdentityService, IdentityService>();
 
         return services;
     }
@@ -66,6 +64,13 @@ public static class InfrastructureExtensions
         services.AddScoped<IRoleRepository, RoleRepository>();
         services.AddScoped<IPermissionRepository, PermissionRepository>();
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+
+        return services;
+    }
+
+    private static IServiceCollection AddServices(this IServiceCollection services)
+    {
+        services.AddScoped<IIdentityService, IdentityService>();
 
         return services;
     }

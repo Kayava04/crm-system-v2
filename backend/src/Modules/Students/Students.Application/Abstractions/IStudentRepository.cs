@@ -18,4 +18,5 @@ public interface IStudentRepository : IRepository<Student>
         int pageSize,
         CancellationToken ct = default
     );
+    Task<bool> ExistsByIdAsync(Guid id, CancellationToken ct = default);
 }

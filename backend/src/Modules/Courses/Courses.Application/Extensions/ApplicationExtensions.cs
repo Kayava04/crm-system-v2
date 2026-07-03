@@ -5,6 +5,7 @@ using Courses.Application.Features.DeleteCourse;
 using Courses.Application.Features.GetCourseById;
 using Courses.Application.Features.GetCourses;
 using Courses.Application.Features.UpdateCourse;
+using Courses.Contracts;
 using FluentValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -19,6 +20,8 @@ public static class ApplicationExtensions
     {
         // Register FluentValidation
         services.AddValidatorsFromAssembly(typeof(ApplicationExtensions).Assembly);
+
+        services.AddScoped<ICourseLookup, CourseLookupService>();
 
         return services;
     }

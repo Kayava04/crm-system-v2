@@ -7,6 +7,7 @@ public enum SystemPermission
     CanViewCourses, CanManageCourses,
     CanViewPayments, CanManagePayments,
     CanViewSchedule, CanManageSchedule,
+    CanViewEnrollments, CanManageEnrollments,
     CanViewReports,
     CanManageAdmins
 }

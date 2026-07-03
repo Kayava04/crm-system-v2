@@ -4,8 +4,9 @@ public enum SystemPermission
 {
     CanCreateStudents, CanViewStudents, CanManageStudents, CanDeleteStudents,
     CanCreateTeachers, CanViewTeachers, CanManageTeachers, CanDeleteTeachers,
-    CanManagePayments,
+    CanViewCourses, CanManageCourses,
+    CanViewPayments, CanManagePayments,
+    CanViewSchedule, CanManageSchedule,
     CanViewReports,
-    CanManageSchedule,
     CanManageAdmins
 }

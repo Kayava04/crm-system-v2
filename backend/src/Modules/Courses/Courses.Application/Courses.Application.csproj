@@ -12,10 +12,9 @@
 
   <ItemGroup>
     <ProjectReference Include="../../../Shared/Shared.Kernel/Shared.Kernel.csproj" />
-    <ProjectReference Include="../Students.Domain/Students.Domain.csproj" />
-    <ProjectReference Include="..\..\..\Contracts\Education.Contracts\Education.Contracts.csproj" />
-    <ProjectReference Include="..\..\Identity\Identity.Contracts\Identity.Contracts.csproj" />
-    <ProjectReference Include="..\Students.Contracts\Students.Contracts.csproj" />
+    <ProjectReference Include="../Courses.Domain/Courses.Domain.csproj" />
+    <ProjectReference Include="../../Identity/Identity.Contracts/Identity.Contracts.csproj" />
+    <ProjectReference Include="../../../Contracts/Education.Contracts/Education.Contracts.csproj" />
   </ItemGroup>
 
 </Project>

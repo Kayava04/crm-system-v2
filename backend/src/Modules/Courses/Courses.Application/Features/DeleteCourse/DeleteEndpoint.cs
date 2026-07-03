@@ -1,45 +1,45 @@
+using Courses.Application.Abstractions;
 using Identity.Contracts.Enums;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
-using Students.Application.Abstractions;
 
-namespace Students.Application.Features.DeleteStudent;
+namespace Courses.Application.Features.DeleteCourse;
 
-public sealed record DeleteRequest;
+public sealed record DeleteCourseRequest;
 
 public static class DeleteEndpoint
 {
     public static void Map(RouteGroupBuilder group)
     {
         group.MapDelete("/{id:guid}", Handle)
-             .WithName("DeleteStudent")
-             .RequireAuthorization(nameof(SystemPermission.CanDeleteStudents))
-             .WithSummary("Delete student")
+             .RequireAuthorization(nameof(SystemPermission.CanManageCourses))
+             .WithName("DeleteCourse")
+             .WithSummary("Delete a course")
              .Produces(StatusCodes.Status204NoContent)
              .ProducesProblem(StatusCodes.Status404NotFound);
     }
 
     private static async Task<IResult> Handle(
         Guid id,
-        IStudentRepository repository,
-        IStudentUnitOfWork unitOfWork,
-        ILogger<DeleteRequest> logger,
+        ICourseRepository repository,
+        ICoursesUnitOfWork unitOfWork,
+        ILogger<DeleteCourseRequest> logger,
         CancellationToken ct
     )
     {
-        var student = await repository.GetByIdAsync(id, ct);
-        if (student is null)
+        var course = await repository.GetByIdAsync(id, ct);
+        if (course is null)
             return Results.Problem(
-                detail: $"Student with id '{id}' not found.",
+                detail: $"Course with id '{id}' not found.",
                 statusCode: StatusCodes.Status404NotFound
             );
 
-        await repository.DeleteAsync(student, ct);
+        await repository.DeleteAsync(course, ct);
         await unitOfWork.SaveChangesAsync(ct);
 
-        logger.LogInformation("Student deleted: {StudentId}", id);
+        logger.LogInformation("Course deleted: {CourseId}", id);
 
         return Results.NoContent();
     }

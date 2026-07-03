@@ -1,4 +1,4 @@
-namespace Students.Domain.Enums;
+namespace Education.Contracts.Enums;
 
 public enum Level
 {

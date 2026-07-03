@@ -27,4 +27,9 @@
   <Folder Name="/src/Contracts/">
     <Project Path="src/Contracts/Education.Contracts/Education.Contracts.csproj" />
   </Folder>
+  <Folder Name="/src/Modules/Courses/">
+    <Project Path="src/Modules/Courses/Courses.Domain/Courses.Domain.csproj" />
+    <Project Path="src/Modules/Courses/Courses.Application/Courses.Application.csproj" />
+    <Project Path="src/Modules/Courses/Courses.Infrastructure.Postgres/Courses.Infrastructure.Postgres.csproj" />
+  </Folder>
 </Solution>

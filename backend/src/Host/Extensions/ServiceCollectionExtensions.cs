@@ -11,6 +11,8 @@ using Students.Application.Extensions;
 using Students.Infrastructure.Postgres.Extensions;
 using Teachers.Application.Extensions;
 using Teachers.Infrastructure.Postgres.Extensions;
+using Courses.Application.Extensions;
+using Courses.Infrastructure.Postgres.Extensions;
 
 namespace Host.Extensions;
 
@@ -42,7 +44,9 @@ public static class ServiceCollectionExtensions
             .AddIdentityInfrastructure(configuration)
             .AddJwtInfrastructure(configuration)
             .AddTeachersApplication()
-            .AddTeachersInfrastructure(configuration);
+            .AddTeachersInfrastructure(configuration)
+            .AddCoursesApplication()
+            .AddCoursesInfrastructure(configuration);
 
         return services;
     }

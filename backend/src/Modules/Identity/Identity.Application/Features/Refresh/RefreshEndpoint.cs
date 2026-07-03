@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
-using Shared.Kernel.Abstractions;
 
 namespace Identity.Application.Features.Refresh;
 
@@ -43,7 +42,7 @@ public static class RefreshEndpoint
         IRefreshTokenRepository refreshTokenRepository,
         IUserRepository userRepository,
         ITokenService tokenService,
-        IUnitOfWork unitOfWork,
+        IIdentityUnitOfWork unitOfWork,
         ILogger<RefreshRequest> logger,
         CancellationToken ct
     )

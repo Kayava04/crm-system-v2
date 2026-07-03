@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
-using Shared.Kernel.Abstractions;
 using Students.Application.Abstractions;
 using Students.Domain.Entities;
 using Students.Domain.Enums;
@@ -21,6 +20,7 @@ public sealed record CreateRequest(
     string City,
     string Country,
     bool IsChild,
+    string? Comment,
 
     LearningGoal LearningGoal,
     Format Format,
@@ -63,6 +63,10 @@ public sealed class CreateValidator : AbstractValidator<CreateRequest>
             .NotEmpty().WithMessage("Phone number is required.")
             .Matches(@"^\+?[0-9\s\-\(\)]{7,20}$")
             .WithMessage("Invalid phone number format.");
+
+        RuleFor(x => x.Comment)
+            .MaximumLength(500).WithMessage("Comment must not exceed 500 characters.")
+            .When(x => x.Comment is not null);
 
         RuleFor(x => x.Email)
             .NotEmpty().WithMessage("Email is required.")
@@ -119,7 +123,7 @@ public static class CreateEndpoint
         CreateRequest request,
         IValidator<CreateRequest> validator,
         IStudentRepository repository,
-        IUnitOfWork unitOfWork,
+        IStudentUnitOfWork unitOfWork,
         ILogger<CreateRequest> logger,
         CancellationToken ct
     )
@@ -130,14 +134,10 @@ public static class CreateEndpoint
 
         var emailExists = await repository.ExistsByEmailAsync(request.Email, ct);
         if (emailExists)
-        {
-            logger.LogWarning("Student with email {Email} already exists", request.Email);
-
             return Results.Problem(
                 detail: $"Student with email '{request.Email}' already exists.",
                 statusCode: StatusCodes.Status409Conflict
             );
-        }
 
         var student = Student.Create(
             request.FirstName,
@@ -148,7 +148,8 @@ public static class CreateEndpoint
             request.Email,
             request.City,
             request.Country,
-            request.IsChild
+            request.IsChild,
+            request.Comment
         );
 
         var preferences = StudentPreferences.Create(

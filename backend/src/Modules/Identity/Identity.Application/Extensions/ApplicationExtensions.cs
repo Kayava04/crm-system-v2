@@ -1,5 +1,7 @@
 using FluentValidation;
 using Identity.Application.Features.ChangePassword;
+using Identity.Application.Features.GetPermissions;
+using Identity.Application.Features.GetRoles;
 using Identity.Application.Features.Login;
 using Identity.Application.Features.Refresh;
 using Identity.Application.Features.Register;
@@ -29,6 +31,9 @@ public static class ApplicationExtensions
         RegisterEndpoint.Map(group);
         ChangePasswordEndpoint.Map(group);
         RefreshEndpoint.Map(group);
+
+        GetRolesEndpoint.Map(group);
+        GetPermissionsEndpoint.Map(group);
 
         return app;
     }

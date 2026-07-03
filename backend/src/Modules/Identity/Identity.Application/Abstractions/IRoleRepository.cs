@@ -9,4 +9,5 @@ public interface IRoleRepository
     Task AddAsync(Role role, CancellationToken ct = default);
     Task AssignPermissionAsync(Guid roleId, Guid permissionId, CancellationToken ct = default);
     Task<IReadOnlyList<Guid>> GetRolePermissionIdsAsync(Guid roleId, CancellationToken ct = default);
+    Task<IReadOnlyList<Role>> GetAllAsync(CancellationToken ct = default);
 }

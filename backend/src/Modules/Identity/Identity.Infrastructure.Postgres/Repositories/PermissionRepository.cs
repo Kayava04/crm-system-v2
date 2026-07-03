@@ -15,4 +15,10 @@ internal sealed class PermissionRepository(IdentityDbContext context) : IPermiss
 
     public async Task AddAsync(Permission permission, CancellationToken ct = default) =>
         await context.Permissions.AddAsync(permission, ct);
+
+    public async Task<IReadOnlyList<Permission>> GetAllAsync(CancellationToken ct = default) =>
+        await context.Permissions
+            .AsNoTracking()
+            .OrderBy(p => p.Name)
+            .ToListAsync(ct);
 }

@@ -36,11 +36,6 @@ public sealed class RegisterValidator : AbstractValidator<RegisterRequest>
             .NotEqual(SystemRole.SuperAdmin)
             .WithMessage("SuperAdmin cannot be created through registration.");
 
-        RuleFor(x => x.PermissionIds)
-            .Empty()
-            .WithMessage("Permissions can only be assigned when registering an Admin.")
-            .When(x => x.Role != SystemRole.Admin);
-
         RuleFor(x => x.ProfileId)
             .NotNull()
             .WithMessage("ProfileId is required when ProfileType is specified.")

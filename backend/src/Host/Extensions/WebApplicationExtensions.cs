@@ -1,3 +1,4 @@
+using Courses.Application.Extensions;
 using Identity.Application.Extensions;
 using Scalar.AspNetCore;
 using Students.Application.Extensions;
@@ -24,9 +25,10 @@ public static class WebApplicationExtensions
 
     private static WebApplication MapEndpoints(this WebApplication app)
     {
-        app.MapStudentsEndpoints();
         app.MapIdentityEndpoints();
+        app.MapStudentsEndpoints();
         app.MapTeachersEndpoints();
+        app.MapCoursesEndpoints();
 
         return app;
     }

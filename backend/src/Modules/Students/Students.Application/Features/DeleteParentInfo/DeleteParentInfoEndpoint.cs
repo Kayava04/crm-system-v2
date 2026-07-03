@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
-using Shared.Kernel.Abstractions;
 using Students.Application.Abstractions;
 
 namespace Students.Application.Features.DeleteParentInfo;
@@ -25,21 +24,17 @@ public static class DeleteParentInfoEndpoint
     private static async Task<IResult> Handle(
         Guid id,
         IStudentRepository repository,
-        IUnitOfWork unitOfWork,
+        IStudentUnitOfWork unitOfWork,
         ILogger<DeleteParentInfoRequest> logger,
         CancellationToken ct
     )
     {
         var student = await repository.GetByIdAsync(id, ct);
         if (student is null)
-        {
-            logger.LogWarning("Student with id {StudentId} not found", id);
-
             return Results.Problem(
                 detail: $"Student with id '{id}' not found.",
                 statusCode: StatusCodes.Status404NotFound
             );
-        }
 
         if (student.ParentInfo is null)
         {

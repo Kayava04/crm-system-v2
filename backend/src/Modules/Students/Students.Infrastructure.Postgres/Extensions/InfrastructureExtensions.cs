@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Shared.Kernel.Abstractions;
 using Students.Application.Abstractions;
 using Students.Infrastructure.Postgres.Persistence;
 using Students.Infrastructure.Postgres.Repositories;
@@ -12,7 +11,8 @@ public static class InfrastructureExtensions
 {
     public static IServiceCollection AddStudentsInfrastructure(
         this IServiceCollection services,
-        IConfiguration configuration)
+        IConfiguration configuration
+    )
     {
         services
             .AddDatabase(configuration)
@@ -23,7 +23,8 @@ public static class InfrastructureExtensions
 
     private static IServiceCollection AddDatabase(
         this IServiceCollection services,
-        IConfiguration configuration)
+        IConfiguration configuration
+    )
     {
         var connectionString = configuration.GetConnectionString("Default")
             ?? throw new InvalidOperationException($"Connection string 'Default' not found in configuration.");
@@ -31,13 +32,12 @@ public static class InfrastructureExtensions
         services.AddDbContext<StudentsDbContext>(options =>
             options.UseNpgsql(connectionString));
 
-        services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<StudentsDbContext>());
+        services.AddScoped<IStudentUnitOfWork>(sp => sp.GetRequiredService<StudentsDbContext>());
 
         return services;
     }
 
-    private static IServiceCollection AddRepositories(
-        this IServiceCollection services)
+    private static IServiceCollection AddRepositories(this IServiceCollection services)
     {
         services.AddScoped<IStudentRepository, StudentRepository>();
 

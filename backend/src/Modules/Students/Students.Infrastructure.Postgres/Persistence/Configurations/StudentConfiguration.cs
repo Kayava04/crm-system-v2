@@ -53,6 +53,13 @@ internal sealed class StudentConfiguration : IEntityTypeConfiguration<Student>
         builder.Property(s => s.IsChild)
             .IsRequired();
 
+        builder.Property(s => s.Status)
+            .IsRequired()
+            .HasConversion<string>();
+
+        builder.Property(s => s.Comment)
+            .HasMaxLength(500);
+
         builder.Property(s => s.CreatedAt)
             .IsRequired();
 

@@ -36,6 +36,8 @@ public sealed record StudentDetailResponse(
     string City,
     string Country,
     bool IsChild,
+    string? Comment,
+    StudentStatus Status,
     StudentPreferencesResponse Preferences,
     IReadOnlyList<Language> Languages,
     ParentInfoResponse? ParentInfo
@@ -62,7 +64,6 @@ public static class GetByIdEndpoint
     )
     {
         var student = await repository.GetByIdAsync(id, ct);
-
         if (student is null)
             return Results.Problem(
                 detail: $"Student with id '{id}' not found.",
@@ -79,6 +80,29 @@ public static class GetByIdEndpoint
             );
         }
 
+        var preferences = new StudentPreferencesResponse(
+            student.Preferences.LearningGoal,
+            student.Preferences.Format,
+            student.Preferences.LessonType,
+            student.Preferences.Intensity,
+            student.Preferences.CurrentLevel,
+            student.Preferences.HadPreviousCourses
+        );
+
+        var languages = student.Languages
+            .Select(l => l.Language)
+            .ToList();
+
+        var parentInfo = student.IsChild && student.ParentInfo is not null
+            ? new ParentInfoResponse(
+                student.ParentInfo.FirstName,
+                student.ParentInfo.LastName,
+                student.ParentInfo.MiddleName,
+                student.ParentInfo.PhoneNumber,
+                student.ParentInfo.Email
+            )
+            : null;
+
         var response = new StudentDetailResponse(
             student.Id,
             student.FirstName,
@@ -90,27 +114,11 @@ public static class GetByIdEndpoint
             student.City,
             student.Country,
             student.IsChild,
-
-            new StudentPreferencesResponse(
-                student.Preferences.LearningGoal,
-                student.Preferences.Format,
-                student.Preferences.LessonType,
-                student.Preferences.Intensity,
-                student.Preferences.CurrentLevel,
-                student.Preferences.HadPreviousCourses
-            ),
-
-            student.Languages.Select(l => l.Language).ToList(),
-
-            student.IsChild && student.ParentInfo is not null
-                ? new ParentInfoResponse(
-                    student.ParentInfo.FirstName,
-                    student.ParentInfo.LastName,
-                    student.ParentInfo.MiddleName,
-                    student.ParentInfo.PhoneNumber,
-                    student.ParentInfo.Email
-                )
-                : null
+            student.Comment,
+            student.Status,
+            preferences,
+            languages,
+            parentInfo
         );
 
         return Results.Ok(response);

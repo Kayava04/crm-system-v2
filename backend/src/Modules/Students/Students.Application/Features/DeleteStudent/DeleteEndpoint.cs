@@ -7,7 +7,7 @@ using Students.Application.Abstractions;
 
 namespace Students.Application.Features.DeleteStudent;
 
-public sealed record DeleteRequest(Guid Id);
+public sealed record DeleteRequest;
 
 public static class DeleteEndpoint
 {

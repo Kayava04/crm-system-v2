@@ -2,6 +2,7 @@
   
   <ItemGroup>
     <ProjectReference Include="../../../Shared/Shared.Kernel/Shared.Kernel.csproj" />
+    <ProjectReference Include="..\..\..\Contracts\Education.Contracts\Education.Contracts.csproj" />
   </ItemGroup>
 
 </Project>

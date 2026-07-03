@@ -1,7 +1,7 @@
+using Education.Contracts.Enums;
 using Microsoft.EntityFrameworkCore;
 using Students.Application.Abstractions;
 using Students.Domain.Entities;
-using Students.Domain.Enums;
 using Students.Infrastructure.Postgres.Persistence;
 
 namespace Students.Infrastructure.Postgres.Repositories;

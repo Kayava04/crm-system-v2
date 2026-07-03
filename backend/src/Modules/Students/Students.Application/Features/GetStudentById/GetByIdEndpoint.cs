@@ -1,3 +1,4 @@
+using Education.Contracts.Enums;
 using Identity.Contracts.Enums;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;

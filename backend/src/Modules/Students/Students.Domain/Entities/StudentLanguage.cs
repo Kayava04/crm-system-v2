@@ -1,4 +1,4 @@
-using Students.Domain.Enums;
+using Education.Contracts.Enums;
 
 namespace Students.Domain.Entities;
 

@@ -9,6 +9,7 @@ using Scheduling.Application.Services;
 using Scheduling.Domain.Entities;
 using Scheduling.Domain.Enums;
 using Teachers.Contracts;
+using Shared.Kernel.Abstractions;
 
 namespace Scheduling.Application.Features.CreateSchedule;
 
@@ -85,6 +86,7 @@ public static class CreateEndpoint
         IValidator<CreateScheduleRequest> validator,
         IScheduleRepository repository,
         ISchedulingUnitOfWork unitOfWork,
+        ITransactionCoordinator transaction,
         LessonTargetResolver targetResolver,
         ITeacherVerifier teacherVerifier,
         ILogger<CreateScheduleRequest> logger,
@@ -114,46 +116,52 @@ public static class CreateEndpoint
 
         var scheduledDate = request.ScheduledDate.ToUniversalTime();
 
-        var hasConflict = await repository.HasTeacherConflictAsync(
-            request.TeacherId, scheduledDate, request.DurationMinutes, ct: ct);
-
-        if (hasConflict)
+        return await transaction.ExecuteAsync<IResult>(async token =>
         {
-            logger.LogWarning(
-                "Teacher {TeacherId} already has a lesson at {ScheduledDate}",
-                request.TeacherId, scheduledDate
+            // Two requests for the same teacher and time must not both pass the conflict check below
+            await transaction.AcquireTeacherCalendarLocksAsync([request.TeacherId], token);
+
+            var hasConflict = await repository.HasTeacherConflictAsync(
+                request.TeacherId, scheduledDate, request.DurationMinutes, ct: ct);
+
+            if (hasConflict)
+            {
+                logger.LogWarning(
+                    "Teacher {TeacherId} already has a lesson at {ScheduledDate}",
+                    request.TeacherId, scheduledDate
+                );
+
+                return Results.Problem(
+                    detail: "Teacher already has a lesson at this time.",
+                    statusCode: StatusCodes.Status409Conflict
+                );
+            }
+
+            var schedule = request.EnrollmentId is not null
+                ? Schedule.CreateForEnrollment(
+                    request.EnrollmentId.Value, request.TeacherId, scheduledDate, request.DurationMinutes, request.Notes)
+                : Schedule.CreateForGroup(
+                    request.GroupId!.Value, request.TeacherId, scheduledDate, request.DurationMinutes, request.Notes);
+
+            await repository.AddAsync(schedule, ct);
+            await unitOfWork.SaveChangesAsync(ct);
+
+            logger.LogInformation(
+                "Schedule created: {ScheduleId} for Enrollment {EnrollmentId} / Group {GroupId}",
+                schedule.Id, request.EnrollmentId, request.GroupId
             );
 
-            return Results.Problem(
-                detail: "Teacher already has a lesson at this time.",
-                statusCode: StatusCodes.Status409Conflict
+            var response = new CreateScheduleResponse(
+                schedule.Id,
+                schedule.EnrollmentId,
+                schedule.GroupId,
+                schedule.TeacherId,
+                schedule.ScheduledDate,
+                schedule.DurationMinutes,
+                schedule.Status
             );
-        }
 
-        var schedule = request.EnrollmentId is not null
-            ? Schedule.CreateForEnrollment(
-                request.EnrollmentId.Value, request.TeacherId, scheduledDate, request.DurationMinutes, request.Notes)
-            : Schedule.CreateForGroup(
-                request.GroupId!.Value, request.TeacherId, scheduledDate, request.DurationMinutes, request.Notes);
-
-        await repository.AddAsync(schedule, ct);
-        await unitOfWork.SaveChangesAsync(ct);
-
-        logger.LogInformation(
-            "Schedule created: {ScheduleId} for Enrollment {EnrollmentId} / Group {GroupId}",
-            schedule.Id, request.EnrollmentId, request.GroupId
-        );
-
-        var response = new CreateScheduleResponse(
-            schedule.Id,
-            schedule.EnrollmentId,
-            schedule.GroupId,
-            schedule.TeacherId,
-            schedule.ScheduledDate,
-            schedule.DurationMinutes,
-            schedule.Status
-        );
-
-        return Results.Created($"/api/schedules/{schedule.Id}", response);
+            return Results.Created($"/api/schedules/{schedule.Id}", response);
+        }, ct);
     }
 }

@@ -16,6 +16,9 @@ internal sealed class IdentityService(UserManager<User> userManager) : IIdentity
         var user = User.Create(email, mustChangePassword);
         var result = await userManager.CreateAsync(user, password);
 
+        if (result.Errors.Any(e => e.Code is "DuplicateEmail" or "DuplicateUserName"))
+            throw new UserAlreadyExistsException(string.Join("; ", result.Errors.Select(e => e.Description)));
+
         if (!result.Succeeded)
             throw new InvalidOperationException(
                 string.Join("; ", result.Errors.Select(e => e.Description)));

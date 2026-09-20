@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
 using Scheduling.Application.Abstractions;
 using Teachers.Contracts;
+using Shared.Kernel.Abstractions;
+using Scheduling.Application.Services;
 
 namespace Scheduling.Application.Features.UpdateSchedule;
 
@@ -51,6 +53,7 @@ public static class UpdateEndpoint
         IValidator<UpdateScheduleRequest> validator,
         IScheduleRepository repository,
         ISchedulingUnitOfWork unitOfWork,
+        ITransactionCoordinator transaction,
         ITeacherVerifier teacherVerifier,
         ILogger<UpdateScheduleRequest> logger,
         CancellationToken ct
@@ -93,29 +96,34 @@ public static class UpdateEndpoint
                 );
         }
 
-        var hasConflict = await repository.HasTeacherConflictAsync(
-            request.TeacherId, schedule.ScheduledDate, request.DurationMinutes, id, ct);
-
-        if (hasConflict)
+        return await transaction.ExecuteAsync<IResult>(async token =>
         {
-            logger.LogWarning(
-                "Teacher {TeacherId} already has a lesson at {ScheduledDate}",
-                request.TeacherId, schedule.ScheduledDate
-            );
+            await transaction.AcquireTeacherCalendarLocksAsync([request.TeacherId], token);
 
-            return Results.Problem(
-                detail: "Teacher already has a lesson at this time.",
-                statusCode: StatusCodes.Status409Conflict
-            );
-        }
+            var hasConflict = await repository.HasTeacherConflictAsync(
+                request.TeacherId, schedule.ScheduledDate, request.DurationMinutes, id, ct);
 
-        schedule.Update(request.TeacherId, request.DurationMinutes, request.Notes);
+            if (hasConflict)
+            {
+                logger.LogWarning(
+                    "Teacher {TeacherId} already has a lesson at {ScheduledDate}",
+                    request.TeacherId, schedule.ScheduledDate
+                );
 
-        await repository.UpdateAsync(schedule, ct);
-        await unitOfWork.SaveChangesAsync(ct);
+                return Results.Problem(
+                    detail: "Teacher already has a lesson at this time.",
+                    statusCode: StatusCodes.Status409Conflict
+                );
+            }
 
-        logger.LogInformation("Schedule updated: {ScheduleId}", id);
+            schedule.Update(request.TeacherId, request.DurationMinutes, request.Notes);
 
-        return Results.NoContent();
+            await repository.UpdateAsync(schedule, ct);
+            await unitOfWork.SaveChangesAsync(ct);
+
+            logger.LogInformation("Schedule updated: {ScheduleId}", id);
+
+            return Results.NoContent();
+        }, ct);
     }
 }

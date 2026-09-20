@@ -8,6 +8,7 @@ using Scheduling.Application.Abstractions;
 using Scheduling.Application.Services;
 using Scheduling.Domain.Entities;
 using Teachers.Contracts;
+using Shared.Kernel.Abstractions;
 
 namespace Scheduling.Application.Features.GenerateSchedule;
 
@@ -94,6 +95,7 @@ public static class GenerateScheduleEndpoint
         IValidator<GenerateScheduleRequest> validator,
         IScheduleRepository repository,
         ISchedulingUnitOfWork unitOfWork,
+        ITransactionCoordinator transaction,
         LessonTargetResolver targetResolver,
         ITeacherVerifier teacherVerifier,
         ISchoolClock clock,
@@ -171,50 +173,55 @@ public static class GenerateScheduleEndpoint
                 statusCode: StatusCodes.Status409Conflict
             );
 
-        var duration = TimeSpan.FromMinutes(request.DurationMinutes);
-
-        var busy = await repository.GetOpenByTeacherInRangeAsync(
-            teacherId, starts[0], starts[^1] + duration, ct);
-
-        var conflicts = starts
-            .Where(start => busy.Any(b => b.ScheduledDate < start + duration && b.EndDate > start))
-            .ToList();
-
-        if (conflicts.Count > 0)
+        return await transaction.ExecuteAsync<IResult>(async token =>
         {
-            logger.LogWarning(
-                "Schedule generation blocked: teacher {TeacherId} is busy at {ConflictCount} of the requested times",
-                teacherId, conflicts.Count
+            await transaction.AcquireTeacherCalendarLocksAsync([teacherId], token);
+
+            var duration = TimeSpan.FromMinutes(request.DurationMinutes);
+
+            var busy = await repository.GetOpenByTeacherInRangeAsync(
+                teacherId, starts[0], starts[^1] + duration, ct);
+
+            var conflicts = starts
+                .Where(start => busy.Any(b => b.ScheduledDate < start + duration && b.EndDate > start))
+                .ToList();
+
+            if (conflicts.Count > 0)
+            {
+                logger.LogWarning(
+                    "Schedule generation blocked: teacher {TeacherId} is busy at {ConflictCount} of the requested times",
+                    teacherId, conflicts.Count
+                );
+
+                var shown = string.Join(", ", conflicts.Take(5).Select(c => c.ToString("yyyy-MM-dd HH:mm 'UTC'")));
+
+                return Results.Problem(
+                    detail: $"Teacher already has lessons at {conflicts.Count} of the requested times (e.g. {shown}). Nothing was created.",
+                    statusCode: StatusCodes.Status409Conflict
+                );
+            }
+
+            var schedules = starts
+                .Select(start => target.EnrollmentId is not null
+                    ? Schedule.CreateForEnrollment(target.EnrollmentId.Value, teacherId, start, request.DurationMinutes)
+                    : Schedule.CreateForGroup(target.GroupId!.Value, teacherId, start, request.DurationMinutes))
+                .ToList();
+
+            await repository.AddRangeAsync(schedules, ct);
+            await unitOfWork.SaveChangesAsync(ct);
+
+            logger.LogInformation(
+                "Generated {Count} lessons for Enrollment {EnrollmentId} / Group {GroupId}",
+                schedules.Count, target.EnrollmentId, target.GroupId
             );
 
-            var shown = string.Join(", ", conflicts.Take(5).Select(c => c.ToString("yyyy-MM-dd HH:mm 'UTC'")));
+            var response = new GenerateScheduleResponse(schedules.Count, starts[0], starts[^1], clock.TimeZoneId);
 
-            return Results.Problem(
-                detail: $"Teacher already has lessons at {conflicts.Count} of the requested times (e.g. {shown}). Nothing was created.",
-                statusCode: StatusCodes.Status409Conflict
-            );
-        }
-
-        var schedules = starts
-            .Select(start => target.EnrollmentId is not null
-                ? Schedule.CreateForEnrollment(target.EnrollmentId.Value, teacherId, start, request.DurationMinutes)
-                : Schedule.CreateForGroup(target.GroupId!.Value, teacherId, start, request.DurationMinutes))
-            .ToList();
-
-        await repository.AddRangeAsync(schedules, ct);
-        await unitOfWork.SaveChangesAsync(ct);
-
-        logger.LogInformation(
-            "Generated {Count} lessons for Enrollment {EnrollmentId} / Group {GroupId}",
-            schedules.Count, target.EnrollmentId, target.GroupId
-        );
-
-        var response = new GenerateScheduleResponse(schedules.Count, starts[0], starts[^1], clock.TimeZoneId);
-
-        return Results.Created(
-            target.EnrollmentId is not null
-                ? $"/api/schedules?enrollmentId={target.EnrollmentId}"
-                : $"/api/schedules?groupId={target.GroupId}",
-            response);
+            return Results.Created(
+                target.EnrollmentId is not null
+                    ? $"/api/schedules?enrollmentId={target.EnrollmentId}"
+                    : $"/api/schedules?groupId={target.GroupId}",
+                response);
+        }, ct);
     }
 }

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
 using Courses.Contracts;
 using Students.Contracts;
+using Shared.Kernel.Abstractions;
 
 namespace Enrollments.Application.Features.CreateEnrollment;
 
@@ -79,6 +80,7 @@ public static class CreateEndpoint
         IEnrollmentRepository repository,
         IEnrollmentNumberGenerator numberGenerator,
         IEnrollmentUnitOfWork unitOfWork,
+        ITransactionCoordinator transaction,
         ICourseLookup courseLookup,
         IStudentVerifier studentVerifier,
         ILogger<CreateEnrollmentRequest> logger,
@@ -109,45 +111,54 @@ public static class CreateEndpoint
                 statusCode: StatusCodes.Status404NotFound
             );
 
-        var alreadyEnrolled = await repository.ExistsByStudentAndCourseAsync(request.StudentId, request.CourseId, ct);
+        return await transaction.ExecuteAsync<IResult>(async token =>
+        {
+            // The same student cannot be enrolled in the same course by two requests at once
+            await transaction.AcquireLockAsync($"enrollment-student:{request.StudentId}", token);
 
-        if (alreadyEnrolled)
-            return Results.Problem(
-                detail: "Student is already enrolled in this course.",
-                statusCode: StatusCodes.Status409Conflict
+            var alreadyEnrolled = await repository.ExistsByStudentAndCourseAsync(request.StudentId, request.CourseId, ct);
+
+            if (alreadyEnrolled)
+                return Results.Problem(
+                    detail: "Student is already enrolled in this course.",
+                    statusCode: StatusCodes.Status409Conflict
+                );
+
+            // Numbers count up per day: only one request at a time may take the next one
+            await transaction.AcquireLockAsync($"enrollment-number:{request.StartDate:yyyyMMdd}", token);
+
+            var enrollmentNumber = await numberGenerator.GenerateAsync(request.StartDate, token);
+
+            var enrollment = Enrollment.Create(
+                enrollmentNumber,
+                request.StudentId,
+                request.CourseId,
+                request.StartDate,
+                course.DurationMonths,
+                course.Price,
+                request.DiscountedPrice,
+                request.Comment,
+                request.PreferredSchedule?.Trim()
             );
 
-        var enrollmentNumber = await numberGenerator.GenerateAsync(request.StartDate, ct);
+            await repository.AddAsync(enrollment, ct);
+            await unitOfWork.SaveChangesAsync(ct);
 
-        var enrollment = Enrollment.Create(
-            enrollmentNumber,
-            request.StudentId,
-            request.CourseId,
-            request.StartDate,
-            course.DurationMonths,
-            course.Price,
-            request.DiscountedPrice,
-            request.Comment,
-            request.PreferredSchedule?.Trim()
-        );
+            logger.LogInformation("Enrollment created: {EnrollmentNumber} for Student {StudentId}", enrollmentNumber, request.StudentId);
 
-        await repository.AddAsync(enrollment, ct);
-        await unitOfWork.SaveChangesAsync(ct);
+            var response = new CreateEnrollmentResponse(
+                enrollment.Id,
+                enrollment.EnrollmentNumber,
+                enrollment.StudentId,
+                enrollment.CourseId,
+                enrollment.StartDate,
+                enrollment.EndDate,
+                enrollment.CoursePrice,
+                enrollment.DiscountedPrice,
+                enrollment.EffectivePrice
+            );
 
-        logger.LogInformation("Enrollment created: {EnrollmentNumber} for Student {StudentId}", enrollmentNumber, request.StudentId);
-
-        var response = new CreateEnrollmentResponse(
-            enrollment.Id,
-            enrollment.EnrollmentNumber,
-            enrollment.StudentId,
-            enrollment.CourseId,
-            enrollment.StartDate,
-            enrollment.EndDate,
-            enrollment.CoursePrice,
-            enrollment.DiscountedPrice,
-            enrollment.EffectivePrice
-        );
-
-        return Results.Created($"/api/enrollments/{enrollment.Id}", response);
+            return Results.Created($"/api/enrollments/{enrollment.Id}", response);
+        }, ct);
     }
 }

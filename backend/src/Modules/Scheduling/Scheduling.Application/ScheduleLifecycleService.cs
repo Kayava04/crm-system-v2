@@ -4,6 +4,8 @@ using Scheduling.Application.Abstractions;
 using Scheduling.Contracts;
 using Scheduling.Domain.Entities;
 using Scheduling.Domain.Enums;
+using Shared.Kernel.Abstractions;
+using Scheduling.Application.Services;
 using Teachers.Contracts;
 
 namespace Scheduling.Application;
@@ -13,7 +15,8 @@ internal sealed class ScheduleLifecycleService(
     ISchedulingUnitOfWork unitOfWork,
     IEnrollmentLookup enrollmentLookup,
     ICourseLookup courseLookup,
-    ITeacherVerifier teacherVerifier
+    ITeacherVerifier teacherVerifier,
+    ITransactionCoordinator transaction
 ) : IScheduleLifecycle
 {
     public async Task<int> CancelForEnrollmentAsync(Guid enrollmentId, CancellationToken ct = default)
@@ -33,44 +36,50 @@ internal sealed class ScheduleLifecycleService(
         Guid enrollmentId,
         CancellationToken ct = default)
     {
-        var cancelled = await repository.GetFutureCancelledAsync(
-            enrollmentId, null, CancellationReason.EnrollmentInactive, DateTime.UtcNow, ct);
-
-        var teacherAvailable = new Dictionary<Guid, bool>();
-        int restored = 0, skipped = 0;
-
-        foreach (var lesson in cancelled)
+        // Restoring checks the teachers' calendars, so they are held for the whole operation
+        return await transaction.ExecuteAsync(async token =>
         {
-            if (!teacherAvailable.TryGetValue(lesson.TeacherId, out var available))
+            var cancelled = await repository.GetFutureCancelledAsync(
+                enrollmentId, null, CancellationReason.EnrollmentInactive, DateTime.UtcNow, token);
+
+            await transaction.AcquireTeacherCalendarLocksAsync(cancelled.Select(l => l.TeacherId), token);
+
+            var teacherAvailable = new Dictionary<Guid, bool>();
+            int restored = 0, skipped = 0;
+
+            foreach (var lesson in cancelled)
             {
-                available = await teacherVerifier.IsAvailableAsync(lesson.TeacherId, ct);
-                teacherAvailable[lesson.TeacherId] = available;
+                if (!teacherAvailable.TryGetValue(lesson.TeacherId, out var available))
+                {
+                    available = await teacherVerifier.IsAvailableAsync(lesson.TeacherId, ct);
+                    teacherAvailable[lesson.TeacherId] = available;
+                }
+
+                if (!available)
+                {
+                    // The teacher is away as well: the lesson comes back together with the teacher
+                    lesson.Cancel(CancellationReason.TeacherUnavailable);
+                    skipped++;
+                    continue;
+                }
+
+                if (await repository.HasTeacherConflictAsync(
+                        lesson.TeacherId, lesson.ScheduledDate, lesson.DurationMinutes, lesson.Id, ct))
+                {
+                    skipped++;
+                    continue;
+                }
+
+                lesson.RestoreIfSystemCancelled();
+                restored++;
             }
 
-            if (!available)
-            {
-                // The teacher is away as well: the lesson comes back together with the teacher
-                lesson.Cancel(CancellationReason.TeacherUnavailable);
-                skipped++;
-                continue;
-            }
+            if (cancelled.Count > 0)
+                await unitOfWork.SaveChangesAsync(ct);
 
-            if (await repository.HasTeacherConflictAsync(
-                    lesson.TeacherId, lesson.ScheduledDate, lesson.DurationMinutes, lesson.Id, ct))
-            {
-                skipped++;
-                continue;
-            }
-
-            lesson.RestoreIfSystemCancelled();
-            restored++;
-        }
-
-        if (cancelled.Count > 0)
-            await unitOfWork.SaveChangesAsync(ct);
-
-        return new EnrollmentLessonsRestoreResult(
-            restored, skipped, await CountLessonsLeftToScheduleAsync(enrollmentId, ct));
+            return new EnrollmentLessonsRestoreResult(
+                restored, skipped, await CountLessonsLeftToScheduleAsync(enrollmentId, ct));
+        }, ct);
     }
 
     public async Task<int> CancelForTeacherAsync(Guid teacherId, CancellationToken ct = default)
@@ -88,41 +97,46 @@ internal sealed class ScheduleLifecycleService(
 
     public async Task<TeacherLessonsRestoreResult> RestoreForTeacherAsync(Guid teacherId, CancellationToken ct = default)
     {
-        var cancelled = await repository.GetFutureCancelledAsync(
-            null, teacherId, CancellationReason.TeacherUnavailable, DateTime.UtcNow, ct);
-
-        var enrollments = (await enrollmentLookup.GetByIdsAsync(
-                cancelled.Where(l => l.EnrollmentId.HasValue).Select(l => l.EnrollmentId!.Value).Distinct().ToList(), ct))
-            .ToDictionary(e => e.Id);
-
-        int restored = 0, skipped = 0;
-
-        foreach (var lesson in cancelled)
+        return await transaction.ExecuteAsync(async token =>
         {
-            // An individual lesson of a suspended student stays cancelled until the student returns
-            if (lesson.EnrollmentId is { } enrollmentId
-                && (!enrollments.TryGetValue(enrollmentId, out var enrollment) || !enrollment.IsActive))
+            await transaction.AcquireTeacherCalendarLocksAsync([teacherId], token);
+
+            var cancelled = await repository.GetFutureCancelledAsync(
+                null, teacherId, CancellationReason.TeacherUnavailable, DateTime.UtcNow, ct);
+
+            var enrollments = (await enrollmentLookup.GetByIdsAsync(
+                    cancelled.Where(l => l.EnrollmentId.HasValue).Select(l => l.EnrollmentId!.Value).Distinct().ToList(), ct))
+                .ToDictionary(e => e.Id);
+
+            int restored = 0, skipped = 0;
+
+            foreach (var lesson in cancelled)
             {
-                lesson.Cancel(CancellationReason.EnrollmentInactive);
-                skipped++;
-                continue;
+                // An individual lesson of a suspended student stays cancelled until the student returns
+                if (lesson.EnrollmentId is { } enrollmentId
+                    && (!enrollments.TryGetValue(enrollmentId, out var enrollment) || !enrollment.IsActive))
+                {
+                    lesson.Cancel(CancellationReason.EnrollmentInactive);
+                    skipped++;
+                    continue;
+                }
+
+                if (await repository.HasTeacherConflictAsync(
+                        lesson.TeacherId, lesson.ScheduledDate, lesson.DurationMinutes, lesson.Id, ct))
+                {
+                    skipped++;
+                    continue;
+                }
+
+                lesson.RestoreIfSystemCancelled();
+                restored++;
             }
 
-            if (await repository.HasTeacherConflictAsync(
-                    lesson.TeacherId, lesson.ScheduledDate, lesson.DurationMinutes, lesson.Id, ct))
-            {
-                skipped++;
-                continue;
-            }
+            if (cancelled.Count > 0)
+                await unitOfWork.SaveChangesAsync(ct);
 
-            lesson.RestoreIfSystemCancelled();
-            restored++;
-        }
-
-        if (cancelled.Count > 0)
-            await unitOfWork.SaveChangesAsync(ct);
-
-        return new TeacherLessonsRestoreResult(restored, skipped);
+            return new TeacherLessonsRestoreResult(restored, skipped);
+        }, ct);
     }
 
     private async Task<int> CountLessonsLeftToScheduleAsync(Guid enrollmentId, CancellationToken ct)

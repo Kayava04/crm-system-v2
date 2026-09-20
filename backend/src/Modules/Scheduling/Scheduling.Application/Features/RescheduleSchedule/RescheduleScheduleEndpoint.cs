@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
 using Scheduling.Application.Abstractions;
+using Shared.Kernel.Abstractions;
+using Scheduling.Application.Services;
 
 namespace Scheduling.Application.Features.RescheduleSchedule;
 
@@ -41,6 +43,7 @@ public static class RescheduleScheduleEndpoint
         IValidator<RescheduleScheduleRequest> validator,
         IScheduleRepository repository,
         ISchedulingUnitOfWork unitOfWork,
+        ITransactionCoordinator transaction,
         ILogger<RescheduleScheduleRequest> logger,
         CancellationToken ct
     )
@@ -68,29 +71,34 @@ public static class RescheduleScheduleEndpoint
 
         var newDate = request.ScheduledDate.ToUniversalTime();
 
-        var hasConflict = await repository.HasTeacherConflictAsync(
-            schedule.TeacherId, newDate, schedule.DurationMinutes, id, ct);
-
-        if (hasConflict)
+        return await transaction.ExecuteAsync<IResult>(async token =>
         {
-            logger.LogWarning(
-                "Teacher {TeacherId} already has a lesson at {ScheduledDate}",
-                schedule.TeacherId, newDate
-            );
+            await transaction.AcquireTeacherCalendarLocksAsync([schedule.TeacherId], token);
 
-            return Results.Problem(
-                detail: "Teacher already has a lesson at this time.",
-                statusCode: StatusCodes.Status409Conflict
-            );
-        }
+            var hasConflict = await repository.HasTeacherConflictAsync(
+                schedule.TeacherId, newDate, schedule.DurationMinutes, id, ct);
 
-        schedule.Reschedule(newDate);
+            if (hasConflict)
+            {
+                logger.LogWarning(
+                    "Teacher {TeacherId} already has a lesson at {ScheduledDate}",
+                    schedule.TeacherId, newDate
+                );
 
-        await repository.UpdateAsync(schedule, ct);
-        await unitOfWork.SaveChangesAsync(ct);
+                return Results.Problem(
+                    detail: "Teacher already has a lesson at this time.",
+                    statusCode: StatusCodes.Status409Conflict
+                );
+            }
 
-        logger.LogInformation("Schedule rescheduled: {ScheduleId} to {ScheduledDate}", id, newDate);
+            schedule.Reschedule(newDate);
 
-        return Results.NoContent();
+            await repository.UpdateAsync(schedule, ct);
+            await unitOfWork.SaveChangesAsync(ct);
+
+            logger.LogInformation("Schedule rescheduled: {ScheduleId} to {ScheduledDate}", id, newDate);
+
+            return Results.NoContent();
+        }, ct);
     }
 }

@@ -19,6 +19,7 @@ public static class SharedInfrastructureExtensions
         services.AddScoped<TransactionCoordinator>();
         services.AddScoped<ITransactionCoordinator>(sp => sp.GetRequiredService<TransactionCoordinator>());
         services.AddSingleton<TransactionEnlistmentInterceptor>();
+        services.AddSingleton<IAdvisoryLock>(_ => new PostgresAdvisoryLock(connectionString));
 
         services.AddHostedService<DatabaseMigrationService>();
 

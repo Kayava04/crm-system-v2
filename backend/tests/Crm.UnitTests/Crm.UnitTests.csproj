@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="../../src/Shared/Shared.Kernel/Shared.Kernel.csproj" />
+    <ProjectReference Include="../../src/Shared/Shared.Infrastructure/Shared.Infrastructure.csproj" />
     <ProjectReference Include="../../src/Modules/Scheduling/Scheduling.Domain/Scheduling.Domain.csproj" />
     <ProjectReference Include="../../src/Modules/Scheduling/Scheduling.Application/Scheduling.Application.csproj" />
     <ProjectReference Include="../../src/Modules/Enrollments/Enrollments.Domain/Enrollments.Domain.csproj" />

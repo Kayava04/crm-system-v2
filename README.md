@@ -30,6 +30,19 @@ automatically at start-up with `Database:MigrateOnStartup=true`.
 | `Cors:AllowedOrigins` | Origins of the frontend (default: the React dev servers on 5173 and 3000). With none configured every cross-origin call is refused. |
 | `Scheduling:TimeZone` | School time zone; lessons are agreed in it and stored in UTC (default `Europe/Kyiv`). |
 | `Database:MigrateOnStartup` | Apply all module migrations when the application starts (default `false`). |
+| `Notifications:Automation:*` | The periodic job (see below); off by default. |
+
+### Notifications and the periodic job
+
+Notifications are in-app only: they are stored in the database and shown in the user's inbox
+(`GET /api/notifications`, `GET /api/notifications/unread-count`). Nothing is sent by email or SMS.
+
+With `Notifications:Automation:Enabled=true` a background service inside the API process runs every
+`IntervalSeconds` (default 900): it marks overdue invoices and sends the invoice and lesson reminders
+(`LessonReminderHoursAhead`, `InvoiceReminderDaysBefore`, `IncludeOverdue`, `MarkOverdueInvoices`).
+Every reminder is sent once. A Postgres advisory lock makes sure only one instance runs the job at a time.
+The admin endpoints (`/api/notifications/invoice-reminders`, `/lesson-reminders`, `/api/billing/invoices/mark-overdue`)
+do the same work on demand and are unaffected by the setting.
 
 ### Health
 

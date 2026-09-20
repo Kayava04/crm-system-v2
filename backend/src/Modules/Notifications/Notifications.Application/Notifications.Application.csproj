@@ -21,4 +21,8 @@
     <ProjectReference Include="../../Scheduling/Scheduling.Contracts/Scheduling.Contracts.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="Crm.UnitTests" />
+  </ItemGroup>
+
 </Project>

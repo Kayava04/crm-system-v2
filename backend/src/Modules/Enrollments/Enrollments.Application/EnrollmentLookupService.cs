@@ -17,7 +17,8 @@ internal sealed class EnrollmentLookupService(IEnrollmentRepository repository) 
             enrollment.Id,
             enrollment.StudentId,
             enrollment.CourseId,
-            enrollment.Status == EnrollmentStatus.Active
+            enrollment.Status == EnrollmentStatus.Active,
+            enrollment.EffectivePrice
         );
     }
 

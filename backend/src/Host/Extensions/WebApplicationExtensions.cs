@@ -1,3 +1,4 @@
+using Billing.Application.Extensions;
 using Courses.Application.Extensions;
 using Enrollments.Application.Extensions;
 using Identity.Application.Extensions;
@@ -33,6 +34,7 @@ public static class WebApplicationExtensions
         app.MapCoursesEndpoints();
         app.MapEnrollmentsEndpoints();
         app.MapSchedulingEndpoints();
+        app.MapBillingEndpoints();
 
         return app;
     }

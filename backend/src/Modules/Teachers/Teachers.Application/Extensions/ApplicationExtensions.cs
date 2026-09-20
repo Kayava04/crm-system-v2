@@ -29,6 +29,8 @@ public static class ApplicationExtensions
 
         services.AddScoped<ITeacherVerifier, TeacherVerifierService>();
 
+        services.AddScoped<ITeacherLookup, TeacherLookupService>();
+
         return services;
     }
 

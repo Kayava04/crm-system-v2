@@ -54,6 +54,9 @@ No administrator permission is needed, only the role:
 |---|---|---|
 | `GET /api/auth/me` | any | account, roles, permissions, the linked student or teacher profile, and `contact` (name and phone kept on the account itself, for administrators and managers) |
 | `PUT /api/auth/me/contact` | any without a student/teacher record | set my first name, last name and phone (administrators and managers); the SuperAdmin system account has none (403); students and teachers change theirs in their own record (409) |
+| `GET /api/auth/users[?isActive=]` | `CanManageAdmins` | list administrator and manager accounts with contact details, status and permissions (the SuperAdmin, students and teachers are not listed) |
+| `PUT /api/auth/users/{id}/status` | `CanManageAdmins` | deactivate or reactivate an administrator; nothing is deleted, refresh tokens are revoked on deactivation |
+| `PUT /api/auth/users/{id}/permissions` | `CanManageAdmins` | replace the permissions of an administrator; you cannot change yourself, the SuperAdmin (403) or a student/teacher account (409) |
 | `GET /api/students/me` | Student | own profile |
 | `GET /api/teachers/me` | Teacher | own profile with salary rates |
 | `GET /api/enrollments/my` | Student | own enrollments with course names |

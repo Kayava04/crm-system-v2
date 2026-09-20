@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
 using Notifications.Contracts;
+using Shared.Kernel.Abstractions;
 
 namespace Identity.Application.Features.ResetPassword;
 
@@ -37,6 +38,7 @@ public static class ResetPasswordEndpoint
         IRefreshTokenRepository refreshTokenRepository,
         IIdentityService identityService,
         IIdentityUnitOfWork unitOfWork,
+        ITransactionCoordinator transaction,
         INotificationSender notificationSender,
         ILogger<ResetPasswordRequest> logger,
         CancellationToken ct
@@ -63,14 +65,18 @@ public static class ResetPasswordEndpoint
 
         var temporaryPassword = TemporaryPasswordGenerator.Generate();
 
-        await identityService.ResetPasswordAsync(user, temporaryPassword, ct);
+        // New password, forced change and revoked sessions are saved together or not at all
+        await transaction.ExecuteAsync(async token =>
+        {
+            await identityService.ResetPasswordAsync(user, temporaryPassword, token);
 
-        user.RequirePasswordChange();
+            user.RequirePasswordChange();
 
-        await userRepository.UpdateAsync(user, ct);
-        // Existing sessions must not survive a reset
-        await refreshTokenRepository.RevokeAllForUserAsync(id, ct);
-        await unitOfWork.SaveChangesAsync(ct);
+            await userRepository.UpdateAsync(user, token);
+            // Existing sessions must not survive a reset
+            await refreshTokenRepository.RevokeAllForUserAsync(id, token);
+            await unitOfWork.SaveChangesAsync(token);
+        }, ct);
 
         logger.LogInformation("Password reset for user {UserId}", id);
 

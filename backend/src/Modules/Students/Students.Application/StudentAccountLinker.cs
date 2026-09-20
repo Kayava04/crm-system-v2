@@ -15,7 +15,10 @@ internal sealed class StudentAccountLinker(
         var student = await repository.GetByIdAsync(profileId, ct);
 
         if (student is null)
-            throw new InvalidOperationException($"Student with id '{profileId}' not found.");
+            throw new ProfileNotFoundException($"Student with id '{profileId}' not found.");
+
+        if (student.UserId is not null)
+            throw new ProfileAlreadyLinkedException($"Student with id '{profileId}' already has an account.");
 
         student.LinkUserAccount(userId);
 

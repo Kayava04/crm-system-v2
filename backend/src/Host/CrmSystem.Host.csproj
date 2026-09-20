@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="../Shared/Shared.Infrastructure/Shared.Infrastructure.csproj" />
     <ProjectReference Include="../Modules/Students/Students.Infrastructure.Postgres/Students.Infrastructure.Postgres.csproj" />
     <ProjectReference Include="..\Modules\Identity\Identity.Application\Identity.Application.csproj" />
     <ProjectReference Include="..\Modules\Identity\Identity.Infrastructure.Jwt\Identity.Infrastructure.Jwt.csproj" />

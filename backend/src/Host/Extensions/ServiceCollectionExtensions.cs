@@ -7,6 +7,7 @@ using Identity.Infrastructure.Jwt.Extensions;
 using Identity.Infrastructure.Postgres.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Shared.Infrastructure.Extensions;
 using Students.Application.Extensions;
 using Students.Infrastructure.Postgres.Extensions;
 using Teachers.Application.Extensions;
@@ -37,7 +38,11 @@ public static class ServiceCollectionExtensions
             .AddModules(configuration)
             .AddAuthentication(configuration)
             .AddJsonOptions()
+            .AddCorsPolicy(configuration)
+            .AddHealth()
             .AddApiDocumentation();
+
+        services.AddProblemDetails();
 
         return services;
     }
@@ -48,6 +53,7 @@ public static class ServiceCollectionExtensions
     )
     {
         services
+            .AddSharedInfrastructure(configuration)
             .AddStudentsApplication()
             .AddStudentsInfrastructure(configuration)
             .AddIdentityApplication()
@@ -67,6 +73,37 @@ public static class ServiceCollectionExtensions
             .AddNotificationsInfrastructure(configuration)
             .AddMaterialsApplication()
             .AddMaterialsInfrastructure(configuration);
+
+        return services;
+    }
+
+    public const string CorsPolicyName = "Frontend";
+
+    // Origins of the frontend (e.g. the React dev server) come from Cors:AllowedOrigins; with none configured
+    // no cross-origin request is allowed. Tokens travel in the Authorization header, so no credentials are needed.
+    private static IServiceCollection AddCorsPolicy(this IServiceCollection services, IConfiguration configuration)
+    {
+        var origins = configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
+
+        services.AddCors(options => options.AddPolicy(CorsPolicyName, policy =>
+        {
+            if (origins.Length == 0)
+                return;
+
+            policy.WithOrigins(origins)
+                  .AllowAnyHeader()
+                  .AllowAnyMethod()
+                  .WithExposedHeaders("Location")
+                  .SetPreflightMaxAge(TimeSpan.FromMinutes(10));
+        }));
+
+        return services;
+    }
+
+    private static IServiceCollection AddHealth(this IServiceCollection services)
+    {
+        services.AddHealthChecks()
+            .AddCheck<DatabaseHealthCheck>("database", tags: ["ready"]);
 
         return services;
     }

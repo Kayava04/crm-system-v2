@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+using Shared.Infrastructure.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Teachers.Application.Abstractions;
@@ -26,12 +26,7 @@ public static class InfrastructureExtensions
         IConfiguration configuration
     )
     {
-        var connectionString = configuration.GetConnectionString("Default")
-            ?? throw new InvalidOperationException(
-                "Connection string 'Default' not found in configuration.");
-
-        services.AddDbContext<TeachersDbContext>(options =>
-            options.UseNpgsql(connectionString));
+services.AddModuleDbContext<TeachersDbContext>();
 
         services.AddScoped<ITeacherUnitOfWork>(sp => sp.GetRequiredService<TeachersDbContext>());
 

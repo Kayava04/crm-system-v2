@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
 using Scheduling.Contracts;
+using Shared.Kernel.Abstractions;
 using Students.Contracts;
 
 namespace Enrollments.Application.Features.ActivateEnrollment;
@@ -29,6 +30,7 @@ public static class ActivateEnrollmentEndpoint
         Guid id,
         IEnrollmentRepository repository,
         IEnrollmentUnitOfWork unitOfWork,
+        ITransactionCoordinator transaction,
         IScheduleLifecycle scheduleLifecycle,
         IStudentVerifier studentVerifier,
         ILogger<ActivateEnrollmentRequest> logger,
@@ -58,27 +60,22 @@ public static class ActivateEnrollmentEndpoint
             );
         }
 
-        enrollment.Activate();
+        // The new status and its effect on the calendar are saved together or not at all
+        var response = await transaction.ExecuteAsync(async token =>
+        {
+            enrollment.Activate();
 
-        await repository.UpdateAsync(enrollment, ct);
-        await unitOfWork.SaveChangesAsync(ct);
+            await repository.UpdateAsync(enrollment, token);
+            await unitOfWork.SaveChangesAsync(token);
+
+            var restored = await scheduleLifecycle.RestoreForEnrollmentAsync(id, token);
+
+            return new EnrollmentStatusChangeResponse(
+                0, restored.RestoredCount, restored.SkippedCount, restored.LessonsLeftToSchedule);
+        }, ct);
 
         logger.LogInformation("Enrollment activated: {EnrollmentId}", id);
 
-        // The enrollment is already saved; a calendar failure must not hide that, so it is reported instead
-        try
-        {
-            var restored = await scheduleLifecycle.RestoreForEnrollmentAsync(id, ct);
-
-            return Results.Ok(new EnrollmentStatusChangeResponse(
-                0, restored.RestoredCount, restored.SkippedCount, restored.LessonsLeftToSchedule, null));
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Enrollment {EnrollmentId} status changed but the calendar update failed", id);
-
-            return Results.Ok(new EnrollmentStatusChangeResponse(
-                0, 0, 0, 0, "The enrollment was updated, but its calendar could not be updated. Check the lessons manually."));
-        }
+        return Results.Ok(response);
     }
 }

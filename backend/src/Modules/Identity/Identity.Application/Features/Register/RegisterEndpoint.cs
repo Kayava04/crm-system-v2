@@ -3,11 +3,13 @@ using Identity.Application.Abstractions;
 using Identity.Application.Services;
 using Identity.Contracts;
 using Identity.Contracts.Enums;
+using Identity.Domain.Entities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
 using Notifications.Contracts;
+using Shared.Kernel.Abstractions;
 
 namespace Identity.Application.Features.Register;
 
@@ -62,6 +64,7 @@ public static class RegisterEndpoint
              .ProducesValidationProblem()
              .ProducesProblem(StatusCodes.Status401Unauthorized)
              .ProducesProblem(StatusCodes.Status403Forbidden)
+             .ProducesProblem(StatusCodes.Status404NotFound)
              .ProducesProblem(StatusCodes.Status409Conflict);
     }
 
@@ -73,6 +76,7 @@ public static class RegisterEndpoint
         IIdentityService identityService,
         IEnumerable<IProfileLinker> profileLinkers,
         IIdentityUnitOfWork unitOfWork,
+        ITransactionCoordinator transaction,
         INotificationSender notificationSender,
         ILogger<RegisterRequest> logger,
         CancellationToken ct
@@ -98,22 +102,12 @@ public static class RegisterEndpoint
                 detail: $"Role '{request.Role}' not found.",
                 statusCode: StatusCodes.Status409Conflict);
 
-        var temporaryPassword = TemporaryPasswordGenerator.Generate();
-
-        var user = await identityService.CreateUserAsync(
-            request.Email, temporaryPassword, mustChangePassword: true, ct);
-
-        await userRepository.AssignRoleAsync(user.Id, role.Id, ct);
-
-        if (request.Role == SystemRole.Admin && request.PermissionIds is { Count: > 0 })
-        {
-            foreach (var permissionId in request.PermissionIds)
-                await userRepository.AssignPermissionAsync(user.Id, permissionId, ct);
-        }
+        // Resolve the profile linker first so an unknown profile type never leaves a half-created account
+        IProfileLinker? linker = null;
 
         if (request.ProfileType is not null && request.ProfileId is not null)
         {
-            var linker = profileLinkers.FirstOrDefault(l => l.ProfileType == request.ProfileType);
+            linker = profileLinkers.FirstOrDefault(l => l.ProfileType == request.ProfileType);
 
             if (linker is null)
             {
@@ -123,14 +117,50 @@ public static class RegisterEndpoint
                     detail: $"Unknown profile type '{request.ProfileType}'.",
                     statusCode: StatusCodes.Status409Conflict);
             }
-
-            await linker.LinkAsync(request.ProfileId.Value, user.Id, ct);
         }
 
-        await unitOfWork.SaveChangesAsync(ct);
+        var temporaryPassword = TemporaryPasswordGenerator.Generate();
+
+        User user;
+
+        try
+        {
+            // The account, its role, permissions and the link to the profile are saved together or not at all
+            user = await transaction.ExecuteAsync(async token =>
+            {
+                var created = await identityService.CreateUserAsync(
+                    request.Email, temporaryPassword, mustChangePassword: true, token);
+
+                await userRepository.AssignRoleAsync(created.Id, role.Id, token);
+
+                if (request.Role == SystemRole.Admin && request.PermissionIds is { Count: > 0 })
+                {
+                    foreach (var permissionId in request.PermissionIds)
+                        await userRepository.AssignPermissionAsync(created.Id, permissionId, token);
+                }
+
+                if (linker is not null)
+                    await linker.LinkAsync(request.ProfileId!.Value, created.Id, token);
+
+                await unitOfWork.SaveChangesAsync(token);
+
+                return created;
+            }, ct);
+        }
+        catch (ProfileNotFoundException ex)
+        {
+            return Results.Problem(detail: ex.Message, statusCode: StatusCodes.Status404NotFound);
+        }
+        catch (ProfileAlreadyLinkedException ex)
+        {
+            logger.LogWarning("Registration refused: {Message}", ex.Message);
+
+            return Results.Problem(detail: ex.Message, statusCode: StatusCodes.Status409Conflict);
+        }
 
         logger.LogInformation("User {Email} registered with role {Role}", request.Email, request.Role);
 
+        // The account is committed; a failing in-app notification must not take it back
         await PasswordNotifications.SendChangeRequiredAsync(notificationSender, user.Id, logger, ct);
 
         var response = new RegisterResponse(

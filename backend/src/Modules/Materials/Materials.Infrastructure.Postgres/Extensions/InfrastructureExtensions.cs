@@ -1,7 +1,7 @@
 using Materials.Application.Abstractions;
 using Materials.Infrastructure.Postgres.Persistence;
 using Materials.Infrastructure.Postgres.Repositories;
-using Microsoft.EntityFrameworkCore;
+using Shared.Infrastructure.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -26,11 +26,7 @@ public static class InfrastructureExtensions
         IConfiguration configuration
     )
     {
-        var connectionString = configuration.GetConnectionString("Default")
-            ?? throw new InvalidOperationException(
-                "Connection string 'Default' not found in configuration.");
-
-        services.AddDbContext<MaterialsDbContext>(options => options.UseNpgsql(connectionString));
+services.AddModuleDbContext<MaterialsDbContext>();
 
         services.AddScoped<IMaterialsUnitOfWork>(sp => sp.GetRequiredService<MaterialsDbContext>());
 

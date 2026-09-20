@@ -4,7 +4,7 @@ using Identity.Domain.Entities;
 using Identity.Infrastructure.Postgres.Persistence;
 using Identity.Infrastructure.Postgres.Repositories;
 using Identity.Infrastructure.Postgres.Services;
-using Microsoft.EntityFrameworkCore;
+using Shared.Infrastructure.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -32,11 +32,7 @@ public static class InfrastructureExtensions
         IConfiguration configuration
     )
     {
-        var connectionString = configuration.GetConnectionString("Default")
-            ?? throw new InvalidOperationException(
-                "Connection string 'Default' not found in configuration.");
-
-        services.AddDbContext<IdentityDbContext>(options => options.UseNpgsql(connectionString));
+services.AddModuleDbContext<IdentityDbContext>();
 
         services.AddScoped<IIdentityUnitOfWork>(sp => sp.GetRequiredService<IdentityDbContext>());
 

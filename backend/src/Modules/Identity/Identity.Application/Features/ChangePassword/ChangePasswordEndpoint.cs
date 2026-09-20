@@ -1,10 +1,12 @@
 using System.Security.Claims;
 using FluentValidation;
 using Identity.Application.Abstractions;
+using Identity.Application.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
+using Notifications.Contracts;
 
 namespace Identity.Application.Features.ChangePassword;
 
@@ -53,6 +55,7 @@ public static class ChangePasswordEndpoint
         IUserRepository userRepository,
         IIdentityService identityService,
         IIdentityUnitOfWork unitOfWork,
+        INotificationSender notificationSender,
         ILogger<ChangePasswordRequest> logger,
         CancellationToken ct
     )
@@ -103,6 +106,8 @@ public static class ChangePasswordEndpoint
         await unitOfWork.SaveChangesAsync(ct);
 
         logger.LogInformation("User {UserId} changed their password", parsedUserId);
+
+        await PasswordNotifications.ResolveChangeRequiredAsync(notificationSender, parsedUserId, logger, ct);
 
         return Results.NoContent();
     }

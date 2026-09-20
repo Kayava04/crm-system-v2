@@ -1,11 +1,13 @@
 using FluentValidation;
 using Identity.Application.Abstractions;
+using Identity.Application.Services;
 using Identity.Contracts;
 using Identity.Contracts.Enums;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
+using Notifications.Contracts;
 
 namespace Identity.Application.Features.Register;
 
@@ -71,6 +73,7 @@ public static class RegisterEndpoint
         IIdentityService identityService,
         IEnumerable<IProfileLinker> profileLinkers,
         IIdentityUnitOfWork unitOfWork,
+        INotificationSender notificationSender,
         ILogger<RegisterRequest> logger,
         CancellationToken ct
     )
@@ -95,7 +98,7 @@ public static class RegisterEndpoint
                 detail: $"Role '{request.Role}' not found.",
                 statusCode: StatusCodes.Status409Conflict);
 
-        var temporaryPassword = GenerateTemporaryPassword();
+        var temporaryPassword = TemporaryPasswordGenerator.Generate();
 
         var user = await identityService.CreateUserAsync(
             request.Email, temporaryPassword, mustChangePassword: true, ct);
@@ -128,6 +131,8 @@ public static class RegisterEndpoint
 
         logger.LogInformation("User {Email} registered with role {Role}", request.Email, request.Role);
 
+        await PasswordNotifications.SendChangeRequiredAsync(notificationSender, user.Id, logger, ct);
+
         var response = new RegisterResponse(
             user.Id,
             user.Email!,
@@ -135,34 +140,5 @@ public static class RegisterEndpoint
         );
 
         return Results.Created($"/api/users/{user.Id}", response);
-    }
-
-    private static string GenerateTemporaryPassword()
-    {
-        const string upper = "ABCDEFGHJKLMNPQRSTUVWXYZ";
-        const string lower = "abcdefghijkmnpqrstuvwxyz";
-        const string digits = "23456789";
-        const string special = "!@#$%";
-
-        var random = Random.Shared;
-
-        var passwordChars = new List<char>
-        {
-            upper[random.Next(upper.Length)],
-            lower[random.Next(lower.Length)],
-            digits[random.Next(digits.Length)],
-            special[random.Next(special.Length)]
-        };
-
-        const string allChars = upper + lower + digits + special;
-
-        passwordChars.AddRange(Enumerable.Range(0, 8)
-            .Select(_ => allChars[random.Next(allChars.Length)])
-        );
-
-        return new string(passwordChars
-            .OrderBy(_ => random.Next())
-            .ToArray()
-        );
     }
 }

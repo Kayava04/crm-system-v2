@@ -5,6 +5,7 @@ using Identity.Application.Features.GetRoles;
 using Identity.Application.Features.Login;
 using Identity.Application.Features.Refresh;
 using Identity.Application.Features.Register;
+using Identity.Application.Features.ResetPassword;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -30,6 +31,7 @@ public static class ApplicationExtensions
         LoginEndpoint.Map(group);
         RegisterEndpoint.Map(group);
         ChangePasswordEndpoint.Map(group);
+        ResetPasswordEndpoint.Map(group);
         RefreshEndpoint.Map(group);
 
         GetRolesEndpoint.Map(group);

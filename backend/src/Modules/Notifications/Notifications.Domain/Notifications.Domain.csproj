@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="../../../Shared/Shared.Kernel/Shared.Kernel.csproj" />
+    <ProjectReference Include="../Notifications.Contracts/Notifications.Contracts.csproj" />
+  </ItemGroup>
+
+</Project>

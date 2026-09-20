@@ -22,6 +22,12 @@ public sealed class User : IdentityUser<Guid>
         };
     }
 
+    public void RequirePasswordChange()
+    {
+        MustChangePassword = true;
+        UpdatedAt = DateTime.UtcNow;
+    }
+
     public void CompletePasswordChange()
     {
         MustChangePassword = false;

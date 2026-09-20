@@ -17,6 +17,8 @@ using Enrollments.Application.Extensions;
 using Enrollments.Infrastructure.Postgres.Extensions;
 using Scheduling.Application.Extensions;
 using Billing.Application.Extensions;
+using Notifications.Application.Extensions;
+using Notifications.Infrastructure.Postgres.Extensions;
 using Billing.Infrastructure.Postgres.Extensions;
 using Scheduling.Infrastructure.Postgres.Extensions;
 
@@ -58,7 +60,9 @@ public static class ServiceCollectionExtensions
             .AddSchedulingApplication()
             .AddSchedulingInfrastructure(configuration)
             .AddBillingApplication()
-            .AddBillingInfrastructure(configuration);
+            .AddBillingInfrastructure(configuration)
+            .AddNotificationsApplication()
+            .AddNotificationsInfrastructure(configuration);
 
         return services;
     }

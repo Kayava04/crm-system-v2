@@ -33,6 +33,8 @@ public static class ApplicationExtensions
 
         services.AddScoped<IStudentLookup, StudentLookupService>();
 
+        services.AddScoped<IStudentStatistics, StudentStatisticsService>();
+
         return services;
     }
 

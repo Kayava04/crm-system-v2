@@ -85,4 +85,16 @@ internal sealed class StudentInvoiceRepository(BillingDbContext context) : IStud
 
         return (invoices, totalCount);
     }
+
+    public async Task<decimal> SumPaidAsync(DateTime from, DateTime to, CancellationToken ct = default) =>
+        await context.StudentInvoices
+            .AsNoTracking()
+            .Where(i => i.Status == InvoiceStatus.Paid && i.PaidAt >= from && i.PaidAt < to)
+            .SumAsync(i => (decimal?)i.Amount, ct) ?? 0m;
+
+    public async Task<decimal> SumByStatusAsync(InvoiceStatus status, CancellationToken ct = default) =>
+        await context.StudentInvoices
+            .AsNoTracking()
+            .Where(i => i.Status == status)
+            .SumAsync(i => (decimal?)i.Amount, ct) ?? 0m;
 }

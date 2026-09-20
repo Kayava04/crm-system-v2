@@ -74,4 +74,16 @@ internal sealed class TeacherPayrollRepository(BillingDbContext context) : ITeac
 
         return (payrolls, totalCount);
     }
+
+    public async Task<decimal> SumPaidAsync(DateTime from, DateTime to, CancellationToken ct = default) =>
+        await context.TeacherPayrolls
+            .AsNoTracking()
+            .Where(p => p.Status == PayrollStatus.Paid && p.PaidAt >= from && p.PaidAt < to)
+            .SumAsync(p => (decimal?)p.TotalAmount, ct) ?? 0m;
+
+    public async Task<decimal> SumByStatusAsync(PayrollStatus status, CancellationToken ct = default) =>
+        await context.TeacherPayrolls
+            .AsNoTracking()
+            .Where(p => p.Status == status)
+            .SumAsync(p => (decimal?)p.TotalAmount, ct) ?? 0m;
 }

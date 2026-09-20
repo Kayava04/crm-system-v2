@@ -2,6 +2,7 @@ using Billing.Application.Extensions;
 using Courses.Application.Extensions;
 using Enrollments.Application.Extensions;
 using Identity.Application.Extensions;
+using Reporting.Application.Extensions;
 using Scalar.AspNetCore;
 using Scheduling.Application.Extensions;
 using Students.Application.Extensions;
@@ -35,6 +36,7 @@ public static class WebApplicationExtensions
         app.MapEnrollmentsEndpoints();
         app.MapSchedulingEndpoints();
         app.MapBillingEndpoints();
+        app.MapReportingEndpoints();
 
         return app;
     }

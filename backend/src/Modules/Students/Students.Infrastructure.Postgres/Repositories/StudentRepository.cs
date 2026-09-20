@@ -2,6 +2,7 @@ using Education.Contracts.Enums;
 using Microsoft.EntityFrameworkCore;
 using Students.Application.Abstractions;
 using Students.Domain.Entities;
+using Students.Domain.Enums;
 using Students.Infrastructure.Postgres.Persistence;
 
 namespace Students.Infrastructure.Postgres.Repositories;
@@ -108,4 +109,11 @@ internal sealed class StudentRepository(StudentsDbContext context) : IStudentRep
             .OrderBy(s => s.LastName)
             .ThenBy(s => s.FirstName)
             .ToListAsync(ct);
+
+    public async Task<IReadOnlyDictionary<StudentStatus, int>> GetCountsByStatusAsync(CancellationToken ct = default) =>
+        await context.Students
+            .AsNoTracking()
+            .GroupBy(s => s.Status)
+            .Select(g => new { Status = g.Key, Count = g.Count() })
+            .ToDictionaryAsync(x => x.Status, x => x.Count, ct);
 }

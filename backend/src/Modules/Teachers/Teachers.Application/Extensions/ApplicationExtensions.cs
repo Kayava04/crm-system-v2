@@ -31,6 +31,8 @@ public static class ApplicationExtensions
 
         services.AddScoped<ITeacherLookup, TeacherLookupService>();
 
+        services.AddScoped<ITeacherStatistics, TeacherStatisticsService>();
+
         return services;
     }
 

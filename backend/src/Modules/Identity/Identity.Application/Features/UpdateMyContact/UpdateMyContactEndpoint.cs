@@ -1,0 +1,83 @@
+using System.Security.Claims;
+using FluentValidation;
+using Identity.Application.Abstractions;
+using Identity.Application.Features.Me;
+using Identity.Contracts;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
+
+namespace Identity.Application.Features.UpdateMyContact;
+
+public sealed record UpdateMyContactRequest(string? FirstName, string? LastName, string? PhoneNumber);
+
+public sealed class UpdateMyContactValidator : AbstractValidator<UpdateMyContactRequest>
+{
+    public UpdateMyContactValidator()
+    {
+        RuleFor(x => x.FirstName)
+            .NotEmpty().WithMessage("First name is required.")
+            .MaximumLength(100).WithMessage("First name must not exceed 100 characters.");
+
+        RuleFor(x => x.LastName)
+            .NotEmpty().WithMessage("Last name is required.")
+            .MaximumLength(100).WithMessage("Last name must not exceed 100 characters.");
+
+        RuleFor(x => x.PhoneNumber)
+            .Matches(@"^\+?[0-9\s\-\(\)]{7,20}$").WithMessage("Invalid phone number format.")
+            .When(x => !string.IsNullOrWhiteSpace(x.PhoneNumber));
+    }
+}
+
+public static class UpdateMyContactEndpoint
+{
+    public static void Map(RouteGroupBuilder group)
+    {
+        group.MapPut("/me/contact", Handle)
+             .RequireAuthorization()
+             .WithName("UpdateMyContact")
+             .WithSummary("Set the name and phone of an account that has no student or teacher record (administrators, managers)")
+             .Produces<MeContact>(StatusCodes.Status200OK)
+             .ProducesValidationProblem()
+             .ProducesProblem(StatusCodes.Status401Unauthorized)
+             .ProducesProblem(StatusCodes.Status409Conflict);
+    }
+
+    private static async Task<IResult> Handle(
+        UpdateMyContactRequest request,
+        ClaimsPrincipal principal,
+        IValidator<UpdateMyContactRequest> validator,
+        IUserRepository userRepository,
+        IEnumerable<IProfileLinker> profileLinkers,
+        IIdentityUnitOfWork unitOfWork,
+        CancellationToken ct
+    )
+    {
+        var validationResult = await validator.ValidateAsync(request, ct);
+        if (!validationResult.IsValid)
+            return Results.ValidationProblem(validationResult.ToDictionary());
+
+        var claim = principal.FindFirstValue(ClaimTypes.NameIdentifier) ?? principal.FindFirstValue("sub");
+        if (!Guid.TryParse(claim, out var userId))
+            return Results.Problem(detail: "Invalid user identity.", statusCode: StatusCodes.Status401Unauthorized);
+
+        var user = await userRepository.GetByIdAsync(userId, ct);
+        if (user is null || !user.IsActive)
+            return Results.Problem(detail: "User not found or deactivated.", statusCode: StatusCodes.Status401Unauthorized);
+
+        // A student or a teacher keeps the personal details in their own record; two copies would drift apart
+        foreach (var linker in profileLinkers)
+        {
+            if (await linker.FindByUserAsync(userId, ct) is not null)
+                return Results.Problem(
+                    detail: $"Your personal details are kept in your {linker.ProfileType.ToLowerInvariant()} record and are changed there.",
+                    statusCode: StatusCodes.Status409Conflict);
+        }
+
+        user.SetContact(request.FirstName, request.LastName, request.PhoneNumber);
+        await userRepository.UpdateAsync(user, ct);
+        await unitOfWork.SaveChangesAsync(ct);
+
+        return Results.Ok(MeEndpoint.ToContact(user));
+    }
+}

@@ -10,6 +10,9 @@ namespace Identity.Application.Features.Me;
 // The profile is the student or teacher record of this account, null for administrators
 public sealed record MeProfile(string Type, Guid Id, string FullName);
 
+// Personal details kept on the account itself; students and teachers keep theirs in their own records
+public sealed record MeContact(string? FirstName, string? LastName, string? FullName, string? PhoneNumber);
+
 public sealed record MeResponse(
     Guid UserId,
     string Email,
@@ -17,6 +20,7 @@ public sealed record MeResponse(
     IReadOnlyList<string> Roles,
     IReadOnlyList<string> Permissions,
     MeProfile? Profile,
+    MeContact Contact,
     bool HasPhoto,
     string? PhotoUrl
 );
@@ -73,7 +77,15 @@ public static class MeEndpoint
             roles.Select(r => r.Name).Order().ToList(),
             permissions.Select(p => p.Name).Order().ToList(),
             profile,
+            ToContact(user),
             hasPhoto,
             hasPhoto ? "/api/auth/me/photo" : null));
+    }
+
+    internal static MeContact ToContact(Domain.Entities.User user)
+    {
+        var fullName = string.Join(' ', new[] { user.FirstName, user.LastName }.Where(n => n is not null));
+
+        return new MeContact(user.FirstName, user.LastName, fullName.Length == 0 ? null : fullName, user.PhoneNumber);
     }
 }

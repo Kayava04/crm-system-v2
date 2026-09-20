@@ -87,4 +87,18 @@ internal sealed class EnrollmentRepository(EnrollmentsDbContext context) : IEnro
 
         return (enrollments, totalCount);
     }
+
+    public async Task<IReadOnlyDictionary<EnrollmentStatus, int>> GetCountsByStatusAsync(CancellationToken ct = default) =>
+        await context.Enrollments
+            .AsNoTracking()
+            .GroupBy(e => e.Status)
+            .Select(g => new { Status = g.Key, Count = g.Count() })
+            .ToDictionaryAsync(x => x.Status, x => x.Count, ct);
+
+    public async Task<IReadOnlyDictionary<Guid, int>> GetCountsByCourseAsync(CancellationToken ct = default) =>
+        await context.Enrollments
+            .AsNoTracking()
+            .GroupBy(e => e.CourseId)
+            .Select(g => new { CourseId = g.Key, Count = g.Count() })
+            .ToDictionaryAsync(x => x.CourseId, x => x.Count, ct);
 }

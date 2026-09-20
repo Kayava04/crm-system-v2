@@ -12,6 +12,10 @@ public interface IStudentInvoiceRepository : IRepository<StudentInvoice>
         CancellationToken ct = default
     );
 
+    Task<decimal> SumPaidAsync(DateTime from, DateTime to, CancellationToken ct = default);
+
+    Task<decimal> SumByStatusAsync(InvoiceStatus status, CancellationToken ct = default);
+
     Task<IReadOnlyList<StudentInvoice>> GetPendingDueBeforeAsync(
         DateOnly date,
         CancellationToken ct = default

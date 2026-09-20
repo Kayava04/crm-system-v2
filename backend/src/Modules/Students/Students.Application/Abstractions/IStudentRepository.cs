@@ -1,6 +1,7 @@
 using Education.Contracts.Enums;
 using Shared.Kernel.Abstractions;
 using Students.Domain.Entities;
+using Students.Domain.Enums;
 
 namespace Students.Application.Abstractions;
 
@@ -18,6 +19,7 @@ public interface IStudentRepository : IRepository<Student>
         int pageSize,
         CancellationToken ct = default
     );
+    Task<IReadOnlyDictionary<StudentStatus, int>> GetCountsByStatusAsync(CancellationToken ct = default);
     Task<bool> ExistsByIdAsync(Guid id, CancellationToken ct = default);
     Task<IReadOnlyList<Student>> GetByIdsAsync(IReadOnlyCollection<Guid> ids, CancellationToken ct = default);
 }

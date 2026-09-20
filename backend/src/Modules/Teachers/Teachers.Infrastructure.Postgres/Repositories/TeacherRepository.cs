@@ -86,4 +86,10 @@ internal sealed class TeacherRepository(TeachersDbContext context) : ITeacherRep
 
         return (teachers, totalCount);
     }
+
+    public async Task<IReadOnlyList<Teacher>> GetAllWithSalaryRatesAsync(CancellationToken ct = default) =>
+        await context.Teachers
+            .AsNoTracking()
+            .Include(t => t.SalaryRates)
+            .ToListAsync(ct);
 }

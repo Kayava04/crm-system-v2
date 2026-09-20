@@ -27,6 +27,8 @@ public static class ApplicationExtensions
 
         services.AddScoped<IEnrollmentLookup, EnrollmentLookupService>();
 
+        services.AddScoped<IEnrollmentStatistics, EnrollmentStatisticsService>();
+
         return services;
     }
 

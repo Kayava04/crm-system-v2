@@ -12,6 +12,10 @@ public interface ITeacherPayrollRepository : IRepository<TeacherPayroll>
         CancellationToken ct = default
     );
 
+    Task<decimal> SumPaidAsync(DateTime from, DateTime to, CancellationToken ct = default);
+
+    Task<decimal> SumByStatusAsync(PayrollStatus status, CancellationToken ct = default);
+
     Task<(IReadOnlyList<TeacherPayroll> Payrolls, int TotalCount)> GetAllAsync(
         Guid? teacherId,
         string? period,

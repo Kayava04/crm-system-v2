@@ -34,6 +34,7 @@
     <ProjectReference Include="../Modules/Scheduling/Scheduling.Application/Scheduling.Application.csproj" />
     <ProjectReference Include="../Modules/Billing/Billing.Infrastructure.Postgres/Billing.Infrastructure.Postgres.csproj" />
     <ProjectReference Include="../Modules/Billing/Billing.Application/Billing.Application.csproj" />
+    <ProjectReference Include="../Modules/Reporting/Reporting.Application/Reporting.Application.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,5 @@
 using Billing.Application.Features.CreateInvoice;
+using Billing.Contracts;
 using Billing.Application.Features.CreatePayroll;
 using Billing.Application.Features.GetInvoiceById;
 using Billing.Application.Features.GetInvoices;
@@ -21,6 +22,8 @@ public static class ApplicationExtensions
     {
         // Register FluentValidation
         services.AddValidatorsFromAssembly(typeof(ApplicationExtensions).Assembly);
+
+        services.AddScoped<IBillingStatistics, BillingStatisticsService>();
 
         return services;
     }

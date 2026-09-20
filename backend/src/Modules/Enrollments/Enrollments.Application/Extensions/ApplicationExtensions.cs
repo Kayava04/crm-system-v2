@@ -5,6 +5,7 @@ using Enrollments.Application.Features.CompleteEnrollment;
 using Enrollments.Application.Features.CreateEnrollment;
 using Enrollments.Application.Features.GetEnrollmentById;
 using Enrollments.Application.Features.GetEnrollments;
+using Enrollments.Application.Features.GetMyEnrollments;
 using Enrollments.Application.Features.RemoveDiscount;
 using Enrollments.Application.Features.SuspendEnrollment;
 using Enrollments.Application.Features.TerminateEnrollment;
@@ -40,6 +41,7 @@ public static class ApplicationExtensions
                        .WithTags("Enrollments");
 
         GetAllEndpoint.Map(group);
+        GetMyEnrollmentsEndpoint.Map(group);
         GetByIdEndpoint.Map(group);
         CreateEndpoint.Map(group);
 

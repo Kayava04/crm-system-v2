@@ -23,6 +23,18 @@ dotnet run --project backend/src/Host      # API docs: /scalar
 Migrations are applied by hand per module (`dotnet ef database update --context <Module>DbContext ...`) or
 automatically at start-up with `Database:MigrateOnStartup=true`.
 
+### Docker (optional)
+
+`docker compose up -d` starts only Postgres and Seq. To run the API in a container too, add to `.env`
+`JWT_SECRET_KEY` (32+ characters), `SUPERADMIN_EMAIL`, `SUPERADMIN_PASSWORD` (and `FRONTEND_ORIGIN`, default
+`http://localhost:5173`), then:
+
+```bash
+docker compose --profile app up -d --build     # the API listens on http://localhost:8080
+```
+
+The container applies the migrations at start-up. Nothing else is needed; there is no CI or deployment pipeline.
+
 ### Configuration
 
 | Key | Purpose |
@@ -31,6 +43,22 @@ automatically at start-up with `Database:MigrateOnStartup=true`.
 | `Scheduling:TimeZone` | School time zone; lessons are agreed in it and stored in UTC (default `Europe/Kyiv`). |
 | `Database:MigrateOnStartup` | Apply all module migrations when the application starts (default `false`). |
 | `Notifications:Automation:*` | The periodic job (see below); off by default. |
+| `Identity:Lockout:*` | `MaxAttempts` (5) wrong passwords lock an account for `DurationMinutes` (15). An administrator's password reset unlocks it. |
+| `RateLimiting:Auth:*` | `PermitLimit` (30) login/refresh requests per `WindowSeconds` (60) from one address; answered with 429 and `Retry-After`. |
+
+### What a student or a teacher can see about themselves
+
+No administrator permission is needed, only the role:
+
+| Endpoint | Role | Returns |
+|---|---|---|
+| `GET /api/auth/me` | any | account, roles, permissions and the linked student or teacher profile |
+| `GET /api/students/me` | Student | own profile |
+| `GET /api/teachers/me` | Teacher | own profile with salary rates |
+| `GET /api/enrollments/my` | Student | own enrollments with course names |
+| `GET /api/billing/invoices/my` | Student | own invoices (`status`, paging) |
+| `GET /api/billing/payrolls/my` | Teacher | own payrolls |
+| `GET /api/calendar/my`, `GET /api/notifications` | Student, Teacher | own calendar, own notifications |
 
 ### Notifications and the periodic job
 

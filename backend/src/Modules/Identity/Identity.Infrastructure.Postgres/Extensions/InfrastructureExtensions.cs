@@ -19,7 +19,7 @@ public static class InfrastructureExtensions
     {
         services
             .AddDatabase(configuration)
-            .AddIdentityCore()
+            .AddIdentityCore(configuration)
             .AddRepositories()
             .AddServices()
             .AddSeeding();
@@ -39,7 +39,7 @@ services.AddModuleDbContext<IdentityDbContext>();
         return services;
     }
 
-    private static IServiceCollection AddIdentityCore(this IServiceCollection services)
+    private static IServiceCollection AddIdentityCore(this IServiceCollection services, IConfiguration configuration)
     {
         services
             .AddIdentityCore<User>(options =>
@@ -48,6 +48,12 @@ services.AddModuleDbContext<IdentityDbContext>();
                 options.Password.RequireUppercase = true;
                 options.Password.RequiredLength = 8;
                 options.User.RequireUniqueEmail = true;
+
+                // Five wrong passwords lock the account for 15 minutes by default
+                options.Lockout.AllowedForNewUsers = true;
+                options.Lockout.MaxFailedAccessAttempts = Math.Max(1, configuration.GetValue("Identity:Lockout:MaxAttempts", 5));
+                options.Lockout.DefaultLockoutTimeSpan =
+                    TimeSpan.FromMinutes(Math.Max(0.01, configuration.GetValue("Identity:Lockout:DurationMinutes", 15.0)));
             })
             .AddEntityFrameworkStores<IdentityDbContext>();
 

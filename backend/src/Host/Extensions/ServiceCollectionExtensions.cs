@@ -1,4 +1,5 @@
 using System.Text;
+using System.Threading.RateLimiting;
 using System.Text.Json.Serialization;
 using Identity.Application.Extensions;
 using Identity.Contracts.Enums;
@@ -39,6 +40,7 @@ public static class ServiceCollectionExtensions
             .AddAuthentication(configuration)
             .AddJsonOptions()
             .AddCorsPolicy(configuration)
+            .AddAuthRateLimiting(configuration)
             .AddHealth()
             .AddApiDocumentation();
 
@@ -97,6 +99,39 @@ public static class ServiceCollectionExtensions
                   .WithExposedHeaders("Location")
                   .SetPreflightMaxAge(TimeSpan.FromMinutes(10));
         }));
+
+        return services;
+    }
+
+    // Login and token refresh are limited per client address, so a password cannot be guessed at machine speed.
+    // RateLimiting:Auth:PermitLimit requests per WindowSeconds (default 30 per minute).
+    private static IServiceCollection AddAuthRateLimiting(this IServiceCollection services, IConfiguration configuration)
+    {
+        var permitLimit = Math.Max(1, configuration.GetValue("RateLimiting:Auth:PermitLimit", 30));
+        var window = TimeSpan.FromSeconds(Math.Max(1, configuration.GetValue("RateLimiting:Auth:WindowSeconds", 60)));
+
+        services.AddRateLimiter(options =>
+        {
+            options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+            options.AddPolicy("auth", httpContext => RateLimitPartition.GetFixedWindowLimiter(
+                httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+                _ => new FixedWindowRateLimiterOptions { PermitLimit = permitLimit, Window = window, QueueLimit = 0 }));
+
+            options.OnRejected = async (context, token) =>
+            {
+                if (context.Lease.TryGetMetadata(MetadataName.RetryAfter, out var retryAfter))
+                    context.HttpContext.Response.Headers.RetryAfter = ((int)Math.Ceiling(retryAfter.TotalSeconds)).ToString();
+
+                context.HttpContext.Response.ContentType = "application/problem+json";
+                await context.HttpContext.Response.WriteAsJsonAsync(new Microsoft.AspNetCore.Mvc.ProblemDetails
+                {
+                    Status = StatusCodes.Status429TooManyRequests,
+                    Title = "Too many requests",
+                    Detail = "Too many attempts. Wait a little and try again."
+                }, token);
+            };
+        });
 
         return services;
     }

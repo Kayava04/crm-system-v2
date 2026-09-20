@@ -37,3 +37,25 @@ services:
       - "8081:80"
     volumes:
       - seq-data:/data
+
+  # The API itself. Not started by a plain "docker compose up" (only Postgres and Seq are);
+  # start it with:  docker compose --profile app up -d --build
+  # Needs in .env: JWT_SECRET_KEY (32+ characters), SUPERADMIN_EMAIL, SUPERADMIN_PASSWORD
+  api:
+    profiles: ["app"]
+    build: ./backend
+    container_name: crm-api
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__Default: Host=postgres;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}
+      Jwt__SecretKey: ${JWT_SECRET_KEY}
+      SuperAdmin__Email: ${SUPERADMIN_EMAIL}
+      SuperAdmin__Password: ${SUPERADMIN_PASSWORD}
+      Database__MigrateOnStartup: "true"
+      Cors__AllowedOrigins__0: ${FRONTEND_ORIGIN:-http://localhost:5173}
+    ports:
+      - "8080:8080"

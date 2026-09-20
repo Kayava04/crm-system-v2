@@ -3,6 +3,7 @@ using Identity.Application.Abstractions;
 using Identity.Domain.Entities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
 
@@ -33,7 +34,8 @@ public static class RefreshEndpoint
              .WithSummary("Exchange a refresh token for a new access token")
              .Produces<RefreshResponse>(StatusCodes.Status200OK)
              .ProducesValidationProblem()
-             .ProducesProblem(StatusCodes.Status401Unauthorized);
+             .ProducesProblem(StatusCodes.Status401Unauthorized)
+             .RequireRateLimiting("auth");
     }
 
     private static async Task<IResult> Handle(

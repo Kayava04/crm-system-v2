@@ -4,6 +4,7 @@ using Identity.Application.Features.ChangePassword;
 using Identity.Application.Features.GetPermissions;
 using Identity.Application.Features.GetRoles;
 using Identity.Application.Features.Login;
+using Identity.Application.Features.Me;
 using Identity.Application.Features.Refresh;
 using Identity.Application.Features.Register;
 using Identity.Application.Features.ResetPassword;
@@ -35,6 +36,7 @@ public static class ApplicationExtensions
         LoginEndpoint.Map(group);
         RegisterEndpoint.Map(group);
         ChangePasswordEndpoint.Map(group);
+        MeEndpoint.Map(group);
         ResetPasswordEndpoint.Map(group);
         RefreshEndpoint.Map(group);
 

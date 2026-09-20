@@ -38,6 +38,8 @@ public sealed class CrmApiFactory : WebApplicationFactory<Program>, IAsyncLifeti
         builder.UseSetting("SuperAdmin:Email", AdminEmail);
         builder.UseSetting("SuperAdmin:Password", AdminPassword);
         builder.UseSetting("Database:MigrateOnStartup", "true");
+        // the whole suite logs in from one "address": the limit is tested on its own host
+        builder.UseSetting("RateLimiting:Auth:PermitLimit", "100000");
         builder.UseSetting("Cors:AllowedOrigins:0", "http://localhost:5173");
         builder.UseSetting("Serilog:MinimumLevel:Default", "Warning");
         builder.UseSetting("Serilog:WriteTo:1:Args:path", Path.Combine(Path.GetTempPath(), "crm-tests-.log"));

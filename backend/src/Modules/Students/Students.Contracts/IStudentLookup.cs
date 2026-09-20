@@ -22,5 +22,6 @@ public sealed record StudentLookupResult(
     Guid Id,
     string FullName,
     string Email,
-    string PhoneNumber
+    string PhoneNumber,
+    Guid? UserId
 );

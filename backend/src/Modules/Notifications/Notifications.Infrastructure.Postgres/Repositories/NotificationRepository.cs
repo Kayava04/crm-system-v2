@@ -77,4 +77,53 @@ internal sealed class NotificationRepository(NotificationsDbContext context) : I
 
         return await query.ToListAsync(ct);
     }
+
+    public async Task AddRangeAsync(IReadOnlyCollection<Notification> notifications, CancellationToken ct = default) =>
+        await context.Notifications.AddRangeAsync(notifications, ct);
+
+    public async Task<HashSet<(Guid UserId, string Key)>> GetSentKeysAsync(
+        NotificationType type,
+        IReadOnlyCollection<string> keys,
+        CancellationToken ct = default)
+    {
+        var sent = await context.Notifications
+            .AsNoTracking()
+            .Where(n => n.Type == type && n.ReferenceKey != null && keys.Contains(n.ReferenceKey))
+            .Select(n => new { n.RecipientUserId, Key = n.ReferenceKey! })
+            .ToListAsync(ct);
+
+        return sent.Select(n => (n.RecipientUserId, n.Key)).ToHashSet();
+    }
+
+    public async Task<(IReadOnlyList<Notification> Notifications, int TotalCount)> GetAllAsync(
+        Guid? recipientUserId,
+        NotificationType? type,
+        bool unreadOnly,
+        int page,
+        int pageSize,
+        CancellationToken ct = default)
+    {
+        var query = context.Notifications
+            .AsNoTracking()
+            .AsQueryable();
+
+        if (recipientUserId.HasValue)
+            query = query.Where(n => n.RecipientUserId == recipientUserId.Value);
+
+        if (type.HasValue)
+            query = query.Where(n => n.Type == type.Value);
+
+        if (unreadOnly)
+            query = query.Where(n => n.ReadAt == null);
+
+        var totalCount = await query.CountAsync(ct);
+
+        var notifications = await query
+            .OrderByDescending(n => n.CreatedAt)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(ct);
+
+        return (notifications, totalCount);
+    }
 }

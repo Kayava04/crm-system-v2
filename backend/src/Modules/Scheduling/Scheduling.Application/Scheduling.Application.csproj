@@ -21,4 +21,8 @@
     <ProjectReference Include="../../Students/Students.Contracts/Students.Contracts.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="Crm.UnitTests" />
+  </ItemGroup>
+
 </Project>

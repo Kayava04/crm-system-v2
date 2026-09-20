@@ -3,7 +3,13 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
+using Notifications.Application.Features.BroadcastNotification;
+using Notifications.Application.Features.GetAllNotifications;
 using Notifications.Application.Features.GetMyNotifications;
+using Notifications.Application.Features.SendInvoiceReminders;
+using Notifications.Application.Features.SendLessonReminders;
+using Notifications.Application.Features.SendNotification;
+using Notifications.Application.Services;
 using Notifications.Application.Features.GetUnreadCount;
 using Notifications.Application.Features.MarkAllNotificationsRead;
 using Notifications.Application.Features.MarkNotificationRead;
@@ -19,6 +25,7 @@ public static class ApplicationExtensions
         services.AddValidatorsFromAssembly(typeof(ApplicationExtensions).Assembly);
 
         services.AddScoped<INotificationSender, NotificationSenderService>();
+        services.AddScoped<NotificationDispatcher>();
 
         return services;
     }
@@ -32,6 +39,13 @@ public static class ApplicationExtensions
         GetUnreadCountEndpoint.Map(group);
         MarkNotificationReadEndpoint.Map(group);
         MarkAllNotificationsReadEndpoint.Map(group);
+
+        // Administration: only for users with CanManageNotifications
+        GetAllNotificationsEndpoint.Map(group);
+        SendNotificationEndpoint.Map(group);
+        BroadcastNotificationEndpoint.Map(group);
+        SendInvoiceRemindersEndpoint.Map(group);
+        SendLessonRemindersEndpoint.Map(group);
 
         return app;
     }

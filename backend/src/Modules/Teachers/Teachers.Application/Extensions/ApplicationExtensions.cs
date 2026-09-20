@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Teachers.Application.Features.AddSalaryRate;
+using Teachers.Application.Features.BulkCreateTeachers;
+using Teachers.Application.Features.BulkDeleteTeachers;
 using Teachers.Application.Features.ChangeTeacherStatus;
 using Teachers.Application.Features.CreateTeacher;
 using Teachers.Application.Features.DeleteTeacher;
@@ -47,6 +49,9 @@ public static class ApplicationExtensions
         CreateEndpoint.Map(group);
         UpdateEndpoint.Map(group);
         DeleteEndpoint.Map(group);
+
+        BulkCreateTeachersEndpoint.Map(group);
+        BulkDeleteTeachersEndpoint.Map(group);
 
         ChangeTeacherStatusEndpoint.Map(group);
 

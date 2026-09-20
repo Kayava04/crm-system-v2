@@ -22,6 +22,7 @@ public static class ApplicationExtensions
         services.AddValidatorsFromAssembly(typeof(ApplicationExtensions).Assembly);
 
         services.AddScoped<IUserAccountManager, UserAccountManager>();
+        services.AddScoped<IUserDirectory, UserDirectoryService>();
 
         return services;
     }

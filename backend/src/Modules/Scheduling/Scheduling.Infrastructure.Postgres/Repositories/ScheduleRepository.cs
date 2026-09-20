@@ -127,6 +127,14 @@ internal sealed class ScheduleRepository(SchedulingDbContext context) : ISchedul
             .OrderBy(s => s.ScheduledDate)
             .ToListAsync(ct);
 
+    public async Task<IReadOnlyList<Schedule>> GetOpenInRangeAsync(DateTime from, DateTime to, CancellationToken ct = default) =>
+        await context.Schedules
+            .AsNoTracking()
+            .Where(s => (s.Status == ScheduleStatus.Scheduled || s.Status == ScheduleStatus.Rescheduled)
+                && s.ScheduledDate > from && s.ScheduledDate <= to)
+            .OrderBy(s => s.ScheduledDate)
+            .ToListAsync(ct);
+
     public async Task<bool> HasTeacherHistoryAsync(Guid teacherId, CancellationToken ct = default) =>
         await context.Schedules.AsNoTracking().AnyAsync(s => s.TeacherId == teacherId, ct)
         || await context.StudyGroups.AsNoTracking().AnyAsync(g => g.TeacherId == teacherId, ct);

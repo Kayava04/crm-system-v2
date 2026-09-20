@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Students.Application.Features.AddParentInfo;
+using Students.Application.Features.BulkCreateStudents;
+using Students.Application.Features.BulkDeleteStudents;
 using Students.Application.Features.ChangeStudentStatus;
 using Students.Application.Features.CreateStudent;
 using Students.Application.Features.DeleteParentInfo;
@@ -48,6 +50,9 @@ public static class ApplicationExtensions
         CreateEndpoint.Map(group);
         UpdateEndpoint.Map(group);
         DeleteEndpoint.Map(group);
+
+        BulkCreateStudentsEndpoint.Map(group);
+        BulkDeleteStudentsEndpoint.Map(group);
 
         UpdatePreferencesEndpoint.Map(group);
 

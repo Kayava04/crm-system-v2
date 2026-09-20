@@ -67,4 +67,8 @@
     <Project Path="src/Modules/Enrollments/Enrollments.Application/Enrollments.Application.csproj" />
     <Project Path="src/Modules/Enrollments/Enrollments.Infrastructure.Postgres/Enrollments.Infrastructure.Postgres.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Crm.UnitTests/Crm.UnitTests.csproj" />
+    <Project Path="tests/Crm.IntegrationTests/Crm.IntegrationTests.csproj" />
+  </Folder>
 </Solution>

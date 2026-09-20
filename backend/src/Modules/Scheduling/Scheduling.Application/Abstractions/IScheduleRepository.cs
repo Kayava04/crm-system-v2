@@ -52,6 +52,8 @@ public interface IScheduleRepository : IRepository<Schedule>
         CancellationToken ct = default
     );
 
+    Task<IReadOnlyList<Schedule>> GetOpenInRangeAsync(DateTime from, DateTime to, CancellationToken ct = default);
+
     Task<bool> HasTeacherHistoryAsync(Guid teacherId, CancellationToken ct = default);
 
     Task<IReadOnlyList<Schedule>> GetForCalendarAsync(

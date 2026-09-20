@@ -12,6 +12,9 @@ public sealed class Notification : AuditableEntity
     public NotificationAction Action { get; private set; }
     public DateTime? ReadAt { get; private set; }
 
+    // Identifies what the notification is about (e.g. "lesson:<id>:<time>"); the same key is never sent twice to a user
+    public string? ReferenceKey { get; private set; }
+
     public bool IsRead => ReadAt is not null;
 
     private Notification() { }
@@ -21,7 +24,8 @@ public sealed class Notification : AuditableEntity
         NotificationType type,
         string subject,
         string body,
-        NotificationAction action = NotificationAction.None
+        NotificationAction action = NotificationAction.None,
+        string? referenceKey = null
     )
     {
         return new Notification
@@ -32,6 +36,7 @@ public sealed class Notification : AuditableEntity
             Subject = subject,
             Body = body,
             Action = action,
+            ReferenceKey = referenceKey,
             CreatedAt = DateTime.UtcNow
         };
     }

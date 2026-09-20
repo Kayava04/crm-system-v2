@@ -13,6 +13,24 @@ public interface INotificationRepository : IRepository<Notification>
         CancellationToken ct = default
     );
 
+    Task AddRangeAsync(IReadOnlyCollection<Notification> notifications, CancellationToken ct = default);
+
+    // Which of the given (user, key) pairs have already been sent for this type
+    Task<HashSet<(Guid UserId, string Key)>> GetSentKeysAsync(
+        Contracts.NotificationType type,
+        IReadOnlyCollection<string> keys,
+        CancellationToken ct = default
+    );
+
+    Task<(IReadOnlyList<Notification> Notifications, int TotalCount)> GetAllAsync(
+        Guid? recipientUserId,
+        Contracts.NotificationType? type,
+        bool unreadOnly,
+        int page,
+        int pageSize,
+        CancellationToken ct = default
+    );
+
     Task<int> CountUnreadAsync(Guid recipientUserId, CancellationToken ct = default);
 
     Task<IReadOnlyList<Notification>> GetUnreadAsync(

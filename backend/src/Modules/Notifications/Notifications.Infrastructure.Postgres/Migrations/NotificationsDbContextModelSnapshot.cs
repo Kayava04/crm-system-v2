@@ -46,6 +46,10 @@ namespace Notifications.Infrastructure.Postgres.Migrations
                     b.Property<Guid>("RecipientUserId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("ReferenceKey")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
                     b.Property<string>("Subject")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -61,6 +65,10 @@ namespace Notifications.Infrastructure.Postgres.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("RecipientUserId", "ReadAt");
+
+                    b.HasIndex("RecipientUserId", "Type", "ReferenceKey")
+                        .IsUnique()
+                        .HasFilter("\"ReferenceKey\" IS NOT NULL");
 
                     b.ToTable("notifications", "notifications");
                 });

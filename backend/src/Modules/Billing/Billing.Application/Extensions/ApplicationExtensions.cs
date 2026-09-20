@@ -24,6 +24,7 @@ public static class ApplicationExtensions
         services.AddValidatorsFromAssembly(typeof(ApplicationExtensions).Assembly);
 
         services.AddScoped<IBillingStatistics, BillingStatisticsService>();
+        services.AddScoped<IInvoiceReminderSource, InvoiceReminderSourceService>();
 
         return services;
     }

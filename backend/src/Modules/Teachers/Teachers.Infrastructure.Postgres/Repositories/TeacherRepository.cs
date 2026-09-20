@@ -106,4 +106,21 @@ internal sealed class TeacherRepository(TeachersDbContext context) : ITeacherRep
             .AsNoTracking()
             .AnyAsync(t => t.Id == id
                 && (t.Status == TeacherStatus.Probation || t.Status == TeacherStatus.Employed), ct);
+
+    public async Task<HashSet<string>> GetExistingEmailsAsync(IReadOnlyCollection<string> emails, CancellationToken ct = default)
+    {
+        var lowered = emails.Select(e => e.ToLower()).ToList();
+
+        return (await context.Teachers
+            .AsNoTracking()
+            .Where(t => lowered.Contains(t.Email.ToLower()))
+            .Select(t => t.Email.ToLower())
+            .ToListAsync(ct)).ToHashSet();
+    }
+
+    public async Task<IReadOnlyList<Teacher>> GetByIdsForUpdateAsync(IReadOnlyCollection<Guid> ids, CancellationToken ct = default) =>
+        await context.Teachers
+            .Include(t => t.SalaryRates)
+            .Where(t => ids.Contains(t.Id))
+            .ToListAsync(ct);
 }

@@ -20,7 +20,8 @@ public interface ITeacherLookup
 
 public sealed record TeacherProfileResult(
     Guid Id,
-    string FullName
+    string FullName,
+    Guid? UserId
 );
 
 public sealed record TeacherSalaryLookupResult(

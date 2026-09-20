@@ -12,4 +12,5 @@ public interface IUserRepository
     Task AssignRoleAsync(Guid userId, Guid roleId, CancellationToken ct = default);
     Task AssignPermissionAsync(Guid userId, Guid permissionId, CancellationToken ct = default);
     Task UpdateAsync(User user, CancellationToken ct = default);
+    Task<IReadOnlyList<Guid>> GetActiveUserIdsByRoleAsync(string roleName, CancellationToken ct = default);
 }

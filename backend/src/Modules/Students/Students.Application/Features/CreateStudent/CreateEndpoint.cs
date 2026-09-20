@@ -99,6 +99,7 @@ public sealed class CreateValidator : AbstractValidator<CreateRequest>
             .IsInEnum().WithMessage("Invalid language level.");
 
         RuleFor(x => x.Languages)
+            .Cascade(CascadeMode.Stop)
             .NotEmpty().WithMessage("At least one language is required.")
             .Must(l => l.Distinct().Count() == l.Count)
             .WithMessage("Languages must not contain duplicates.");

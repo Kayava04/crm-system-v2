@@ -47,6 +47,7 @@ public sealed class GenerateScheduleValidator : AbstractValidator<GenerateSchedu
             .When(x => x.EnrollmentId is not null);
 
         RuleFor(x => x.Slots)
+            .Cascade(CascadeMode.Stop)
             .NotEmpty().WithMessage("At least one weekly slot is required.")
             .Must(s => s.Count <= 7).WithMessage("At most 7 weekly slots are allowed.")
             .Must(s => s.Select(x => x.DayOfWeek).Distinct().Count() == s.Count)

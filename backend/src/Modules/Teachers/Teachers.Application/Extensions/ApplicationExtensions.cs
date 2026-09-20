@@ -10,11 +10,15 @@ using Teachers.Application.Features.BulkDeleteTeachers;
 using Teachers.Application.Features.ChangeTeacherStatus;
 using Teachers.Application.Features.CreateTeacher;
 using Teachers.Application.Features.DeleteTeacher;
+using Teachers.Application.Features.ExportTeachers;
 using Teachers.Application.Features.GetTeacherById;
 using Teachers.Application.Features.GetMyStudents;
 using Teachers.Application.Features.GetTeachers;
+using Teachers.Application.Features.ImportTeachers;
+using Teachers.Application.Features.TeacherImportTemplate;
 using Teachers.Application.Features.UpdateComment;
 using Teachers.Application.Features.UpdateTeacher;
+using Teachers.Application.Services;
 using Teachers.Contracts;
 
 namespace Teachers.Application.Extensions;
@@ -32,6 +36,7 @@ public static class ApplicationExtensions
         services.AddScoped<ITeacherVerifier, TeacherVerifierService>();
 
         services.AddScoped<ITeacherLookup, TeacherLookupService>();
+        services.AddScoped<TeacherBulkCreator>();
 
         services.AddScoped<ITeacherStatistics, TeacherStatisticsService>();
 
@@ -51,6 +56,10 @@ public static class ApplicationExtensions
         DeleteEndpoint.Map(group);
 
         BulkCreateTeachersEndpoint.Map(group);
+
+        ExportTeachersEndpoint.Map(group);
+        TeacherImportTemplateEndpoint.Map(group);
+        ImportTeachersEndpoint.Map(group);
         BulkDeleteTeachersEndpoint.Map(group);
 
         ChangeTeacherStatusEndpoint.Map(group);

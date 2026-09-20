@@ -15,6 +15,8 @@ public interface ITeacherRepository : IRepository<Teacher>
     Task<HashSet<string>> GetExistingEmailsAsync(IReadOnlyCollection<string> emails, CancellationToken ct = default);
     // Tracked, so they can be deleted
     Task<IReadOnlyList<Teacher>> GetByIdsForUpdateAsync(IReadOnlyCollection<Guid> ids, CancellationToken ct = default);
+    // With the salary rates, at most limit rows, ordered by name
+    Task<IReadOnlyList<Teacher>> GetForExportAsync(string? search, string? city, TeacherStatus? status, int limit, CancellationToken ct = default);
     Task<bool> ExistsByIdAsync(Guid id, CancellationToken ct = default);
     Task<(IReadOnlyList<Teacher> Teachers, int TotalCount)> GetAllAsync(
         string? search,

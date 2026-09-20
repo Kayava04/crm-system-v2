@@ -6,6 +6,7 @@
   <Folder Name="/src/Shared/">
     <Project Path="src/Shared/Shared.Kernel/Shared.Kernel.csproj" />
     <Project Path="src/Shared/Shared.Infrastructure/Shared.Infrastructure.csproj" />
+    <Project Path="src/Shared/Shared.Files/Shared.Files.csproj" />
   </Folder>
   <Folder Name="/src/Modules/Students/">
     <Project Path="src/Modules/Students/Students.Domain/Students.Domain.csproj" />

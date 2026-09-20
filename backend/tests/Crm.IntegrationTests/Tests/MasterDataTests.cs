@@ -29,6 +29,22 @@ public class MasterDataTests(CrmApiFactory factory) : ApiTest(factory)
     }
 
     [Fact]
+    public async Task A_student_without_a_languages_list_is_a_validation_error_not_a_server_error()
+    {
+        var body = System.Text.Json.Nodes.JsonNode.Parse(System.Text.Json.JsonSerializer.Serialize(Data.StudentBody(), Api.JsonOptions))!.AsObject();
+        body.Remove("languages");
+
+        var missing = (await Api.PostAsync("/api/students", body, Admin)).Expect(400);
+        Assert.Contains("Languages", missing.Raw);
+
+        body["languages"] = null;
+        (await Api.PostAsync("/api/students", body, Admin)).Expect(400);
+        (await Api.PostAsync("/api/schedules/generate", new { enrollmentId = Guid.NewGuid(), teacherId = Guid.NewGuid(), durationMinutes = 60 }, Admin)).Expect(400);
+        (await Api.PostAsync("/api/students/bulk", new { }, Admin)).Expect(400);
+        (await Api.PostAsync("/api/notifications/send", new { subject = "s", body = "b" }, Admin)).Expect(400);
+    }
+
+    [Fact]
     public async Task Student_emails_are_unique_ignoring_case_and_input_is_validated()
     {
         var email = TestData.Email("student");

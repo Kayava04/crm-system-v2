@@ -7,6 +7,7 @@ namespace Teachers.Application.Abstractions;
 public interface ITeacherRepository : IRepository<Teacher>
 {
     Task<bool> ExistsByEmailAsync(string email, CancellationToken ct = default);
+    Task<bool> ExistsByIdAsync(Guid id, CancellationToken ct = default);
     Task<(IReadOnlyList<Teacher> Teachers, int TotalCount)> GetAllAsync(
         string? search,
         string? city,

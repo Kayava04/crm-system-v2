@@ -1,4 +1,5 @@
 using Enrollments.Application.Features.ActivateEnrollment;
+using Enrollments.Contracts;
 using Enrollments.Application.Features.ApplyDiscount;
 using Enrollments.Application.Features.CompleteEnrollment;
 using Enrollments.Application.Features.CreateEnrollment;
@@ -23,6 +24,8 @@ public static class ApplicationExtensions
     {
         // Register FluentValidation
         services.AddValidatorsFromAssembly(typeof(ApplicationExtensions).Assembly);
+
+        services.AddScoped<IEnrollmentLookup, EnrollmentLookupService>();
 
         return services;
     }

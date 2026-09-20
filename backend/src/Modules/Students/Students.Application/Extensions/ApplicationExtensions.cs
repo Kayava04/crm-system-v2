@@ -12,6 +12,7 @@ using Students.Application.Features.CreateStudent;
 using Students.Application.Features.DeleteParentInfo;
 using Students.Application.Features.DeleteStudent;
 using Students.Application.Features.ExportStudents;
+using Students.Application.Features.GetMyStudentProfile;
 using Students.Application.Features.GetStudentById;
 using Students.Application.Features.GetStudents;
 using Students.Application.Features.ImportStudents;
@@ -51,6 +52,7 @@ public static class ApplicationExtensions
                        .WithTags("Students");
 
         GetAllEndpoint.Map(group);
+        GetMyStudentProfileEndpoint.Map(group);
         GetByIdEndpoint.Map(group);
         CreateEndpoint.Map(group);
         UpdateEndpoint.Map(group);

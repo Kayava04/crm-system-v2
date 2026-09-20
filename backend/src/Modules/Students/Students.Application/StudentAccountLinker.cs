@@ -10,6 +10,15 @@ internal sealed class StudentAccountLinker(
 {
     public string ProfileType => "Student";
 
+    public async Task<LinkedProfile?> FindByUserAsync(Guid userId, CancellationToken ct = default)
+    {
+        var student = await repository.GetByUserIdAsync(userId, ct);
+
+        return student is null
+            ? null
+            : new LinkedProfile(ProfileType, student.Id, $"{student.LastName} {student.FirstName}");
+    }
+
     public async Task LinkAsync(Guid profileId, Guid userId, CancellationToken ct = default)
     {
         var student = await repository.GetByIdAsync(profileId, ct);

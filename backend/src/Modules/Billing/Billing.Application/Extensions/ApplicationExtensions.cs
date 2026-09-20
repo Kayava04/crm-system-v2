@@ -3,6 +3,8 @@ using Billing.Contracts;
 using Billing.Application.Features.CreatePayroll;
 using Billing.Application.Features.GetInvoiceById;
 using Billing.Application.Features.GetInvoices;
+using Billing.Application.Features.GetMyInvoices;
+using Billing.Application.Features.GetMyPayrolls;
 using Billing.Application.Features.GetPayrollById;
 using Billing.Application.Features.GetPayrolls;
 using Billing.Application.Features.MarkInvoicePaid;
@@ -36,6 +38,7 @@ public static class ApplicationExtensions
                           .WithTags("Billing - Invoices");
 
         GetInvoicesEndpoint.Map(invoices);
+        GetMyInvoicesEndpoint.Map(invoices);
         GetInvoiceByIdEndpoint.Map(invoices);
         CreateInvoiceEndpoint.Map(invoices);
         MarkInvoicePaidEndpoint.Map(invoices);
@@ -45,6 +48,7 @@ public static class ApplicationExtensions
                           .WithTags("Billing - Payrolls");
 
         GetPayrollsEndpoint.Map(payrolls);
+        GetMyPayrollsEndpoint.Map(payrolls);
         GetPayrollByIdEndpoint.Map(payrolls);
         CreatePayrollEndpoint.Map(payrolls);
         MarkPayrollPaidEndpoint.Map(payrolls);

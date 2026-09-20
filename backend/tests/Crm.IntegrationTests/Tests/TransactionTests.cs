@@ -25,6 +25,8 @@ public class TransactionTests(CrmApiFactory factory) : ApiTest(factory)
     {
         public string ProfileType => "Student";
 
+        public Task<LinkedProfile?> FindByUserAsync(Guid userId, CancellationToken ct = default) => Task.FromResult<LinkedProfile?>(null);
+
         public Task LinkAsync(Guid profileId, Guid userId, CancellationToken ct = default) =>
             throw new InvalidOperationException("Simulated failure in the Students module.");
     }

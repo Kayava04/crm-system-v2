@@ -120,6 +120,9 @@ internal sealed class StudentRepository(StudentsDbContext context) : IStudentRep
     public async Task<Student?> GetByUserIdAsync(Guid userId, CancellationToken ct = default) =>
         await context.Students
             .AsNoTracking()
+            .Include(s => s.Preferences)
+            .Include(s => s.ParentInfo)
+            .Include(s => s.Languages)
             .FirstOrDefaultAsync(s => s.UserId == userId, ct);
 
     public async Task<bool> IsActiveByIdAsync(Guid id, CancellationToken ct = default) =>

@@ -26,6 +26,31 @@ internal sealed class IdentityService(UserManager<User> userManager) : IIdentity
         return user;
     }
 
+    public async Task<TimeSpan?> GetLockoutRemainingAsync(User user, CancellationToken ct = default)
+    {
+        if (!await userManager.IsLockedOutAsync(user))
+            return null;
+
+        var end = await userManager.GetLockoutEndDateAsync(user);
+
+        return end is null ? null : end.Value - DateTimeOffset.UtcNow;
+    }
+
+    public async Task RecordFailedLoginAsync(User user, CancellationToken ct = default) =>
+        await userManager.AccessFailedAsync(user);
+
+    public async Task RecordSuccessfulLoginAsync(User user, CancellationToken ct = default)
+    {
+        if (user.AccessFailedCount > 0)
+            await userManager.ResetAccessFailedCountAsync(user);
+    }
+
+    public async Task UnlockAsync(User user, CancellationToken ct = default)
+    {
+        await userManager.SetLockoutEndDateAsync(user, null);
+        await userManager.ResetAccessFailedCountAsync(user);
+    }
+
     public async Task<bool> CheckPasswordAsync(User user, string password, CancellationToken ct = default) =>
         await userManager.CheckPasswordAsync(user, password);
 

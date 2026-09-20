@@ -69,6 +69,7 @@ public static class ResetPasswordEndpoint
         await transaction.ExecuteAsync(async token =>
         {
             await identityService.ResetPasswordAsync(user, temporaryPassword, token);
+            await identityService.UnlockAsync(user, token);
 
             user.RequirePasswordChange();
 

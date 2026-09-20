@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
 using Teachers.Application.Abstractions;
+using Teachers.Domain.Entities;
 using Teachers.Domain.Enums;
 
 namespace Teachers.Application.Features.GetTeacherById;
@@ -31,7 +32,41 @@ public sealed record TeacherDetailResponse(
     bool HasAccount,
     TeacherSalaryRateResponse? CurrentSalaryRate,
     IReadOnlyList<TeacherSalaryRateResponse> SalaryRates
-);
+)
+{
+    internal static TeacherDetailResponse From(Teacher teacher)
+    {
+        var salaryRates = teacher.SalaryRates
+            .OrderByDescending(sr => sr.EffectiveFrom)
+            .Select(sr => new TeacherSalaryRateResponse(sr.Id, sr.BaseSalary, sr.LessonsRate, sr.EffectiveFrom))
+            .ToList();
+
+        var currentRate = teacher.CurrentSalaryRate is not null
+            ? new TeacherSalaryRateResponse(
+                teacher.CurrentSalaryRate.Id,
+                teacher.CurrentSalaryRate.BaseSalary,
+                teacher.CurrentSalaryRate.LessonsRate,
+                teacher.CurrentSalaryRate.EffectiveFrom)
+            : null;
+
+        return new TeacherDetailResponse(
+            teacher.Id,
+            teacher.UserId,
+            teacher.FirstName,
+            teacher.LastName,
+            teacher.MiddleName,
+            teacher.DateOfBirth,
+            teacher.PhoneNumber,
+            teacher.Email,
+            teacher.City,
+            teacher.Country,
+            teacher.Status,
+            teacher.Comment,
+            teacher.UserId is not null,
+            currentRate,
+            salaryRates);
+    }
+}
 
 public static class GetByIdEndpoint
 {
@@ -59,42 +94,7 @@ public static class GetByIdEndpoint
                 statusCode: StatusCodes.Status404NotFound
             );
 
-        var salaryRates = teacher.SalaryRates
-            .OrderByDescending(sr => sr.EffectiveFrom)
-            .Select(sr => new TeacherSalaryRateResponse(
-                sr.Id,
-                sr.BaseSalary,
-                sr.LessonsRate,
-                sr.EffectiveFrom)
-            )
-            .ToList();
-
-        var currentRate = teacher.CurrentSalaryRate is not null
-            ? new TeacherSalaryRateResponse(
-                teacher.CurrentSalaryRate.Id,
-                teacher.CurrentSalaryRate.BaseSalary,
-                teacher.CurrentSalaryRate.LessonsRate,
-                teacher.CurrentSalaryRate.EffectiveFrom
-            )
-            : null;
-
-        var response = new TeacherDetailResponse(
-            teacher.Id,
-            teacher.UserId,
-            teacher.FirstName,
-            teacher.LastName,
-            teacher.MiddleName,
-            teacher.DateOfBirth,
-            teacher.PhoneNumber,
-            teacher.Email,
-            teacher.City,
-            teacher.Country,
-            teacher.Status,
-            teacher.Comment,
-            teacher.UserId is not null,
-            currentRate,
-            salaryRates
-        );
+        var response = TeacherDetailResponse.From(teacher);
 
         return Results.Ok(response);
     }

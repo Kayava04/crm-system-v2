@@ -44,6 +44,24 @@ Every reminder is sent once. A Postgres advisory lock makes sure only one instan
 The admin endpoints (`/api/notifications/invoice-reminders`, `/lesson-reminders`, `/api/billing/invoices/mark-overdue`)
 do the same work on demand and are unaffected by the setting.
 
+### Import and export (students and teachers)
+
+Excel (`.xlsx`) and JSON, the same for `/api/students` and `/api/teachers`:
+
+| Endpoint | What it does |
+|---|---|
+| `GET .../export?fileFormat=xlsx\|json&lang=en\|uk` | Download the data; accepts the same filters as the list (`search`, `city`, ...). |
+| `GET .../import-template?fileFormat=xlsx\|json&lang=en\|uk` | An empty Excel template (headers, drop-down lists, a help sheet with allowed values and examples) or a JSON sample. |
+| `POST .../import` (multipart field `file`) | Import a file. `?dryRun=true` only checks it, `?allOrNothing=true` saves nothing if any row is bad. |
+
+- Excel column names are meant for people: `First name`, `Date of birth`, `Learning goal`... or, with `lang=uk`,
+  `Ім'я`, `Дата народження`, `Мета навчання`. Values are readable too (`Yes/No` or `Так/Ні`, `Online` or `Онлайн`).
+- An import understands both languages (even mixed), any letter case, and dates as Excel dates, `2001-03-25` or `25.03.2001`.
+- A file exported from the system can be edited and imported again (status, id and creation date are ignored).
+- The response lists every row with its Excel row number, whether it was saved, and errors that name the column
+  (`Date of birth: '31.02.2001' is not a valid date...`).
+- Limits: 5 MB and 2000 rows per file, 10000 rows per export. Parent information is not part of the files.
+
 ### Health
 
 - `GET /health`: the process is alive.

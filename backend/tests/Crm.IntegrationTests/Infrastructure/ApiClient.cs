@@ -33,6 +33,21 @@ public sealed class ApiResponse(HttpStatusCode status, string raw)
     }
 }
 
+public sealed record DownloadedFile(HttpStatusCode Status, string? ContentType, string? FileName, byte[] Content)
+{
+    public int Code => (int)Status;
+
+    public DownloadedFile Expect(int code)
+    {
+        Assert.True(Code == code, $"Expected HTTP {code} but got {Code}: {System.Text.Encoding.UTF8.GetString(Content)}");
+        return this;
+    }
+
+    public JsonNode Json => JsonNode.Parse(Content)!;
+
+    public ClosedXML.Excel.XLWorkbook Workbook => new(new MemoryStream(Content));
+}
+
 public sealed class Api(HttpClient http)
 {
     public static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web)
@@ -55,6 +70,42 @@ public sealed class Api(HttpClient http)
         using var response = await Http.SendAsync(request);
 
         return new ApiResponse(response.StatusCode, await response.Content.ReadAsStringAsync());
+    }
+
+    // A file upload as a browser form would send it
+    public async Task<ApiResponse> UploadAsync(string path, string fileName, byte[] content, string? token = null, string field = "file")
+    {
+        using var request = new HttpRequestMessage(HttpMethod.Post, path);
+
+        if (token is not null)
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        var form = new MultipartFormDataContent();
+        var file = new ByteArrayContent(content);
+        file.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+        form.Add(file, field, fileName);
+        request.Content = form;
+
+        using var response = await Http.SendAsync(request);
+
+        return new ApiResponse(response.StatusCode, await response.Content.ReadAsStringAsync());
+    }
+
+    public async Task<DownloadedFile> DownloadAsync(string path, string? token = null)
+    {
+        using var request = new HttpRequestMessage(HttpMethod.Get, path);
+
+        if (token is not null)
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        using var response = await Http.SendAsync(request);
+        var bytes = await response.Content.ReadAsByteArrayAsync();
+
+        return new DownloadedFile(
+            response.StatusCode,
+            response.Content.Headers.ContentType?.MediaType,
+            response.Content.Headers.ContentDisposition?.FileNameStar ?? response.Content.Headers.ContentDisposition?.FileName?.Trim('"'),
+            bytes);
     }
 
     public Task<ApiResponse> GetAsync(string path, string? token = null) => SendAsync(HttpMethod.Get, path, null, token);

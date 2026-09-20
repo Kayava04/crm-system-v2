@@ -22,6 +22,7 @@ public sealed class SendNotificationValidator : AbstractValidator<SendNotificati
     public SendNotificationValidator()
     {
         RuleFor(x => x.RecipientUserIds)
+            .Cascade(CascadeMode.Stop)
             .NotEmpty().WithMessage("At least one recipient is required.")
             .Must(ids => ids.Count <= 1000).WithMessage("At most 1000 recipients per request.")
             .Must(ids => ids.All(id => id != Guid.Empty)).WithMessage("Recipient ids must not be empty.");

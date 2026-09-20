@@ -123,4 +123,34 @@ internal sealed class TeacherRepository(TeachersDbContext context) : ITeacherRep
             .Include(t => t.SalaryRates)
             .Where(t => ids.Contains(t.Id))
             .ToListAsync(ct);
+
+    public async Task<IReadOnlyList<Teacher>> GetForExportAsync(
+        string? search,
+        string? city,
+        TeacherStatus? status,
+        int limit,
+        CancellationToken ct = default)
+    {
+        var query = context.Teachers
+            .AsNoTracking()
+            .Include(t => t.SalaryRates)
+            .AsQueryable();
+
+        if (!string.IsNullOrEmpty(search))
+            query = query.Where(t =>
+                t.FirstName.ToLower().Contains(search.ToLower()) ||
+                t.LastName.ToLower().Contains(search.ToLower()));
+
+        if (!string.IsNullOrEmpty(city))
+            query = query.Where(t => t.City.ToLower() == city.ToLower());
+
+        if (status.HasValue)
+            query = query.Where(t => t.Status == status.Value);
+
+        return await query
+            .OrderBy(t => t.LastName)
+            .ThenBy(t => t.FirstName)
+            .Take(limit)
+            .ToListAsync(ct);
+    }
 }

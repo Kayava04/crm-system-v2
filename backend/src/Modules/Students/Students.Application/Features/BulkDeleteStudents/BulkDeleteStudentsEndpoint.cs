@@ -20,6 +20,7 @@ public sealed class BulkDeleteStudentsValidator : AbstractValidator<BulkDeleteSt
     public BulkDeleteStudentsValidator()
     {
         RuleFor(x => x.Ids)
+            .Cascade(CascadeMode.Stop)
             .NotEmpty().WithMessage("At least one id is required.")
             .Must(ids => ids.Count <= MaxItems).WithMessage($"At most {MaxItems} ids per request.");
     }

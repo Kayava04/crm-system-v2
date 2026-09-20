@@ -122,3 +122,31 @@ public class BulkAndNotificationValidatorTests
         Assert.Equal(valid, new SendLessonRemindersValidator().Validate(new SendLessonRemindersRequest(hours)).IsValid);
     }
 }
+
+// A missing list in a request body is a validation error (400), never an unhandled exception (500)
+public class MissingCollectionValidatorTests
+{
+    [Fact]
+    public void Missing_languages_are_reported_not_thrown()
+    {
+        var request = new CreateRequest("Ivan", "Petrenko", null, new DateOnly(2000, 1, 1), "+380501112244", "ivan@example.test", "Kyiv", "Ukraine",
+            false, null, Students.Domain.Enums.LearningGoal.Work, Education.Contracts.Enums.Format.Online, Education.Contracts.Enums.LessonType.Individual,
+            3, Education.Contracts.Enums.Level.A2, false, null!);
+
+        var result = new CreateValidator().Validate(request);
+
+        Assert.Contains(result.Errors, e => e.PropertyName == "Languages");
+    }
+
+    [Fact]
+    public void Missing_lists_in_other_requests_are_reported_not_thrown()
+    {
+        Assert.False(new Scheduling.Application.Features.GenerateSchedule.GenerateScheduleValidator()
+            .Validate(new Scheduling.Application.Features.GenerateSchedule.GenerateScheduleRequest(Guid.NewGuid(), null, Guid.NewGuid(), null!, 60, null, null)).IsValid);
+        Assert.False(new SendNotificationValidator().Validate(new SendNotificationRequest(null!, "s", "b")).IsValid);
+        Assert.False(new BulkCreateStudentsValidator().Validate(new BulkCreateStudentsRequest(null!)).IsValid);
+        Assert.False(new BulkCreateTeachersValidator().Validate(new BulkCreateTeachersRequest(null!)).IsValid);
+        Assert.False(new BulkDeleteStudentsValidator().Validate(new BulkDeleteStudentsRequest(null!)).IsValid);
+        Assert.False(new BulkDeleteTeachersValidator().Validate(new BulkDeleteTeachersRequest(null!)).IsValid);
+    }
+}

@@ -142,4 +142,47 @@ internal sealed class StudentRepository(StudentsDbContext context) : IStudentRep
         await context.Students
             .Where(s => ids.Contains(s.Id))
             .ToListAsync(ct);
+
+    public async Task<IReadOnlyList<Student>> GetForExportAsync(
+        string? search,
+        string? city,
+        bool? isChild,
+        Language? language,
+        Level? currentLevel,
+        Format? format,
+        int limit,
+        CancellationToken ct = default)
+    {
+        var query = context.Students
+            .AsNoTracking()
+            .Include(s => s.Preferences)
+            .Include(s => s.Languages)
+            .AsQueryable();
+
+        if (!string.IsNullOrEmpty(search))
+            query = query.Where(s =>
+                s.FirstName.ToLower().Contains(search.ToLower()) ||
+                s.LastName.ToLower().Contains(search.ToLower()));
+
+        if (!string.IsNullOrEmpty(city))
+            query = query.Where(s => s.City.ToLower() == city.ToLower());
+
+        if (isChild.HasValue)
+            query = query.Where(s => s.IsChild == isChild.Value);
+
+        if (currentLevel.HasValue)
+            query = query.Where(s => s.Preferences!.CurrentLevel == currentLevel.Value);
+
+        if (format.HasValue)
+            query = query.Where(s => s.Preferences!.Format == format.Value);
+
+        if (language.HasValue)
+            query = query.Where(s => s.Languages.Any(l => l.Language == language.Value));
+
+        return await query
+            .OrderBy(s => s.LastName)
+            .ThenBy(s => s.FirstName)
+            .Take(limit)
+            .ToListAsync(ct);
+    }
 }

@@ -11,6 +11,9 @@ public sealed class CrmApiFactory : WebApplicationFactory<Program>, IAsyncLifeti
 
     public TestDatabase Database { get; private set; } = null!;
 
+    // Uploaded files of this test run; removed together with the database
+    public string UploadsPath { get; } = Path.Combine(Path.GetTempPath(), "crm-tests-uploads-" + Guid.NewGuid().ToString("N"));
+
 
     public async Task InitializeAsync()
     {
@@ -26,6 +29,9 @@ public sealed class CrmApiFactory : WebApplicationFactory<Program>, IAsyncLifeti
     {
         await base.DisposeAsync();
         await Database.DisposeAsync();
+
+        if (Directory.Exists(UploadsPath))
+            Directory.Delete(UploadsPath, recursive: true);
     }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -38,6 +44,7 @@ public sealed class CrmApiFactory : WebApplicationFactory<Program>, IAsyncLifeti
         builder.UseSetting("SuperAdmin:Email", AdminEmail);
         builder.UseSetting("SuperAdmin:Password", AdminPassword);
         builder.UseSetting("Database:MigrateOnStartup", "true");
+        builder.UseSetting("Storage:Path", UploadsPath);
         // the whole suite logs in from one "address": the limit is tested on its own host
         builder.UseSetting("RateLimiting:Auth:PermitLimit", "100000");
         builder.UseSetting("Cors:AllowedOrigins:0", "http://localhost:5173");

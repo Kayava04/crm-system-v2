@@ -12,6 +12,7 @@ using Teachers.Application.Features.CreateTeacher;
 using Teachers.Application.Features.DeleteTeacher;
 using Teachers.Application.Features.ExportTeachers;
 using Teachers.Application.Features.GetTeacherById;
+using Teachers.Application.Features.GetTeacherPhoto;
 using Teachers.Application.Features.GetMyStudents;
 using Teachers.Application.Features.GetMyTeacherProfile;
 using Teachers.Application.Features.GetTeachers;
@@ -52,6 +53,7 @@ public static class ApplicationExtensions
         GetAllEndpoint.Map(group);
         GetMyStudentsEndpoint.Map(group);
         GetMyTeacherProfileEndpoint.Map(group);
+        GetTeacherPhotoEndpoint.Map(group);
         GetByIdEndpoint.Map(group);
         CreateEndpoint.Map(group);
         UpdateEndpoint.Map(group);

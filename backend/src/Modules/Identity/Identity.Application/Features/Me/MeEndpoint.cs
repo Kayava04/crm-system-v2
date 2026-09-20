@@ -16,7 +16,9 @@ public sealed record MeResponse(
     bool MustChangePassword,
     IReadOnlyList<string> Roles,
     IReadOnlyList<string> Permissions,
-    MeProfile? Profile
+    MeProfile? Profile,
+    bool HasPhoto,
+    string? PhotoUrl
 );
 
 public static class MeEndpoint
@@ -35,6 +37,7 @@ public static class MeEndpoint
         ClaimsPrincipal principal,
         IUserRepository userRepository,
         IEnumerable<IProfileLinker> profileLinkers,
+        IUserPhotoRepository photoRepository,
         CancellationToken ct
     )
     {
@@ -61,12 +64,16 @@ public static class MeEndpoint
             break;
         }
 
+        var hasPhoto = await photoRepository.ExistsForUserAsync(userId, ct);
+
         return Results.Ok(new MeResponse(
             user.Id,
             user.Email!,
             user.MustChangePassword,
             roles.Select(r => r.Name).Order().ToList(),
             permissions.Select(p => p.Name).Order().ToList(),
-            profile));
+            profile,
+            hasPhoto,
+            hasPhoto ? "/api/auth/me/photo" : null));
     }
 }

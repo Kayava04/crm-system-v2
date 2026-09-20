@@ -73,9 +73,9 @@ public sealed class Api(HttpClient http)
     }
 
     // A file upload as a browser form would send it
-    public async Task<ApiResponse> UploadAsync(string path, string fileName, byte[] content, string? token = null, string field = "file")
+    public async Task<ApiResponse> UploadAsync(string path, string fileName, byte[] content, string? token = null, string field = "file", HttpMethod? method = null)
     {
-        using var request = new HttpRequestMessage(HttpMethod.Post, path);
+        using var request = new HttpRequestMessage(method ?? HttpMethod.Post, path);
 
         if (token is not null)
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);

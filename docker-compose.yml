@@ -1,6 +1,7 @@
 volumes:
   postgres-data:
   seq-data:
+  uploads:
 
 services:
   postgres:
@@ -56,6 +57,9 @@ services:
       SuperAdmin__Email: ${SUPERADMIN_EMAIL}
       SuperAdmin__Password: ${SUPERADMIN_PASSWORD}
       Database__MigrateOnStartup: "true"
+      Storage__Path: /app/uploads
       Cors__AllowedOrigins__0: ${FRONTEND_ORIGIN:-http://localhost:5173}
+    volumes:
+      - uploads:/app/uploads
     ports:
       - "8080:8080"

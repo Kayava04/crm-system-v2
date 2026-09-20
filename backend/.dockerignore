@@ -1,6 +1,7 @@
 **/bin/
 **/obj/
 **/Logs/
+**/uploads/
 tests/
 .vs/
 .idea/

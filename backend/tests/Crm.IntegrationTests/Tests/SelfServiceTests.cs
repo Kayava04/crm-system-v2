@@ -104,8 +104,9 @@ public class SelfServiceTests(CrmApiFactory factory) : ApiTest(factory)
         Assert.Equal("Ivan Melnyk", me["contact"]!["fullName"]!.GetValue<string>());
         Assert.Null(me["contact"]!["phoneNumber"]);
 
-        // the super admin has no record either and can fill the details in
-        (await Api.PutAsync("/api/auth/me/contact", new { firstName = "Root", lastName = "Admin" }, Admin)).Expect(200);
+        // the SuperAdmin is the system account, not a member of the staff: it has no personal details
+        (await Api.PutAsync("/api/auth/me/contact", new { firstName = "Root", lastName = "Admin" }, Admin)).Expect(403);
+        Assert.Null((await Api.GetAsync("/api/auth/me", Admin)).Expect(200)["contact"]!["fullName"]);
     }
 
     [Fact]

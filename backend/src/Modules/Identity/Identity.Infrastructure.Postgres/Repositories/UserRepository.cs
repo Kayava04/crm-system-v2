@@ -71,4 +71,22 @@ internal sealed class UserRepository(IdentityDbContext context) : IUserRepositor
             .Join(context.Roles.Where(r => r.Name == roleName), ur => ur.RoleId, r => r.Id, (ur, r) => ur.UserId)
             .Join(context.Users.Where(u => u.IsActive), id => id, u => u.Id, (id, u) => u.Id)
             .ToListAsync(ct);
+
+    public async Task<IReadOnlyList<User>> ListByRoleAsync(string roleName, CancellationToken ct = default) =>
+        await context.UserRoles
+            .AsNoTracking()
+            .Join(context.Roles.Where(r => r.Name == roleName), ur => ur.RoleId, r => r.Id, (ur, r) => ur.UserId)
+            .Join(context.Users, id => id, u => u.Id, (id, u) => u)
+            .OrderBy(u => u.Email)
+            .ToListAsync(ct);
+
+    public async Task ReplaceDirectPermissionsAsync(Guid userId, IReadOnlyCollection<Guid> permissionIds, CancellationToken ct = default)
+    {
+        var current = await context.UserPermissions.Where(up => up.UserId == userId).ToListAsync(ct);
+
+        context.UserPermissions.RemoveRange(current.Where(up => !permissionIds.Contains(up.PermissionId)));
+
+        var missing = permissionIds.Except(current.Select(up => up.PermissionId));
+        await context.UserPermissions.AddRangeAsync(missing.Select(id => UserPermission.Create(userId, id)), ct);
+    }
 }

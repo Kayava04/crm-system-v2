@@ -14,6 +14,7 @@ using Students.Application.Features.DeleteStudent;
 using Students.Application.Features.ExportStudents;
 using Students.Application.Features.GetMyStudentProfile;
 using Students.Application.Features.GetStudentById;
+using Students.Application.Features.GetStudentPhoto;
 using Students.Application.Features.GetStudents;
 using Students.Application.Features.ImportStudents;
 using Students.Application.Features.StudentImportTemplate;
@@ -53,6 +54,7 @@ public static class ApplicationExtensions
 
         GetAllEndpoint.Map(group);
         GetMyStudentProfileEndpoint.Map(group);
+        GetStudentPhotoEndpoint.Map(group);
         GetByIdEndpoint.Map(group);
         CreateEndpoint.Map(group);
         UpdateEndpoint.Map(group);

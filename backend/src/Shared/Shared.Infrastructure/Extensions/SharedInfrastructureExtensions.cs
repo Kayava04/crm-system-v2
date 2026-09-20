@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Shared.Kernel.Abstractions;
 
 namespace Shared.Infrastructure.Extensions;
@@ -20,6 +21,17 @@ public static class SharedInfrastructureExtensions
         services.AddScoped<ITransactionCoordinator>(sp => sp.GetRequiredService<TransactionCoordinator>());
         services.AddSingleton<TransactionEnlistmentInterceptor>();
         services.AddSingleton<IAdvisoryLock>(_ => new PostgresAdvisoryLock(connectionString));
+
+        // Uploaded files: a folder on this server. A relative Storage:Path is relative to the application's content root.
+        services.AddSingleton<IFileStorage>(sp =>
+        {
+            var configured = sp.GetRequiredService<IConfiguration>()["Storage:Path"];
+            var path = string.IsNullOrWhiteSpace(configured) ? "uploads" : configured;
+
+            return new LocalFileStorage(Path.IsPathRooted(path)
+                ? path
+                : Path.Combine(sp.GetRequiredService<IHostEnvironment>().ContentRootPath, path));
+        });
 
         services.AddHostedService<DatabaseMigrationService>();
 

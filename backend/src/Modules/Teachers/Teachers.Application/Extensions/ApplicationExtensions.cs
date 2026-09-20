@@ -9,6 +9,7 @@ using Teachers.Application.Features.ChangeTeacherStatus;
 using Teachers.Application.Features.CreateTeacher;
 using Teachers.Application.Features.DeleteTeacher;
 using Teachers.Application.Features.GetTeacherById;
+using Teachers.Application.Features.GetMyStudents;
 using Teachers.Application.Features.GetTeachers;
 using Teachers.Application.Features.UpdateComment;
 using Teachers.Application.Features.UpdateTeacher;
@@ -37,6 +38,7 @@ public static class ApplicationExtensions
                        .WithTags("Teachers");
 
         GetAllEndpoint.Map(group);
+        GetMyStudentsEndpoint.Map(group);
         GetByIdEndpoint.Map(group);
         CreateEndpoint.Map(group);
         UpdateEndpoint.Map(group);

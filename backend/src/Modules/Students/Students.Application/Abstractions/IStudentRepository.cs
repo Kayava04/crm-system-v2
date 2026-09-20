@@ -19,4 +19,5 @@ public interface IStudentRepository : IRepository<Student>
         CancellationToken ct = default
     );
     Task<bool> ExistsByIdAsync(Guid id, CancellationToken ct = default);
+    Task<IReadOnlyList<Student>> GetByIdsAsync(IReadOnlyCollection<Guid> ids, CancellationToken ct = default);
 }

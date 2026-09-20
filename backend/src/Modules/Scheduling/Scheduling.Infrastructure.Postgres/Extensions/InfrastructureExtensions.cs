@@ -40,6 +40,7 @@ public static class InfrastructureExtensions
     private static IServiceCollection AddRepositories(this IServiceCollection services)
     {
         services.AddScoped<IScheduleRepository, ScheduleRepository>();
+        services.AddScoped<IStudyGroupRepository, StudyGroupRepository>();
 
         return services;
     }

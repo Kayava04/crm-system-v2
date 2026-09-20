@@ -6,7 +6,22 @@ public interface ITeacherLookup
         Guid teacherId,
         CancellationToken ct = default
     );
+
+    Task<TeacherProfileResult?> GetByUserIdAsync(
+        Guid userId,
+        CancellationToken ct = default
+    );
+
+    Task<IReadOnlyList<TeacherProfileResult>> GetByIdsAsync(
+        IReadOnlyCollection<Guid> teacherIds,
+        CancellationToken ct = default
+    );
 }
+
+public sealed record TeacherProfileResult(
+    Guid Id,
+    string FullName
+);
 
 public sealed record TeacherSalaryLookupResult(
     Guid TeacherId,

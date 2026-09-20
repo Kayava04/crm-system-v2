@@ -10,6 +10,7 @@ using Enrollments.Application.Features.SuspendEnrollment;
 using Enrollments.Application.Features.TerminateEnrollment;
 using Enrollments.Application.Features.UpdateEnrollmentComment;
 using Enrollments.Application.Features.UpdateEnrollmentPrice;
+using Enrollments.Application.Features.UpdatePreferredSchedule;
 using FluentValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -52,6 +53,7 @@ public static class ApplicationExtensions
         UpdateEnrollmentPriceEndpoint.Map(group);
 
         UpdateEnrollmentCommentEndpoint.Map(group);
+        UpdatePreferredScheduleEndpoint.Map(group);
 
         return app;
     }

@@ -7,6 +7,7 @@ namespace Courses.Application.Abstractions;
 
 public interface ICourseRepository : IRepository<Course>
 {
+    Task<IReadOnlyList<Course>> GetByIdsAsync(IReadOnlyCollection<Guid> ids, CancellationToken ct = default);
     Task<bool> ExistsByNameAsync(string name, CancellationToken ct = default);
     Task<(IReadOnlyList<Course> Courses, int TotalCount)> GetAllAsync(
         string? search,

@@ -1,4 +1,3 @@
-using Enrollments.Contracts;
 using FluentValidation;
 using Identity.Contracts.Enums;
 using Microsoft.AspNetCore.Builder;
@@ -6,14 +5,17 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
 using Scheduling.Application.Abstractions;
+using Scheduling.Application.Services;
 using Scheduling.Domain.Entities;
 using Scheduling.Domain.Enums;
 using Teachers.Contracts;
 
 namespace Scheduling.Application.Features.CreateSchedule;
 
+// Exactly one of EnrollmentId (individual course) and GroupId (group course) must be set
 public sealed record CreateScheduleRequest(
-    Guid EnrollmentId,
+    Guid? EnrollmentId,
+    Guid? GroupId,
     Guid TeacherId,
     DateTime ScheduledDate,
     int DurationMinutes,
@@ -22,7 +24,8 @@ public sealed record CreateScheduleRequest(
 
 public sealed record CreateScheduleResponse(
     Guid Id,
-    Guid EnrollmentId,
+    Guid? EnrollmentId,
+    Guid? GroupId,
     Guid TeacherId,
     DateTime ScheduledDate,
     int DurationMinutes,
@@ -33,8 +36,18 @@ public sealed class CreateScheduleValidator : AbstractValidator<CreateScheduleRe
 {
     public CreateScheduleValidator()
     {
+        RuleFor(x => x)
+            .Must(x => x.EnrollmentId is null != x.GroupId is null)
+            .WithName("EnrollmentId")
+            .WithMessage("Specify either an enrollment or a study group.");
+
         RuleFor(x => x.EnrollmentId)
-            .NotEmpty().WithMessage("Enrollment is required.");
+            .NotEmpty().WithMessage("Enrollment must not be empty.")
+            .When(x => x.EnrollmentId is not null);
+
+        RuleFor(x => x.GroupId)
+            .NotEmpty().WithMessage("Study group must not be empty.")
+            .When(x => x.GroupId is not null);
 
         RuleFor(x => x.TeacherId)
             .NotEmpty().WithMessage("Teacher is required.");
@@ -60,7 +73,7 @@ public static class CreateEndpoint
         group.MapPost("/", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanManageSchedule))
              .WithName("CreateSchedule")
-             .WithSummary("Create a schedule")
+             .WithSummary("Create a single lesson for an enrollment or a study group")
              .Produces<CreateScheduleResponse>(StatusCodes.Status201Created)
              .ProducesValidationProblem()
              .ProducesProblem(StatusCodes.Status404NotFound)
@@ -72,7 +85,7 @@ public static class CreateEndpoint
         IValidator<CreateScheduleRequest> validator,
         IScheduleRepository repository,
         ISchedulingUnitOfWork unitOfWork,
-        IEnrollmentLookup enrollmentLookup,
+        LessonTargetResolver targetResolver,
         ITeacherVerifier teacherVerifier,
         ILogger<CreateScheduleRequest> logger,
         CancellationToken ct
@@ -82,12 +95,9 @@ public static class CreateEndpoint
         if (!validationResult.IsValid)
             return Results.ValidationProblem(validationResult.ToDictionary());
 
-        var enrollment = await enrollmentLookup.GetByIdAsync(request.EnrollmentId, ct);
-        if (enrollment is null)
-            return Results.Problem(
-                detail: $"Enrollment with id '{request.EnrollmentId}' not found.",
-                statusCode: StatusCodes.Status404NotFound
-            );
+        var resolution = await targetResolver.ResolveAsync(request.EnrollmentId, request.GroupId, ct);
+        if (resolution.Error is not null)
+            return resolution.Error;
 
         var teacherExists = await teacherVerifier.ExistsAsync(request.TeacherId, ct);
         if (!teacherExists)
@@ -95,16 +105,6 @@ public static class CreateEndpoint
                 detail: $"Teacher with id '{request.TeacherId}' not found.",
                 statusCode: StatusCodes.Status404NotFound
             );
-
-        if (!enrollment.IsActive)
-        {
-            logger.LogWarning("Enrollment {EnrollmentId} is not active", request.EnrollmentId);
-
-            return Results.Problem(
-                detail: "Lessons can only be scheduled for an active enrollment.",
-                statusCode: StatusCodes.Status409Conflict
-            );
-        }
 
         var scheduledDate = request.ScheduledDate.ToUniversalTime();
 
@@ -124,25 +124,24 @@ public static class CreateEndpoint
             );
         }
 
-        var schedule = Schedule.Create(
-            request.EnrollmentId,
-            request.TeacherId,
-            scheduledDate,
-            request.DurationMinutes,
-            request.Notes
-        );
+        var schedule = request.EnrollmentId is not null
+            ? Schedule.CreateForEnrollment(
+                request.EnrollmentId.Value, request.TeacherId, scheduledDate, request.DurationMinutes, request.Notes)
+            : Schedule.CreateForGroup(
+                request.GroupId!.Value, request.TeacherId, scheduledDate, request.DurationMinutes, request.Notes);
 
         await repository.AddAsync(schedule, ct);
         await unitOfWork.SaveChangesAsync(ct);
 
         logger.LogInformation(
-            "Schedule created: {ScheduleId} for Enrollment {EnrollmentId}",
-            schedule.Id, request.EnrollmentId
+            "Schedule created: {ScheduleId} for Enrollment {EnrollmentId} / Group {GroupId}",
+            schedule.Id, request.EnrollmentId, request.GroupId
         );
 
         var response = new CreateScheduleResponse(
             schedule.Id,
             schedule.EnrollmentId,
+            schedule.GroupId,
             schedule.TeacherId,
             schedule.ScheduledDate,
             schedule.DurationMinutes,

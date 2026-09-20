@@ -15,6 +15,9 @@ public sealed class Enrollment : AuditableEntity
     public EnrollmentStatus Status { get; private set; }
     public string? Comment { get; private set; }
 
+    // Free text: when the student can attend (e.g. "Tue/Thu after 18:00"); used by an admin to build the schedule
+    public string? PreferredSchedule { get; private set; }
+
     public decimal EffectivePrice => DiscountedPrice ?? CoursePrice;
 
     private Enrollment() { }
@@ -27,7 +30,8 @@ public sealed class Enrollment : AuditableEntity
         int durationMonths,
         decimal coursePrice,
         decimal? discountedPrice = null,
-        string? comment = null
+        string? comment = null,
+        string? preferredSchedule = null
     )
     {
         return new Enrollment
@@ -42,6 +46,7 @@ public sealed class Enrollment : AuditableEntity
             DiscountedPrice = discountedPrice,
             Status = EnrollmentStatus.Draft,
             Comment = comment,
+            PreferredSchedule = preferredSchedule,
             CreatedAt = DateTime.UtcNow
         };
     }
@@ -85,6 +90,12 @@ public sealed class Enrollment : AuditableEntity
     public void UpdateComment(string? comment)
     {
         Comment = comment;
+        UpdatedAt = DateTime.UtcNow;
+    }
+
+    public void UpdatePreferredSchedule(string? preferredSchedule)
+    {
+        PreferredSchedule = preferredSchedule;
         UpdatedAt = DateTime.UtcNow;
     }
 

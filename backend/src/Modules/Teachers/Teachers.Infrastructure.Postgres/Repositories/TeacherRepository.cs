@@ -92,4 +92,12 @@ internal sealed class TeacherRepository(TeachersDbContext context) : ITeacherRep
             .AsNoTracking()
             .Include(t => t.SalaryRates)
             .ToListAsync(ct);
+
+    public async Task<IReadOnlyList<Teacher>> GetByIdsAsync(
+        IReadOnlyCollection<Guid> ids,
+        CancellationToken ct = default) =>
+        await context.Teachers
+            .AsNoTracking()
+            .Where(t => ids.Contains(t.Id))
+            .ToListAsync(ct);
 }

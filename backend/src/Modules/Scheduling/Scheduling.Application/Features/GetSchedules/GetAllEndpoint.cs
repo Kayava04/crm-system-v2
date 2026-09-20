@@ -10,7 +10,8 @@ namespace Scheduling.Application.Features.GetSchedules;
 
 public sealed record ScheduleListResponse(
     Guid Id,
-    Guid EnrollmentId,
+    Guid? EnrollmentId,
+    Guid? GroupId,
     Guid TeacherId,
     DateTime ScheduledDate,
     int DurationMinutes,
@@ -32,6 +33,7 @@ public static class GetAllEndpoint
         IScheduleRepository repository,
         CancellationToken ct,
         Guid? enrollmentId = null,
+        Guid? groupId = null,
         Guid? teacherId = null,
         ScheduleStatus? status = null,
         DateTime? dateFrom = null,
@@ -46,6 +48,7 @@ public static class GetAllEndpoint
 
         var (schedules, totalCount) = await repository.GetAllAsync(
             enrollmentId,
+            groupId,
             teacherId,
             status,
             dateFrom?.ToUniversalTime(),
@@ -58,6 +61,7 @@ public static class GetAllEndpoint
         var items = schedules.Select(s => new ScheduleListResponse(
             s.Id,
             s.EnrollmentId,
+            s.GroupId,
             s.TeacherId,
             s.ScheduledDate,
             s.DurationMinutes,

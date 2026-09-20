@@ -116,4 +116,9 @@ internal sealed class StudentRepository(StudentsDbContext context) : IStudentRep
             .GroupBy(s => s.Status)
             .Select(g => new { Status = g.Key, Count = g.Count() })
             .ToDictionaryAsync(x => x.Status, x => x.Count, ct);
+
+    public async Task<Student?> GetByUserIdAsync(Guid userId, CancellationToken ct = default) =>
+        await context.Students
+            .AsNoTracking()
+            .FirstOrDefaultAsync(s => s.UserId == userId, ct);
 }

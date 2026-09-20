@@ -34,7 +34,10 @@ namespace Scheduling.Infrastructure.Postgres.Migrations
                     b.Property<int>("DurationMinutes")
                         .HasColumnType("integer");
 
-                    b.Property<Guid>("EnrollmentId")
+                    b.Property<Guid?>("EnrollmentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("GroupId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Notes")
@@ -58,9 +61,81 @@ namespace Scheduling.Infrastructure.Postgres.Migrations
 
                     b.HasIndex("EnrollmentId");
 
+                    b.HasIndex("GroupId");
+
                     b.HasIndex("TeacherId", "ScheduledDate");
 
-                    b.ToTable("schedules", "scheduling");
+                    b.ToTable("schedules", "scheduling", t =>
+                        {
+                            t.HasCheckConstraint("ck_schedules_target", "(\"EnrollmentId\" IS NOT NULL) <> (\"GroupId\" IS NOT NULL)");
+                        });
+                });
+
+            modelBuilder.Entity("Scheduling.Domain.Entities.StudyGroup", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CourseId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<Guid>("TeacherId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CourseId");
+
+                    b.ToTable("study_groups", "scheduling");
+                });
+
+            modelBuilder.Entity("Scheduling.Domain.Entities.StudyGroupMember", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("EnrollmentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("GroupId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("JoinedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EnrollmentId");
+
+                    b.HasIndex("GroupId", "EnrollmentId")
+                        .IsUnique();
+
+                    b.ToTable("study_group_members", "scheduling");
+                });
+
+            modelBuilder.Entity("Scheduling.Domain.Entities.StudyGroupMember", b =>
+                {
+                    b.HasOne("Scheduling.Domain.Entities.StudyGroup", null)
+                        .WithMany("Members")
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Scheduling.Domain.Entities.StudyGroup", b =>
+                {
+                    b.Navigation("Members");
                 });
 #pragma warning restore 612, 618
         }

@@ -16,7 +16,8 @@ public sealed record CreateEnrollmentRequest(
     Guid CourseId,
     DateOnly StartDate,
     decimal? DiscountedPrice,
-    string? Comment
+    string? Comment,
+    string? PreferredSchedule
 );
 
 public sealed record CreateEnrollmentResponse(
@@ -47,6 +48,10 @@ public sealed class CreateEnrollmentValidator : AbstractValidator<CreateEnrollme
         RuleFor(x => x.DiscountedPrice)
             .GreaterThan(0).WithMessage("Discounted price must be greater than 0.")
             .When(x => x.DiscountedPrice.HasValue);
+
+        RuleFor(x => x.PreferredSchedule)
+            .MaximumLength(500).WithMessage("Preferred schedule must not exceed 500 characters.")
+            .When(x => x.PreferredSchedule is not null);
 
         RuleFor(x => x.Comment)
             .MaximumLength(500).WithMessage("Comment must not exceed 500 characters.")
@@ -116,7 +121,8 @@ public static class CreateEndpoint
             course.DurationMonths,
             course.Price,
             request.DiscountedPrice,
-            request.Comment
+            request.Comment,
+            request.PreferredSchedule?.Trim()
         );
 
         await repository.AddAsync(enrollment, ct);

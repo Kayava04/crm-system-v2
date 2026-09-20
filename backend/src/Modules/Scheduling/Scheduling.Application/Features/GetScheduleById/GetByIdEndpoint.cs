@@ -9,7 +9,8 @@ namespace Scheduling.Application.Features.GetScheduleById;
 
 public sealed record ScheduleDetailResponse(
     Guid Id,
-    Guid EnrollmentId,
+    Guid? EnrollmentId,
+    Guid? GroupId,
     Guid TeacherId,
     DateTime ScheduledDate,
     int DurationMinutes,
@@ -47,6 +48,7 @@ public static class GetByIdEndpoint
         var response = new ScheduleDetailResponse(
             schedule.Id,
             schedule.EnrollmentId,
+            schedule.GroupId,
             schedule.TeacherId,
             schedule.ScheduledDate,
             schedule.DurationMinutes,

@@ -8,15 +8,18 @@ internal sealed class ScheduleConfiguration : IEntityTypeConfiguration<Schedule>
 {
     public void Configure(EntityTypeBuilder<Schedule> builder)
     {
-        builder.ToTable("schedules");
+        builder.ToTable("schedules", t => t.HasCheckConstraint(
+            "ck_schedules_target",
+            "(\"EnrollmentId\" IS NOT NULL) <> (\"GroupId\" IS NOT NULL)"));
 
         builder.HasKey(s => s.Id);
 
         builder.Property(s => s.Id)
             .ValueGeneratedNever();
 
-        builder.Property(s => s.EnrollmentId)
-            .IsRequired();
+        builder.Property(s => s.EnrollmentId);
+
+        builder.Property(s => s.GroupId);
 
         builder.Property(s => s.TeacherId)
             .IsRequired();
@@ -38,6 +41,8 @@ internal sealed class ScheduleConfiguration : IEntityTypeConfiguration<Schedule>
             .IsRequired();
 
         builder.HasIndex(s => s.EnrollmentId);
+
+        builder.HasIndex(s => s.GroupId);
 
         builder.HasIndex(s => new { s.TeacherId, s.ScheduledDate });
 

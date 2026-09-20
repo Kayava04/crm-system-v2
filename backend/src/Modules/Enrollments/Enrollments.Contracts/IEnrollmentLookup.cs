@@ -7,6 +7,16 @@ public interface IEnrollmentLookup
         CancellationToken ct = default
     );
 
+    Task<IReadOnlyList<EnrollmentLookupResult>> GetByIdsAsync(
+        IReadOnlyCollection<Guid> enrollmentIds,
+        CancellationToken ct = default
+    );
+
+    Task<IReadOnlyList<Guid>> GetIdsByStudentAsync(
+        Guid studentId,
+        CancellationToken ct = default
+    );
+
     Task<IReadOnlyList<Guid>> GetStudentIdsAsync(
         IReadOnlyCollection<Guid> enrollmentIds,
         CancellationToken ct = default
@@ -18,5 +28,7 @@ public sealed record EnrollmentLookupResult(
     Guid StudentId,
     Guid CourseId,
     bool IsActive,
-    decimal EffectivePrice
+    decimal EffectivePrice,
+    DateOnly StartDate,
+    DateOnly EndDate
 );

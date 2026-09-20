@@ -2,6 +2,7 @@ using Enrollments.Contracts;
 using Scheduling.Contracts;
 using Students.Application.Abstractions;
 using Students.Contracts;
+using Students.Domain.Entities;
 
 namespace Students.Application;
 
@@ -25,13 +26,32 @@ internal sealed class StudentLookupService(
 
         var students = await repository.GetByIdsAsync(studentIds.ToList(), ct);
 
-        return students
-            .Select(s => new StudentLookupResult(
-                s.Id,
-                string.Join(' ', new[] { s.LastName, s.FirstName, s.MiddleName }
-                    .Where(x => !string.IsNullOrWhiteSpace(x))),
-                s.Email,
-                s.PhoneNumber))
-            .ToList();
+        return students.Select(Map).ToList();
     }
+
+    public async Task<StudentLookupResult?> GetByUserIdAsync(Guid userId, CancellationToken ct = default)
+    {
+        var student = await repository.GetByUserIdAsync(userId, ct);
+
+        return student is null ? null : Map(student);
+    }
+
+    public async Task<IReadOnlyList<StudentLookupResult>> GetByIdsAsync(
+        IReadOnlyCollection<Guid> studentIds,
+        CancellationToken ct = default)
+    {
+        if (studentIds.Count == 0)
+            return [];
+
+        var students = await repository.GetByIdsAsync(studentIds, ct);
+
+        return students.Select(Map).ToList();
+    }
+
+    private static StudentLookupResult Map(Student s) => new(
+        s.Id,
+        string.Join(' ', new[] { s.LastName, s.FirstName, s.MiddleName }
+            .Where(x => !string.IsNullOrWhiteSpace(x))),
+        s.Email,
+        s.PhoneNumber);
 }

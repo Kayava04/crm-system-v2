@@ -5,7 +5,9 @@ namespace Scheduling.Domain.Entities;
 
 public sealed class Schedule : AuditableEntity
 {
-    public Guid EnrollmentId { get; private set; }
+    // A lesson belongs either to one enrollment (individual) or to a study group (group lesson)
+    public Guid? EnrollmentId { get; private set; }
+    public Guid? GroupId { get; private set; }
     public Guid TeacherId { get; private set; }
     public DateTime ScheduledDate { get; private set; }
     public int DurationMinutes { get; private set; }
@@ -19,18 +21,36 @@ public sealed class Schedule : AuditableEntity
 
     private Schedule() { }
 
-    public static Schedule Create(
+    public static Schedule CreateForEnrollment(
         Guid enrollmentId,
         Guid teacherId,
         DateTime scheduledDate,
         int durationMinutes,
         string? notes = null
+    ) => Create(enrollmentId, null, teacherId, scheduledDate, durationMinutes, notes);
+
+    public static Schedule CreateForGroup(
+        Guid groupId,
+        Guid teacherId,
+        DateTime scheduledDate,
+        int durationMinutes,
+        string? notes = null
+    ) => Create(null, groupId, teacherId, scheduledDate, durationMinutes, notes);
+
+    private static Schedule Create(
+        Guid? enrollmentId,
+        Guid? groupId,
+        Guid teacherId,
+        DateTime scheduledDate,
+        int durationMinutes,
+        string? notes
     )
     {
         return new Schedule
         {
             Id = Guid.NewGuid(),
             EnrollmentId = enrollmentId,
+            GroupId = groupId,
             TeacherId = teacherId,
             ScheduledDate = NormalizeToUtc(scheduledDate),
             DurationMinutes = durationMinutes,

@@ -54,6 +54,10 @@ namespace Enrollments.Infrastructure.Postgres.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)");
 
+                    b.Property<string>("PreferredSchedule")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
                     b.Property<DateOnly>("StartDate")
                         .HasColumnType("date");
 

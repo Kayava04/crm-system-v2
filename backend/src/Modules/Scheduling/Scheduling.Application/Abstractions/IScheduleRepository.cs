@@ -14,8 +14,41 @@ public interface IScheduleRepository : IRepository<Schedule>
         CancellationToken ct = default
     );
 
+    Task AddRangeAsync(IReadOnlyCollection<Schedule> schedules, CancellationToken ct = default);
+
+    Task<IReadOnlyList<Schedule>> GetOpenByTeacherInRangeAsync(
+        Guid teacherId,
+        DateTime from,
+        DateTime to,
+        CancellationToken ct = default
+    );
+
+    // Lessons that are held or still to be held (everything except Cancelled)
+    Task<int> CountActiveByTargetAsync(
+        Guid? enrollmentId,
+        Guid? groupId,
+        CancellationToken ct = default
+    );
+
+    Task<IReadOnlyList<Schedule>> GetFutureOpenAsync(
+        Guid? enrollmentId,
+        Guid? groupId,
+        DateTime from,
+        CancellationToken ct = default
+    );
+
+    Task<IReadOnlyList<Schedule>> GetForCalendarAsync(
+        Guid? teacherId,
+        IReadOnlyCollection<Guid> enrollmentIds,
+        IReadOnlyCollection<Guid> groupIds,
+        DateTime from,
+        DateTime to,
+        CancellationToken ct = default
+    );
+
     Task<(IReadOnlyList<Schedule> Schedules, int TotalCount)> GetAllAsync(
         Guid? enrollmentId,
+        Guid? groupId,
         Guid? teacherId,
         ScheduleStatus? status,
         DateTime? dateFrom,

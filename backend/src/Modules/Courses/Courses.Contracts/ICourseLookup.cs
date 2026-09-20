@@ -6,11 +6,20 @@ public interface ICourseLookup
         Guid courseId,
         CancellationToken ct = default
     );
+
+    Task<IReadOnlyList<CourseLookupResult>> GetByIdsAsync(
+        IReadOnlyCollection<Guid> courseIds,
+        CancellationToken ct = default
+    );
 }
 
 public sealed record CourseLookupResult(
     Guid Id,
     string Name,
     decimal Price,
-    int DurationMonths
+    int DurationMonths,
+    int LessonsCount,
+    int LessonsPerWeek,
+    bool IsGroup,
+    bool IsOnline
 );

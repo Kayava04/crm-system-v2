@@ -8,6 +8,8 @@ internal sealed class SchedulingDbContext(DbContextOptions<SchedulingDbContext> 
     : DbContext(options), ISchedulingUnitOfWork
 {
     public DbSet<Schedule> Schedules => Set<Schedule>();
+    public DbSet<StudyGroup> StudyGroups => Set<StudyGroup>();
+    public DbSet<StudyGroupMember> StudyGroupMembers => Set<StudyGroupMember>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

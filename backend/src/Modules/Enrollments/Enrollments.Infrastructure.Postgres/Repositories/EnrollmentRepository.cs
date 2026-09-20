@@ -101,4 +101,19 @@ internal sealed class EnrollmentRepository(EnrollmentsDbContext context) : IEnro
             .GroupBy(e => e.CourseId)
             .Select(g => new { CourseId = g.Key, Count = g.Count() })
             .ToDictionaryAsync(x => x.CourseId, x => x.Count, ct);
+
+    public async Task<IReadOnlyList<Enrollment>> GetByIdsAsync(
+        IReadOnlyCollection<Guid> ids,
+        CancellationToken ct = default) =>
+        await context.Enrollments
+            .AsNoTracking()
+            .Where(e => ids.Contains(e.Id))
+            .ToListAsync(ct);
+
+    public async Task<IReadOnlyList<Guid>> GetIdsByStudentAsync(Guid studentId, CancellationToken ct = default) =>
+        await context.Enrollments
+            .AsNoTracking()
+            .Where(e => e.StudentId == studentId)
+            .Select(e => e.Id)
+            .ToListAsync(ct);
 }

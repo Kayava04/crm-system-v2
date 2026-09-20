@@ -16,6 +16,10 @@ public interface IEnrollmentRepository : IRepository<Enrollment>
 
     Task<IReadOnlyDictionary<Guid, int>> GetCountsByCourseAsync(CancellationToken ct = default);
 
+    Task<IReadOnlyList<Enrollment>> GetByIdsAsync(IReadOnlyCollection<Guid> ids, CancellationToken ct = default);
+
+    Task<IReadOnlyList<Guid>> GetIdsByStudentAsync(Guid studentId, CancellationToken ct = default);
+
     Task<IReadOnlyList<Guid>> GetStudentIdsByEnrollmentIdsAsync(
         IReadOnlyCollection<Guid> enrollmentIds,
         CancellationToken ct = default

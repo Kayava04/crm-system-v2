@@ -19,6 +19,7 @@ public sealed record EnrollmentDetailResponse(
     decimal EffectivePrice,
     EnrollmentStatus Status,
     string? Comment,
+    string? PreferredSchedule,
     DateTime CreatedAt,
     DateTime? UpdatedAt
 );
@@ -60,6 +61,7 @@ public static class GetByIdEndpoint
             enrollment.EffectivePrice,
             enrollment.Status,
             enrollment.Comment,
+            enrollment.PreferredSchedule,
             enrollment.CreatedAt,
             enrollment.UpdatedAt
         );

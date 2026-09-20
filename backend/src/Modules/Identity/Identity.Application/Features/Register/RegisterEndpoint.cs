@@ -18,7 +18,10 @@ public sealed record RegisterRequest(
     SystemRole Role,
     List<Guid>? PermissionIds,
     string? ProfileType,
-    Guid? ProfileId
+    Guid? ProfileId,
+    string? FirstName = null,
+    string? LastName = null,
+    string? PhoneNumber = null
 );
 
 public sealed record RegisterResponse(
@@ -39,6 +42,12 @@ public sealed class RegisterValidator : AbstractValidator<RegisterRequest>
             .IsInEnum().WithMessage("Invalid role.")
             .NotEqual(SystemRole.SuperAdmin)
             .WithMessage("SuperAdmin cannot be created through registration.");
+
+        RuleFor(x => x.FirstName).MaximumLength(100).WithMessage("First name must not exceed 100 characters.");
+        RuleFor(x => x.LastName).MaximumLength(100).WithMessage("Last name must not exceed 100 characters.");
+        RuleFor(x => x.PhoneNumber)
+            .Matches(@"^\+?[0-9\s\-\(\)]{7,20}$").WithMessage("Invalid phone number format.")
+            .When(x => !string.IsNullOrWhiteSpace(x.PhoneNumber));
 
         RuleFor(x => x.ProfileId)
             .NotNull()
@@ -130,6 +139,12 @@ public static class RegisterEndpoint
             {
                 var created = await identityService.CreateUserAsync(
                     request.Email, temporaryPassword, mustChangePassword: true, token);
+
+                if (request.FirstName is not null || request.LastName is not null || request.PhoneNumber is not null)
+                {
+                    created.SetContact(request.FirstName, request.LastName, request.PhoneNumber);
+                    await userRepository.UpdateAsync(created, token);
+                }
 
                 await userRepository.AssignRoleAsync(created.Id, role.Id, token);
 

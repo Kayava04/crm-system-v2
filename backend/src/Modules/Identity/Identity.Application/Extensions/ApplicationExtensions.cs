@@ -9,6 +9,7 @@ using Identity.Application.Features.Login;
 using Identity.Application.Features.Me;
 using Identity.Application.Features.Refresh;
 using Identity.Application.Features.Register;
+using Identity.Application.Features.UpdateMyContact;
 using Identity.Application.Features.UploadMyPhoto;
 using Identity.Application.Services;
 using Identity.Application.Features.ResetPassword;
@@ -43,6 +44,7 @@ public static class ApplicationExtensions
         RegisterEndpoint.Map(group);
         ChangePasswordEndpoint.Map(group);
         MeEndpoint.Map(group);
+        UpdateMyContactEndpoint.Map(group);
         UploadMyPhotoEndpoint.Map(group);
         GetMyPhotoEndpoint.Map(group);
         DeleteMyPhotoEndpoint.Map(group);

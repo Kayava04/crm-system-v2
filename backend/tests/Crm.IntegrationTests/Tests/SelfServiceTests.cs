@@ -69,6 +69,63 @@ public class SelfServiceTests(CrmApiFactory factory) : ApiTest(factory)
         Assert.Null(me.Json!["profile"]);
     }
 
+    // ------------------------------------------------------------------ contact details of administrators
+    [Fact]
+    public async Task An_administrator_registered_with_contact_details_sees_them_in_me()
+    {
+        var email = TestData.Email("manager");
+        var registered = (await Api.PostAsync("/api/auth/register", new
+        {
+            email, role = "Admin", firstName = " Olena ", lastName = "Kovalenko", phoneNumber = "+380501234567"
+        }, Admin)).Expect(201);
+        var token = await Data.LoginAsync(email, registered["temporaryPassword"].GetValue<string>());
+
+        var me = (await Api.GetAsync("/api/auth/me", token)).Expect(200);
+
+        Assert.Null(me.Json!["profile"]);
+        Assert.Equal("Olena", me["contact"]!["firstName"]!.GetValue<string>());
+        Assert.Equal("Olena Kovalenko", me["contact"]!["fullName"]!.GetValue<string>());
+        Assert.Equal("+380501234567", me["contact"]!["phoneNumber"]!.GetValue<string>());
+        Assert.Equal(["Admin"], me["roles"].AsArray().Select(r => r!.GetValue<string>()));
+    }
+
+    [Fact]
+    public async Task An_administrator_fills_in_and_changes_their_own_contact_details()
+    {
+        var admin = await Data.UserAsync("Admin");
+
+        var empty = (await Api.GetAsync("/api/auth/me", admin.Token)).Expect(200);
+        Assert.Null(empty["contact"]!["fullName"]);
+
+        (await Api.PutAsync("/api/auth/me/contact", new { firstName = "Ivan", lastName = "Petrenko", phoneNumber = "+38 (050) 111-22-33" }, admin.Token)).Expect(200);
+        (await Api.PutAsync("/api/auth/me/contact", new { firstName = "Ivan", lastName = "Melnyk" }, admin.Token)).Expect(200);   // the phone is optional and is cleared
+
+        var me = (await Api.GetAsync("/api/auth/me", admin.Token)).Expect(200);
+        Assert.Equal("Ivan Melnyk", me["contact"]!["fullName"]!.GetValue<string>());
+        Assert.Null(me["contact"]!["phoneNumber"]);
+
+        // the super admin has no record either and can fill the details in
+        (await Api.PutAsync("/api/auth/me/contact", new { firstName = "Root", lastName = "Admin" }, Admin)).Expect(200);
+    }
+
+    [Fact]
+    public async Task Contact_details_are_validated_and_belong_to_accounts_without_a_student_or_teacher_record()
+    {
+        var admin = await Data.UserAsync("Admin");
+        var student = await Data.StudentUserAsync(await Data.StudentAsync());
+        var teacher = await Data.TeacherUserAsync(await Data.TeacherAsync());
+
+        (await Api.PutAsync("/api/auth/me/contact", new { firstName = "", lastName = "X" }, admin.Token)).Expect(400);
+        (await Api.PutAsync("/api/auth/me/contact", new { firstName = "X", lastName = new string('a', 101) }, admin.Token)).Expect(400);
+        (await Api.PutAsync("/api/auth/me/contact", new { firstName = "X", lastName = "Y", phoneNumber = "call me" }, admin.Token)).Expect(400);
+        (await Api.PostAsync("/api/auth/register", new { email = TestData.Email(), role = "Admin", phoneNumber = "abc" }, Admin)).Expect(400);
+
+        // students and teachers keep their details in their own record: no second copy
+        (await Api.PutAsync("/api/auth/me/contact", new { firstName = "A", lastName = "B" }, student.Token)).Expect(409);
+        (await Api.PutAsync("/api/auth/me/contact", new { firstName = "A", lastName = "B" }, teacher.Token)).Expect(409);
+        (await Api.PutAsync("/api/auth/me/contact", new { firstName = "A", lastName = "B" })).Expect(401);
+    }
+
     // ------------------------------------------------------------------ own profile
     [Fact]
     public async Task A_student_reads_their_own_profile_and_only_a_student_can()

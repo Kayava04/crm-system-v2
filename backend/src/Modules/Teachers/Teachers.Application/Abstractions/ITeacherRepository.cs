@@ -10,6 +10,7 @@ public interface ITeacherRepository : IRepository<Teacher>
     Task<Teacher?> GetByUserIdAsync(Guid userId, CancellationToken ct = default);
     Task<IReadOnlyList<Teacher>> GetAllWithSalaryRatesAsync(CancellationToken ct = default);
     Task<IReadOnlyList<Teacher>> GetByIdsAsync(IReadOnlyCollection<Guid> ids, CancellationToken ct = default);
+    Task<bool> IsAvailableByIdAsync(Guid id, CancellationToken ct = default);
     Task<bool> ExistsByIdAsync(Guid id, CancellationToken ct = default);
     Task<(IReadOnlyList<Teacher> Teachers, int TotalCount)> GetAllAsync(
         string? search,

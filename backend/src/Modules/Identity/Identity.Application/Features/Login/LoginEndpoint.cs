@@ -41,7 +41,8 @@ public static class LoginEndpoint
              .WithSummary("Authenticate a user and issue an access token")
              .Produces<LoginResponse>(StatusCodes.Status200OK)
              .ProducesValidationProblem()
-             .ProducesProblem(StatusCodes.Status401Unauthorized);
+             .ProducesProblem(StatusCodes.Status401Unauthorized)
+             .ProducesProblem(StatusCodes.Status403Forbidden);
     }
 
     private static async Task<IResult> Handle(
@@ -78,6 +79,15 @@ public static class LoginEndpoint
             return Results.Problem(
                 detail: "Invalid email or password.",
                 statusCode: StatusCodes.Status401Unauthorized);
+        }
+
+        if (!user.IsActive)
+        {
+            logger.LogWarning("Login refused: account {Email} is deactivated", request.Email);
+
+            return Results.Problem(
+                detail: "Account is deactivated. Contact the administrator.",
+                statusCode: StatusCodes.Status403Forbidden);
         }
 
         var roles = await userRepository.GetUserRolesAsync(user.Id, ct);

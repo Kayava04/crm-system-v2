@@ -20,7 +20,12 @@ internal sealed class StudentLookupService(
         if (enrollmentIds.Count == 0)
             return [];
 
-        var studentIds = await enrollmentLookup.GetStudentIdsAsync(enrollmentIds.ToList(), ct);
+        var studentIds = (await enrollmentLookup.GetByIdsAsync(enrollmentIds.ToList(), ct))
+            .Where(e => e.IsActive)
+            .Select(e => e.StudentId)
+            .Distinct()
+            .ToList();
+
         if (studentIds.Count == 0)
             return [];
 

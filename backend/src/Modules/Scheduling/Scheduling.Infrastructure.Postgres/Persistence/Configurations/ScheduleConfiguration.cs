@@ -34,6 +34,10 @@ internal sealed class ScheduleConfiguration : IEntityTypeConfiguration<Schedule>
             .IsRequired()
             .HasConversion<string>();
 
+        builder.Property(s => s.CancellationReason)
+            .IsRequired()
+            .HasConversion<string>();
+
         builder.Property(s => s.Notes)
             .HasMaxLength(500);
 

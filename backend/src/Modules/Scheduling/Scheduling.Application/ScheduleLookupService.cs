@@ -12,6 +12,9 @@ internal sealed class ScheduleLookupService(IScheduleRepository repository) : IS
         CancellationToken ct = default) =>
         await repository.CountCompletedByTeacherAsync(teacherId, from, to, ct);
 
+    public async Task<bool> HasTeacherHistoryAsync(Guid teacherId, CancellationToken ct = default) =>
+        await repository.HasTeacherHistoryAsync(teacherId, ct);
+
     public async Task<IReadOnlyList<Guid>> GetEnrollmentIdsByTeacherAsync(
         Guid teacherId,
         CancellationToken ct = default) =>

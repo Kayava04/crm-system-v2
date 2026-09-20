@@ -18,6 +18,13 @@ public interface IEnrollmentRepository : IRepository<Enrollment>
 
     Task<IReadOnlyList<Enrollment>> GetByIdsAsync(IReadOnlyCollection<Guid> ids, CancellationToken ct = default);
 
+    // Tracked, for status changes
+    Task<IReadOnlyList<Enrollment>> GetActiveByStudentAsync(Guid studentId, CancellationToken ct = default);
+
+    Task<IReadOnlyList<Enrollment>> GetAutoSuspendedByStudentAsync(Guid studentId, CancellationToken ct = default);
+
+    Task<IReadOnlyList<Enrollment>> GetByStudentAsync(Guid studentId, CancellationToken ct = default);
+
     Task<IReadOnlyList<Guid>> GetIdsByStudentAsync(Guid studentId, CancellationToken ct = default);
 
     Task<IReadOnlyList<Guid>> GetStudentIdsByEnrollmentIdsAsync(

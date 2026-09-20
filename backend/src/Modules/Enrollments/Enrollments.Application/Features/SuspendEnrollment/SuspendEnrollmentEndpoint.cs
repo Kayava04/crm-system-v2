@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
+using Scheduling.Contracts;
 
 namespace Enrollments.Application.Features.SuspendEnrollment;
 
@@ -17,8 +18,8 @@ public static class SuspendEnrollmentEndpoint
         group.MapPut("/{id:guid}/suspend", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanManageEnrollments))
              .WithName("SuspendEnrollment")
-             .WithSummary("Suspend an enrollment")
-             .Produces(StatusCodes.Status204NoContent)
+             .WithSummary("Suspend an enrollment and cancel its upcoming lessons")
+             .Produces<EnrollmentStatusChangeResponse>(StatusCodes.Status200OK)
              .ProducesProblem(StatusCodes.Status404NotFound)
              .ProducesProblem(StatusCodes.Status409Conflict);
     }
@@ -27,6 +28,7 @@ public static class SuspendEnrollmentEndpoint
         Guid id,
         IEnrollmentRepository repository,
         IEnrollmentUnitOfWork unitOfWork,
+        IScheduleLifecycle scheduleLifecycle,
         ILogger<SuspendEnrollmentRequest> logger,
         CancellationToken ct
     )
@@ -51,6 +53,19 @@ public static class SuspendEnrollmentEndpoint
 
         logger.LogInformation("Enrollment suspended: {EnrollmentId}", id);
 
-        return Results.NoContent();
+        // The enrollment is already saved; a calendar failure must not hide that, so it is reported instead
+        try
+        {
+            var cancelled = await scheduleLifecycle.CancelForEnrollmentAsync(id, ct);
+
+            return Results.Ok(new EnrollmentStatusChangeResponse(cancelled, 0, 0, 0, null));
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Enrollment {EnrollmentId} status changed but the calendar update failed", id);
+
+            return Results.Ok(new EnrollmentStatusChangeResponse(
+                0, 0, 0, 0, "The enrollment was updated, but its calendar could not be updated. Check the lessons manually."));
+        }
     }
 }

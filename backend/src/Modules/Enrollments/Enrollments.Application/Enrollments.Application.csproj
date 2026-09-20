@@ -17,6 +17,7 @@
     <ProjectReference Include="../../Identity/Identity.Contracts/Identity.Contracts.csproj" />
     <ProjectReference Include="../../Courses/Courses.Contracts/Courses.Contracts.csproj" />
     <ProjectReference Include="../../Students/Students.Contracts/Students.Contracts.csproj" />
+    <ProjectReference Include="../../Scheduling/Scheduling.Contracts/Scheduling.Contracts.csproj" />
   </ItemGroup>
 
 </Project>

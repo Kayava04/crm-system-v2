@@ -64,9 +64,9 @@ public static class RefreshEndpoint
         }
 
         var user = await userRepository.GetByIdAsync(existingToken.UserId, ct);
-        if (user is null)
+        if (user is null || !user.IsActive)
         {
-            logger.LogWarning("Refresh failed: user {UserId} not found", existingToken.UserId);
+            logger.LogWarning("Refresh failed: user {UserId} not found or deactivated", existingToken.UserId);
 
             return Results.Problem(
                 detail: "Invalid or expired refresh token.",

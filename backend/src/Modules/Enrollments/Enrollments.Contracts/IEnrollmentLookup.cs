@@ -12,6 +12,11 @@ public interface IEnrollmentLookup
         CancellationToken ct = default
     );
 
+    Task<IReadOnlyList<EnrollmentLookupResult>> GetByStudentAsync(
+        Guid studentId,
+        CancellationToken ct = default
+    );
+
     Task<IReadOnlyList<Guid>> GetIdsByStudentAsync(
         Guid studentId,
         CancellationToken ct = default

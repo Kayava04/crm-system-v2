@@ -18,6 +18,10 @@ public sealed class Enrollment : AuditableEntity
     // Free text: when the student can attend (e.g. "Tue/Thu after 18:00"); used by an admin to build the schedule
     public string? PreferredSchedule { get; private set; }
 
+    // True when the system paused this enrollment because the student became inactive.
+    // Only such enrollments are resumed automatically when the student returns.
+    public bool AutoSuspended { get; private set; }
+
     public decimal EffectivePrice => DiscountedPrice ?? CoursePrice;
 
     private Enrollment() { }
@@ -54,24 +58,28 @@ public sealed class Enrollment : AuditableEntity
     public void Activate()
     {
         Status = EnrollmentStatus.Active;
+        AutoSuspended = false;
         UpdatedAt = DateTime.UtcNow;
     }
 
-    public void Suspend()
+    public void Suspend(bool bySystem = false)
     {
         Status = EnrollmentStatus.Suspended;
+        AutoSuspended = bySystem;
         UpdatedAt = DateTime.UtcNow;
     }
 
     public void Complete()
     {
         Status = EnrollmentStatus.Completed;
+        AutoSuspended = false;
         UpdatedAt = DateTime.UtcNow;
     }
 
     public void Terminate()
     {
         Status = EnrollmentStatus.Terminated;
+        AutoSuspended = false;
         UpdatedAt = DateTime.UtcNow;
     }
 

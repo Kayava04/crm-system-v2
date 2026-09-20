@@ -96,6 +96,12 @@ public static class CreateEndpoint
                 statusCode: StatusCodes.Status404NotFound
             );
 
+        if (!await studentVerifier.IsActiveAsync(request.StudentId, ct))
+            return Results.Problem(
+                detail: "The student is not active and cannot be enrolled.",
+                statusCode: StatusCodes.Status409Conflict
+            );
+
         var course = await courseLookup.GetByIdAsync(request.CourseId, ct);
         if (course is null)
             return Results.Problem(

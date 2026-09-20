@@ -48,6 +48,9 @@ internal sealed class EnrollmentConfiguration : IEntityTypeConfiguration<Enrollm
         builder.Property(e => e.Comment)
             .HasMaxLength(500);
 
+        builder.Property(e => e.AutoSuspended)
+            .IsRequired();
+
         builder.Property(e => e.PreferredSchedule)
             .HasMaxLength(500);
 

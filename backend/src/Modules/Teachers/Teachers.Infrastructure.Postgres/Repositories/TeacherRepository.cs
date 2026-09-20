@@ -100,4 +100,10 @@ internal sealed class TeacherRepository(TeachersDbContext context) : ITeacherRep
             .AsNoTracking()
             .Where(t => ids.Contains(t.Id))
             .ToListAsync(ct);
+
+    public async Task<bool> IsAvailableByIdAsync(Guid id, CancellationToken ct = default) =>
+        await context.Teachers
+            .AsNoTracking()
+            .AnyAsync(t => t.Id == id
+                && (t.Status == TeacherStatus.Probation || t.Status == TeacherStatus.Employed), ct);
 }

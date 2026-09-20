@@ -106,6 +106,12 @@ public static class CreateEndpoint
                 statusCode: StatusCodes.Status404NotFound
             );
 
+        if (!await teacherVerifier.IsAvailableAsync(request.TeacherId, ct))
+            return Results.Problem(
+                detail: "Teacher is not active and cannot be given lessons.",
+                statusCode: StatusCodes.Status409Conflict
+            );
+
         var scheduledDate = request.ScheduledDate.ToUniversalTime();
 
         var hasConflict = await repository.HasTeacherConflictAsync(

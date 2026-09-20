@@ -72,6 +72,13 @@ public static class UpdateGroupEndpoint
                 );
         }
 
+        if (request.TeacherId != studyGroup.TeacherId
+            && !await teacherVerifier.IsAvailableAsync(request.TeacherId, ct))
+            return Results.Problem(
+                detail: "Teacher is not active and cannot lead a group.",
+                statusCode: StatusCodes.Status409Conflict
+            );
+
         studyGroup.Update(request.Name.Trim(), request.TeacherId);
 
         await repository.UpdateAsync(studyGroup, ct);

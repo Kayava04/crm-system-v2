@@ -16,6 +16,7 @@ using Scheduling.Application.Features.GetGroups;
 using Scheduling.Application.Features.GetMyCalendar;
 using Scheduling.Application.Features.GetScheduleById;
 using Scheduling.Application.Features.GetSchedules;
+using Scheduling.Application.Features.ReassignTeacher;
 using Scheduling.Application.Features.RemoveGroupMember;
 using Scheduling.Application.Features.RescheduleSchedule;
 using Scheduling.Application.Features.UpdateGroup;
@@ -35,6 +36,7 @@ public static class ApplicationExtensions
         services.AddValidatorsFromAssembly(typeof(ApplicationExtensions).Assembly);
 
         services.AddScoped<IScheduleLookup, ScheduleLookupService>();
+        services.AddScoped<IScheduleLifecycle, ScheduleLifecycleService>();
         services.AddScoped<LessonTargetResolver>();
 
         // Lessons are agreed in one school time zone (Scheduling:TimeZone) and stored in UTC
@@ -56,6 +58,7 @@ public static class ApplicationExtensions
 
         GenerateScheduleEndpoint.Map(group);
         CancelFutureScheduleEndpoint.Map(group);
+        ReassignTeacherEndpoint.Map(group);
 
         CompleteScheduleEndpoint.Map(group);
         CancelScheduleEndpoint.Map(group);

@@ -27,6 +27,7 @@ public static class ApplicationExtensions
         services.AddValidatorsFromAssembly(typeof(ApplicationExtensions).Assembly);
 
         services.AddScoped<IEnrollmentLookup, EnrollmentLookupService>();
+        services.AddScoped<IEnrollmentLifecycle, EnrollmentLifecycleService>();
 
         services.AddScoped<IEnrollmentStatistics, EnrollmentStatisticsService>();
 

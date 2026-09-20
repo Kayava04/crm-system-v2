@@ -32,6 +32,12 @@ public sealed class StudyGroup : AuditableEntity
         UpdatedAt = DateTime.UtcNow;
     }
 
+    public void ChangeTeacher(Guid teacherId)
+    {
+        TeacherId = teacherId;
+        UpdatedAt = DateTime.UtcNow;
+    }
+
     public bool HasMember(Guid enrollmentId) => _members.Any(m => m.EnrollmentId == enrollmentId);
 
     public StudyGroupMember AddMember(Guid enrollmentId)

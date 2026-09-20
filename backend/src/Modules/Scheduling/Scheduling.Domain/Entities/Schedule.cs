@@ -12,6 +12,7 @@ public sealed class Schedule : AuditableEntity
     public DateTime ScheduledDate { get; private set; }
     public int DurationMinutes { get; private set; }
     public ScheduleStatus Status { get; private set; }
+    public CancellationReason CancellationReason { get; private set; }
     public string? Notes { get; private set; }
 
     public DateTime EndDate => ScheduledDate.AddMinutes(DurationMinutes);
@@ -55,6 +56,7 @@ public sealed class Schedule : AuditableEntity
             ScheduledDate = NormalizeToUtc(scheduledDate),
             DurationMinutes = durationMinutes,
             Status = ScheduleStatus.Scheduled,
+            CancellationReason = CancellationReason.None,
             Notes = notes,
             CreatedAt = DateTime.UtcNow
         };
@@ -74,9 +76,30 @@ public sealed class Schedule : AuditableEntity
         UpdatedAt = DateTime.UtcNow;
     }
 
-    public void Cancel()
+    public void Cancel(CancellationReason reason = CancellationReason.Manual)
     {
         Status = ScheduleStatus.Cancelled;
+        CancellationReason = reason;
+        UpdatedAt = DateTime.UtcNow;
+    }
+
+    // Undoes a cancellation made by the system (teacher or student became inactive); manual ones stay cancelled
+    public bool RestoreIfSystemCancelled()
+    {
+        if (Status != ScheduleStatus.Cancelled
+            || CancellationReason is not (CancellationReason.TeacherUnavailable or CancellationReason.EnrollmentInactive))
+            return false;
+
+        Status = ScheduleStatus.Scheduled;
+        CancellationReason = CancellationReason.None;
+        UpdatedAt = DateTime.UtcNow;
+
+        return true;
+    }
+
+    public void ReassignTeacher(Guid teacherId)
+    {
+        TeacherId = teacherId;
         UpdatedAt = DateTime.UtcNow;
     }
 

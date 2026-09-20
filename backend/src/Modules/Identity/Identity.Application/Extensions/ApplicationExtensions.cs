@@ -1,4 +1,5 @@
 using FluentValidation;
+using Identity.Contracts;
 using Identity.Application.Features.ChangePassword;
 using Identity.Application.Features.GetPermissions;
 using Identity.Application.Features.GetRoles;
@@ -19,6 +20,8 @@ public static class ApplicationExtensions
     {
         // Register FluentValidation
         services.AddValidatorsFromAssembly(typeof(ApplicationExtensions).Assembly);
+
+        services.AddScoped<IUserAccountManager, UserAccountManager>();
 
         return services;
     }

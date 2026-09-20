@@ -110,6 +110,22 @@ internal sealed class EnrollmentRepository(EnrollmentsDbContext context) : IEnro
             .Where(e => ids.Contains(e.Id))
             .ToListAsync(ct);
 
+    public async Task<IReadOnlyList<Enrollment>> GetActiveByStudentAsync(Guid studentId, CancellationToken ct = default) =>
+        await context.Enrollments
+            .Where(e => e.StudentId == studentId && e.Status == EnrollmentStatus.Active)
+            .ToListAsync(ct);
+
+    public async Task<IReadOnlyList<Enrollment>> GetAutoSuspendedByStudentAsync(Guid studentId, CancellationToken ct = default) =>
+        await context.Enrollments
+            .Where(e => e.StudentId == studentId && e.Status == EnrollmentStatus.Suspended && e.AutoSuspended)
+            .ToListAsync(ct);
+
+    public async Task<IReadOnlyList<Enrollment>> GetByStudentAsync(Guid studentId, CancellationToken ct = default) =>
+        await context.Enrollments
+            .AsNoTracking()
+            .Where(e => e.StudentId == studentId)
+            .ToListAsync(ct);
+
     public async Task<IReadOnlyList<Guid>> GetIdsByStudentAsync(Guid studentId, CancellationToken ct = default) =>
         await context.Enrollments
             .AsNoTracking()

@@ -102,6 +102,35 @@ internal sealed class ScheduleRepository(SchedulingDbContext context) : ISchedul
                     || (groupId != null && s.GroupId == groupId)))
             .ToListAsync(ct);
 
+    public async Task<IReadOnlyList<Schedule>> GetFutureOpenByTeacherAsync(
+        Guid teacherId,
+        DateTime from,
+        CancellationToken ct = default) =>
+        await context.Schedules
+            .Where(s => s.TeacherId == teacherId
+                && (s.Status == ScheduleStatus.Scheduled || s.Status == ScheduleStatus.Rescheduled)
+                && s.ScheduledDate > from)
+            .ToListAsync(ct);
+
+    public async Task<IReadOnlyList<Schedule>> GetFutureCancelledAsync(
+        Guid? enrollmentId,
+        Guid? teacherId,
+        CancellationReason reason,
+        DateTime from,
+        CancellationToken ct = default) =>
+        await context.Schedules
+            .Where(s => s.Status == ScheduleStatus.Cancelled
+                && s.CancellationReason == reason
+                && s.ScheduledDate > from
+                && (enrollmentId == null || s.EnrollmentId == enrollmentId)
+                && (teacherId == null || s.TeacherId == teacherId))
+            .OrderBy(s => s.ScheduledDate)
+            .ToListAsync(ct);
+
+    public async Task<bool> HasTeacherHistoryAsync(Guid teacherId, CancellationToken ct = default) =>
+        await context.Schedules.AsNoTracking().AnyAsync(s => s.TeacherId == teacherId, ct)
+        || await context.StudyGroups.AsNoTracking().AnyAsync(g => g.TeacherId == teacherId, ct);
+
     public async Task<IReadOnlyList<Schedule>> GetForCalendarAsync(
         Guid? teacherId,
         IReadOnlyCollection<Guid> enrollmentIds,

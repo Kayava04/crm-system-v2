@@ -13,6 +13,7 @@ public sealed record GroupMemberResponse(
     Guid EnrollmentId,
     Guid StudentId,
     string StudentName,
+    bool IsActive,
     DateTime JoinedAt
 );
 
@@ -68,6 +69,7 @@ public static class GetGroupByIdEndpoint
                     m.EnrollmentId,
                     enrollment?.StudentId ?? Guid.Empty,
                     student?.FullName ?? "Unknown student",
+                    enrollment?.IsActive ?? false,
                     m.JoinedAt);
             })
             .OrderBy(m => m.StudentName)

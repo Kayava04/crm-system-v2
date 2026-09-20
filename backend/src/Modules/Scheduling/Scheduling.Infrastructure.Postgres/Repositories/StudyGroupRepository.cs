@@ -63,6 +63,11 @@ internal sealed class StudyGroupRepository(SchedulingDbContext context) : IStudy
         return (groups, totalCount);
     }
 
+    public async Task<IReadOnlyList<StudyGroup>> GetByTeacherAsync(Guid teacherId, CancellationToken ct = default) =>
+        await context.StudyGroups
+            .Where(g => g.TeacherId == teacherId)
+            .ToListAsync(ct);
+
     public async Task<IReadOnlyList<StudyGroup>> GetByIdsAsync(
         IReadOnlyCollection<Guid> ids,
         CancellationToken ct = default) =>

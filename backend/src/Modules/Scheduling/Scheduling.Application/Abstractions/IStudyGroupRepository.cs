@@ -13,6 +13,11 @@ public interface IStudyGroupRepository : IRepository<StudyGroup>
         CancellationToken ct = default
     );
 
+    Task<IReadOnlyList<StudyGroup>> GetByTeacherAsync(
+        Guid teacherId,
+        CancellationToken ct = default
+    );
+
     Task<IReadOnlyList<StudyGroup>> GetByIdsAsync(
         IReadOnlyCollection<Guid> ids,
         CancellationToken ct = default

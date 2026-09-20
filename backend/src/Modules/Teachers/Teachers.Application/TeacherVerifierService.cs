@@ -7,4 +7,7 @@ internal sealed class TeacherVerifierService(ITeacherRepository repository) : IT
 {
     public async Task<bool> ExistsAsync(Guid teacherId, CancellationToken ct = default) =>
         await repository.ExistsByIdAsync(teacherId, ct);
+
+    public async Task<bool> IsAvailableAsync(Guid teacherId, CancellationToken ct = default) =>
+        await repository.IsAvailableByIdAsync(teacherId, ct);
 }

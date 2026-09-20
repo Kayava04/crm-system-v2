@@ -112,8 +112,11 @@ public static class GetMyCalendarEndpoint
                     statusCode: StatusCodes.Status404NotFound
                 );
 
-            var enrollmentIds = await enrollmentLookup.GetIdsByStudentAsync(student.Id, ct);
-            var groupIds = await groupRepository.GetGroupIdsByEnrollmentsAsync(enrollmentIds, ct);
+            // Own lessons stay visible as history; group lessons only while the enrollment is active
+            var studentEnrollments = await enrollmentLookup.GetByStudentAsync(student.Id, ct);
+            var enrollmentIds = studentEnrollments.Select(e => e.Id).ToList();
+            var activeEnrollmentIds = studentEnrollments.Where(e => e.IsActive).Select(e => e.Id).ToList();
+            var groupIds = await groupRepository.GetGroupIdsByEnrollmentsAsync(activeEnrollmentIds, ct);
 
             lessons = await scheduleRepository.GetForCalendarAsync(null, enrollmentIds, groupIds, fromUtc, toUtc, ct);
         }
@@ -202,7 +205,7 @@ public static class GetMyCalendarEndpoint
 
             var students = teacherView
                 ? memberEnrollmentIds
-                    .Where(enrollments.ContainsKey)
+                    .Where(e => enrollments.TryGetValue(e, out var member) && member.IsActive)
                     .Select(e => studentNames.GetValueOrDefault(enrollments[e].StudentId, "Unknown student"))
                     .Order()
                     .ToList()

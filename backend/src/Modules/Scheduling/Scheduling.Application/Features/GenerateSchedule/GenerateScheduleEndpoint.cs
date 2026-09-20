@@ -118,6 +118,12 @@ public static class GenerateScheduleEndpoint
                 statusCode: StatusCodes.Status404NotFound
             );
 
+        if (!await teacherVerifier.IsAvailableAsync(teacherId, ct))
+            return Results.Problem(
+                detail: "Teacher is not active and cannot be given lessons.",
+                statusCode: StatusCodes.Status409Conflict
+            );
+
         var alreadyScheduled = await repository.CountActiveByTargetAsync(target.EnrollmentId, target.GroupId, ct);
         var lessonsToCreate = request.LessonsCount ?? target.Course.LessonsCount - alreadyScheduled;
 

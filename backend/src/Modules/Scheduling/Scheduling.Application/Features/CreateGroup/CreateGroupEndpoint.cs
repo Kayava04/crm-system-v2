@@ -93,6 +93,12 @@ public static class CreateGroupEndpoint
                 statusCode: StatusCodes.Status404NotFound
             );
 
+        if (!await teacherVerifier.IsAvailableAsync(request.TeacherId, ct))
+            return Results.Problem(
+                detail: "Teacher is not active and cannot lead a group.",
+                statusCode: StatusCodes.Status409Conflict
+            );
+
         var studyGroup = StudyGroup.Create(request.CourseId, request.TeacherId, request.Name.Trim());
 
         await repository.AddAsync(studyGroup, ct);

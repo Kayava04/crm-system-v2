@@ -23,6 +23,15 @@ internal sealed class EnrollmentLookupService(IEnrollmentRepository repository) 
         return enrollments.Select(Map).ToList();
     }
 
+    public async Task<IReadOnlyList<EnrollmentLookupResult>> GetByStudentAsync(
+        Guid studentId,
+        CancellationToken ct = default)
+    {
+        var enrollments = await repository.GetByStudentAsync(studentId, ct);
+
+        return enrollments.Select(Map).ToList();
+    }
+
     public async Task<IReadOnlyList<Guid>> GetIdsByStudentAsync(Guid studentId, CancellationToken ct = default) =>
         await repository.GetIdsByStudentAsync(studentId, ct);
 

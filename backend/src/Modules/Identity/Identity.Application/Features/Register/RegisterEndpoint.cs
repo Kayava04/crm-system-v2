@@ -147,6 +147,15 @@ public static class RegisterEndpoint
                 return created;
             }, ct);
         }
+        catch (UserAlreadyExistsException)
+        {
+            // another request registered the same email at the same moment
+            logger.LogWarning("Registration failed: user with email {Email} already exists", request.Email);
+
+            return Results.Problem(
+                detail: $"User with email '{request.Email}' already exists.",
+                statusCode: StatusCodes.Status409Conflict);
+        }
         catch (ProfileNotFoundException ex)
         {
             return Results.Problem(detail: ex.Message, statusCode: StatusCodes.Status404NotFound);

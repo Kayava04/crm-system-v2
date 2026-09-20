@@ -68,6 +68,16 @@ public sealed class TransactionCoordinator(SharedDbConnection shared) : ITransac
             return null;
         }, ct);
 
+    public async Task AcquireLockAsync(string name, CancellationToken ct = default)
+    {
+        if (_transaction is null)
+            throw new InvalidOperationException("A lock can only be taken inside ITransactionCoordinator.ExecuteAsync.");
+
+        await using var command = new NpgsqlCommand("select pg_advisory_xact_lock(@key)", shared.Connection, _transaction);
+        command.Parameters.AddWithValue("key", AdvisoryLockKey.For(name));
+        await command.ExecuteNonQueryAsync(ct);
+    }
+
     internal async Task EnlistAsync(DbContext context, CancellationToken ct)
     {
         if (_transaction is null || context.Database.CurrentTransaction is not null)

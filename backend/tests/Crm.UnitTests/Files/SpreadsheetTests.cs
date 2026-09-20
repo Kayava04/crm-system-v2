@@ -111,7 +111,7 @@ public class SpreadsheetTests
 
         Assert.DoesNotContain("Status", sheet.Row(1).CellsUsed().Select(c => c.GetString()));   // export-only columns are not in the template
         Assert.True(sheet.Cell(2, 1).IsEmpty());                                                 // no example row that could be imported by mistake
-        Assert.True(sheet.DataValidations.Any(v => v.AllowedValues == XLAllowedValues.List));    // drop-down lists
+        Assert.Contains(sheet.DataValidations, v => v.AllowedValues == XLAllowedValues.List);    // drop-down lists
 
         var help = workbook.Worksheet("Help");
         Assert.Contains(help.Column(1).CellsUsed(), c => c.GetString() == "Full name");

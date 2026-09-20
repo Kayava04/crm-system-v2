@@ -8,6 +8,8 @@ using Microsoft.Extensions.Logging;
 using Scheduling.Application.Abstractions;
 using Scheduling.Domain.Enums;
 using Teachers.Contracts;
+using Shared.Kernel.Abstractions;
+using Scheduling.Application.Services;
 
 namespace Scheduling.Application.Features.ReassignTeacher;
 
@@ -58,6 +60,7 @@ public static class ReassignTeacherEndpoint
         IScheduleRepository repository,
         IStudyGroupRepository groupRepository,
         ISchedulingUnitOfWork unitOfWork,
+        ITransactionCoordinator transaction,
         ITeacherVerifier teacherVerifier,
         IEnrollmentLookup enrollmentLookup,
         ILogger<ReassignTeacherRequest> logger,
@@ -86,81 +89,87 @@ public static class ReassignTeacherEndpoint
                 statusCode: StatusCodes.Status409Conflict
             );
 
-        var now = DateTime.UtcNow;
-
-        var open = await repository.GetFutureOpenByTeacherAsync(request.FromTeacherId, now, ct);
-        var cancelled = await repository.GetFutureCancelledAsync(
-            null, request.FromTeacherId, CancellationReason.TeacherUnavailable, now, ct);
-
-        // A lesson of a student who is away stays cancelled, only its teacher changes
-        var enrollments = (await enrollmentLookup.GetByIdsAsync(
-                cancelled.Where(l => l.EnrollmentId.HasValue).Select(l => l.EnrollmentId!.Value).Distinct().ToList(), ct))
-            .ToDictionary(e => e.Id);
-
-        var toRestore = cancelled
-            .Where(l => l.GroupId.HasValue
-                || (l.EnrollmentId is { } id && enrollments.TryGetValue(id, out var e) && e.IsActive))
-            .ToList();
-
-        // Everything that will be held by the new teacher must fit into their calendar
-        var willBeHeld = open.Concat(toRestore).OrderBy(l => l.ScheduledDate).ToList();
-
-        if (willBeHeld.Count > 0)
+        return await transaction.ExecuteAsync<IResult>(async token =>
         {
-            var busy = await repository.GetOpenByTeacherInRangeAsync(
-                request.ToTeacherId, willBeHeld[0].ScheduledDate, willBeHeld[^1].EndDate, ct);
+            // Lessons leave one calendar and enter another: both are held until the change is saved
+            await transaction.AcquireTeacherCalendarLocksAsync([request.FromTeacherId, request.ToTeacherId], token);
 
-            var conflicts = willBeHeld
-                .Where(l => busy.Any(b => b.ScheduledDate < l.EndDate && b.EndDate > l.ScheduledDate))
+            var now = DateTime.UtcNow;
+
+            var open = await repository.GetFutureOpenByTeacherAsync(request.FromTeacherId, now, ct);
+            var cancelled = await repository.GetFutureCancelledAsync(
+                null, request.FromTeacherId, CancellationReason.TeacherUnavailable, now, ct);
+
+            // A lesson of a student who is away stays cancelled, only its teacher changes
+            var enrollments = (await enrollmentLookup.GetByIdsAsync(
+                    cancelled.Where(l => l.EnrollmentId.HasValue).Select(l => l.EnrollmentId!.Value).Distinct().ToList(), ct))
+                .ToDictionary(e => e.Id);
+
+            var toRestore = cancelled
+                .Where(l => l.GroupId.HasValue
+                    || (l.EnrollmentId is { } id && enrollments.TryGetValue(id, out var e) && e.IsActive))
                 .ToList();
 
-            for (var i = 1; i < willBeHeld.Count; i++)
-                if (willBeHeld[i].ScheduledDate < willBeHeld[i - 1].EndDate && !conflicts.Contains(willBeHeld[i]))
-                    conflicts.Add(willBeHeld[i]);
+            // Everything that will be held by the new teacher must fit into their calendar
+            var willBeHeld = open.Concat(toRestore).OrderBy(l => l.ScheduledDate).ToList();
 
-            if (conflicts.Count > 0)
+            if (willBeHeld.Count > 0)
             {
-                logger.LogWarning(
-                    "Reassignment from {From} to {To} blocked: {Count} conflicting lessons",
-                    request.FromTeacherId, request.ToTeacherId, conflicts.Count);
+                var busy = await repository.GetOpenByTeacherInRangeAsync(
+                    request.ToTeacherId, willBeHeld[0].ScheduledDate, willBeHeld[^1].EndDate, ct);
 
-                var shown = string.Join(", ", conflicts.Take(5).Select(c => c.ScheduledDate.ToString("yyyy-MM-dd HH:mm 'UTC'")));
+                var conflicts = willBeHeld
+                    .Where(l => busy.Any(b => b.ScheduledDate < l.EndDate && b.EndDate > l.ScheduledDate))
+                    .ToList();
 
-                return Results.Problem(
-                    detail: $"The new teacher is busy at {conflicts.Count} of these times (e.g. {shown}). Nothing was changed.",
-                    statusCode: StatusCodes.Status409Conflict
-                );
+                for (var i = 1; i < willBeHeld.Count; i++)
+                    if (willBeHeld[i].ScheduledDate < willBeHeld[i - 1].EndDate && !conflicts.Contains(willBeHeld[i]))
+                        conflicts.Add(willBeHeld[i]);
+
+                if (conflicts.Count > 0)
+                {
+                    logger.LogWarning(
+                        "Reassignment from {From} to {To} blocked: {Count} conflicting lessons",
+                        request.FromTeacherId, request.ToTeacherId, conflicts.Count);
+
+                    var shown = string.Join(", ", conflicts.Take(5).Select(c => c.ScheduledDate.ToString("yyyy-MM-dd HH:mm 'UTC'")));
+
+                    return Results.Problem(
+                        detail: $"The new teacher is busy at {conflicts.Count} of these times (e.g. {shown}). Nothing was changed.",
+                        statusCode: StatusCodes.Status409Conflict
+                    );
+                }
             }
-        }
 
-        foreach (var lesson in open.Concat(cancelled))
-            lesson.ReassignTeacher(request.ToTeacherId);
+            foreach (var lesson in open.Concat(cancelled))
+                lesson.ReassignTeacher(request.ToTeacherId);
 
-        foreach (var lesson in toRestore)
-            lesson.RestoreIfSystemCancelled();
+            foreach (var lesson in toRestore)
+                lesson.RestoreIfSystemCancelled();
 
-        // Lessons of an inactive student now belong to the new teacher but wait for the student
-        foreach (var lesson in cancelled.Except(toRestore))
-            lesson.Cancel(CancellationReason.EnrollmentInactive);
+            // Lessons of an inactive student now belong to the new teacher but wait for the student
+            foreach (var lesson in cancelled.Except(toRestore))
+                lesson.Cancel(CancellationReason.EnrollmentInactive);
 
-        var updatedGroups = 0;
+            var updatedGroups = 0;
 
-        if (request.UpdateGroups)
-        {
-            var groups = await groupRepository.GetByTeacherAsync(request.FromTeacherId, ct);
+            if (request.UpdateGroups)
+            {
+                var groups = await groupRepository.GetByTeacherAsync(request.FromTeacherId, ct);
 
-            foreach (var studyGroup in groups)
-                studyGroup.ChangeTeacher(request.ToTeacherId);
+                foreach (var studyGroup in groups)
+                    studyGroup.ChangeTeacher(request.ToTeacherId);
 
-            updatedGroups = groups.Count;
-        }
+                updatedGroups = groups.Count;
+            }
 
-        await unitOfWork.SaveChangesAsync(ct);
+            await unitOfWork.SaveChangesAsync(ct);
 
-        logger.LogInformation(
-            "Reassigned {Count} lessons ({Restored} restored) and {Groups} groups from {From} to {To}",
-            open.Count + cancelled.Count, toRestore.Count, updatedGroups, request.FromTeacherId, request.ToTeacherId);
+            logger.LogInformation(
+                "Reassigned {Count} lessons ({Restored} restored) and {Groups} groups from {From} to {To}",
+                open.Count + cancelled.Count, toRestore.Count, updatedGroups, request.FromTeacherId, request.ToTeacherId);
 
-        return Results.Ok(new ReassignTeacherResponse(open.Count + cancelled.Count, toRestore.Count, updatedGroups));
+            return Results.Ok(new ReassignTeacherResponse(open.Count + cancelled.Count, toRestore.Count, updatedGroups));
+        }, ct);
     }
 }

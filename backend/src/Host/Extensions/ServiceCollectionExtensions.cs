@@ -42,6 +42,7 @@ public static class ServiceCollectionExtensions
             .AddHealth()
             .AddApiDocumentation();
 
+        services.AddExceptionHandler<UniqueViolationExceptionHandler>();
         services.AddProblemDetails();
 
         return services;
@@ -146,6 +147,11 @@ public static class ServiceCollectionExtensions
         var jwtSection = configuration.GetSection(JwtOptions.SectionName);
         var secretKey = jwtSection["SecretKey"]
             ?? throw new InvalidOperationException("Jwt:SecretKey not found in configuration.");
+
+        // Fail at start-up with a clear message instead of on the first login
+        if (secretKey.Length < 32)
+            throw new InvalidOperationException(
+                "Jwt:SecretKey must be at least 32 characters long. Set it with: dotnet user-secrets set \"Jwt:SecretKey\" \"<random text>\".");
 
         services
             .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

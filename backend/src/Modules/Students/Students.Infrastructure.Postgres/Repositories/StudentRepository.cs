@@ -98,4 +98,14 @@ internal sealed class StudentRepository(StudentsDbContext context) : IStudentRep
         await context.Students
             .AsNoTracking()
             .AnyAsync(s => s.Id == id, ct);
+
+    public async Task<IReadOnlyList<Student>> GetByIdsAsync(
+        IReadOnlyCollection<Guid> ids,
+        CancellationToken ct = default) =>
+        await context.Students
+            .AsNoTracking()
+            .Where(s => ids.Contains(s.Id))
+            .OrderBy(s => s.LastName)
+            .ThenBy(s => s.FirstName)
+            .ToListAsync(ct);
 }

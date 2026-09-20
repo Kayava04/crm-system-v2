@@ -20,4 +20,9 @@ internal sealed class EnrollmentLookupService(IEnrollmentRepository repository) 
             enrollment.Status == EnrollmentStatus.Active
         );
     }
+
+    public async Task<IReadOnlyList<Guid>> GetStudentIdsAsync(
+        IReadOnlyCollection<Guid> enrollmentIds,
+        CancellationToken ct = default) =>
+        await repository.GetStudentIdsByEnrollmentIdsAsync(enrollmentIds, ct);
 }

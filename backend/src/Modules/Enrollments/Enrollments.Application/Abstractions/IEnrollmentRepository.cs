@@ -12,6 +12,11 @@ public interface IEnrollmentRepository : IRepository<Enrollment>
         CancellationToken ct = default
     );
 
+    Task<IReadOnlyList<Guid>> GetStudentIdsByEnrollmentIdsAsync(
+        IReadOnlyCollection<Guid> enrollmentIds,
+        CancellationToken ct = default
+    );
+
     Task<(IReadOnlyList<Enrollment> Enrollments, int TotalCount)> GetAllAsync(
         Guid? studentId,
         Guid? courseId,

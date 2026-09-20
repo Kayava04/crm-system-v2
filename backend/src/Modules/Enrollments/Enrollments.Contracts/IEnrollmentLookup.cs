@@ -6,6 +6,11 @@ public interface IEnrollmentLookup
         Guid enrollmentId,
         CancellationToken ct = default
     );
+
+    Task<IReadOnlyList<Guid>> GetStudentIdsAsync(
+        IReadOnlyCollection<Guid> enrollmentIds,
+        CancellationToken ct = default
+    );
 }
 
 public sealed record EnrollmentLookupResult(

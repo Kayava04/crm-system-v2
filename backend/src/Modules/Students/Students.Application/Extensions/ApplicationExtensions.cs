@@ -31,6 +31,8 @@ public static class ApplicationExtensions
 
         services.AddScoped<IStudentVerifier, StudentVerifierService>();
 
+        services.AddScoped<IStudentLookup, StudentLookupService>();
+
         return services;
     }
 

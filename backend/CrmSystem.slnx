@@ -40,6 +40,11 @@
     <Project Path="src/Modules/Scheduling/Scheduling.Application/Scheduling.Application.csproj" />
     <Project Path="src/Modules/Scheduling/Scheduling.Infrastructure.Postgres/Scheduling.Infrastructure.Postgres.csproj" />
   </Folder>
+  <Folder Name="/src/Modules/Billing/">
+    <Project Path="src/Modules/Billing/Billing.Domain/Billing.Domain.csproj" />
+    <Project Path="src/Modules/Billing/Billing.Application/Billing.Application.csproj" />
+    <Project Path="src/Modules/Billing/Billing.Infrastructure.Postgres/Billing.Infrastructure.Postgres.csproj" />
+  </Folder>
   <Folder Name="/src/Modules/Enrollments/">
     <Project Path="src/Modules/Enrollments/Enrollments.Domain/Enrollments.Domain.csproj" />
     <Project Path="src/Modules/Enrollments/Enrollments.Contracts/Enrollments.Contracts.csproj" />

@@ -17,5 +17,6 @@ public sealed record EnrollmentLookupResult(
     Guid Id,
     Guid StudentId,
     Guid CourseId,
-    bool IsActive
+    bool IsActive,
+    decimal EffectivePrice
 );

@@ -37,6 +37,8 @@
     <ProjectReference Include="../Modules/Reporting/Reporting.Application/Reporting.Application.csproj" />
     <ProjectReference Include="../Modules/Notifications/Notifications.Infrastructure.Postgres/Notifications.Infrastructure.Postgres.csproj" />
     <ProjectReference Include="../Modules/Notifications/Notifications.Application/Notifications.Application.csproj" />
+    <ProjectReference Include="../Modules/Materials/Materials.Infrastructure.Postgres/Materials.Infrastructure.Postgres.csproj" />
+    <ProjectReference Include="../Modules/Materials/Materials.Application/Materials.Application.csproj" />
   </ItemGroup>
 
 </Project>

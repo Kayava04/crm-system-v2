@@ -97,6 +97,43 @@ public sealed class IdentitySeeder(
 
             await unitOfWork.SaveChangesAsync(ct);
         }
+
+        await SeedDefaultRolePermissionsAsync(roleRepository, permissionRepository, unitOfWork, ct);
+    }
+
+    // Permissions every user of a role gets by default (additive, safe to run on each start)
+    private static readonly Dictionary<SystemRole, SystemPermission[]> DefaultRolePermissions = new()
+    {
+        [SystemRole.Teacher] = [SystemPermission.CanViewMaterials, SystemPermission.CanManageMaterials],
+        [SystemRole.Student] = [SystemPermission.CanViewMaterials]
+    };
+
+    private static async Task SeedDefaultRolePermissionsAsync(
+        IRoleRepository roleRepository,
+        IPermissionRepository permissionRepository,
+        IIdentityUnitOfWork unitOfWork,
+        CancellationToken ct
+    )
+    {
+        foreach (var (systemRole, permissions) in DefaultRolePermissions)
+        {
+            var role = await roleRepository.GetByNameAsync(systemRole.ToString(), ct);
+            if (role is null)
+                continue;
+
+            var existingPermissionIds = (await roleRepository.GetRolePermissionIdsAsync(role.Id, ct))
+                .ToHashSet();
+
+            foreach (var permission in permissions)
+            {
+                var permissionEntity = await permissionRepository.GetByNameAsync(permission.ToString(), ct);
+
+                if (permissionEntity is not null && !existingPermissionIds.Contains(permissionEntity.Id))
+                    await roleRepository.AssignPermissionAsync(role.Id, permissionEntity.Id, ct);
+            }
+        }
+
+        await unitOfWork.SaveChangesAsync(ct);
     }
 
     private async Task SeedSuperAdminAsync(

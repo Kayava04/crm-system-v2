@@ -21,6 +21,7 @@
   </Folder>
   <Folder Name="/src/Modules/Teachers/">
     <Project Path="src/Modules/Teachers/Teachers.Domain/Teachers.Domain.csproj" />
+    <Project Path="src/Modules/Teachers/Teachers.Contracts/Teachers.Contracts.csproj" />
     <Project Path="src/Modules/Teachers/Teachers.Application/Teachers.Application.csproj" />
     <Project Path="src/Modules/Teachers/Teachers.Infrastructure.Postgres/Teachers.Infrastructure.Postgres.csproj" />
   </Folder>
@@ -33,8 +34,15 @@
     <Project Path="src/Modules/Courses/Courses.Application/Courses.Application.csproj" />
     <Project Path="src/Modules/Courses/Courses.Infrastructure.Postgres/Courses.Infrastructure.Postgres.csproj" />
   </Folder>
+  <Folder Name="/src/Modules/Scheduling/">
+    <Project Path="src/Modules/Scheduling/Scheduling.Domain/Scheduling.Domain.csproj" />
+    <Project Path="src/Modules/Scheduling/Scheduling.Contracts/Scheduling.Contracts.csproj" />
+    <Project Path="src/Modules/Scheduling/Scheduling.Application/Scheduling.Application.csproj" />
+    <Project Path="src/Modules/Scheduling/Scheduling.Infrastructure.Postgres/Scheduling.Infrastructure.Postgres.csproj" />
+  </Folder>
   <Folder Name="/src/Modules/Enrollments/">
     <Project Path="src/Modules/Enrollments/Enrollments.Domain/Enrollments.Domain.csproj" />
+    <Project Path="src/Modules/Enrollments/Enrollments.Contracts/Enrollments.Contracts.csproj" />
     <Project Path="src/Modules/Enrollments/Enrollments.Application/Enrollments.Application.csproj" />
     <Project Path="src/Modules/Enrollments/Enrollments.Infrastructure.Postgres/Enrollments.Infrastructure.Postgres.csproj" />
   </Folder>

@@ -35,6 +35,11 @@ internal sealed class TeacherRepository(TeachersDbContext context) : ITeacherRep
         return Task.CompletedTask;
     }
 
+    public async Task<bool> ExistsByIdAsync(Guid id, CancellationToken ct = default) =>
+        await context.Teachers
+            .AsNoTracking()
+            .AnyAsync(t => t.Id == id, ct);
+
     public async Task<bool> ExistsByEmailAsync(string email, CancellationToken ct = default) =>
         await context.Teachers
             .AsNoTracking()

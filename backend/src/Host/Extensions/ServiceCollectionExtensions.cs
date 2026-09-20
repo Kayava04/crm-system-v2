@@ -15,6 +15,8 @@ using Courses.Application.Extensions;
 using Courses.Infrastructure.Postgres.Extensions;
 using Enrollments.Application.Extensions;
 using Enrollments.Infrastructure.Postgres.Extensions;
+using Scheduling.Application.Extensions;
+using Scheduling.Infrastructure.Postgres.Extensions;
 
 namespace Host.Extensions;
 
@@ -50,7 +52,9 @@ public static class ServiceCollectionExtensions
             .AddCoursesApplication()
             .AddCoursesInfrastructure(configuration)
             .AddEnrollmentsApplication()
-            .AddEnrollmentsInfrastructure(configuration);
+            .AddEnrollmentsInfrastructure(configuration)
+            .AddSchedulingApplication()
+            .AddSchedulingInfrastructure(configuration);
 
         return services;
     }

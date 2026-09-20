@@ -12,6 +12,7 @@ using Teachers.Application.Features.GetTeacherById;
 using Teachers.Application.Features.GetTeachers;
 using Teachers.Application.Features.UpdateComment;
 using Teachers.Application.Features.UpdateTeacher;
+using Teachers.Contracts;
 
 namespace Teachers.Application.Extensions;
 
@@ -24,6 +25,8 @@ public static class ApplicationExtensions
 
         // Link user account to teacher
         services.AddScoped<IProfileLinker, TeacherAccountLinker>();
+
+        services.AddScoped<ITeacherVerifier, TeacherVerifierService>();
 
         return services;
     }

@@ -64,4 +64,11 @@ internal sealed class UserRepository(IdentityDbContext context) : IUserRepositor
         context.Users.Update(user);
         return Task.CompletedTask;
     }
+
+    public async Task<IReadOnlyList<Guid>> GetActiveUserIdsByRoleAsync(string roleName, CancellationToken ct = default) =>
+        await context.UserRoles
+            .AsNoTracking()
+            .Join(context.Roles.Where(r => r.Name == roleName), ur => ur.RoleId, r => r.Id, (ur, r) => ur.UserId)
+            .Join(context.Users.Where(u => u.IsActive), id => id, u => u.Id, (id, u) => u.Id)
+            .ToListAsync(ct);
 }

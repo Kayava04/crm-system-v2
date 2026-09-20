@@ -12,6 +12,9 @@ public interface IStudentInvoiceRepository : IRepository<StudentInvoice>
         CancellationToken ct = default
     );
 
+    // Pending or Overdue invoices with a due date on or before the given day
+    Task<IReadOnlyList<StudentInvoice>> GetUnpaidDueUntilAsync(DateOnly dueUntil, CancellationToken ct = default);
+
     Task<decimal> SumPaidAsync(DateTime from, DateTime to, CancellationToken ct = default);
 
     Task<decimal> SumByStatusAsync(InvoiceStatus status, CancellationToken ct = default);

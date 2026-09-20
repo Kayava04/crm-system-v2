@@ -17,4 +17,8 @@
     <ProjectReference Include="../../Courses/Courses.Contracts/Courses.Contracts.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="Crm.UnitTests" />
+  </ItemGroup>
+
 </Project>

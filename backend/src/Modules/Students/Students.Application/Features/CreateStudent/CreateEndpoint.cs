@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
 using Students.Application.Abstractions;
+using Students.Application.Services;
 using Students.Domain.Entities;
 using Students.Domain.Enums;
 
@@ -140,33 +141,7 @@ public static class CreateEndpoint
                 statusCode: StatusCodes.Status409Conflict
             );
 
-        var student = Student.Create(
-            request.FirstName,
-            request.LastName,
-            request.MiddleName,
-            request.DateOfBirth,
-            request.PhoneNumber,
-            request.Email,
-            request.City,
-            request.Country,
-            request.IsChild,
-            request.Comment
-        );
-
-        var preferences = StudentPreferences.Create(
-            student.Id,
-            request.LearningGoal,
-            request.Format,
-            request.LessonType,
-            request.Intensity,
-            request.CurrentLevel,
-            request.HadPreviousCourses
-        );
-
-        student.SetPreferences(preferences);
-
-        foreach (var language in request.Languages)
-            student.AddLanguage(language);
+        var student = StudentFactory.Build(request);
 
         await repository.AddAsync(student, ct);
         await unitOfWork.SaveChangesAsync(ct);

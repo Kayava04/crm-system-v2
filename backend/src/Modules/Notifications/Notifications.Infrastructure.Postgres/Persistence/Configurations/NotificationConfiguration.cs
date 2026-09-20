@@ -34,10 +34,17 @@ internal sealed class NotificationConfiguration : IEntityTypeConfiguration<Notif
             .IsRequired()
             .HasConversion<string>();
 
+        builder.Property(n => n.ReferenceKey)
+            .HasMaxLength(200);
+
         builder.Property(n => n.CreatedAt)
             .IsRequired();
 
         builder.HasIndex(n => new { n.RecipientUserId, n.ReadAt });
+
+        builder.HasIndex(n => new { n.RecipientUserId, n.Type, n.ReferenceKey })
+            .IsUnique()
+            .HasFilter("\"ReferenceKey\" IS NOT NULL");
 
         builder.Ignore(n => n.IsRead);
     }

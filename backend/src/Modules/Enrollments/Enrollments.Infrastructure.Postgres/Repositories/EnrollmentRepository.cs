@@ -126,6 +126,16 @@ internal sealed class EnrollmentRepository(EnrollmentsDbContext context) : IEnro
             .Where(e => e.StudentId == studentId)
             .ToListAsync(ct);
 
+    public async Task<IReadOnlySet<Guid>> GetStudentIdsWithEnrollmentsAsync(
+        IReadOnlyCollection<Guid> studentIds,
+        CancellationToken ct = default) =>
+        (await context.Enrollments
+            .AsNoTracking()
+            .Where(e => studentIds.Contains(e.StudentId))
+            .Select(e => e.StudentId)
+            .Distinct()
+            .ToListAsync(ct)).ToHashSet();
+
     public async Task<IReadOnlyList<Guid>> GetIdsByStudentAsync(Guid studentId, CancellationToken ct = default) =>
         await context.Enrollments
             .AsNoTracking()

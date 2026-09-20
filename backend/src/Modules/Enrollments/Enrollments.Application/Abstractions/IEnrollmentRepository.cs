@@ -25,6 +25,8 @@ public interface IEnrollmentRepository : IRepository<Enrollment>
 
     Task<IReadOnlyList<Enrollment>> GetByStudentAsync(Guid studentId, CancellationToken ct = default);
 
+    Task<IReadOnlySet<Guid>> GetStudentIdsWithEnrollmentsAsync(IReadOnlyCollection<Guid> studentIds, CancellationToken ct = default);
+
     Task<IReadOnlyList<Guid>> GetIdsByStudentAsync(Guid studentId, CancellationToken ct = default);
 
     Task<IReadOnlyList<Guid>> GetStudentIdsByEnrollmentIdsAsync(

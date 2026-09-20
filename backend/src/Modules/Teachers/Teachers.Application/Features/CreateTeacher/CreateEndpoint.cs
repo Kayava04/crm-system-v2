@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
 using Teachers.Application.Abstractions;
+using Teachers.Application.Services;
 using Teachers.Domain.Entities;
 
 namespace Teachers.Application.Features.CreateTeacher;
@@ -112,26 +113,7 @@ public static class CreateEndpoint
                 statusCode: StatusCodes.Status409Conflict
             );
 
-        var teacher = Teacher.Create(
-            request.FirstName,
-            request.LastName,
-            request.MiddleName,
-            request.DateOfBirth,
-            request.PhoneNumber,
-            request.Email,
-            request.City,
-            request.Country,
-            request.Comment
-        );
-
-        var salaryRate = TeacherSalaryRate.Create(
-            teacher.Id,
-            request.BaseSalary,
-            request.LessonsRate,
-            DateTime.UtcNow
-        );
-
-        teacher.AddSalaryRate(salaryRate);
+        var teacher = TeacherFactory.Build(request);
 
         await repository.AddAsync(teacher, ct);
         await unitOfWork.SaveChangesAsync(ct);

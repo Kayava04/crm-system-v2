@@ -58,5 +58,6 @@ internal sealed class StudentLookupService(
         string.Join(' ', new[] { s.LastName, s.FirstName, s.MiddleName }
             .Where(x => !string.IsNullOrWhiteSpace(x))),
         s.Email,
-        s.PhoneNumber);
+        s.PhoneNumber,
+        s.UserId);
 }

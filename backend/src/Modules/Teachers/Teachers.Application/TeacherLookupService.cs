@@ -41,5 +41,6 @@ internal sealed class TeacherLookupService(ITeacherRepository repository) : ITea
     private static TeacherProfileResult Map(Teacher t) => new(
         t.Id,
         string.Join(' ', new[] { t.LastName, t.FirstName, t.MiddleName }
-            .Where(x => !string.IsNullOrWhiteSpace(x))));
+            .Where(x => !string.IsNullOrWhiteSpace(x))),
+        t.UserId);
 }

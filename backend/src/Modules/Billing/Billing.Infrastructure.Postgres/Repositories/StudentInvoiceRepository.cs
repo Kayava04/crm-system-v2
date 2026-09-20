@@ -97,4 +97,11 @@ internal sealed class StudentInvoiceRepository(BillingDbContext context) : IStud
             .AsNoTracking()
             .Where(i => i.Status == status)
             .SumAsync(i => (decimal?)i.Amount, ct) ?? 0m;
+
+    public async Task<IReadOnlyList<StudentInvoice>> GetUnpaidDueUntilAsync(DateOnly dueUntil, CancellationToken ct = default) =>
+        await context.StudentInvoices
+            .AsNoTracking()
+            .Where(i => (i.Status == InvoiceStatus.Pending || i.Status == InvoiceStatus.Overdue) && i.DueDate <= dueUntil)
+            .OrderBy(i => i.DueDate)
+            .ToListAsync(ct);
 }

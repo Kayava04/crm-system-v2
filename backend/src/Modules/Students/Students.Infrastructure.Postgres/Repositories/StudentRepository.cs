@@ -126,4 +126,20 @@ internal sealed class StudentRepository(StudentsDbContext context) : IStudentRep
         await context.Students
             .AsNoTracking()
             .AnyAsync(s => s.Id == id && s.Status == StudentStatus.Active, ct);
+
+    public async Task<HashSet<string>> GetExistingEmailsAsync(IReadOnlyCollection<string> emails, CancellationToken ct = default)
+    {
+        var lowered = emails.Select(e => e.ToLower()).ToList();
+
+        return (await context.Students
+            .AsNoTracking()
+            .Where(s => lowered.Contains(s.Email.ToLower()))
+            .Select(s => s.Email.ToLower())
+            .ToListAsync(ct)).ToHashSet();
+    }
+
+    public async Task<IReadOnlyList<Student>> GetByIdsForUpdateAsync(IReadOnlyCollection<Guid> ids, CancellationToken ct = default) =>
+        await context.Students
+            .Where(s => ids.Contains(s.Id))
+            .ToListAsync(ct);
 }

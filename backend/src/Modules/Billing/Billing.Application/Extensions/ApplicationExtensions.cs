@@ -25,6 +25,7 @@ public static class ApplicationExtensions
 
         services.AddScoped<IBillingStatistics, BillingStatisticsService>();
         services.AddScoped<IInvoiceReminderSource, InvoiceReminderSourceService>();
+        services.AddScoped<IInvoiceOverdueMarker, InvoiceOverdueService>();
 
         return services;
     }

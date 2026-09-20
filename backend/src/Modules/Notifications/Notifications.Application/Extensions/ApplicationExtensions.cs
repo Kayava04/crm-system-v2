@@ -2,6 +2,7 @@ using FluentValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Notifications.Application.Features.BroadcastNotification;
 using Notifications.Application.Features.GetAllNotifications;
@@ -26,6 +27,15 @@ public static class ApplicationExtensions
 
         services.AddScoped<INotificationSender, NotificationSenderService>();
         services.AddScoped<NotificationDispatcher>();
+        services.AddScoped<InvoiceReminderService>();
+        services.AddScoped<LessonReminderService>();
+
+        // The periodic job: the timer is a hosted service, the work itself is INotificationAutomation
+        services.AddOptions<NotificationAutomationOptions>()
+            .Configure<IConfiguration>((options, configuration) =>
+                configuration.GetSection(NotificationAutomationOptions.SectionName).Bind(options));
+        services.AddSingleton<INotificationAutomation, NotificationAutomationRunner>();
+        services.AddHostedService<NotificationAutomationService>();
 
         return services;
     }

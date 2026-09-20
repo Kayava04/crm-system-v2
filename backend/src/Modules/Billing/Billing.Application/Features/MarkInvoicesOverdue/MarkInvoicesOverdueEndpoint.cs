@@ -1,9 +1,8 @@
-using Billing.Application.Abstractions;
+using Billing.Contracts;
 using Identity.Contracts.Enums;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
-using Microsoft.Extensions.Logging;
 
 namespace Billing.Application.Features.MarkInvoicesOverdue;
 
@@ -23,23 +22,12 @@ public static class MarkInvoicesOverdueEndpoint
     }
 
     private static async Task<IResult> Handle(
-        IStudentInvoiceRepository repository,
-        IBillingUnitOfWork unitOfWork,
-        ILogger<MarkInvoicesOverdueRequest> logger,
+        IInvoiceOverdueMarker marker,
         CancellationToken ct
     )
     {
-        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+        var count = await marker.MarkOverdueAsync(ct);
 
-        var invoices = await repository.GetPendingDueBeforeAsync(today, ct);
-
-        foreach (var invoice in invoices)
-            invoice.MarkOverdue();
-
-        await unitOfWork.SaveChangesAsync(ct);
-
-        logger.LogInformation("Invoices marked as overdue: {Count}", invoices.Count);
-
-        return Results.Ok(new MarkInvoicesOverdueResponse(invoices.Count));
+        return Results.Ok(new MarkInvoicesOverdueResponse(count));
     }
 }

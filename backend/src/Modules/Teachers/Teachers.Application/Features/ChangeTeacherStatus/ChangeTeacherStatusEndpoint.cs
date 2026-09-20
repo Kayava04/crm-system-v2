@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Routing;
 using Identity.Contracts;
 using Microsoft.Extensions.Logging;
 using Scheduling.Contracts;
+using Shared.Kernel.Abstractions;
 using Teachers.Application.Abstractions;
 using Teachers.Domain.Enums;
 
@@ -51,6 +52,7 @@ public static class ChangeTeacherStatusEndpoint
         IValidator<ChangeTeacherStatusRequest> validator,
         ITeacherRepository repository,
         ITeacherUnitOfWork unitOfWork,
+        ITransactionCoordinator transaction,
         IScheduleLifecycle scheduleLifecycle,
         IUserAccountManager accountManager,
         ILogger<ChangeTeacherStatusRequest> logger,
@@ -79,56 +81,50 @@ public static class ChangeTeacherStatusEndpoint
         }
 
         var wasAvailable = IsAvailable(teacher.Status);
-
-        teacher.ChangeStatus(request.Status);
-
-        await repository.UpdateAsync(teacher, ct);
-        await unitOfWork.SaveChangesAsync(ct);
-
-        logger.LogInformation("Teacher {TeacherId} status changed to {Status}", id, request.Status);
+        var isAvailable = IsAvailable(request.Status);
 
         // Only a teacher who left (Resigned, Dismissed) loses access; being on leave keeps the account
         var accountActive = request.Status is not (TeacherStatus.Resigned or TeacherStatus.Dismissed);
-        var isAvailable = IsAvailable(request.Status);
 
-        // The status is already saved; a failure in the other modules is reported, not hidden behind a 500
-        try
+        // Status, account and calendar change together or not at all
+        var response = await transaction.ExecuteAsync(async token =>
         {
+            teacher.ChangeStatus(request.Status);
+
+            await repository.UpdateAsync(teacher, token);
+            await unitOfWork.SaveChangesAsync(token);
+
             if (teacher.UserId is { } userId)
-                await accountManager.SetActiveAsync(userId, accountActive, ct);
+                await accountManager.SetActiveAsync(userId, accountActive, token);
 
             if (wasAvailable && !isAvailable)
             {
-                var cancelled = await scheduleLifecycle.CancelForTeacherAsync(id, ct);
+                var cancelled = await scheduleLifecycle.CancelForTeacherAsync(id, token);
 
-                return Results.Ok(new ChangeTeacherStatusResponse(
+                return new ChangeTeacherStatusResponse(
                     cancelled, 0, 0, accountActive,
                     cancelled > 0
                         ? "Upcoming lessons were cancelled. Hand them over to another teacher with PUT /api/schedules/reassign-teacher, or they return automatically when this teacher does."
-                        : null));
+                        : null);
             }
 
             if (!wasAvailable && isAvailable)
             {
-                var restored = await scheduleLifecycle.RestoreForTeacherAsync(id, ct);
+                var restored = await scheduleLifecycle.RestoreForTeacherAsync(id, token);
 
-                return Results.Ok(new ChangeTeacherStatusResponse(
+                return new ChangeTeacherStatusResponse(
                     0, restored.RestoredCount, restored.SkippedCount, accountActive,
                     restored.SkippedCount > 0
                         ? "Some lessons could not be restored (time already taken or the student is away)."
-                        : null));
+                        : null);
             }
 
-            return Results.Ok(new ChangeTeacherStatusResponse(0, 0, 0, accountActive, null));
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Teacher {TeacherId} status changed but calendar/account update failed", id);
+            return new ChangeTeacherStatusResponse(0, 0, 0, accountActive, null);
+        }, ct);
 
-            return Results.Ok(new ChangeTeacherStatusResponse(
-                0, 0, 0, accountActive,
-                "The status was saved, but the calendar or account could not be fully updated. Check them manually."));
-        }
+        logger.LogInformation("Teacher {TeacherId} status changed to {Status}", id, request.Status);
+
+        return Results.Ok(response);
     }
 
     private static bool IsAvailable(TeacherStatus status) =>

@@ -14,4 +14,8 @@
     <ProjectReference Include="..\Billing.Domain\Billing.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="../../../Shared/Shared.Infrastructure/Shared.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -2,7 +2,7 @@ using Enrollments.Application.Abstractions;
 using Enrollments.Infrastructure.Postgres.Persistence;
 using Enrollments.Infrastructure.Postgres.Repositories;
 using Enrollments.Infrastructure.Postgres.Services;
-using Microsoft.EntityFrameworkCore;
+using Shared.Infrastructure.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -28,11 +28,7 @@ public static class InfrastructureExtensions
         IConfiguration configuration
     )
     {
-        var connectionString = configuration.GetConnectionString("Default")
-            ?? throw new InvalidOperationException(
-                "Connection string 'Default' not found in configuration.");
-
-        services.AddDbContext<EnrollmentsDbContext>(options => options.UseNpgsql(connectionString));
+services.AddModuleDbContext<EnrollmentsDbContext>();
 
         services.AddScoped<IEnrollmentUnitOfWork>(sp => sp.GetRequiredService<EnrollmentsDbContext>());
 

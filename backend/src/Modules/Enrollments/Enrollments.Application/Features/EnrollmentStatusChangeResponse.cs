@@ -5,6 +5,5 @@ public sealed record EnrollmentStatusChangeResponse(
     int CancelledLessons,
     int RestoredLessons,
     int SkippedLessons,
-    int LessonsLeftToSchedule,
-    string? Warning
+    int LessonsLeftToSchedule
 );

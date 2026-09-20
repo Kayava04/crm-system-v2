@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Routing;
 using Enrollments.Contracts;
 using Identity.Contracts;
 using Microsoft.Extensions.Logging;
+using Shared.Kernel.Abstractions;
 using Students.Application.Abstractions;
 using Students.Domain.Enums;
 
@@ -20,8 +21,7 @@ public sealed record ChangeStudentStatusResponse(
     int ResumedEnrollments,
     int RestoredLessons,
     int LessonsLeftToSchedule,
-    bool AccountActive,
-    string? Warning
+    bool AccountActive
 );
 
 public sealed class ChangeStudentStatusValidator : AbstractValidator<ChangeStudentStatusRequest>
@@ -53,6 +53,7 @@ public static class ChangeStudentStatusEndpoint
         IValidator<ChangeStudentStatusRequest> validator,
         IStudentRepository repository,
         IStudentUnitOfWork unitOfWork,
+        ITransactionCoordinator transaction,
         IEnrollmentLifecycle enrollmentLifecycle,
         IUserAccountManager accountManager,
         ILogger<ChangeStudentStatusRequest> logger,
@@ -82,47 +83,41 @@ public static class ChangeStudentStatusEndpoint
 
         var wasActive = student.Status == StudentStatus.Active;
 
-        student.ChangeStatus(request.Status);
-
-        await repository.UpdateAsync(student, ct);
-        await unitOfWork.SaveChangesAsync(ct);
-
-        logger.LogInformation("Student {StudentId} status changed to {Status}", id, request.Status);
-
         // Only a student who left (Withdrawn) loses access; a pause or graduation keeps the account
         var accountActive = request.Status != StudentStatus.Withdrawn;
 
-        // The status is already saved; a failure in the other modules is reported, not hidden behind a 500
-        try
+        // Status, account, enrollments and calendar change together or not at all
+        var response = await transaction.ExecuteAsync(async token =>
         {
+            student.ChangeStatus(request.Status);
+
+            await repository.UpdateAsync(student, token);
+            await unitOfWork.SaveChangesAsync(token);
+
             if (student.UserId is { } userId)
-                await accountManager.SetActiveAsync(userId, accountActive, ct);
+                await accountManager.SetActiveAsync(userId, accountActive, token);
 
             if (request.Status == StudentStatus.Active)
             {
-                var resumed = await enrollmentLifecycle.RestoreForStudentAsync(id, ct);
+                var resumed = await enrollmentLifecycle.RestoreForStudentAsync(id, token);
 
-                return Results.Ok(new ChangeStudentStatusResponse(
-                    0, 0, resumed.EnrollmentsCount, resumed.RestoredLessons, resumed.LessonsLeftToSchedule, accountActive, null));
+                return new ChangeStudentStatusResponse(
+                    0, 0, resumed.EnrollmentsCount, resumed.RestoredLessons, resumed.LessonsLeftToSchedule, accountActive);
             }
 
             if (wasActive)
             {
-                var suspended = await enrollmentLifecycle.SuspendForStudentAsync(id, ct);
+                var suspended = await enrollmentLifecycle.SuspendForStudentAsync(id, token);
 
-                return Results.Ok(new ChangeStudentStatusResponse(
-                    suspended.EnrollmentsCount, suspended.CancelledLessons, 0, 0, 0, accountActive, null));
+                return new ChangeStudentStatusResponse(
+                    suspended.EnrollmentsCount, suspended.CancelledLessons, 0, 0, 0, accountActive);
             }
 
-            return Results.Ok(new ChangeStudentStatusResponse(0, 0, 0, 0, 0, accountActive, null));
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Student {StudentId} status changed but enrollments/calendar/account update failed", id);
+            return new ChangeStudentStatusResponse(0, 0, 0, 0, 0, accountActive);
+        }, ct);
 
-            return Results.Ok(new ChangeStudentStatusResponse(
-                0, 0, 0, 0, 0, accountActive,
-                "The status was saved, but the enrollments, calendar or account could not be fully updated. Check them manually."));
-        }
+        logger.LogInformation("Student {StudentId} status changed to {Status}", id, request.Status);
+
+        return Results.Ok(response);
     }
 }

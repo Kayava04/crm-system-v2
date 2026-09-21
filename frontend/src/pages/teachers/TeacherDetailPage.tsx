@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import { ArrowLeft, Pencil, UserX, UserCheck, Trash2, Plus } from 'lucide-react'
+import { ArrowLeft, Pencil, UserX, UserCheck, ArrowUpCircle, Trash2, Plus } from 'lucide-react'
 import {
   getTeacherById,
   updateTeacher,
@@ -15,11 +15,15 @@ import {
   deleteTeacher,
   addSalaryRate,
 } from '@/features/teachers/api'
+import { getSchedules } from '@/features/scheduling/api'
+import { useResolvedSchedules } from '@/features/scheduling/useResolvedSchedules'
+import { getPayrolls } from '@/features/billing/api'
+import { useResolvedPayrolls } from '@/features/billing/useResolvedPayrolls'
 import { ApiError } from '@/api/errors'
 import { applyServerValidation } from '@/lib/applyServerValidation'
 import { useAuthenticatedBlobUrl } from '@/lib/useAuthenticatedBlobUrl'
 import { enumLabel } from '@/lib/enumLabels'
-import { toNum, formatCurrency, formatDate } from '@/lib/utils'
+import { toNum, formatCurrency, formatDate, formatDateTime } from '@/lib/utils'
 import { useCan } from '@/features/auth/useCan'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -32,6 +36,8 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { DataTable, type DataTableColumn } from '@/components/shared/DataTable'
+import { Pagination } from '@/components/shared/Pagination'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -71,6 +77,7 @@ export function TeacherDetailPage() {
   const [activeTab, setActiveTab] = useState('profile')
   const [deactivateOpen, setDeactivateOpen] = useState(false)
   const [reactivateOpen, setReactivateOpen] = useState(false)
+  const [promoteOpen, setPromoteOpen] = useState(false)
   const [deleteOpen, setDeleteOpen] = useState(false)
   const [deactivateTarget, setDeactivateTarget] =
     useState<(typeof INACTIVE_STATUSES)[number]>('OnLeave')
@@ -144,7 +151,7 @@ export function TeacherDetailPage() {
 
   if (isLoading || !teacher) {
     return (
-      <div className="flex max-w-3xl flex-col gap-4">
+      <div className="mx-auto flex w-full max-w-3xl flex-col gap-4">
         <Skeleton className="h-8 w-64" />
         <Skeleton className="h-40 w-full" />
       </div>
@@ -158,7 +165,7 @@ export function TeacherDetailPage() {
   const isActive = (ACTIVE_STATUSES as readonly string[]).includes(teacher.status)
 
   return (
-    <div className="flex max-w-3xl flex-col gap-6">
+    <div className="mx-auto flex w-full max-w-3xl flex-col gap-6">
       <div className="flex flex-col gap-4">
         <Link
           to="/teachers"
@@ -179,7 +186,19 @@ export function TeacherDetailPage() {
               <Badge variant={statusVariant(teacher.status)}>
                 {enumLabel(t, 'teacherStatus', teacher.status)}
               </Badge>
-              {teacher.hasAccount && <Badge variant="secondary">{t('table.hasAccount')}</Badge>}
+              {teacher.hasAccount && (
+                <Badge
+                  variant={
+                    teacher.status === 'Resigned' || teacher.status === 'Dismissed'
+                      ? 'secondary'
+                      : 'success'
+                  }
+                >
+                  {teacher.status === 'Resigned' || teacher.status === 'Dismissed'
+                    ? t('accountLink.accountDeactivated')
+                    : t('accountLink.accountActive')}
+                </Badge>
+              )}
             </div>
           </div>
 
@@ -192,6 +211,12 @@ export function TeacherDetailPage() {
             )}
             {canManage && (
               <>
+                {teacher.status === 'Probation' && (
+                  <Button variant="outline" onClick={() => setPromoteOpen(true)}>
+                    <ArrowUpCircle />
+                    {t('teachers.detail.promote')}
+                  </Button>
+                )}
                 {isActive ? (
                   <Button variant="outline" onClick={() => setDeactivateOpen(true)}>
                     <UserX />
@@ -241,10 +266,10 @@ export function TeacherDetailPage() {
           <CommentTab teacherId={id} comment={teacher.comment} canManage={canManage} />
         </TabsContent>
         <TabsContent value="lessons">
-          <PlaceholderTab titleKey="teachers.detail.tabs.lessons" />
+          <LessonsTab teacherId={id} />
         </TabsContent>
         <TabsContent value="payroll">
-          <PlaceholderTab titleKey="teachers.detail.tabs.payroll" />
+          <PayrollTab teacherId={id} />
         </TabsContent>
       </Tabs>
 
@@ -298,6 +323,15 @@ export function TeacherDetailPage() {
         onOpenChange={setReactivateOpen}
         title={t('teachers.detail.confirmReactivateTitle')}
         description={t('teachers.detail.confirmReactivateDesc')}
+        onConfirm={async () => {
+          await statusMutation.mutateAsync('Employed')
+        }}
+      />
+      <ConfirmDialog
+        open={promoteOpen}
+        onOpenChange={setPromoteOpen}
+        title={t('teachers.detail.confirmPromoteTitle')}
+        description={t('teachers.detail.confirmPromoteDesc')}
         onConfirm={async () => {
           await statusMutation.mutateAsync('Employed')
         }}
@@ -707,15 +741,137 @@ function CommentTab({
   )
 }
 
-function PlaceholderTab({ titleKey }: { titleKey: string }) {
-  const { t } = useTranslation()
+function LessonsTab({ teacherId }: { teacherId: string }) {
+  const { t, i18n } = useTranslation()
+  const lang = i18n.language === 'en' ? 'en' : 'uk'
+  const [page, setPage] = useState(1)
+
+  const { data, isPending } = useQuery({
+    queryKey: ['schedules', { teacherId, page }],
+    queryFn: () => getSchedules({ teacherId, page, pageSize: 10 }),
+  })
+  const resolved = useResolvedSchedules(data?.items ?? [])
+
+  const columns: DataTableColumn<(typeof resolved)[number]>[] = [
+    {
+      key: 'date',
+      header: t('calendar.item.title'),
+      cell: (r) => formatDateTime(r.row.scheduledDate, lang),
+    },
+    {
+      key: 'course',
+      header: t('teachers.detail.tabs.lessonsColumns.course'),
+      cell: (r) => r.courseName ?? '—',
+    },
+    {
+      key: 'with',
+      header: t('teachers.detail.tabs.lessonsColumns.with'),
+      cell: (r) => r.groupName ?? r.studentName ?? '—',
+    },
+    {
+      key: 'status',
+      header: t('teachers.detail.tabs.lessonsColumns.status'),
+      cell: (r) => (
+        <Badge
+          variant={
+            r.row.status === 'Cancelled'
+              ? 'destructive'
+              : r.row.status === 'Completed'
+                ? 'success'
+                : 'secondary'
+          }
+        >
+          {enumLabel(t, 'scheduleStatus', r.row.status)}
+        </Badge>
+      ),
+    },
+  ]
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base font-medium">{t(titleKey)}</CardTitle>
+        <CardTitle className="text-base font-medium">{t('teachers.detail.tabs.lessons')}</CardTitle>
       </CardHeader>
-      <CardContent>
-        <p className="text-sm text-muted-foreground">{t('common.comingSoon')}</p>
+      <CardContent className="flex flex-col gap-4">
+        <DataTable
+          columns={columns}
+          rows={resolved}
+          rowKey={(r) => r.row.id}
+          isLoading={isPending}
+          emptyMessage={t('teachers.detail.noLessons')}
+        />
+        {data && (
+          <Pagination
+            page={toNum(data.page)}
+            totalPages={toNum(data.totalPages)}
+            totalCount={toNum(data.totalCount)}
+            onPageChange={setPage}
+          />
+        )}
+      </CardContent>
+    </Card>
+  )
+}
+
+function PayrollTab({ teacherId }: { teacherId: string }) {
+  const { t, i18n } = useTranslation()
+  const lang = i18n.language === 'en' ? 'en' : 'uk'
+  const [page, setPage] = useState(1)
+
+  const { data, isPending } = useQuery({
+    queryKey: ['payrolls', { teacherId, page }],
+    queryFn: () => getPayrolls({ teacherId, page, pageSize: 10 }),
+  })
+  const resolved = useResolvedPayrolls(data?.items ?? [])
+
+  const columns: DataTableColumn<(typeof resolved)[number]>[] = [
+    {
+      key: 'period',
+      header: t('billing.payroll.columns.period'),
+      cell: (r) => r.row.period,
+    },
+    {
+      key: 'lessonsCount',
+      header: t('billing.payroll.columns.lessonsCount'),
+      cell: (r) => Number(r.row.completedLessonsCount),
+    },
+    {
+      key: 'amount',
+      header: t('billing.payroll.columns.amount'),
+      cell: (r) => formatCurrency(r.row.totalAmount, lang),
+    },
+    {
+      key: 'status',
+      header: t('billing.payroll.columns.status'),
+      cell: (r) => (
+        <Badge variant={r.row.status === 'Paid' ? 'success' : 'warning'}>
+          {enumLabel(t, 'payrollStatus', r.row.status)}
+        </Badge>
+      ),
+    },
+  ]
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-base font-medium">{t('teachers.detail.tabs.payroll')}</CardTitle>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-4">
+        <DataTable
+          columns={columns}
+          rows={resolved}
+          rowKey={(r) => r.row.id}
+          isLoading={isPending}
+          emptyMessage={t('billing.payroll.empty')}
+        />
+        {data && (
+          <Pagination
+            page={toNum(data.page)}
+            totalPages={toNum(data.totalPages)}
+            totalCount={toNum(data.totalCount)}
+            onPageChange={setPage}
+          />
+        )}
       </CardContent>
     </Card>
   )

@@ -19,9 +19,9 @@ import { ConfirmDialog } from '@/components/shared/ConfirmDialog'
 import { Field } from '@/components/shared/Field'
 
 function statusVariant(status: string): 'success' | 'warning' | 'secondary' | 'destructive' {
-  if (status === 'Scheduled' || status === 'Rescheduled') return 'success'
-  if (status === 'Completed') return 'secondary'
-  return 'destructive'
+  if (status === 'Cancelled') return 'destructive'
+  if (status === 'Completed') return 'success'
+  return 'secondary'
 }
 
 interface LessonDetailDialogProps {

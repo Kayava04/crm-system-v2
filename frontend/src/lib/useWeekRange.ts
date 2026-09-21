@@ -9,8 +9,11 @@ function startOfWeek(date: Date): Date {
   return d
 }
 
-function toIsoDate(d: Date): string {
-  return d.toISOString().slice(0, 10)
+export function toIsoDate(d: Date): string {
+  const year = d.getFullYear()
+  const month = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
 }
 
 /** Tracks a Monday-Sunday week window as ISO date strings, with prev/next/today navigation. */

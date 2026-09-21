@@ -84,7 +84,7 @@ export function PhotoTab() {
     .toUpperCase()
 
   return (
-    <Card className="max-w-sm">
+    <Card>
       <CardHeader>
         <CardTitle className="text-base font-medium">{t('profile.tabs.photo')}</CardTitle>
         <CardDescription>{t('profile.photo.description')}</CardDescription>

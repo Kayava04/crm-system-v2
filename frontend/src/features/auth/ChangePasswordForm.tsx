@@ -67,7 +67,7 @@ export function ChangePasswordForm({ onSuccess }: { onSuccess?: () => void }) {
   }
 
   return (
-    <form className="flex max-w-sm flex-col gap-4" onSubmit={handleSubmit(onSubmit)} noValidate>
+    <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)} noValidate>
       {formError && (
         <Alert variant="destructive">
           <AlertDescription>{formError}</AlertDescription>

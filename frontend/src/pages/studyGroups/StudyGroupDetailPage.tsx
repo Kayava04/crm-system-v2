@@ -99,7 +99,7 @@ export function StudyGroupDetailPage() {
   if (!group) return null
 
   return (
-    <div className="flex max-w-2xl flex-col gap-4">
+    <div className="mx-auto flex w-full max-w-2xl flex-col gap-4">
       <Link
         to="/study-groups"
         className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"

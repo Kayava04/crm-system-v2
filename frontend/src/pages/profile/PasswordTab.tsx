@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 export function PasswordTab() {
   const { t } = useTranslation()
   return (
-    <Card className="max-w-sm">
+    <Card>
       <CardHeader>
         <CardTitle className="text-base font-medium">{t('profile.tabs.password')}</CardTitle>
       </CardHeader>

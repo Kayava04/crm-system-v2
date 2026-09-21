@@ -149,8 +149,6 @@ export function StaffEnrollmentsListPage() {
         )}
       </div>
 
-      <p className="text-xs text-muted-foreground">{t('enrollments.detail.backendGapNote')}</p>
-
       <div className="flex flex-wrap items-end gap-3">
         <Select value={status} onValueChange={(v) => updateParam('status', v === 'any' ? '' : v)}>
           <SelectTrigger className="w-40">

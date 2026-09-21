@@ -70,7 +70,7 @@ export function ContactTab() {
   }
 
   return (
-    <Card className="max-w-sm">
+    <Card>
       <CardHeader>
         <CardTitle className="text-base font-medium">{t('profile.tabs.contact')}</CardTitle>
         <CardDescription>{t('profile.contact.description')}</CardDescription>

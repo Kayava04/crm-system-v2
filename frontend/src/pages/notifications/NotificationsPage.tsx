@@ -56,7 +56,7 @@ export function NotificationsPage() {
   }
 
   return (
-    <div className="flex max-w-2xl flex-col gap-4">
+    <div className="mx-auto flex w-full max-w-2xl flex-col gap-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-2xl font-semibold tracking-tight">{t('notifications.title')}</h1>
         <Button variant="outline" size="sm" onClick={handleMarkAllRead}>

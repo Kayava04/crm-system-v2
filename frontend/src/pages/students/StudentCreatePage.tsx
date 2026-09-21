@@ -101,7 +101,7 @@ export function StudentCreatePage() {
   }
 
   return (
-    <div className="flex max-w-2xl flex-col gap-6">
+    <div className="mx-auto flex w-full max-w-2xl flex-col gap-6">
       <h1 className="text-2xl font-semibold tracking-tight">{t('students.create.title')}</h1>
       <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-6">
         {formError && (

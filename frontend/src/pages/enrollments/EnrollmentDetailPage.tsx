@@ -153,7 +153,7 @@ export function EnrollmentDetailPage() {
 
   if (isLoading || !enrollment) {
     return (
-      <div className="flex max-w-2xl flex-col gap-4">
+      <div className="mx-auto flex w-full max-w-2xl flex-col gap-4">
         <Skeleton className="h-8 w-64" />
         <Skeleton className="h-40 w-full" />
       </div>
@@ -168,7 +168,7 @@ export function EnrollmentDetailPage() {
     enrollment.status === 'Draft'
 
   return (
-    <div className="flex max-w-2xl flex-col gap-6">
+    <div className="mx-auto flex w-full max-w-2xl flex-col gap-6">
       <div className="flex flex-col gap-4">
         <button
           type="button"

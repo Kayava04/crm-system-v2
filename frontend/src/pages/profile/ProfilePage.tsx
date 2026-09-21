@@ -54,7 +54,7 @@ export function ProfilePage() {
   const initials = (displayName || '?').slice(0, 2).toUpperCase()
 
   return (
-    <div className="flex max-w-4xl flex-col gap-6">
+    <div className="mx-auto flex w-full max-w-4xl flex-col gap-6">
       <div className="flex items-center gap-4">
         <Avatar className="size-14">
           {avatarUrl && <AvatarImage src={avatarUrl} alt="" />}

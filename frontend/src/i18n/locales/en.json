@@ -339,7 +339,11 @@
         "comment": "Comment",
         "enrollments": "Enrollments",
         "lessons": "Lessons",
-        "invoices": "Invoices"
+        "invoices": "Invoices",
+        "lessonsColumns": {
+          "course": "Course",
+          "status": "Status"
+        }
       },
       "commentLabel": "Internal comment",
       "commentPlaceholder": "Staff notes — not visible to the student",
@@ -352,7 +356,8 @@
       "profileSaved": "Profile updated",
       "preferencesSaved": "Preferences updated",
       "noEnrollments": "This student has no enrollments yet",
-      "newStatusLabel": "New status"
+      "newStatusLabel": "New status",
+      "noLessons": "This student has no lessons yet."
     },
     "create": {
       "title": "New student",
@@ -387,6 +392,7 @@
       "cancelEdit": "Cancel",
       "deactivate": "Deactivate",
       "reactivate": "Reactivate",
+      "promote": "Move to permanent status",
       "delete": "Delete",
       "deleteConflictTitle": "Can't delete",
       "deleteConflictDesc": "This teacher has an account or history (lessons, payroll). Deactivate instead.",
@@ -396,6 +402,8 @@
       "confirmDeactivateDesc": "Future lessons will be cancelled or need a new teacher. This can be reversed.",
       "confirmReactivateTitle": "Reactivate this teacher?",
       "confirmReactivateDesc": "The teacher will be able to teach lessons again.",
+      "confirmPromoteTitle": "Move to permanent status?",
+      "confirmPromoteDesc": "The teacher will move from Probation to Employed. No lessons are cancelled.",
       "statusChangeResultTitle": "Done",
       "cancelledLessons": "Lessons cancelled: {{count}}",
       "restoredLessons": "Lessons restored: {{count}}",
@@ -405,7 +413,12 @@
         "salary": "Salary rates",
         "comment": "Comment",
         "lessons": "Lessons",
-        "payroll": "Payroll"
+        "payroll": "Payroll",
+        "lessonsColumns": {
+          "course": "Course",
+          "with": "Students/group",
+          "status": "Status"
+        }
       },
       "commentLabel": "Internal comment",
       "commentPlaceholder": "Staff notes",
@@ -414,7 +427,8 @@
       "addRate": "New rate",
       "addRateTitle": "New salary rate",
       "rateSaved": "Rate added",
-      "newStatusLabel": "New status"
+      "newStatusLabel": "New status",
+      "noLessons": "This teacher has no lessons yet."
     },
     "create": {
       "title": "New teacher",
@@ -540,8 +554,7 @@
       "discountRemoved": "Discount removed",
       "viewStudent": "Student profile",
       "viewCourse": "Course profile",
-      "resolving": "Resolving student/course…",
-      "backendGapNote": "The API's enrollment list doesn't include the student's or course's name — each row is resolved individually."
+      "resolving": "Resolving student/course…"
     },
     "createDialog": {
       "title": "New enrollment",
@@ -572,6 +585,11 @@
     "createLesson": "New lesson",
     "generate": "Generate lessons",
     "reassignTeacher": "Reassign teacher",
+    "selectLessons": "Select lessons",
+    "exitSelectLessons": "Done selecting",
+    "selectedCount": "{{count}} lessons selected",
+    "clearSelection": "Clear selection",
+    "reassignSelectedTeacher": "Reassign teacher for selected",
     "cancelFuture": "Cancel future lessons",
     "online": "Online",
     "offline": "Offline",
@@ -595,7 +613,9 @@
       "rescheduleSubmit": "Reschedule",
       "rescheduledToast": "Lesson rescheduled",
       "cancelledToast": "Lesson cancelled",
-      "completedToast": "Lesson marked completed"
+      "completedToast": "Lesson marked completed",
+      "time": "Time",
+      "format": "Format"
     },
     "createDialog": {
       "title": "New lesson",
@@ -638,7 +658,15 @@
       "reassignedCount": "Lessons reassigned: {{count}}",
       "restoredCount": "Lessons restored: {{count}}",
       "updatedGroupsCount": "Groups updated: {{count}}",
-      "description": "The replacement applies to all of the selected teacher's future lessons at once — picking individual lessons isn't possible yet."
+      "description": "This replacement applies to all of the selected teacher's future lessons at once. To reassign only individual lessons, use the \"Select lessons\" button in the calendar instead."
+    },
+    "reassignSelectedDialog": {
+      "title": "Reassign teacher for selected lessons",
+      "description": "The new teacher will be assigned only to the {{count}} selected lessons — all other lessons, for this teacher or any other, stay unchanged.",
+      "toLabel": "New teacher",
+      "submit": "Reassign",
+      "success": "Teacher reassigned for {{count}} lessons",
+      "someFailed": "Could not reassign {{count}} lessons (time conflict or teacher unavailable)"
     },
     "cancelFutureDialog": {
       "title": "Cancel future lessons",
@@ -911,7 +939,8 @@
       "netResult": "Net result",
       "pendingInvoices": "Pending payment",
       "overdueInvoices": "Overdue",
-      "pendingPayroll": "Pending payout (payroll)"
+      "pendingPayroll": "Pending payout (payroll)",
+      "incomeVsExpenses": "Income vs. expenses"
     },
     "students": {
       "title": "Students",
@@ -979,7 +1008,7 @@
       "emailLabel": "Email",
       "firstNameLabel": "First name",
       "lastNameLabel": "Last name",
-      "phoneLabel": "Phone (optional)",
+      "phoneLabel": "Phone",
       "permissionsLabel": "Permissions",
       "submit": "Create",
       "success": "Staff member created"
@@ -1026,6 +1055,21 @@
       "lessons": "Lessons",
       "nextLesson": "Next lesson",
       "lastLesson": "Last lesson"
+    },
+    "searchPlaceholder": "Search student…",
+    "filters": {
+      "course": "Course",
+      "any": "All courses",
+      "clear": "Clear filters"
+    },
+    "detail": {
+      "title": "Lessons — {{name}}",
+      "columns": {
+        "date": "Date",
+        "course": "Course",
+        "status": "Status"
+      },
+      "empty": "No lessons found"
     }
   },
   "accountLink": {
@@ -1033,6 +1077,8 @@
     "dialogTitle": "Create a login account",
     "dialogDescription": "This creates a login and temporary password linked to this profile.",
     "emailLabel": "Login email",
-    "submit": "Create"
+    "submit": "Create",
+    "accountActive": "Account active",
+    "accountDeactivated": "Account deactivated"
   }
 }

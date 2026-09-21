@@ -40,18 +40,20 @@ export function SidebarNav({ onNavigate, collapsible = false }: SidebarNavProps)
                 className={({ isActive }) =>
                   cn(
                     'flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors',
+                    collapsible &&
+                      'justify-center gap-0 group-hover:justify-start group-hover:gap-3 group-focus-within:justify-start group-focus-within:gap-3',
                     isActive
                       ? 'bg-sidebar-accent text-sidebar-accent-foreground'
                       : 'text-sidebar-foreground hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground',
                   )
                 }
               >
-                <item.icon className="size-4 shrink-0" />
+                <item.icon className="size-5 shrink-0" />
                 <span
                   className={cn(
                     'truncate',
                     collapsible &&
-                      'opacity-0 transition-opacity delay-75 duration-150 group-hover:opacity-100 group-focus-within:opacity-100',
+                      'w-0 opacity-0 transition-opacity delay-75 duration-150 group-hover:w-auto group-hover:opacity-100 group-focus-within:w-auto group-focus-within:opacity-100',
                   )}
                 >
                   {t(item.labelKey)}
@@ -82,10 +84,12 @@ export function Sidebar() {
           'lg:flex',
         )}
       >
-        <div className="flex h-14 shrink-0 items-center gap-2 overflow-hidden border-b border-sidebar-border px-4">
-          <GraduationCap className="size-5 shrink-0 text-primary" />
+        <div className="flex h-14 shrink-0 items-center justify-center gap-0 overflow-hidden border-b border-sidebar-border px-3 group-hover:justify-start group-hover:gap-3 group-focus-within:justify-start group-focus-within:gap-3">
+          <span className="flex size-6 shrink-0 items-center justify-center">
+            <GraduationCap className="size-5 text-primary" />
+          </span>
           <span
-            className="truncate text-sm font-semibold text-sidebar-foreground opacity-0 transition-opacity delay-75 duration-150 group-hover:opacity-100 group-focus-within:opacity-100"
+            className="w-0 truncate text-sm font-semibold text-sidebar-foreground opacity-0 transition-opacity delay-100 duration-150 group-hover:w-auto group-hover:opacity-100 group-focus-within:w-auto group-focus-within:opacity-100"
             title={t('common.appName')}
           >
             {t('common.appName')}

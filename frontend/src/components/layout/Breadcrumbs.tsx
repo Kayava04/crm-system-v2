@@ -34,10 +34,10 @@ export function Breadcrumbs() {
       aria-label="Breadcrumb"
     >
       <Link to="/" className="flex items-center gap-1 hover:text-foreground">
-        <Home className="size-3.5" />
+        <Home className="size-4" />
       </Link>
       <ChevronRight className="size-3.5" />
-      <span className="truncate font-medium text-foreground">{label}</span>
+      <span className="truncate text-[15px] font-medium text-foreground">{label}</span>
     </nav>
   )
 }

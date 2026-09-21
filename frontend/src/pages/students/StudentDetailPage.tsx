@@ -19,11 +19,14 @@ import {
   deleteParentInfo,
 } from '@/features/students/api'
 import { getEnrollments } from '@/features/enrollments/api'
+import { getInvoices } from '@/features/billing/api'
+import { useResolvedInvoices } from '@/features/billing/useResolvedInvoices'
+import { useStudentLessons } from '@/features/scheduling/useStudentLessons'
 import { ApiError } from '@/api/errors'
 import { applyServerValidation } from '@/lib/applyServerValidation'
 import { useAuthenticatedBlobUrl } from '@/lib/useAuthenticatedBlobUrl'
 import { enumLabel } from '@/lib/enumLabels'
-import { toNum } from '@/lib/utils'
+import { toNum, formatCurrency, formatDate, formatDateTime } from '@/lib/utils'
 import { useCan } from '@/features/auth/useCan'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -53,6 +56,8 @@ import {
 } from '@/components/ui/dialog'
 import { ConfirmDialog } from '@/components/shared/ConfirmDialog'
 import { EnrollmentsTable } from '@/components/shared/EnrollmentsTable'
+import { DataTable, type DataTableColumn } from '@/components/shared/DataTable'
+import { Pagination } from '@/components/shared/Pagination'
 import { CreateEnrollmentDialog } from '@/components/shared/CreateEnrollmentDialog'
 import { CreateProfileAccountDialog } from '@/components/shared/CreateProfileAccountDialog'
 import { TemporaryPasswordDialog } from '@/components/shared/TemporaryPasswordDialog'
@@ -168,7 +173,7 @@ export function StudentDetailPage() {
 
   if (isLoading || !student) {
     return (
-      <div className="flex max-w-3xl flex-col gap-4">
+      <div className="mx-auto flex w-full max-w-3xl flex-col gap-4">
         <Skeleton className="h-8 w-64" />
         <Skeleton className="h-40 w-full" />
       </div>
@@ -181,7 +186,7 @@ export function StudentDetailPage() {
   const initials = `${student.firstName[0] ?? ''}${student.lastName[0] ?? ''}`.toUpperCase()
 
   return (
-    <div className="flex max-w-3xl flex-col gap-6">
+    <div className="mx-auto flex w-full max-w-3xl flex-col gap-6">
       <div className="flex flex-col gap-4">
         <Link
           to="/students"
@@ -205,7 +210,13 @@ export function StudentDetailPage() {
               {student.isChild && (
                 <Badge variant="outline">{t('profile.studentData.isChild')}</Badge>
               )}
-              {student.hasAccount && <Badge variant="secondary">{t('table.hasAccount')}</Badge>}
+              {student.hasAccount && (
+                <Badge variant={student.status === 'Withdrawn' ? 'secondary' : 'success'}>
+                  {student.status === 'Withdrawn'
+                    ? t('accountLink.accountDeactivated')
+                    : t('accountLink.accountActive')}
+                </Badge>
+              )}
             </div>
           </div>
 
@@ -281,10 +292,10 @@ export function StudentDetailPage() {
           <EnrollmentsTab studentId={id} studentName={fullName} />
         </TabsContent>
         <TabsContent value="lessons">
-          <PlaceholderTab titleKey="students.detail.tabs.lessons" />
+          <LessonsTab studentId={id} />
         </TabsContent>
         <TabsContent value="invoices">
-          <PlaceholderTab titleKey="students.detail.tabs.invoices" />
+          <InvoicesTab studentId={id} />
         </TabsContent>
       </Tabs>
 
@@ -1093,15 +1104,156 @@ function EnrollmentsTab({ studentId, studentName }: { studentId: string; student
   )
 }
 
-function PlaceholderTab({ titleKey }: { titleKey: string }) {
-  const { t } = useTranslation()
+const LESSONS_PAGE_SIZE = 10
+
+function LessonsTab({ studentId }: { studentId: string }) {
+  const { t, i18n } = useTranslation()
+  const lang = i18n.language === 'en' ? 'en' : 'uk'
+  const { rows, isLoading } = useStudentLessons(studentId)
+  const [page, setPage] = useState(1)
+
+  // useStudentLessons assembles the full history client-side (see its own
+  // comment - there's no `GET /api/schedules?studentId=` filter to page
+  // through on the backend), so pagination here slices the already-sorted
+  // in-memory array instead of a page/pageSize query param.
+  const totalPages = Math.max(1, Math.ceil(rows.length / LESSONS_PAGE_SIZE))
+  const currentPage = Math.min(page, totalPages)
+  const pageRows = rows.slice(
+    (currentPage - 1) * LESSONS_PAGE_SIZE,
+    currentPage * LESSONS_PAGE_SIZE,
+  )
+
+  const columns: DataTableColumn<(typeof rows)[number]>[] = [
+    {
+      key: 'date',
+      header: t('calendar.item.title'),
+      cell: (r) => formatDateTime(r.row.scheduledDate, lang),
+    },
+    {
+      key: 'course',
+      header: t('students.detail.tabs.lessonsColumns.course'),
+      cell: (r) => r.courseName ?? '—',
+    },
+    {
+      key: 'teacher',
+      header: t('calendar.item.teacher'),
+      cell: (r) =>
+        r.groupName ? `${r.teacherName ?? '—'} · ${r.groupName}` : (r.teacherName ?? '—'),
+    },
+    {
+      key: 'status',
+      header: t('students.detail.tabs.lessonsColumns.status'),
+      cell: (r) => (
+        <Badge
+          variant={
+            r.row.status === 'Cancelled'
+              ? 'destructive'
+              : r.row.status === 'Completed'
+                ? 'success'
+                : 'secondary'
+          }
+        >
+          {enumLabel(t, 'scheduleStatus', r.row.status)}
+        </Badge>
+      ),
+    },
+  ]
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base font-medium">{t(titleKey)}</CardTitle>
+        <CardTitle className="text-base font-medium">{t('students.detail.tabs.lessons')}</CardTitle>
       </CardHeader>
-      <CardContent>
-        <p className="text-sm text-muted-foreground">{t('common.comingSoon')}</p>
+      <CardContent className="flex flex-col gap-4">
+        <DataTable
+          columns={columns}
+          rows={pageRows}
+          rowKey={(r) => r.row.id}
+          isLoading={isLoading}
+          emptyMessage={t('students.detail.noLessons')}
+        />
+        {rows.length > 0 && (
+          <Pagination
+            page={currentPage}
+            totalPages={totalPages}
+            totalCount={rows.length}
+            onPageChange={setPage}
+          />
+        )}
+      </CardContent>
+    </Card>
+  )
+}
+
+function InvoicesTab({ studentId }: { studentId: string }) {
+  const { t, i18n } = useTranslation()
+  const lang = i18n.language === 'en' ? 'en' : 'uk'
+  const [page, setPage] = useState(1)
+
+  const { data, isPending } = useQuery({
+    queryKey: ['invoices', { studentId, page }],
+    queryFn: () => getInvoices({ studentId, page, pageSize: 10 }),
+  })
+  const resolved = useResolvedInvoices(data?.items ?? [])
+
+  const columns: DataTableColumn<(typeof resolved)[number]>[] = [
+    {
+      key: 'period',
+      header: t('billing.invoices.columns.period'),
+      cell: (r) => r.row.period,
+    },
+    {
+      key: 'amount',
+      header: t('billing.invoices.columns.amount'),
+      cell: (r) => formatCurrency(r.row.amount, lang),
+    },
+    {
+      key: 'dueDate',
+      header: t('billing.invoices.columns.dueDate'),
+      cell: (r) => formatDate(r.row.dueDate, lang),
+    },
+    {
+      key: 'status',
+      header: t('billing.invoices.columns.status'),
+      cell: (r) => (
+        <Badge
+          variant={
+            r.row.status === 'Paid'
+              ? 'success'
+              : r.row.status === 'Overdue'
+                ? 'destructive'
+                : 'warning'
+          }
+        >
+          {enumLabel(t, 'invoiceStatus', r.row.status)}
+        </Badge>
+      ),
+    },
+  ]
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-base font-medium">
+          {t('students.detail.tabs.invoices')}
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-4">
+        <DataTable
+          columns={columns}
+          rows={resolved}
+          rowKey={(r) => r.row.id}
+          isLoading={isPending}
+          emptyMessage={t('billing.invoices.empty')}
+        />
+        {data && (
+          <Pagination
+            page={toNum(data.page)}
+            totalPages={toNum(data.totalPages)}
+            totalCount={toNum(data.totalCount)}
+            onPageChange={setPage}
+          />
+        )}
       </CardContent>
     </Card>
   )

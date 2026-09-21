@@ -26,9 +26,11 @@ export function Header() {
         </Button>
         <SheetContent side="left" className="flex flex-col p-0">
           <SheetTitle className="sr-only">{t('common.appName')}</SheetTitle>
-          <div className="flex h-14 items-center gap-2 border-b border-sidebar-border px-4">
-            <GraduationCap className="size-5 text-primary" />
-            <span className="truncate text-sm font-semibold">{t('common.appName')}</span>
+          <div className="flex h-16 items-center border-b border-sidebar-border px-3">
+            <div className="flex items-center gap-3 px-3 py-2.5">
+              <GraduationCap className="size-6 text-primary" />
+              <span className="truncate text-sm font-semibold">{t('common.appName')}</span>
+            </div>
           </div>
           <SidebarNav onNavigate={() => setMobileNavOpen(false)} />
         </SheetContent>
@@ -38,7 +40,7 @@ export function Header() {
         <Breadcrumbs />
       </div>
 
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-3">
         <NotificationBell />
         <UserMenu />
       </div>

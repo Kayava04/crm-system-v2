@@ -1,26 +1,28 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useQuery } from '@tanstack/react-query'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { getMyCalendar } from '@/features/scheduling/api'
 import type { CalendarItem } from '@/features/scheduling/api'
-import { useWeekRange } from '@/lib/useWeekRange'
+import { useWeekRange, toIsoDate } from '@/lib/useWeekRange'
 import { enumLabel } from '@/lib/enumLabels'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
+import { MyLessonDetailDialog } from './MyLessonDetailDialog'
 
 function statusVariant(status: string): 'success' | 'secondary' | 'destructive' {
-  if (status === 'Scheduled' || status === 'Rescheduled') return 'success'
-  if (status === 'Completed') return 'secondary'
-  return 'destructive'
+  if (status === 'Cancelled') return 'destructive'
+  if (status === 'Completed') return 'success'
+  return 'secondary'
 }
 
 export function MyCalendarView() {
   const { t, i18n } = useTranslation()
   const lang = i18n.language === 'en' ? 'en' : 'uk'
   const { from, to, weekStart, weekEnd, goPrev, goNext, goToday } = useWeekRange()
+  const [selectedItem, setSelectedItem] = useState<CalendarItem | null>(null)
 
   const { data, isLoading } = useQuery({
     queryKey: ['calendar', 'my', from, to],
@@ -41,7 +43,7 @@ export function MyCalendarView() {
     const days: { date: Date; key: string; items: CalendarItem[] }[] = []
     const cursor = new Date(weekStart)
     for (let i = 0; i < 7; i++) {
-      const key = cursor.toISOString().slice(0, 10)
+      const key = toIsoDate(cursor)
       days.push({ date: new Date(cursor), key, items: byDay.get(key) ?? [] })
       cursor.setDate(cursor.getDate() + 1)
     }
@@ -95,7 +97,11 @@ export function MyCalendarView() {
               </h2>
               <div className="flex flex-col gap-2">
                 {day.items.map((item) => (
-                  <Card key={item.id}>
+                  <Card
+                    key={item.id}
+                    className="cursor-pointer transition-colors hover:bg-muted/40"
+                    onClick={() => setSelectedItem(item)}
+                  >
                     <CardContent className="flex flex-wrap items-center justify-between gap-3 py-3">
                       <div className="flex flex-col gap-1">
                         <div className="flex items-center gap-2">
@@ -139,6 +145,13 @@ export function MyCalendarView() {
             </div>
           ))}
       </div>
+
+      <MyLessonDetailDialog
+        open={!!selectedItem}
+        onOpenChange={(open) => !open && setSelectedItem(null)}
+        item={selectedItem}
+        lang={lang}
+      />
     </div>
   )
 }

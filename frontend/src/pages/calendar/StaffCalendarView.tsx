@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { ChevronLeft, ChevronRight, Plus, CalendarPlus, Users, Ban } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Plus, CalendarPlus, Users, Ban, ListChecks } from 'lucide-react'
 import { getSchedules } from '@/features/scheduling/api'
 import type { ScheduleListItem, ScheduleStatus } from '@/features/scheduling/api'
 import {
@@ -9,7 +9,7 @@ import {
   type ResolvedScheduleRow,
 } from '@/features/scheduling/useResolvedSchedules'
 import { getAllGroupsForLookup } from '@/features/studyGroups/api'
-import { useWeekRange } from '@/lib/useWeekRange'
+import { useWeekRange, toIsoDate } from '@/lib/useWeekRange'
 import { enumLabel } from '@/lib/enumLabels'
 import { useCan } from '@/features/auth/useCan'
 import { Button } from '@/components/ui/button'
@@ -24,18 +24,29 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { TeacherSearchInput } from '@/components/shared/TeacherSearchInput'
+import { Checkbox } from '@/components/ui/checkbox'
 import { CreateLessonDialog } from './CreateLessonDialog'
 import { GenerateScheduleDialog } from './GenerateScheduleDialog'
 import { ReassignTeacherDialog } from './ReassignTeacherDialog'
+import { ReassignSelectedLessonsDialog } from './ReassignSelectedLessonsDialog'
 import { CancelFutureDialog } from './CancelFutureDialog'
 import { LessonDetailDialog } from './LessonDetailDialog'
 
 const STATUSES: ScheduleStatus[] = ['Scheduled', 'Rescheduled', 'Completed', 'Cancelled']
 
+function addOneDay(isoDate: string): string {
+  const d = new Date(`${isoDate}T00:00:00`)
+  d.setDate(d.getDate() + 1)
+  const year = d.getFullYear()
+  const month = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
 function statusVariant(status: string): 'success' | 'secondary' | 'destructive' {
-  if (status === 'Scheduled' || status === 'Rescheduled') return 'success'
-  if (status === 'Completed') return 'secondary'
-  return 'destructive'
+  if (status === 'Cancelled') return 'destructive'
+  if (status === 'Completed') return 'success'
+  return 'secondary'
 }
 
 export function StaffCalendarView() {
@@ -54,6 +65,9 @@ export function StaffCalendarView() {
   const [reassignOpen, setReassignOpen] = useState(false)
   const [cancelFutureOpen, setCancelFutureOpen] = useState(false)
   const [selectedRow, setSelectedRow] = useState<ResolvedScheduleRow | null>(null)
+  const [selectMode, setSelectMode] = useState(false)
+  const [selectedLessonIds, setSelectedLessonIds] = useState<Set<string>>(new Set())
+  const [reassignSelectedOpen, setReassignSelectedOpen] = useState(false)
 
   const { data: groups } = useQuery({
     queryKey: ['study-groups', 'lookup-all'],
@@ -64,7 +78,10 @@ export function StaffCalendarView() {
   const filters = useMemo(
     () => ({
       dateFrom: from,
-      dateTo: to,
+      // GET /api/schedules filters with `ScheduledDate <= dateTo` (no day
+      // rollover), so a bare end-of-week date would cut off that whole last
+      // day's lessons. Ask for one day past `to` to include it fully.
+      dateTo: addOneDay(to),
       teacherId: teacherFilter?.id || undefined,
       groupId: groupFilter || undefined,
       status: (statusFilter || undefined) as ScheduleStatus | undefined,
@@ -96,7 +113,7 @@ export function StaffCalendarView() {
     const days: { date: Date; key: string; items: ResolvedScheduleRow[] }[] = []
     const cursor = new Date(weekStart)
     for (let i = 0; i < 7; i++) {
-      const key = cursor.toISOString().slice(0, 10)
+      const key = toIsoDate(cursor)
       days.push({ date: new Date(cursor), key, items: byDay.get(key) ?? [] })
       cursor.setDate(cursor.getDate() + 1)
     }
@@ -105,6 +122,20 @@ export function StaffCalendarView() {
 
   function invalidate() {
     queryClient.invalidateQueries({ queryKey: ['schedules'] })
+  }
+
+  function toggleSelectMode() {
+    setSelectMode((prev) => !prev)
+    setSelectedLessonIds(new Set())
+  }
+
+  function toggleLessonSelected(id: string, checked: boolean) {
+    setSelectedLessonIds((prev) => {
+      const next = new Set(prev)
+      if (checked) next.add(id)
+      else next.delete(id)
+      return next
+    })
   }
 
   const hasFilters = !!(teacherFilter || groupFilter || statusFilter)
@@ -127,6 +158,14 @@ export function StaffCalendarView() {
             <Button size="sm" variant="outline" onClick={() => setReassignOpen(true)}>
               <Users />
               {t('calendar.reassignTeacher')}
+            </Button>
+            <Button
+              size="sm"
+              variant={selectMode ? 'default' : 'outline'}
+              onClick={toggleSelectMode}
+            >
+              <ListChecks />
+              {selectMode ? t('calendar.exitSelectLessons') : t('calendar.selectLessons')}
             </Button>
             <Button size="sm" variant="outline" onClick={() => setCancelFutureOpen(true)}>
               <Ban />
@@ -226,39 +265,72 @@ export function StaffCalendarView() {
                 })}
               </h2>
               <div className="flex flex-col gap-2">
-                {day.items.map((r) => (
-                  <Card
-                    key={r.row.id}
-                    className="cursor-pointer transition-colors hover:bg-muted/40"
-                    onClick={() => setSelectedRow(r)}
-                  >
-                    <CardContent className="flex flex-wrap items-center justify-between gap-3 py-3">
-                      <div className="flex flex-col gap-1">
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm font-medium">
-                            {new Date(r.row.scheduledDate).toLocaleTimeString(lang, {
-                              hour: '2-digit',
-                              minute: '2-digit',
-                            })}
-                          </span>
-                          <Badge variant={statusVariant(r.row.status)}>
-                            {enumLabel(t, 'scheduleStatus', r.row.status)}
-                          </Badge>
+                {day.items.map((r) => {
+                  const isOpenLesson =
+                    r.row.status === 'Scheduled' || r.row.status === 'Rescheduled'
+                  return (
+                    <Card
+                      key={r.row.id}
+                      className="cursor-pointer transition-colors hover:bg-muted/40"
+                      onClick={() => (selectMode ? undefined : setSelectedRow(r))}
+                    >
+                      <CardContent className="flex flex-wrap items-center justify-between gap-3 py-3">
+                        <div className="flex items-center gap-3">
+                          {selectMode && (
+                            <Checkbox
+                              checked={selectedLessonIds.has(r.row.id)}
+                              disabled={!isOpenLesson}
+                              onClick={(e) => e.stopPropagation()}
+                              onCheckedChange={(checked) =>
+                                toggleLessonSelected(r.row.id, checked === true)
+                              }
+                            />
+                          )}
+                          <div className="flex flex-col gap-1">
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-medium">
+                                {new Date(r.row.scheduledDate).toLocaleTimeString(lang, {
+                                  hour: '2-digit',
+                                  minute: '2-digit',
+                                })}
+                              </span>
+                              <Badge variant={statusVariant(r.row.status)}>
+                                {enumLabel(t, 'scheduleStatus', r.row.status)}
+                              </Badge>
+                            </div>
+                            <span className="text-sm">{r.courseName ?? '—'}</span>
+                            <span className="text-xs text-muted-foreground">
+                              {r.groupName ? r.groupName : (r.studentName ?? '—')}
+                              {' · '}
+                              {r.teacherName ?? '—'}
+                            </span>
+                          </div>
                         </div>
-                        <span className="text-sm">{r.courseName ?? '—'}</span>
-                        <span className="text-xs text-muted-foreground">
-                          {r.groupName ? r.groupName : (r.studentName ?? '—')}
-                          {' · '}
-                          {r.teacherName ?? '—'}
-                        </span>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
+                      </CardContent>
+                    </Card>
+                  )
+                })}
               </div>
             </div>
           ))}
       </div>
+
+      {selectMode && selectedLessonIds.size > 0 && (
+        <div className="sticky bottom-4 z-10 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border bg-card p-3 shadow-lg">
+          <span className="text-sm font-medium">
+            {t('calendar.selectedCount', { count: selectedLessonIds.size })}
+          </span>
+          <div className="flex gap-2">
+            <Button size="sm" variant="ghost" onClick={() => setSelectedLessonIds(new Set())}>
+              {t('calendar.clearSelection')}
+            </Button>
+            <Button size="sm" onClick={() => setReassignSelectedOpen(true)}>
+              <Users />
+              {t('calendar.reassignSelectedTeacher')}
+            </Button>
+          </div>
+        </div>
+      )}
 
       <CreateLessonDialog open={createOpen} onOpenChange={setCreateOpen} onCreated={invalidate} />
       <GenerateScheduleDialog
@@ -270,6 +342,16 @@ export function StaffCalendarView() {
         open={reassignOpen}
         onOpenChange={setReassignOpen}
         onReassigned={invalidate}
+      />
+      <ReassignSelectedLessonsDialog
+        open={reassignSelectedOpen}
+        onOpenChange={setReassignSelectedOpen}
+        lessonIds={Array.from(selectedLessonIds)}
+        onReassigned={() => {
+          invalidate()
+          setSelectedLessonIds(new Set())
+          setSelectMode(false)
+        }}
       />
       <CancelFutureDialog
         open={cancelFutureOpen}

@@ -63,3 +63,21 @@ services:
       - uploads:/app/uploads
     ports:
       - "8080:8080"
+
+  # The SPA, built and served by nginx. Same profile as the API, so
+  # `docker compose --profile app up -d --build` brings up the whole app.
+  # VITE_API_URL is baked into the static bundle at build time (see frontend/Dockerfile) —
+  # it must be an origin the browser can reach, and it must match FRONTEND_ORIGIN above so
+  # the API's CORS accepts it.
+  web:
+    profiles: ["app"]
+    build:
+      context: ./frontend
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:8080}
+    container_name: crm-web
+    restart: unless-stopped
+    depends_on:
+      - api
+    ports:
+      - "5173:80"

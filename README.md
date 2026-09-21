@@ -25,15 +25,17 @@ automatically at start-up with `Database:MigrateOnStartup=true`.
 
 ### Docker (optional)
 
-`docker compose up -d` starts only Postgres and Seq. To run the API in a container too, add to `.env`
-`JWT_SECRET_KEY` (32+ characters), `SUPERADMIN_EMAIL`, `SUPERADMIN_PASSWORD` (and `FRONTEND_ORIGIN`, default
-`http://localhost:5173`), then:
+`docker compose up -d` starts only Postgres and Seq. To run the whole application in containers too
+(API and frontend), add to `.env` `JWT_SECRET_KEY` (32+ characters), `SUPERADMIN_EMAIL`,
+`SUPERADMIN_PASSWORD` (and `FRONTEND_ORIGIN`, default `http://localhost:5173`), then:
 
 ```bash
-docker compose --profile app up -d --build     # the API listens on http://localhost:8080
+docker compose --profile app up -d --build     # API on :8080, frontend on :5173
 ```
 
 The container applies the migrations at start-up. Nothing else is needed; there is no CI or deployment pipeline.
+The `app` profile builds and starts both `api` and `web` (the frontend, see Frontend → Docker below); to
+run only the API container add `--build api` or list the service explicitly.
 
 ### Configuration
 
@@ -124,3 +126,59 @@ dotnet test backend/CrmSystem.slnx
 - `Crm.IntegrationTests`: the whole application in memory against a real Postgres. Every run creates its own
   database and drops it afterwards. The server comes from the `CRM_TEST_CONNECTION` environment variable, or from the
   Host user secret `ConnectionStrings:Default` (the database name is replaced).
+
+## Frontend
+
+React 18 + TypeScript (strict) + Vite, in `frontend/`. Tailwind CSS v4 + hand-rolled shadcn-style
+components (Radix primitives), TanStack Query for server state, React Router, react-hook-form + zod,
+i18next (Ukrainian default, English second). The typed API client is generated from
+`frontend/openapi/v1.json` (`npm run gen:api` regenerates it from a running backend's
+`/openapi/v1.json`).
+
+### Run
+
+```bash
+cd frontend
+npm install
+npm run dev            # http://localhost:5173, expects the API at VITE_API_URL (see .env.example)
+```
+
+The backend must be running (`docker compose --profile app up -d --build` at the repo root) and its
+CORS `FRONTEND_ORIGIN` must match the dev server's origin (`http://localhost:5173` by default).
+
+### Scripts
+
+| Script | What it does |
+|---|---|
+| `npm run dev` | Vite dev server |
+| `npm run build` | Type-check (`tsc -b`) and production build to `dist/` |
+| `npm run lint` / `npm run format` | ESLint / Prettier |
+| `npm test` / `npm run test:watch` | Vitest |
+| `npm run gen:api` | Regenerate `src/api/schema.d.ts` from `openapi/v1.json` |
+
+### Docker
+
+`frontend/Dockerfile` builds the SPA with Vite and serves the static output with nginx
+(`frontend/nginx.conf` — SPA fallback to `index.html` so client-side routes survive a hard refresh).
+`VITE_API_URL` is a **build-time** value baked into the bundle (Vite only reads `import.meta.env.VITE_*`
+at build time, not when the container starts), so it's passed as a build arg, not a runtime environment
+variable:
+
+```bash
+docker build -t crm-web --build-arg VITE_API_URL=http://localhost:8080 frontend
+docker run -p 5173:80 crm-web
+```
+
+Via compose it's part of the `app` profile (see Backend → Docker above) — `VITE_API_URL` there defaults to
+`http://localhost:8080` and can be overridden in the root `.env`; it must be an origin the browser can
+reach and must match the API's `FRONTEND_ORIGIN` (CORS) for the built app to actually work.
+
+### Notes
+
+- Access token lives only in memory; the refresh token is in `localStorage` (per the brief — acceptable
+  for this project, but means an XSS vulnerability could read it, hence the short-lived access token and
+  rotation on every refresh).
+- Every request goes through one `openapi-fetch` client (`src/api/client.ts`) whose middleware attaches
+  the bearer token and, on a 401, serializes a single refresh call and retries the original request once.
+- The sidebar/route table (`src/routes/navConfig.ts`, `src/App.tsx`) is permission/role-gated client-side
+  for UX only; the server remains the authority and every endpoint is still checked there.

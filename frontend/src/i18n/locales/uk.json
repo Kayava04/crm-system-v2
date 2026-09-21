@@ -1,0 +1,1038 @@
+{
+  "common": {
+    "appName": "CRM школи іноземних мов",
+    "loading": "Завантаження…",
+    "save": "Зберегти",
+    "cancel": "Скасувати",
+    "close": "Закрити",
+    "confirm": "Підтвердити",
+    "retry": "Повторити",
+    "search": "Пошук",
+    "actions": "Дії",
+    "yes": "Так",
+    "no": "Ні",
+    "back": "Назад",
+    "comingSoon": "Цей розділ ще в розробці",
+    "unknownError": "Щось пішло не так. Спробуйте ще раз.",
+    "networkError": "Немає з'єднання з сервером. Перевірте мережу.",
+    "lightTheme": "Світла тема",
+    "darkTheme": "Темна тема",
+    "language": "Мова",
+    "edit": "Редагувати",
+    "delete": "Видалити",
+    "add": "Додати",
+    "create": "Створити",
+    "download": "Завантажити",
+    "upload": "Завантажити файл",
+    "filters": "Фільтри",
+    "apply": "Застосувати",
+    "remove": "Видалити",
+    "optional": "необов'язково",
+    "middleName": "По батькові",
+    "required": "Обов'язкове поле"
+  },
+  "auth": {
+    "loginTitle": "Вхід у систему",
+    "loginSubtitle": "Увійдіть за допомогою робочої пошти",
+    "emailLabel": "Електронна пошта",
+    "passwordLabel": "Пароль",
+    "loginButton": "Увійти",
+    "invalidCredentials": "Неправильна пошта або пароль",
+    "accountLocked": "Обліковий запис тимчасово заблоковано через забагато невдалих спроб входу. Спробуйте пізніше.",
+    "accountDeactivated": "Обліковий запис деактивовано. Зверніться до адміністратора.",
+    "tooManyAttempts": "Забагато спроб. Спробуйте через {{seconds}} с.",
+    "mustChangePasswordTitle": "Потрібно змінити пароль",
+    "mustChangePasswordDescription": "Це ваш перший вхід або пароль було скинуто. Встановіть новий пароль, щоб продовжити.",
+    "oldPasswordLabel": "Поточний пароль",
+    "newPasswordLabel": "Новий пароль",
+    "confirmNewPasswordLabel": "Підтвердження нового пароля",
+    "changePasswordButton": "Змінити пароль",
+    "passwordChanged": "Пароль змінено",
+    "passwordMinLength": "Пароль має містити щонайменше 8 символів",
+    "passwordsDontMatch": "Паролі не збігаються",
+    "logout": "Вийти",
+    "sessionExpired": "Сесію завершено. Увійдіть знову."
+  },
+  "home": {
+    "welcome": "Вітаємо, {{name}}"
+  },
+  "nav": {
+    "dashboard": "Дашборд",
+    "students": "Студенти",
+    "teachers": "Викладачі",
+    "courses": "Курси",
+    "enrollments": "Зарахування",
+    "studyGroups": "Групи",
+    "calendar": "Календар",
+    "invoices": "Рахунки",
+    "payroll": "Зарплата",
+    "notifications": "Сповіщення",
+    "materials": "Матеріали",
+    "staff": "Персонал",
+    "profile": "Профіль",
+    "myStudents": "Мої студенти",
+    "myCalendar": "Мій календар",
+    "myEnrollments": "Мої зарахування",
+    "myInvoices": "Мої рахунки",
+    "myPayroll": "Моя зарплата"
+  },
+  "roles": {
+    "SuperAdmin": "Суперадміністратор",
+    "Admin": "Адміністратор",
+    "Teacher": "Викладач",
+    "Student": "Студент"
+  },
+  "errors": {
+    "forbidden403Title": "Немає доступу",
+    "forbidden403Desc": "У вас недостатньо прав для перегляду цієї сторінки.",
+    "notFound404Title": "Сторінку не знайдено",
+    "notFound404Desc": "Перевірте адресу або поверніться на головну.",
+    "goHome": "На головну"
+  },
+  "profile": {
+    "title": "Профіль",
+    "tabs": {
+      "account": "Акаунт",
+      "contact": "Контактні дані",
+      "profileData": "Дані профілю",
+      "photo": "Фото",
+      "password": "Пароль"
+    },
+    "account": {
+      "emailLabel": "Електронна пошта",
+      "rolesLabel": "Ролі",
+      "permissionsLabel": "Дозволи",
+      "noPermissions": "Немає жодного дозволу"
+    },
+    "contact": {
+      "description": "Ці дані бачать інші співробітники школи.",
+      "firstNameLabel": "Ім'я",
+      "lastNameLabel": "Прізвище",
+      "phoneLabel": "Телефон",
+      "saved": "Контактні дані збережено",
+      "conflict": "Ці дані редагуються у вашому профілі студента/викладача, а не тут."
+    },
+    "photo": {
+      "description": "JPEG, PNG або WebP, до 5 МБ.",
+      "upload": "Завантажити фото",
+      "replace": "Замінити фото",
+      "remove": "Видалити фото",
+      "uploaded": "Фото оновлено",
+      "removed": "Фото видалено",
+      "confirmRemoveTitle": "Видалити фото профілю?",
+      "confirmRemoveDesc": "Дію можна скасувати, завантаживши нове фото пізніше.",
+      "tooLarge": "Файл більший за 5 МБ",
+      "wrongType": "Дозволені формати: JPEG, PNG, WebP"
+    },
+    "studentData": {
+      "fullName": "ПІБ",
+      "dateOfBirth": "Дата народження",
+      "phone": "Телефон",
+      "email": "Пошта",
+      "city": "Місто",
+      "country": "Країна",
+      "status": "Статус",
+      "isChild": "Неповнолітній",
+      "languages": "Мови",
+      "preferencesTitle": "Побажання щодо навчання",
+      "learningGoal": "Мета навчання",
+      "format": "Формат",
+      "lessonType": "Тип занять",
+      "intensity": "Інтенсивність (занять/тиждень)",
+      "currentLevel": "Поточний рівень",
+      "hadPreviousCourses": "Раніше вивчав(ла) мову",
+      "parentTitle": "Контакти батьків",
+      "noParent": "Контакти батьків не вказано",
+      "editNote": "Ці дані редагує адміністрація школи."
+    },
+    "teacherData": {
+      "fullName": "ПІБ",
+      "dateOfBirth": "Дата народження",
+      "phone": "Телефон",
+      "email": "Пошта",
+      "city": "Місто",
+      "country": "Країна",
+      "status": "Статус",
+      "salaryTitle": "Ставки оплати",
+      "currentRate": "Поточна ставка",
+      "baseSalary": "Базовий оклад",
+      "lessonsRate": "Ставка за заняття",
+      "effectiveFrom": "Діє з",
+      "noRates": "Ставки ще не встановлено",
+      "editNote": "Ці дані редагує адміністрація школи."
+    }
+  },
+  "enums": {
+    "studentStatus": {
+      "Active": "Активний",
+      "Suspended": "Призупинено",
+      "Graduated": "Випустився",
+      "Withdrawn": "Відрахований"
+    },
+    "teacherStatus": {
+      "Probation": "Випробувальний термін",
+      "Employed": "Працює",
+      "OnLeave": "У відпустці",
+      "Resigned": "Звільнився",
+      "Dismissed": "Звільнено"
+    },
+    "learningGoal": {
+      "Work": "Робота",
+      "Relocation": "Переїзд",
+      "Study": "Навчання",
+      "Personal": "Особисте"
+    },
+    "format": {
+      "Online": "Онлайн",
+      "Offline": "Офлайн"
+    },
+    "lessonType": {
+      "Individual": "Індивідуальні",
+      "Group": "Групові"
+    },
+    "level": {
+      "A1": "A1",
+      "A2": "A2",
+      "B1": "B1",
+      "B2": "B2",
+      "C1": "C1",
+      "C2": "C2"
+    },
+    "language": {
+      "English": "Англійська",
+      "French": "Французька",
+      "German": "Німецька",
+      "Polish": "Польська",
+      "Spanish": "Іспанська",
+      "Italian": "Італійська"
+    },
+    "courseStatus": {
+      "Active": "Активний",
+      "Archived": "Архівний"
+    },
+    "enrollmentStatus": {
+      "Draft": "Чернетка",
+      "Active": "Активне",
+      "Suspended": "Призупинено",
+      "Completed": "Завершено",
+      "Terminated": "Розірвано"
+    },
+    "scheduleStatus": {
+      "Scheduled": "Заплановано",
+      "Completed": "Проведено",
+      "Cancelled": "Скасовано",
+      "Rescheduled": "Перенесено"
+    },
+    "dayOfWeek": {
+      "Sunday": "Неділя",
+      "Monday": "Понеділок",
+      "Tuesday": "Вівторок",
+      "Wednesday": "Середа",
+      "Thursday": "Четвер",
+      "Friday": "П'ятниця",
+      "Saturday": "Субота"
+    },
+    "invoiceStatus": {
+      "Pending": "Очікує оплати",
+      "Paid": "Оплачено",
+      "Overdue": "Прострочено"
+    },
+    "payrollStatus": {
+      "Pending": "Очікує виплати",
+      "Paid": "Виплачено"
+    },
+    "notificationType": {
+      "PasswordChangeRequired": "Потрібна зміна пароля",
+      "InvoiceReminder": "Нагадування про рахунок",
+      "LessonReminder": "Нагадування про заняття",
+      "General": "Загальне"
+    },
+    "broadcastAudience": {
+      "Students": "Студенти",
+      "Teachers": "Викладачі",
+      "Admins": "Адміністратори",
+      "Everyone": "Усі"
+    },
+    "materialType": {
+      "Video": "Відео",
+      "Article": "Стаття",
+      "Link": "Посилання"
+    }
+  },
+  "table": {
+    "empty": "Нічого не знайдено",
+    "pageOf": "Сторінка {{page}} з {{totalPages}}",
+    "totalCount": "{{count}} записів",
+    "next": "Далі",
+    "selected": "Вибрано: {{count}}",
+    "clearSelection": "Скасувати вибір",
+    "bulkDeleteConfirmTitle": "Видалити вибрані записи?",
+    "bulkDeleteConfirmDesc": "Видалити можна лише записи без акаунта чи історії. Дію не можна скасувати.",
+    "bulkDeleteResult": "Видалено {{succeeded}} з {{total}}",
+    "hasAccount": "Є акаунт"
+  },
+  "import": {
+    "title": "Імпорт",
+    "description": "Excel (.xlsx) або JSON, до 5 МБ та 2000 рядків.",
+    "downloadTemplate": "Завантажити шаблон",
+    "selectFile": "Обрати файл",
+    "dryRun": "Лише перевірити (без збереження)",
+    "allOrNothing": "Все або нічого (не зберігати, якщо є помилки)",
+    "run": "Імпортувати",
+    "checking": "Перевірка…",
+    "importing": "Імпортування…",
+    "rowsSucceeded": "Успішно: {{count}}",
+    "rowsFailed": "З помилками: {{count}}",
+    "ignoredColumns": "Проігноровані колонки: {{columns}}",
+    "rowNumber": "Рядок",
+    "close": "Закрити",
+    "noFile": "Файл не обрано"
+  },
+  "students": {
+    "title": "Студенти",
+    "add": "Додати студента",
+    "searchPlaceholder": "Пошук за ім'ям, поштою, телефоном…",
+    "filters": {
+      "city": "Місто",
+      "isChild": "Неповнолітній",
+      "any": "Будь-який",
+      "yes": "Так",
+      "no": "Ні",
+      "language": "Мова",
+      "level": "Рівень",
+      "format": "Формат",
+      "clear": "Скинути фільтри"
+    },
+    "columns": {
+      "name": "ПІБ",
+      "email": "Пошта",
+      "phone": "Телефон",
+      "child": "Неповнолітній",
+      "actions": "Дії"
+    },
+    "detail": {
+      "backToList": "До списку студентів",
+      "edit": "Редагувати",
+      "save": "Зберегти",
+      "cancelEdit": "Скасувати",
+      "deactivate": "Деактивувати",
+      "reactivate": "Відновити",
+      "delete": "Видалити",
+      "deleteConflictTitle": "Неможливо видалити",
+      "deleteConflictDesc": "У студента є акаунт або історія (зарахування, заняття). Деактивуйте замість видалення.",
+      "confirmDeleteTitle": "Видалити студента назавжди?",
+      "confirmDeleteDesc": "Дію не можна скасувати. Можливо лише для студентів без акаунта й без історії.",
+      "confirmDeactivateTitle": "Деактивувати студента?",
+      "confirmDeactivateDesc": "Майбутні заняття й активні зарахування будуть автоматично призупинені. Дію можна скасувати.",
+      "confirmReactivateTitle": "Відновити студента?",
+      "confirmReactivateDesc": "Призупинені зарахування й заняття будуть відновлені там, де це можливо.",
+      "statusChangeResultTitle": "Готово",
+      "suspendedEnrollments": "Призупинено зарахувань: {{count}}",
+      "cancelledLessons": "Скасовано занять: {{count}}",
+      "resumedEnrollments": "Відновлено зарахувань: {{count}}",
+      "restoredLessons": "Відновлено занять: {{count}}",
+      "lessonsLeftToSchedule": "Занять залишилось запланувати: {{count}}",
+      "tabs": {
+        "profile": "Профіль",
+        "preferences": "Побажання",
+        "parent": "Батьки",
+        "comment": "Коментар",
+        "enrollments": "Зарахування",
+        "lessons": "Заняття",
+        "invoices": "Рахунки"
+      },
+      "commentLabel": "Внутрішній коментар",
+      "commentPlaceholder": "Нотатки для персоналу — студент їх не бачить",
+      "commentSaved": "Коментар збережено",
+      "noParent": "Контакти батьків не вказано",
+      "addParent": "Додати контакти батьків",
+      "editParent": "Редагувати контакти батьків",
+      "removeParent": "Видалити контакти батьків",
+      "confirmRemoveParentTitle": "Видалити контакти батьків?",
+      "profileSaved": "Профіль оновлено",
+      "preferencesSaved": "Побажання оновлено",
+      "noEnrollments": "У студента ще немає зарахувань",
+      "newStatusLabel": "Новий статус"
+    },
+    "create": {
+      "title": "Новий студент",
+      "sectionPersonal": "Особисті дані",
+      "sectionPreferences": "Побажання щодо навчання",
+      "sectionParent": "Контакти батьків (неповнолітній)",
+      "submit": "Створити студента",
+      "success": "Студента створено"
+    }
+  },
+  "teachers": {
+    "title": "Викладачі",
+    "add": "Додати викладача",
+    "searchPlaceholder": "Пошук за ім'ям, поштою, телефоном…",
+    "filters": {
+      "city": "Місто",
+      "status": "Статус",
+      "any": "Будь-який",
+      "clear": "Скинути фільтри"
+    },
+    "columns": {
+      "name": "ПІБ",
+      "email": "Пошта",
+      "phone": "Телефон",
+      "status": "Статус",
+      "actions": "Дії"
+    },
+    "detail": {
+      "backToList": "До списку викладачів",
+      "edit": "Редагувати",
+      "save": "Зберегти",
+      "cancelEdit": "Скасувати",
+      "deactivate": "Деактивувати",
+      "reactivate": "Відновити",
+      "delete": "Видалити",
+      "deleteConflictTitle": "Неможливо видалити",
+      "deleteConflictDesc": "У викладача є акаунт або історія (заняття, зарплата). Деактивуйте замість видалення.",
+      "confirmDeleteTitle": "Видалити викладача назавжди?",
+      "confirmDeleteDesc": "Дію не можна скасувати. Можливо лише для викладачів без акаунта й без історії.",
+      "confirmDeactivateTitle": "Деактивувати викладача?",
+      "confirmDeactivateDesc": "Майбутні заняття будуть скасовані або потребуватимуть заміни викладача. Дію можна скасувати.",
+      "confirmReactivateTitle": "Відновити викладача?",
+      "confirmReactivateDesc": "Викладач знову зможе вести заняття.",
+      "statusChangeResultTitle": "Готово",
+      "cancelledLessons": "Скасовано занять: {{count}}",
+      "restoredLessons": "Відновлено занять: {{count}}",
+      "skippedLessons": "Пропущено занять: {{count}}",
+      "tabs": {
+        "profile": "Профіль",
+        "salary": "Ставки оплати",
+        "comment": "Коментар",
+        "lessons": "Заняття",
+        "payroll": "Зарплата"
+      },
+      "commentLabel": "Внутрішній коментар",
+      "commentPlaceholder": "Нотатки для персоналу",
+      "commentSaved": "Коментар збережено",
+      "profileSaved": "Профіль оновлено",
+      "addRate": "Нова ставка",
+      "addRateTitle": "Нова ставка оплати",
+      "rateSaved": "Ставку додано",
+      "newStatusLabel": "Новий статус"
+    },
+    "create": {
+      "title": "Новий викладач",
+      "sectionPersonal": "Особисті дані",
+      "sectionSalary": "Початкова ставка оплати",
+      "submit": "Створити викладача",
+      "success": "Викладача створено"
+    }
+  },
+  "courses": {
+    "title": "Курси",
+    "add": "Додати курс",
+    "searchPlaceholder": "Пошук за назвою…",
+    "filters": {
+      "language": "Мова",
+      "level": "Рівень",
+      "format": "Формат",
+      "lessonType": "Тип занять",
+      "status": "Статус",
+      "any": "Будь-який",
+      "clear": "Скинути фільтри"
+    },
+    "columns": {
+      "name": "Назва",
+      "language": "Мова",
+      "level": "Рівень",
+      "price": "Ціна",
+      "status": "Статус",
+      "actions": "Дії"
+    },
+    "fields": {
+      "name": "Назва курсу",
+      "language": "Мова",
+      "level": "Рівень",
+      "format": "Формат",
+      "lessonType": "Тип занять",
+      "durationMonths": "Тривалість (місяців)",
+      "lessonsCount": "Кількість занять",
+      "lessonsPerWeek": "Занять на тиждень",
+      "price": "Ціна",
+      "description": "Опис",
+      "lessonTypeHint": "Лише курси з типом \"Групове\" можна обрати при створенні групи. Послідовність: курс → (для груп) група → зарахування студента → викладач."
+    },
+    "detail": {
+      "backToList": "До списку курсів",
+      "edit": "Редагувати",
+      "save": "Зберегти",
+      "cancelEdit": "Скасувати",
+      "activate": "Активувати",
+      "archive": "Архівувати",
+      "delete": "Видалити",
+      "confirmActivateTitle": "Активувати курс?",
+      "confirmActivateDesc": "Курс знову стане доступним для нових зарахувань.",
+      "confirmArchiveTitle": "Архівувати курс?",
+      "confirmArchiveDesc": "Новi зарахування на цей курс стануть неможливими. Дію можна скасувати.",
+      "confirmDeleteTitle": "Видалити курс назавжди?",
+      "confirmDeleteDesc": "Дію не можна скасувати.",
+      "profileSaved": "Курс оновлено",
+      "tabs": {
+        "profile": "Профіль",
+        "enrollments": "Зарахування"
+      },
+      "enroll": "Записати студента",
+      "noEnrollments": "На цей курс ще ніхто не записаний"
+    },
+    "create": {
+      "title": "Новий курс",
+      "sectionDetails": "Параметри курсу",
+      "submit": "Створити курс",
+      "success": "Курс створено"
+    }
+  },
+  "enrollments": {
+    "columns": {
+      "number": "№",
+      "student": "Студент",
+      "course": "Курс",
+      "dates": "Період",
+      "price": "Ціна",
+      "status": "Статус"
+    },
+    "detail": {
+      "title": "Зарахування {{number}}",
+      "student": "Студент",
+      "course": "Курс",
+      "startDate": "Початок",
+      "endDate": "Кінець",
+      "coursePrice": "Ціна курсу",
+      "discountedPrice": "Ціна зі знижкою",
+      "effectivePrice": "Фактична ціна",
+      "status": "Статус",
+      "commentLabel": "Внутрішній коментар",
+      "commentPlaceholder": "Нотатки для персоналу",
+      "commentSaved": "Коментар збережено",
+      "preferredScheduleLabel": "Бажаний розклад",
+      "preferredSchedulePlaceholder": "Коли студент може відвідувати заняття",
+      "preferredScheduleSaved": "Бажаний розклад збережено",
+      "activate": "Активувати",
+      "suspend": "Призупинити",
+      "complete": "Завершити",
+      "terminate": "Розірвати",
+      "confirmActivateTitle": "Активувати зарахування?",
+      "confirmActivateDesc": "Заплановані заняття будуть відновлені там, де це можливо.",
+      "confirmSuspendTitle": "Призупинити зарахування?",
+      "confirmSuspendDesc": "Майбутні заняття будуть скасовані. Дію можна скасувати.",
+      "confirmCompleteTitle": "Завершити зарахування?",
+      "confirmCompleteDesc": "Курс вважатиметься пройденим. Дію не можна скасувати.",
+      "confirmTerminateTitle": "Розірвати зарахування?",
+      "confirmTerminateDesc": "Усі майбутні заняття будуть скасовані. Дію не можна скасувати.",
+      "statusChangeResultTitle": "Готово",
+      "cancelledLessons": "Скасовано занять: {{count}}",
+      "restoredLessons": "Відновлено занять: {{count}}",
+      "skippedLessons": "Пропущено занять: {{count}}",
+      "lessonsLeftToSchedule": "Занять залишилось запланувати: {{count}}",
+      "setPriceTitle": "Змінити ціну курсу",
+      "setPriceLabel": "Нова ціна курсу",
+      "priceSaved": "Ціну оновлено",
+      "discountTitle": "Знижка",
+      "discountLabel": "Ціна зі знижкою",
+      "applyDiscount": "Застосувати знижку",
+      "removeDiscount": "Скасувати знижку",
+      "discountSaved": "Знижку застосовано",
+      "discountRemoved": "Знижку скасовано",
+      "viewStudent": "Профіль студента",
+      "viewCourse": "Профіль курсу",
+      "resolving": "Визначення студента/курсу…",
+      "backendGapNote": "Список зарахувань від API не містить імені студента чи курсу — вони підвантажуються окремо для кожного рядка."
+    },
+    "createDialog": {
+      "title": "Нове зарахування",
+      "studentLabel": "Студент",
+      "studentSearchPlaceholder": "Пошук студента за іменем, поштою…",
+      "courseLabel": "Курс",
+      "startDateLabel": "Дата початку",
+      "discountedPriceLabel": "Ціна зі знижкою (необов'язково)",
+      "commentLabel": "Коментар (необов'язково)",
+      "preferredScheduleLabel": "Бажаний розклад (необов'язково)",
+      "submit": "Створити зарахування",
+      "success": "Зарахування створено"
+    }
+  },
+  "calendar": {
+    "title": "Календар",
+    "prev": "Назад",
+    "next": "Далі",
+    "today": "Сьогодні",
+    "filters": {
+      "teacher": "Викладач",
+      "group": "Група",
+      "status": "Статус",
+      "any": "Будь-який",
+      "clear": "Скинути фільтри"
+    },
+    "emptyRange": "На цей період занять немає",
+    "createLesson": "Нове заняття",
+    "generate": "Згенерувати заняття",
+    "reassignTeacher": "Замінити викладача",
+    "cancelFuture": "Скасувати майбутні заняття",
+    "online": "Онлайн",
+    "offline": "Офлайн",
+    "item": {
+      "title": "Заняття",
+      "teacher": "Викладач",
+      "students": "Студенти",
+      "course": "Курс",
+      "group": "Група",
+      "duration": "Тривалість (хв)",
+      "notes": "Нотатки",
+      "status": "Статус",
+      "reschedule": "Перенести",
+      "cancel": "Скасувати",
+      "complete": "Провести",
+      "confirmCancelTitle": "Скасувати заняття?",
+      "confirmCancelDesc": "Дію можна скасувати повторним плануванням.",
+      "confirmCompleteTitle": "Позначити заняття проведеним?",
+      "confirmCompleteDesc": "Використовується для нарахування зарплати викладачу.",
+      "rescheduleLabel": "Нові дата й час",
+      "rescheduleSubmit": "Перенести",
+      "rescheduledToast": "Заняття перенесено",
+      "cancelledToast": "Заняття скасовано",
+      "completedToast": "Заняття позначено проведеним"
+    },
+    "createDialog": {
+      "title": "Нове заняття",
+      "targetType": "Прив'язка",
+      "individual": "Індивідуальне (зарахування)",
+      "group": "Групове (група)",
+      "enrollmentLabel": "Зарахування",
+      "enrollmentSearchPlaceholder": "Пошук студента для вибору зарахування…",
+      "groupLabel": "Група",
+      "teacherLabel": "Викладач",
+      "teacherSearchPlaceholder": "Пошук викладача за іменем…",
+      "dateLabel": "Дата й час",
+      "durationLabel": "Тривалість (хв)",
+      "notesLabel": "Нотатки (необов'язково)",
+      "submit": "Створити заняття",
+      "success": "Заняття створено",
+      "description": "Тут можна створити лише навчальне заняття (індивідуальне або групове) — воно завжди прив'язане до курсу/групи та викладача. Інші типи подій (співбесіда, зустріч, доставка тощо) поки не підтримуються."
+    },
+    "generateDialog": {
+      "title": "Згенерувати заняття за розкладом",
+      "targetType": "Прив'язка",
+      "startDateLabel": "Дата початку (необов'язково)",
+      "lessonsCountLabel": "Кількість занять (необов'язково)",
+      "durationLabel": "Тривалість заняття (хв)",
+      "slotsLabel": "Слоти розкладу",
+      "addSlot": "Додати слот",
+      "removeSlot": "Прибрати",
+      "dayOfWeekLabel": "День тижня",
+      "startTimeLabel": "Час початку",
+      "submit": "Згенерувати",
+      "success": "Створено занять: {{count}}"
+    },
+    "reassignDialog": {
+      "title": "Замінити викладача",
+      "fromLabel": "Від викладача",
+      "toLabel": "До викладача",
+      "updateGroupsLabel": "Оновити й закріплених груп",
+      "submit": "Замінити",
+      "success": "Готово",
+      "reassignedCount": "Перепризначено занять: {{count}}",
+      "restoredCount": "Відновлено занять: {{count}}",
+      "updatedGroupsCount": "Оновлено груп: {{count}}",
+      "description": "Заміна діє одразу на всі майбутні заняття вибраного викладача — вибрати окремі заняття поки не можна."
+    },
+    "cancelFutureDialog": {
+      "title": "Скасувати майбутні заняття",
+      "targetType": "Прив'язка",
+      "submit": "Скасувати заняття",
+      "success": "Скасовано занять: {{count}}"
+    }
+  },
+  "studyGroups": {
+    "title": "Навчальні групи",
+    "add": "Створити групу",
+    "searchPlaceholder": "Пошук за назвою…",
+    "filters": {
+      "course": "Курс",
+      "teacher": "Викладач",
+      "any": "Будь-який",
+      "clear": "Скинути фільтри"
+    },
+    "columns": {
+      "name": "Назва",
+      "course": "Курс",
+      "teacher": "Викладач",
+      "members": "Учасників",
+      "actions": "Дії"
+    },
+    "detail": {
+      "backToList": "До списку груп",
+      "edit": "Редагувати",
+      "save": "Зберегти",
+      "cancelEdit": "Скасувати",
+      "profileSaved": "Групу оновлено",
+      "membersTitle": "Учасники",
+      "addMember": "Додати студента",
+      "removeMember": "Видалити",
+      "confirmRemoveMemberTitle": "Видалити студента з групи?",
+      "confirmRemoveMemberDesc": "Майбутні групові заняття для цього студента більше не плануватимуться.",
+      "noMembers": "У групі ще немає учасників",
+      "memberAdded": "Студента додано до групи",
+      "memberRemoved": "Студента видалено з групи",
+      "joinedAt": "У групі з"
+    },
+    "create": {
+      "title": "Нова група",
+      "nameLabel": "Назва групи",
+      "courseLabel": "Курс",
+      "teacherLabel": "Викладач",
+      "submit": "Створити групу",
+      "success": "Групу створено",
+      "noGroupCourses": "Немає активних курсів з груповим форматом занять. Спершу створіть або активуйте такий курс."
+    },
+    "addMemberDialog": {
+      "title": "Додати студента до групи",
+      "studentSearchPlaceholder": "Пошук студента за іменем, поштою…",
+      "noEligibleEnrollment": "У цього студента немає зарахування на курс цієї групи",
+      "pickEnrollment": "Оберіть зарахування",
+      "submit": "Додати"
+    }
+  },
+  "billing": {
+    "invoices": {
+      "title": "Рахунки",
+      "add": "Виставити рахунок",
+      "markOverdue": "Позначити прострочені",
+      "markOverdueResult": "Позначено прострочених: {{count}}",
+      "searchPlaceholder": "Пошук студента для вибору зарахування…",
+      "empty": "Рахунків не знайдено",
+      "filters": {
+        "status": "Статус",
+        "any": "Будь-який",
+        "clear": "Скинути фільтри"
+      },
+      "columns": {
+        "student": "Студент",
+        "course": "Курс",
+        "period": "Період",
+        "amount": "Сума",
+        "dueDate": "Термін оплати",
+        "status": "Статус"
+      },
+      "detail": {
+        "title": "Рахунок",
+        "student": "Студент",
+        "course": "Курс",
+        "period": "Період",
+        "amount": "Сума",
+        "dueDate": "Термін оплати",
+        "paidAt": "Оплачено",
+        "notes": "Нотатки",
+        "markPaid": "Позначити оплаченим",
+        "markPaidSuccess": "Рахунок позначено оплаченим",
+        "confirmMarkPaidTitle": "Позначити рахунок оплаченим?",
+        "confirmMarkPaidDesc": "Дію не можна скасувати з інтерфейсу."
+      },
+      "createDialog": {
+        "title": "Новий рахунок",
+        "enrollmentLabel": "Зарахування",
+        "enrollmentSearchPlaceholder": "Пошук студента для вибору зарахування…",
+        "periodLabel": "Період (наприклад, 2026-09)",
+        "dueDateLabel": "Термін оплати",
+        "notesLabel": "Нотатки (необов'язково)",
+        "submit": "Виставити рахунок",
+        "success": "Рахунок створено"
+      }
+    },
+    "payroll": {
+      "title": "Зарплата",
+      "add": "Нарахувати зарплату",
+      "empty": "Записів про зарплату не знайдено",
+      "filters": {
+        "teacher": "Викладач",
+        "status": "Статус",
+        "any": "Будь-який",
+        "clear": "Скинути фільтри"
+      },
+      "columns": {
+        "teacher": "Викладач",
+        "period": "Період",
+        "lessonsCount": "Проведено занять",
+        "amount": "Сума",
+        "status": "Статус"
+      },
+      "detail": {
+        "title": "Нарахування зарплати",
+        "teacher": "Викладач",
+        "period": "Період",
+        "baseSalary": "Базовий оклад",
+        "lessonsRate": "Ставка за заняття",
+        "lessonsCount": "Проведено занять",
+        "totalAmount": "Разом",
+        "paidAt": "Виплачено",
+        "markPaid": "Позначити виплаченим",
+        "markPaidSuccess": "Зарплату позначено виплаченою",
+        "confirmMarkPaidTitle": "Позначити зарплату виплаченою?",
+        "confirmMarkPaidDesc": "Дію не можна скасувати з інтерфейсу."
+      },
+      "createDialog": {
+        "title": "Нарахувати зарплату",
+        "teacherLabel": "Викладач",
+        "periodLabel": "Період (наприклад, 2026-09)",
+        "submit": "Розрахувати",
+        "success": "Зарплату нараховано"
+      }
+    }
+  },
+  "notifications": {
+    "title": "Сповіщення",
+    "unreadOnly": "Лише непрочитані",
+    "markAllRead": "Позначити всі прочитаними",
+    "markAllReadSuccess": "Усі сповіщення позначено прочитаними",
+    "empty": "Сповіщень немає",
+    "changePasswordAction": "Змінити пароль",
+    "admin": {
+      "title": "Керування сповіщеннями",
+      "tabs": {
+        "tools": "Інструменти",
+        "log": "Журнал"
+      },
+      "broadcast": {
+        "title": "Розсилка групі",
+        "audienceLabel": "Аудиторія",
+        "subjectLabel": "Тема",
+        "bodyLabel": "Текст повідомлення",
+        "submit": "Розіслати",
+        "success": "Надіслано сповіщень: {{count}}"
+      },
+      "send": {
+        "title": "Надіслати конкретним користувачам",
+        "recipientsLabel": "Отримувачі",
+        "sourceStudent": "Студент",
+        "sourceTeacher": "Викладач",
+        "searchStudentPlaceholder": "Пошук студента за іменем, поштою…",
+        "searchTeacherPlaceholder": "Пошук викладача за іменем…",
+        "subjectLabel": "Тема",
+        "bodyLabel": "Текст повідомлення",
+        "submit": "Надіслати",
+        "success": "Надіслано сповіщень: {{count}}",
+        "noRecipients": "Додайте хоча б одного отримувача"
+      },
+      "invoiceReminders": {
+        "title": "Нагадування про рахунки",
+        "description": "Нагадує студентам про неоплачені рахунки, термін оплати яких скоро настає або вже минув. Кожне нагадування надсилається лише один раз.",
+        "daysBeforeDueLabel": "За скільки днів до терміну оплати",
+        "includeOverdueLabel": "Включати прострочені рахунки",
+        "submit": "Надіслати нагадування",
+        "result": "Знайдено рахунків: {{found}}, надіслано: {{created}}, вже надсилалось: {{skippedSent}}, без акаунта: {{skippedNoAccount}}"
+      },
+      "lessonReminders": {
+        "title": "Нагадування про заняття",
+        "description": "Нагадує студентам і викладачам про заняття, які скоро розпочнуться. Кожне нагадування надсилається лише один раз.",
+        "hoursAheadLabel": "За скільки годин до заняття",
+        "submit": "Надіслати нагадування",
+        "result": "Знайдено занять: {{found}}, надіслано: {{created}}, вже надсилалось: {{skippedSent}}"
+      },
+      "log": {
+        "filters": {
+          "type": "Тип",
+          "unreadOnly": "Лише непрочитані",
+          "any": "Будь-який",
+          "clear": "Скинути фільтри"
+        },
+        "columns": {
+          "recipient": "Отримувач",
+          "type": "Тип",
+          "subject": "Тема",
+          "status": "Статус",
+          "createdAt": "Створено"
+        },
+        "unread": "Непрочитано",
+        "read": "Прочитано",
+        "empty": "Записів не знайдено"
+      }
+    }
+  },
+  "materials": {
+    "title": "Матеріали",
+    "add": "Додати матеріал",
+    "searchPlaceholder": "Пошук за назвою…",
+    "empty": "Матеріалів не знайдено",
+    "filters": {
+      "course": "Курс",
+      "type": "Тип",
+      "any": "Будь-який",
+      "clear": "Скинути фільтри"
+    },
+    "card": {
+      "openLink": "Відкрити посилання"
+    },
+    "detail": {
+      "title": "Матеріал",
+      "course": "Курс",
+      "type": "Тип",
+      "author": "Автор",
+      "description": "Опис",
+      "body": "Текст",
+      "url": "Посилання",
+      "openLink": "Відкрити посилання",
+      "edit": "Редагувати",
+      "save": "Зберегти",
+      "cancelEdit": "Скасувати",
+      "delete": "Видалити",
+      "deleteConfirmTitle": "Видалити матеріал?",
+      "deleteConfirmDesc": "Дію не можна скасувати.",
+      "deleted": "Матеріал видалено",
+      "saved": "Матеріал оновлено",
+      "createdAt": "Створено"
+    },
+    "createDialog": {
+      "title": "Новий матеріал",
+      "courseLabel": "Курс",
+      "typeLabel": "Тип",
+      "titleLabel": "Назва",
+      "descriptionLabel": "Короткий опис (необов'язково)",
+      "urlLabel": "Посилання (URL)",
+      "urlHintVideo": "Посилання на YouTube-відео",
+      "bodyLabel": "Текст статті (необов'язково)",
+      "submit": "Додати матеріал",
+      "success": "Матеріал додано"
+    }
+  },
+  "reports": {
+    "title": "Звіти",
+    "dateFrom": "Від",
+    "dateTo": "До",
+    "apply": "Застосувати",
+    "resetToCurrentMonth": "Поточний місяць",
+    "billing": {
+      "title": "Фінанси",
+      "income": "Дохід",
+      "expenses": "Витрати",
+      "netResult": "Чистий результат",
+      "pendingInvoices": "Очікують оплати",
+      "overdueInvoices": "Прострочені",
+      "pendingPayroll": "Очікує виплати (зарплата)"
+    },
+    "students": {
+      "title": "Студенти",
+      "total": "Усього студентів",
+      "byStatus": "За статусом"
+    },
+    "teachers": {
+      "title": "Викладачі",
+      "total": "Усього викладачів",
+      "byStatus": "За статусом",
+      "salaryOverview": {
+        "title": "Огляд ставок",
+        "teachersWithRate": "Викладачів зі ставкою",
+        "totalBaseSalary": "Сума базових окладів",
+        "averageBaseSalary": "Середній базовий оклад",
+        "averageLessonsRate": "Середня ставка за заняття"
+      }
+    },
+    "enrollments": {
+      "title": "Зарахування",
+      "total": "Усього зарахувань",
+      "byStatus": "За статусом",
+      "byCourse": "За курсами"
+    }
+  },
+  "staff": {
+    "title": "Персонал",
+    "add": "Додати співробітника",
+    "empty": "Співробітників не знайдено",
+    "filters": {
+      "status": "Статус",
+      "active": "Активні",
+      "inactive": "Неактивні",
+      "any": "Усі",
+      "clear": "Скинути фільтри"
+    },
+    "columns": {
+      "name": "Ім'я",
+      "email": "Пошта",
+      "phone": "Телефон",
+      "status": "Статус",
+      "permissions": "Прав"
+    },
+    "active": "Активний",
+    "inactive": "Неактивний",
+    "detail": {
+      "title": "Співробітник",
+      "permissionsTitle": "Права доступу",
+      "save": "Зберегти права",
+      "saved": "Права оновлено",
+      "deactivate": "Деактивувати",
+      "reactivate": "Активувати",
+      "confirmDeactivateTitle": "Деактивувати обліковий запис?",
+      "confirmDeactivateDesc": "Співробітник більше не зможе увійти в систему. Дані не видаляються.",
+      "confirmReactivateTitle": "Активувати обліковий запис?",
+      "confirmReactivateDesc": "Співробітник знову зможе увійти в систему.",
+      "statusChanged": "Статус оновлено",
+      "resetPassword": "Скинути пароль",
+      "confirmResetTitle": "Скинути пароль співробітника?",
+      "confirmResetDesc": "Буде згенеровано новий тимчасовий пароль. Поточний пароль перестане діяти.",
+      "createdAt": "Створено"
+    },
+    "createDialog": {
+      "title": "Новий співробітник",
+      "emailLabel": "Пошта",
+      "firstNameLabel": "Ім'я",
+      "lastNameLabel": "Прізвище",
+      "phoneLabel": "Телефон (необов'язково)",
+      "permissionsLabel": "Права доступу",
+      "submit": "Створити",
+      "success": "Співробітника створено"
+    },
+    "tempPasswordDialog": {
+      "title": "Тимчасовий пароль",
+      "description": "Передайте цей пароль співробітнику особисто. Він показується лише один раз і буде потрібен для першого входу — систему буде запропоновано змінити його одразу.",
+      "copy": "Скопіювати",
+      "copied": "Скопійовано",
+      "close": "Закрити"
+    }
+  },
+  "permissions": {
+    "CanCreateStudents": "Створювати студентів",
+    "CanViewStudents": "Переглядати студентів",
+    "CanManageStudents": "Керувати студентами",
+    "CanDeleteStudents": "Видаляти студентів",
+    "CanCreateTeachers": "Створювати викладачів",
+    "CanViewTeachers": "Переглядати викладачів",
+    "CanManageTeachers": "Керувати викладачами",
+    "CanDeleteTeachers": "Видаляти викладачів",
+    "CanViewCourses": "Переглядати курси",
+    "CanManageCourses": "Керувати курсами",
+    "CanViewPayments": "Переглядати фінанси",
+    "CanManagePayments": "Керувати фінансами",
+    "CanViewSchedule": "Переглядати розклад",
+    "CanManageSchedule": "Керувати розкладом",
+    "CanViewEnrollments": "Переглядати зарахування",
+    "CanManageEnrollments": "Керувати зарахуваннями",
+    "CanViewReports": "Переглядати звіти",
+    "CanViewMaterials": "Переглядати матеріали",
+    "CanManageMaterials": "Керувати матеріалами",
+    "CanManageNotifications": "Керувати сповіщеннями",
+    "CanManageAdmins": "Керувати персоналом",
+    "selectAll": "Вибрати всі",
+    "deselectAll": "Зняти всі"
+  },
+  "myStudents": {
+    "note": "Список складено на основі вашого календаря занять (за останні та найближчі 90 днів), оскільки окремого списку «моїх студентів» бекенд не надає.",
+    "empty": "Занять не знайдено — список студентів порожній.",
+    "columns": {
+      "name": "Студент",
+      "courses": "Курси",
+      "lessons": "Занять",
+      "nextLesson": "Найближче заняття",
+      "lastLesson": "Останнє заняття"
+    }
+  },
+  "accountLink": {
+    "createButton": "Створити обліковий запис",
+    "dialogTitle": "Створити обліковий запис для входу",
+    "dialogDescription": "Буде створено логін і тимчасовий пароль, прив'язані до цього профілю.",
+    "emailLabel": "Електронна пошта для входу",
+    "submit": "Створити"
+  }
+}

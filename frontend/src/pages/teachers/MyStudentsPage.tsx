@@ -28,6 +28,7 @@ import {
 interface StudentRosterRow {
   name: string
   courses: Set<string>
+  groups: Set<string>
   lessonCount: number
   nextLessonAt: string | null
   lastLessonAt: string | null
@@ -51,6 +52,7 @@ export function MyStudentsPage() {
   const lang = i18n.language === 'en' ? 'en' : 'uk'
   const [search, setSearch] = useState('')
   const [courseFilter, setCourseFilter] = useState('')
+  const [groupFilter, setGroupFilter] = useState('')
   const [selectedStudent, setSelectedStudent] = useState<string | null>(null)
 
   const { from, to } = useMemo(() => {
@@ -75,6 +77,12 @@ export function MyStudentsPage() {
     return Array.from(names).sort((a, b) => a.localeCompare(b, lang))
   }, [data, lang])
 
+  const allGroupNames = useMemo(() => {
+    const names = new Set<string>()
+    for (const item of data?.items ?? []) if (item.groupName) names.add(item.groupName)
+    return Array.from(names).sort((a, b) => a.localeCompare(b, lang))
+  }, [data, lang])
+
   const roster = useMemo<StudentRosterRow[]>(() => {
     const byName = new Map<string, StudentRosterRow>()
     for (const item of data?.items ?? []) {
@@ -82,11 +90,13 @@ export function MyStudentsPage() {
         const row = byName.get(studentName) ?? {
           name: studentName,
           courses: new Set<string>(),
+          groups: new Set<string>(),
           lessonCount: 0,
           nextLessonAt: null,
           lastLessonAt: null,
         }
         row.courses.add(item.courseName)
+        if (item.groupName) row.groups.add(item.groupName)
         row.lessonCount += 1
         const startsAt = item.startsAt
         if (new Date(startsAt).getTime() >= now) {
@@ -104,9 +114,10 @@ export function MyStudentsPage() {
     return roster.filter((row) => {
       if (search && !row.name.toLowerCase().includes(search.toLowerCase())) return false
       if (courseFilter && !row.courses.has(courseFilter)) return false
+      if (groupFilter && !row.groups.has(groupFilter)) return false
       return true
     })
-  }, [roster, search, courseFilter])
+  }, [roster, search, courseFilter, groupFilter])
 
   const selectedStudentLessons = useMemo(() => {
     if (!selectedStudent) return []
@@ -143,14 +154,14 @@ export function MyStudentsPage() {
     },
   ]
 
-  const hasFilters = !!(search || courseFilter)
+  const hasFilters = !!(search || courseFilter || groupFilter)
 
   return (
     <div className="flex flex-col gap-4">
       <h1 className="text-2xl font-semibold tracking-tight">{t('nav.myStudents')}</h1>
 
       <div className="flex flex-wrap items-end gap-3">
-        <div className="min-w-48">
+        <div className="min-w-56 flex-1">
           <Input
             placeholder={t('myStudents.searchPlaceholder')}
             value={search}
@@ -170,6 +181,19 @@ export function MyStudentsPage() {
             ))}
           </SelectContent>
         </Select>
+        <Select value={groupFilter} onValueChange={(v) => setGroupFilter(v === 'any' ? '' : v)}>
+          <SelectTrigger className="w-48">
+            <SelectValue placeholder={t('myStudents.filters.group')} />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="any">{t('myStudents.filters.anyGroup')}</SelectItem>
+            {allGroupNames.map((name) => (
+              <SelectItem key={name} value={name}>
+                {name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
         {hasFilters && (
           <Button
             variant="ghost"
@@ -177,6 +201,7 @@ export function MyStudentsPage() {
             onClick={() => {
               setSearch('')
               setCourseFilter('')
+              setGroupFilter('')
             }}
           >
             {t('myStudents.filters.clear')}

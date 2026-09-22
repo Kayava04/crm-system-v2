@@ -137,6 +137,40 @@ public class StaffManagementTests(CrmApiFactory factory) : ApiTest(factory)
         Assert.Equal(["CanViewReports"], me["permissions"].AsArray().Select(p => p!.GetValue<string>()));
     }
 
+    // ------------------------------------------------------------------ salary
+    [Fact]
+    public async Task Salary_is_set_by_staff_management_only_never_by_the_account_itself()
+    {
+        var manager = await AdminManagerAsync();
+        var target = await Data.UserAsync("Admin");
+
+        Assert.Null((await Api.GetAsync("/api/auth/me", target.Token)).Expect(200)["contact"]!["salary"]);
+
+        var withSalary = (await Api.PutAsync($"/api/auth/users/{target.UserId}/salary", new { salary = 42000.50 }, manager.Token)).Expect(200);
+        Assert.Equal(42000.50m, withSalary["salary"].GetValue<decimal>());
+
+        var list = (await Api.GetAsync("/api/auth/users", manager.Token)).Expect(200).Json!.AsArray();
+        Assert.Equal(42000.50m, list.Single(m => m!["id"]!.GetValue<Guid>() == target.UserId)!["salary"]!.GetValue<decimal>());
+
+        var me = (await Api.GetAsync("/api/auth/me", target.Token)).Expect(200);
+        Assert.Equal(42000.50m, me["contact"]!["salary"]!.GetValue<decimal>());
+
+        // the target cannot set it on themselves, only read it
+        (await Api.PutAsync("/api/auth/me/contact", new { firstName = "X", lastName = "Y", salary = 999999 }, target.Token)).Expect(200);
+        Assert.Equal(42000.50m, (await Api.GetAsync("/api/auth/me", target.Token)).Expect(200)["contact"]!["salary"]!.GetValue<decimal>());   // ignored, unchanged
+
+        var cleared = (await Api.PutAsync($"/api/auth/users/{target.UserId}/salary", new { salary = (decimal?)null }, manager.Token)).Expect(200);
+        Assert.Null(cleared.Json!["salary"]);
+    }
+
+    [Fact]
+    public async Task A_negative_salary_is_refused()
+    {
+        var target = await Data.UserAsync("Admin");
+
+        (await Api.PutAsync($"/api/auth/users/{target.UserId}/salary", new { salary = -1 }, Admin)).Expect(400);
+    }
+
     // ------------------------------------------------------------------ what can never be done
     [Fact]
     public async Task The_super_admin_students_teachers_and_oneself_cannot_be_changed_here()
@@ -151,6 +185,7 @@ public class StaffManagementTests(CrmApiFactory factory) : ApiTest(factory)
         {
             (await Api.PutAsync($"/api/auth/users/{id}/status", new { isActive = false }, manager.Token)).Expect(code);
             (await Api.PutAsync($"/api/auth/users/{id}/permissions", noPermissions, manager.Token)).Expect(code);
+            (await Api.PutAsync($"/api/auth/users/{id}/salary", new { salary = 1000 }, manager.Token)).Expect(code);
         }
 
         // the SuperAdmin still works, the manager keeps the right to manage

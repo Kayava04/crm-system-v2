@@ -10,7 +10,15 @@ using Microsoft.AspNetCore.Routing;
 
 namespace Identity.Application.Features.UpdateMyContact;
 
-public sealed record UpdateMyContactRequest(string? FirstName, string? LastName, string? PhoneNumber);
+public sealed record UpdateMyContactRequest(
+    string? FirstName,
+    string? LastName,
+    string? PhoneNumber,
+    string? MiddleName = null,
+    DateOnly? DateOfBirth = null,
+    string? City = null,
+    string? Country = null
+);
 
 public sealed class UpdateMyContactValidator : AbstractValidator<UpdateMyContactRequest>
 {
@@ -24,9 +32,17 @@ public sealed class UpdateMyContactValidator : AbstractValidator<UpdateMyContact
             .NotEmpty().WithMessage("Last name is required.")
             .MaximumLength(100).WithMessage("Last name must not exceed 100 characters.");
 
+        RuleFor(x => x.MiddleName).MaximumLength(100).WithMessage("Middle name must not exceed 100 characters.");
+        RuleFor(x => x.City).MaximumLength(100).WithMessage("City must not exceed 100 characters.");
+        RuleFor(x => x.Country).MaximumLength(100).WithMessage("Country must not exceed 100 characters.");
+
         RuleFor(x => x.PhoneNumber)
             .Matches(@"^\+?[0-9\s\-\(\)]{7,20}$").WithMessage("Invalid phone number format.")
             .When(x => !string.IsNullOrWhiteSpace(x.PhoneNumber));
+
+        RuleFor(x => x.DateOfBirth)
+            .LessThan(DateOnly.FromDateTime(DateTime.UtcNow)).WithMessage("Invalid date of birth.")
+            .When(x => x.DateOfBirth is not null);
     }
 }
 
@@ -37,7 +53,7 @@ public static class UpdateMyContactEndpoint
         group.MapPut("/me/contact", Handle)
              .RequireAuthorization()
              .WithName("UpdateMyContact")
-             .WithSummary("Set the name and phone of an administrator or manager (not for the SuperAdmin, students and teachers)")
+             .WithSummary("Set the name, birth date, city, country and phone of an administrator or manager (not for the SuperAdmin, students and teachers)")
              .Produces<MeContact>(StatusCodes.Status200OK)
              .ProducesValidationProblem()
              .ProducesProblem(StatusCodes.Status401Unauthorized)
@@ -83,7 +99,9 @@ public static class UpdateMyContactEndpoint
                     statusCode: StatusCodes.Status409Conflict);
         }
 
-        user.SetContact(request.FirstName, request.LastName, request.PhoneNumber);
+        user.SetContact(
+            request.FirstName, request.LastName, request.PhoneNumber,
+            request.MiddleName, request.DateOfBirth, request.City, request.Country);
         await userRepository.UpdateAsync(user, ct);
         await unitOfWork.SaveChangesAsync(ct);
 

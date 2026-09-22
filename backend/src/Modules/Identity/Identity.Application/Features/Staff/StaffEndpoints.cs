@@ -17,8 +17,13 @@ public sealed record StaffMember(
     string Email,
     string? FirstName,
     string? LastName,
+    string? MiddleName,
     string? FullName,
     string? PhoneNumber,
+    DateOnly? DateOfBirth,
+    string? City,
+    string? Country,
+    decimal? Salary,
     bool IsActive,
     DateTime CreatedAt,
     IReadOnlyList<string> Permissions
@@ -28,12 +33,24 @@ public sealed record SetStaffStatusRequest(bool IsActive);
 
 public sealed record SetStaffPermissionsRequest(List<Guid>? PermissionIds);
 
+public sealed record SetStaffSalaryRequest(decimal? Salary);
+
 public sealed class SetStaffPermissionsValidator : AbstractValidator<SetStaffPermissionsRequest>
 {
     public SetStaffPermissionsValidator()
     {
         RuleFor(x => x.PermissionIds)
             .NotNull().WithMessage("PermissionIds is required (an empty list removes all permissions).");
+    }
+}
+
+public sealed class SetStaffSalaryValidator : AbstractValidator<SetStaffSalaryRequest>
+{
+    public SetStaffSalaryValidator()
+    {
+        RuleFor(x => x.Salary)
+            .GreaterThanOrEqualTo(0).WithMessage("Salary cannot be negative.")
+            .When(x => x.Salary is not null);
     }
 }
 
@@ -69,6 +86,16 @@ public static class StaffEndpoints
              .ProducesProblem(StatusCodes.Status403Forbidden)
              .ProducesProblem(StatusCodes.Status404NotFound)
              .ProducesProblem(StatusCodes.Status409Conflict);
+
+        group.MapPut("/users/{id:guid}/salary", SetSalary)
+             .RequireAuthorization(nameof(SystemPermission.CanManageAdmins))
+             .WithName("SetStaffSalary")
+             .WithSummary("Set or clear the salary of an administrator account; never self-service")
+             .Produces<StaffMember>(StatusCodes.Status200OK)
+             .ProducesValidationProblem()
+             .ProducesProblem(StatusCodes.Status403Forbidden)
+             .ProducesProblem(StatusCodes.Status404NotFound)
+             .ProducesProblem(StatusCodes.Status409Conflict);
     }
 
     private static async Task<StaffMember> ToMemberAsync(User user, IUserRepository users, CancellationToken ct)
@@ -77,7 +104,8 @@ public static class StaffEndpoints
         var contact = MeEndpoint.ToContact(user);
 
         return new StaffMember(
-            user.Id, user.Email!, contact.FirstName, contact.LastName, contact.FullName, contact.PhoneNumber,
+            user.Id, user.Email!, contact.FirstName, contact.LastName, contact.MiddleName, contact.FullName, contact.PhoneNumber,
+            contact.DateOfBirth, contact.City, contact.Country, contact.Salary,
             user.IsActive, user.CreatedAt, permissions.Select(p => p.Name).Order().ToList());
     }
 
@@ -183,5 +211,32 @@ public static class StaffEndpoints
         logger.LogInformation("Permissions of administrator {UserId} replaced", id);
 
         return Results.Ok(await ToMemberAsync(user!, users, ct));
+    }
+
+    private static async Task<IResult> SetSalary(
+        Guid id,
+        SetStaffSalaryRequest request,
+        ClaimsPrincipal principal,
+        IValidator<SetStaffSalaryRequest> validator,
+        IUserRepository users,
+        IIdentityUnitOfWork unitOfWork,
+        ILogger<SetStaffSalaryRequest> logger,
+        CancellationToken ct)
+    {
+        var validation = await validator.ValidateAsync(request, ct);
+        if (!validation.IsValid)
+            return Results.ValidationProblem(validation.ToDictionary());
+
+        var (user, problem) = await FindManageableAsync(id, principal, users, ct);
+        if (problem is not null)
+            return problem;
+
+        user!.SetSalary(request.Salary);
+        await users.UpdateAsync(user, ct);
+        await unitOfWork.SaveChangesAsync(ct);
+
+        logger.LogInformation("Salary of administrator {UserId} changed", id);
+
+        return Results.Ok(await ToMemberAsync(user, users, ct));
     }
 }

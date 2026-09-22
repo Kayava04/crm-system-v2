@@ -127,6 +127,37 @@ public class SelfServiceTests(CrmApiFactory factory) : ApiTest(factory)
         (await Api.PutAsync("/api/auth/me/contact", new { firstName = "A", lastName = "B" })).Expect(401);
     }
 
+    [Fact]
+    public async Task An_administrator_can_also_set_their_middle_name_birth_date_city_and_country()
+    {
+        var email = TestData.Email("manager");
+        var registered = (await Api.PostAsync("/api/auth/register", new
+        {
+            email, role = "Admin", firstName = "Olena", lastName = "Kovalenko", middleName = "Petrivna",
+            dateOfBirth = "1990-05-06", city = "Lviv", country = "Ukraine"
+        }, Admin)).Expect(201);
+        var token = await Data.LoginAsync(email, registered["temporaryPassword"].GetValue<string>());
+
+        var me = (await Api.GetAsync("/api/auth/me", token)).Expect(200);
+        Assert.Equal("Petrivna", me["contact"]!["middleName"]!.GetValue<string>());
+        Assert.Equal("Olena Kovalenko Petrivna", me["contact"]!["fullName"]!.GetValue<string>());
+        Assert.Equal("1990-05-06", me["contact"]!["dateOfBirth"]!.GetValue<string>());
+        Assert.Equal("Lviv", me["contact"]!["city"]!.GetValue<string>());
+        Assert.Equal("Ukraine", me["contact"]!["country"]!.GetValue<string>());
+        Assert.Null(me.Json!["contact"]!["salary"]);   // only staff management sets this, never the person themselves
+
+        var updated = (await Api.PutAsync("/api/auth/me/contact", new
+        {
+            firstName = "Olena", lastName = "Kovalenko", phoneNumber = (string?)null,
+            middleName = "Ivanivna", dateOfBirth = "1991-01-02", city = "Kyiv", country = "Ukraine"
+        }, token)).Expect(200);
+        Assert.Equal("Ivanivna", updated["middleName"].GetValue<string>());
+        Assert.Equal("Kyiv", updated["city"].GetValue<string>());
+
+        (await Api.PutAsync("/api/auth/me/contact", new { firstName = "X", lastName = "Y", middleName = new string('a', 101) }, token)).Expect(400);
+        (await Api.PutAsync("/api/auth/me/contact", new { firstName = "X", lastName = "Y", dateOfBirth = DateTime.UtcNow.AddDays(1).ToString("yyyy-MM-dd") }, token)).Expect(400);
+    }
+
     // ------------------------------------------------------------------ own profile
     [Fact]
     public async Task A_student_reads_their_own_profile_and_only_a_student_can()

@@ -11,7 +11,17 @@ namespace Identity.Application.Features.Me;
 public sealed record MeProfile(string Type, Guid Id, string FullName);
 
 // Personal details kept on the account itself; students and teachers keep theirs in their own records
-public sealed record MeContact(string? FirstName, string? LastName, string? FullName, string? PhoneNumber);
+public sealed record MeContact(
+    string? FirstName,
+    string? LastName,
+    string? MiddleName,
+    string? FullName,
+    string? PhoneNumber,
+    DateOnly? DateOfBirth,
+    string? City,
+    string? Country,
+    decimal? Salary
+);
 
 public sealed record MeResponse(
     Guid UserId,
@@ -84,8 +94,11 @@ public static class MeEndpoint
 
     internal static MeContact ToContact(Domain.Entities.User user)
     {
-        var fullName = string.Join(' ', new[] { user.FirstName, user.LastName }.Where(n => n is not null));
+        var fullName = string.Join(' ', new[] { user.FirstName, user.LastName, user.MiddleName }
+            .Where(n => !string.IsNullOrWhiteSpace(n)));
 
-        return new MeContact(user.FirstName, user.LastName, fullName.Length == 0 ? null : fullName, user.PhoneNumber);
+        return new MeContact(
+            user.FirstName, user.LastName, user.MiddleName, fullName.Length == 0 ? null : fullName, user.PhoneNumber,
+            user.DateOfBirth, user.City, user.Country, user.Salary);
     }
 }

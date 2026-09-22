@@ -15,6 +15,12 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
 
         builder.Property(u => u.FirstName).HasMaxLength(100);
         builder.Property(u => u.LastName).HasMaxLength(100);
+        builder.Property(u => u.MiddleName).HasMaxLength(100);
+        builder.Property(u => u.City).HasMaxLength(100);
+        builder.Property(u => u.Country).HasMaxLength(100);
+
+        builder.Property(u => u.Salary)
+            .HasPrecision(18, 2);
 
         builder.Property(u => u.MustChangePassword)
             .IsRequired();

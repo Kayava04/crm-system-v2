@@ -37,6 +37,7 @@ services.AddModuleDbContext<SchedulingDbContext>();
     {
         services.AddScoped<IScheduleRepository, ScheduleRepository>();
         services.AddScoped<IStudyGroupRepository, StudyGroupRepository>();
+        services.AddScoped<ICalendarEventRepository, CalendarEventRepository>();
 
         return services;
     }

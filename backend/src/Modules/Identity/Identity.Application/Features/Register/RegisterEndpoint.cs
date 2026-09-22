@@ -21,7 +21,11 @@ public sealed record RegisterRequest(
     Guid? ProfileId,
     string? FirstName = null,
     string? LastName = null,
-    string? PhoneNumber = null
+    string? PhoneNumber = null,
+    string? MiddleName = null,
+    DateOnly? DateOfBirth = null,
+    string? City = null,
+    string? Country = null
 );
 
 public sealed record RegisterResponse(
@@ -45,9 +49,15 @@ public sealed class RegisterValidator : AbstractValidator<RegisterRequest>
 
         RuleFor(x => x.FirstName).MaximumLength(100).WithMessage("First name must not exceed 100 characters.");
         RuleFor(x => x.LastName).MaximumLength(100).WithMessage("Last name must not exceed 100 characters.");
+        RuleFor(x => x.MiddleName).MaximumLength(100).WithMessage("Middle name must not exceed 100 characters.");
+        RuleFor(x => x.City).MaximumLength(100).WithMessage("City must not exceed 100 characters.");
+        RuleFor(x => x.Country).MaximumLength(100).WithMessage("Country must not exceed 100 characters.");
         RuleFor(x => x.PhoneNumber)
             .Matches(@"^\+?[0-9\s\-\(\)]{7,20}$").WithMessage("Invalid phone number format.")
             .When(x => !string.IsNullOrWhiteSpace(x.PhoneNumber));
+        RuleFor(x => x.DateOfBirth)
+            .LessThan(DateOnly.FromDateTime(DateTime.UtcNow)).WithMessage("Invalid date of birth.")
+            .When(x => x.DateOfBirth is not null);
 
         RuleFor(x => x.ProfileId)
             .NotNull()
@@ -140,9 +150,12 @@ public static class RegisterEndpoint
                 var created = await identityService.CreateUserAsync(
                     request.Email, temporaryPassword, mustChangePassword: true, token);
 
-                if (request.FirstName is not null || request.LastName is not null || request.PhoneNumber is not null)
+                if (request.FirstName is not null || request.LastName is not null || request.PhoneNumber is not null
+                    || request.MiddleName is not null || request.DateOfBirth is not null || request.City is not null || request.Country is not null)
                 {
-                    created.SetContact(request.FirstName, request.LastName, request.PhoneNumber);
+                    created.SetContact(
+                        request.FirstName, request.LastName, request.PhoneNumber,
+                        request.MiddleName, request.DateOfBirth, request.City, request.Country);
                     await userRepository.UpdateAsync(created, token);
                 }
 

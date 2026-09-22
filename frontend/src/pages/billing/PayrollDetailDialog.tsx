@@ -70,13 +70,15 @@ export function PayrollDetailDialog({
           <div className="flex flex-col gap-3 text-sm">
             <div className="flex justify-between">
               <span className="text-muted-foreground">{t('billing.payroll.detail.teacher')}</span>
-              <span>{resolved.teacherName ?? '—'}</span>
+              <span>{resolved.employeeName ?? '—'}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">{t('billing.payroll.detail.period')}</span>
               <span>{row.period}</span>
             </div>
-            {detail && (
+            {/* A staff payroll (row.teacherId is null) is just the flat Salary for the period -
+             * base salary / lessons rate / lessons count are a teacher-only breakdown. */}
+            {detail && row.teacherId && (
               <>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">
@@ -90,14 +92,14 @@ export function PayrollDetailDialog({
                   </span>
                   <span>{formatCurrency(detail.lessonsRate, lang)}</span>
                 </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">
+                    {t('billing.payroll.detail.lessonsCount')}
+                  </span>
+                  <span>{Number(row.completedLessonsCount)}</span>
+                </div>
               </>
             )}
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">
-                {t('billing.payroll.detail.lessonsCount')}
-              </span>
-              <span>{Number(row.completedLessonsCount)}</span>
-            </div>
             <div className="flex justify-between font-medium">
               <span className="text-muted-foreground">
                 {t('billing.payroll.detail.totalAmount')}

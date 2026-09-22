@@ -22,7 +22,7 @@ import {
 } from '@/components/ui/select'
 import { DataTable, type DataTableColumn } from '@/components/shared/DataTable'
 import { Pagination } from '@/components/shared/Pagination'
-import { TeacherSearchInput } from '@/components/shared/TeacherSearchInput'
+import { EmployeeSearchInput, type EmployeePick } from '@/components/shared/EmployeeSearchInput'
 import { CreatePayrollDialog } from './CreatePayrollDialog'
 import { PayrollDetailDialog } from './PayrollDetailDialog'
 
@@ -40,18 +40,19 @@ export function PayrollsListPage() {
 
   const [page, setPage] = useState(1)
   const [status, setStatus] = useState('')
-  const [teacher, setTeacher] = useState<{ id: string; fullName: string } | null>(null)
+  const [employee, setEmployee] = useState<EmployeePick | null>(null)
   const [createOpen, setCreateOpen] = useState(false)
   const [selected, setSelected] = useState<ResolvedPayrollRow | null>(null)
 
   const filters = useMemo(
     () => ({
       status: (status || undefined) as PayrollStatus | undefined,
-      teacherId: teacher?.id || undefined,
+      teacherId: employee?.kind === 'teacher' ? employee.id : undefined,
+      userId: employee?.kind === 'staff' ? employee.id : undefined,
       page,
       pageSize: 20,
     }),
-    [status, teacher, page],
+    [status, employee, page],
   )
 
   const { data, isPending, isPlaceholderData } = useQuery({
@@ -66,13 +67,13 @@ export function PayrollsListPage() {
     queryClient.invalidateQueries({ queryKey: ['payrolls'] })
   }
 
-  const hasFilters = !!(status || teacher)
+  const hasFilters = !!(status || employee)
 
   const columns: DataTableColumn<ResolvedPayrollRow>[] = [
     {
       key: 'teacher',
       header: t('billing.payroll.columns.teacher'),
-      cell: (row) => <span className="font-medium">{row.teacherName ?? '—'}</span>,
+      cell: (row) => <span className="font-medium">{row.employeeName ?? '—'}</span>,
     },
     {
       key: 'period',
@@ -114,9 +115,9 @@ export function PayrollsListPage() {
 
       <div className="flex flex-wrap items-end gap-3">
         <div className="min-w-48">
-          <TeacherSearchInput
-            value={teacher}
-            onChange={setTeacher}
+          <EmployeeSearchInput
+            value={employee}
+            onChange={setEmployee}
             placeholder={t('billing.payroll.filters.teacher')}
           />
         </div>
@@ -144,7 +145,7 @@ export function PayrollsListPage() {
             variant="ghost"
             onClick={() => {
               setStatus('')
-              setTeacher(null)
+              setEmployee(null)
               setPage(1)
             }}
           >

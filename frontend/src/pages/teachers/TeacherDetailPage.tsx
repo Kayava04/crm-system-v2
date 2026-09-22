@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import { ArrowLeft, Pencil, UserX, UserCheck, ArrowUpCircle, Trash2, Plus } from 'lucide-react'
+import { ArrowLeft, Pencil, UserCheck, RefreshCw, Trash2, Plus } from 'lucide-react'
 import {
   getTeacherById,
   updateTeacher,
@@ -15,6 +15,7 @@ import {
   deleteTeacher,
   addSalaryRate,
 } from '@/features/teachers/api'
+import type { TeacherStatus } from '@/features/teachers/api'
 import { getSchedules } from '@/features/scheduling/api'
 import { useResolvedSchedules } from '@/features/scheduling/useResolvedSchedules'
 import { getPayrolls } from '@/features/billing/api'
@@ -55,8 +56,7 @@ import { CreateProfileAccountDialog } from '@/components/shared/CreateProfileAcc
 import { TemporaryPasswordDialog } from '@/components/shared/TemporaryPasswordDialog'
 import { Field } from '@/components/shared/Field'
 
-const ACTIVE_STATUSES = ['Probation', 'Employed'] as const
-const INACTIVE_STATUSES = ['OnLeave', 'Resigned', 'Dismissed'] as const
+const ALL_STATUSES: TeacherStatus[] = ['Probation', 'Employed', 'OnLeave', 'Resigned', 'Dismissed']
 
 function statusVariant(status: string): 'success' | 'warning' | 'secondary' | 'destructive' {
   if (status === 'Employed' || status === 'Probation') return 'success'
@@ -75,12 +75,9 @@ export function TeacherDetailPage() {
   const canCreateAccount = useCan('CanManageAdmins')
 
   const [activeTab, setActiveTab] = useState('profile')
-  const [deactivateOpen, setDeactivateOpen] = useState(false)
-  const [reactivateOpen, setReactivateOpen] = useState(false)
-  const [promoteOpen, setPromoteOpen] = useState(false)
+  const [statusDialogOpen, setStatusDialogOpen] = useState(false)
+  const [statusTarget, setStatusTarget] = useState<TeacherStatus>('Employed')
   const [deleteOpen, setDeleteOpen] = useState(false)
-  const [deactivateTarget, setDeactivateTarget] =
-    useState<(typeof INACTIVE_STATUSES)[number]>('OnLeave')
   const [createAccountOpen, setCreateAccountOpen] = useState(false)
   const [createdAccount, setCreatedAccount] = useState<{
     email: string
@@ -96,8 +93,7 @@ export function TeacherDetailPage() {
   const photoUrl = useAuthenticatedBlobUrl(teacher ? `/api/teachers/${id}/photo` : null)
 
   const statusMutation = useMutation({
-    mutationFn: (status: (typeof ACTIVE_STATUSES)[number] | (typeof INACTIVE_STATUSES)[number]) =>
-      changeTeacherStatus(id, status),
+    mutationFn: (status: TeacherStatus) => changeTeacherStatus(id, status),
     onSuccess: async (result) => {
       await queryClient.invalidateQueries({ queryKey: ['teachers', id] })
       await queryClient.invalidateQueries({ queryKey: ['teachers'] })
@@ -162,7 +158,11 @@ export function TeacherDetailPage() {
     .filter(Boolean)
     .join(' ')
   const initials = `${teacher.firstName[0] ?? ''}${teacher.lastName[0] ?? ''}`.toUpperCase()
-  const isActive = (ACTIVE_STATUSES as readonly string[]).includes(teacher.status)
+
+  function openStatusDialog() {
+    setStatusTarget(ALL_STATUSES.find((s) => s !== teacher?.status) ?? 'Employed')
+    setStatusDialogOpen(true)
+  }
 
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-6">
@@ -175,34 +175,36 @@ export function TeacherDetailPage() {
           {t('teachers.detail.backToList')}
         </Link>
 
-        <div className="flex flex-wrap items-center gap-4">
-          <Avatar className="size-16">
-            {photoUrl && <AvatarImage src={photoUrl} alt="" />}
-            <AvatarFallback className="text-lg">{initials || '?'}</AvatarFallback>
-          </Avatar>
-          <div className="flex flex-col gap-1">
-            <h1 className="text-2xl font-semibold tracking-tight">{fullName}</h1>
-            <div className="flex flex-wrap items-center gap-2">
-              <Badge variant={statusVariant(teacher.status)}>
-                {enumLabel(t, 'teacherStatus', teacher.status)}
-              </Badge>
-              {teacher.hasAccount && (
-                <Badge
-                  variant={
-                    teacher.status === 'Resigned' || teacher.status === 'Dismissed'
-                      ? 'secondary'
-                      : 'success'
-                  }
-                >
-                  {teacher.status === 'Resigned' || teacher.status === 'Dismissed'
-                    ? t('accountLink.accountDeactivated')
-                    : t('accountLink.accountActive')}
+        <div className="flex flex-col gap-3">
+          <div className="flex flex-wrap items-center gap-4">
+            <Avatar className="size-16">
+              {photoUrl && <AvatarImage src={photoUrl} alt="" />}
+              <AvatarFallback className="text-lg">{initials || '?'}</AvatarFallback>
+            </Avatar>
+            <div className="flex min-w-0 flex-col gap-1">
+              <h1 className="text-2xl font-semibold tracking-tight">{fullName}</h1>
+              <div className="flex flex-wrap items-center gap-2">
+                <Badge variant={statusVariant(teacher.status)}>
+                  {enumLabel(t, 'teacherStatus', teacher.status)}
                 </Badge>
-              )}
+                {teacher.hasAccount && (
+                  <Badge
+                    variant={
+                      teacher.status === 'Resigned' || teacher.status === 'Dismissed'
+                        ? 'secondary'
+                        : 'success'
+                    }
+                  >
+                    {teacher.status === 'Resigned' || teacher.status === 'Dismissed'
+                      ? t('accountLink.accountDeactivated')
+                      : t('accountLink.accountActive')}
+                  </Badge>
+                )}
+              </div>
             </div>
           </div>
 
-          <div className="ml-auto flex flex-wrap gap-2">
+          <div className="flex flex-wrap justify-end gap-2">
             {canCreateAccount && !teacher.hasAccount && (
               <Button variant="outline" onClick={() => setCreateAccountOpen(true)}>
                 <UserCheck />
@@ -211,23 +213,10 @@ export function TeacherDetailPage() {
             )}
             {canManage && (
               <>
-                {teacher.status === 'Probation' && (
-                  <Button variant="outline" onClick={() => setPromoteOpen(true)}>
-                    <ArrowUpCircle />
-                    {t('teachers.detail.promote')}
-                  </Button>
-                )}
-                {isActive ? (
-                  <Button variant="outline" onClick={() => setDeactivateOpen(true)}>
-                    <UserX />
-                    {t('teachers.detail.deactivate')}
-                  </Button>
-                ) : (
-                  <Button variant="outline" onClick={() => setReactivateOpen(true)}>
-                    <UserCheck />
-                    {t('teachers.detail.reactivate')}
-                  </Button>
-                )}
+                <Button variant="outline" onClick={openStatusDialog}>
+                  <RefreshCw />
+                  {t('teachers.detail.changeStatus')}
+                </Button>
                 {canDelete && (
                   <Button variant="outline" onClick={() => setDeleteOpen(true)}>
                     <Trash2 />
@@ -273,22 +262,19 @@ export function TeacherDetailPage() {
         </TabsContent>
       </Tabs>
 
-      <Dialog open={deactivateOpen} onOpenChange={setDeactivateOpen}>
+      <Dialog open={statusDialogOpen} onOpenChange={setStatusDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{t('teachers.detail.confirmDeactivateTitle')}</DialogTitle>
-            <DialogDescription>{t('teachers.detail.confirmDeactivateDesc')}</DialogDescription>
+            <DialogTitle>{t('teachers.detail.changeStatusTitle')}</DialogTitle>
+            <DialogDescription>{t('teachers.detail.changeStatusDesc')}</DialogDescription>
           </DialogHeader>
           <Field label={t('teachers.detail.newStatusLabel')}>
-            <Select
-              value={deactivateTarget}
-              onValueChange={(v) => setDeactivateTarget(v as typeof deactivateTarget)}
-            >
+            <Select value={statusTarget} onValueChange={(v) => setStatusTarget(v as TeacherStatus)}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {INACTIVE_STATUSES.map((v) => (
+                {ALL_STATUSES.filter((v) => v !== teacher.status).map((v) => (
                   <SelectItem key={v} value={v}>
                     {enumLabel(t, 'teacherStatus', v)}
                   </SelectItem>
@@ -299,17 +285,16 @@ export function TeacherDetailPage() {
           <DialogFooter>
             <Button
               variant="outline"
-              onClick={() => setDeactivateOpen(false)}
+              onClick={() => setStatusDialogOpen(false)}
               disabled={statusMutation.isPending}
             >
               {t('common.cancel')}
             </Button>
             <Button
-              variant="destructive"
               loading={statusMutation.isPending}
               onClick={async () => {
-                await statusMutation.mutateAsync(deactivateTarget)
-                setDeactivateOpen(false)
+                await statusMutation.mutateAsync(statusTarget)
+                setStatusDialogOpen(false)
               }}
             >
               {t('common.confirm')}
@@ -318,24 +303,6 @@ export function TeacherDetailPage() {
         </DialogContent>
       </Dialog>
 
-      <ConfirmDialog
-        open={reactivateOpen}
-        onOpenChange={setReactivateOpen}
-        title={t('teachers.detail.confirmReactivateTitle')}
-        description={t('teachers.detail.confirmReactivateDesc')}
-        onConfirm={async () => {
-          await statusMutation.mutateAsync('Employed')
-        }}
-      />
-      <ConfirmDialog
-        open={promoteOpen}
-        onOpenChange={setPromoteOpen}
-        title={t('teachers.detail.confirmPromoteTitle')}
-        description={t('teachers.detail.confirmPromoteDesc')}
-        onConfirm={async () => {
-          await statusMutation.mutateAsync('Employed')
-        }}
-      />
       <ConfirmDialog
         open={deleteOpen}
         onOpenChange={setDeleteOpen}
@@ -744,6 +711,7 @@ function CommentTab({
 function LessonsTab({ teacherId }: { teacherId: string }) {
   const { t, i18n } = useTranslation()
   const lang = i18n.language === 'en' ? 'en' : 'uk'
+  const navigate = useNavigate()
   const [page, setPage] = useState(1)
 
   const { data, isPending } = useQuery({
@@ -799,6 +767,7 @@ function LessonsTab({ teacherId }: { teacherId: string }) {
           rowKey={(r) => r.row.id}
           isLoading={isPending}
           emptyMessage={t('teachers.detail.noLessons')}
+          onRowClick={() => navigate('/calendar')}
         />
         {data && (
           <Pagination
@@ -816,6 +785,7 @@ function LessonsTab({ teacherId }: { teacherId: string }) {
 function PayrollTab({ teacherId }: { teacherId: string }) {
   const { t, i18n } = useTranslation()
   const lang = i18n.language === 'en' ? 'en' : 'uk'
+  const navigate = useNavigate()
   const [page, setPage] = useState(1)
 
   const { data, isPending } = useQuery({
@@ -863,6 +833,7 @@ function PayrollTab({ teacherId }: { teacherId: string }) {
           rowKey={(r) => r.row.id}
           isLoading={isPending}
           emptyMessage={t('billing.payroll.empty')}
+          onRowClick={() => navigate('/billing/payroll')}
         />
         {data && (
           <Pagination

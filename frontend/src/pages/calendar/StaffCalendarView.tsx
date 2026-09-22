@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { ChevronLeft, ChevronRight, Plus, CalendarPlus, Users, Ban, ListChecks } from 'lucide-react'
@@ -25,12 +25,12 @@ import {
 } from '@/components/ui/select'
 import { Input } from '@/components/ui/input'
 import { Checkbox } from '@/components/ui/checkbox'
-import { CreateLessonDialog } from './CreateLessonDialog'
 import { GenerateScheduleDialog } from './GenerateScheduleDialog'
 import { ReassignTeacherDialog } from './ReassignTeacherDialog'
 import { ReassignSelectedLessonsDialog } from './ReassignSelectedLessonsDialog'
 import { CancelFutureDialog } from './CancelFutureDialog'
 import { LessonDetailDialog } from './LessonDetailDialog'
+import { CalendarEventsPanel, type CalendarEventsPanelHandle } from './CalendarEventsPanel'
 
 const STATUSES: ScheduleStatus[] = ['Scheduled', 'Rescheduled', 'Completed', 'Cancelled']
 
@@ -60,7 +60,7 @@ export function StaffCalendarView() {
   const [groupFilter, setGroupFilter] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
 
-  const [createOpen, setCreateOpen] = useState(false)
+  const eventsPanelRef = useRef<CalendarEventsPanelHandle>(null)
   const [generateOpen, setGenerateOpen] = useState(false)
   const [reassignOpen, setReassignOpen] = useState(false)
   const [cancelFutureOpen, setCancelFutureOpen] = useState(false)
@@ -156,35 +156,42 @@ export function StaffCalendarView() {
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-3">
         <h1 className="text-2xl font-semibold tracking-tight">{t('calendar.title')}</h1>
-        {canManage && (
-          <div className="flex flex-wrap justify-end gap-2">
-            <Button size="sm" onClick={() => setCreateOpen(true)}>
-              <Plus />
-              {t('calendar.createLesson')}
-            </Button>
-            <Button size="sm" variant="outline" onClick={() => setGenerateOpen(true)}>
-              <CalendarPlus />
-              {t('calendar.generate')}
-            </Button>
-            <Button size="sm" variant="outline" onClick={() => setReassignOpen(true)}>
-              <Users />
-              {t('calendar.reassignTeacher')}
-            </Button>
-            <Button
-              size="sm"
-              variant={selectMode ? 'default' : 'outline'}
-              onClick={toggleSelectMode}
-            >
-              <ListChecks />
-              {selectMode ? t('calendar.exitSelectLessons') : t('calendar.selectLessons')}
-            </Button>
-            <Button size="sm" variant="outline" onClick={() => setCancelFutureOpen(true)}>
-              <Ban />
-              {t('calendar.cancelFuture')}
-            </Button>
-          </div>
-        )}
+        <div className="flex flex-wrap justify-end gap-2">
+          {/* Creating a personal reminder needs no special permission; only "everyone" does,
+           * which the dialog itself offers to a CanManageSchedule holder - so this one button
+           * replaces both the old two-button pair here and the lesson-creation button below. */}
+          <Button size="sm" onClick={() => eventsPanelRef.current?.openCreate('Personal')}>
+            <Plus />
+            {t('calendar.newEvent')}
+          </Button>
+          {canManage && (
+            <>
+              <Button size="sm" variant="outline" onClick={() => setGenerateOpen(true)}>
+                <CalendarPlus />
+                {t('calendar.generate')}
+              </Button>
+              <Button size="sm" variant="outline" onClick={() => setReassignOpen(true)}>
+                <Users />
+                {t('calendar.reassignTeacher')}
+              </Button>
+              <Button
+                size="sm"
+                variant={selectMode ? 'default' : 'outline'}
+                onClick={toggleSelectMode}
+              >
+                <ListChecks />
+                {selectMode ? t('calendar.exitSelectLessons') : t('calendar.selectLessons')}
+              </Button>
+              <Button size="sm" variant="outline" onClick={() => setCancelFutureOpen(true)}>
+                <Ban />
+                {t('calendar.cancelFuture')}
+              </Button>
+            </>
+          )}
+        </div>
       </div>
+
+      <CalendarEventsPanel ref={eventsPanelRef} from={from} to={to} showAddButton={false} />
 
       <div className="flex flex-col gap-3">
         <div className="flex flex-wrap items-center gap-2">
@@ -343,7 +350,6 @@ export function StaffCalendarView() {
         </div>
       )}
 
-      <CreateLessonDialog open={createOpen} onOpenChange={setCreateOpen} onCreated={invalidate} />
       <GenerateScheduleDialog
         open={generateOpen}
         onOpenChange={setGenerateOpen}

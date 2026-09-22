@@ -20,6 +20,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { MyLessonDetailDialog } from './MyLessonDetailDialog'
+import { CalendarEventsPanel } from './CalendarEventsPanel'
 
 const STATUSES: ScheduleStatus[] = ['Scheduled', 'Completed', 'Cancelled', 'Rescheduled']
 
@@ -94,8 +95,11 @@ export function MyCalendarView() {
 
   return (
     <div className="flex flex-col gap-4">
+      <h1 className="text-2xl font-semibold tracking-tight">{t('calendar.title')}</h1>
+
+      <CalendarEventsPanel from={from} to={to} />
+
       <div className="flex flex-col gap-3">
-        <h1 className="text-2xl font-semibold tracking-tight">{t('calendar.title')}</h1>
         <div className="flex flex-wrap items-center gap-2">
           <Button variant="outline" size="sm" onClick={goPrev}>
             <ChevronLeft />

@@ -123,6 +123,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/auth/users/{id}/salary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Set or clear the salary of an administrator account; never self-service */
+        put: operations["SetStaffSalary"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/auth/me/contact": {
         parameters: {
             query?: never;
@@ -131,7 +148,7 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        /** Set the name and phone of an administrator or manager (not for the SuperAdmin, students and teachers) */
+        /** Set the name, birth date, city, country and phone of an administrator or manager (not for the SuperAdmin, students and teachers) */
         put: operations["UpdateMyContact"];
         post?: never;
         delete?: never;
@@ -1130,6 +1147,43 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/calendar/events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List the arbitrary calendar events visible to the current user (own ones plus everyone's), defaults to the next 30 days */
+        get: operations["GetCalendarEvents"];
+        put?: never;
+        /** Create a personal reminder, or (with CanManageSchedule) a school-wide notice */
+        post: operations["CreateCalendarEvent"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/calendar/events/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get one calendar event, if it is visible to the current user */
+        get: operations["GetCalendarEventById"];
+        /** Update a calendar event: its owner for a personal one, a schedule manager for one visible to everyone */
+        put: operations["UpdateCalendarEvent"];
+        post?: never;
+        /** Delete a calendar event: its owner for a personal one, a schedule manager for one visible to everyone */
+        delete: operations["DeleteCalendarEvent"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/billing/invoices": {
         parameters: {
             query?: never;
@@ -1647,6 +1701,21 @@ export interface components {
             failed: number | string;
             results: components["schemas"]["BulkItemResult"][];
         };
+        CalendarEventResponse: {
+            /** Format: uuid */
+            id: string;
+            visibility: components["schemas"]["CalendarEventVisibility"];
+            title: string;
+            description: null | string;
+            /** Format: date-time */
+            startsAt: string;
+            /** Format: date-time */
+            endsAt: string;
+            isAllDay: boolean;
+            isMine: boolean;
+        };
+        /** @enum {unknown} */
+        CalendarEventVisibility: "Personal" | "Everyone";
         CalendarItemResponse: {
             /** Format: uuid */
             id: string;
@@ -1759,6 +1828,16 @@ export interface components {
         };
         /** @enum {unknown} */
         CourseStatus: "Active" | "Archived";
+        CreateCalendarEventRequest: {
+            visibility: components["schemas"]["CalendarEventVisibility"];
+            title: string;
+            description: null | string;
+            /** Format: date-time */
+            startsAt: string;
+            /** Format: date-time */
+            endsAt: string;
+            isAllDay: boolean;
+        };
         CreateCourseRequest: {
             name: string;
             language: components["schemas"]["Language"];
@@ -2212,8 +2291,15 @@ export interface components {
         MeContact: {
             firstName: null | string;
             lastName: null | string;
+            middleName: null | string;
             fullName: null | string;
             phoneNumber: null | string;
+            /** Format: date */
+            dateOfBirth: null | string;
+            city: null | string;
+            country: null | string;
+            /** Format: double */
+            salary: null | number | string;
         };
         MeProfile: {
             type: string;
@@ -2491,6 +2577,13 @@ export interface components {
             firstName?: null | string;
             lastName?: null | string;
             phoneNumber?: null | string;
+            middleName?: null | string;
+            /** Format: date */
+            dateOfBirth?: null | string;
+            city?: null | string;
+            country?: null | string;
+            /** Format: double */
+            salary?: null | number | string;
         };
         RegisterResponse: {
             /** Format: uuid */
@@ -2596,6 +2689,10 @@ export interface components {
         SetStaffPermissionsRequest: {
             permissionIds: null | string[];
         };
+        SetStaffSalaryRequest: {
+            /** Format: double */
+            salary: null | number | string;
+        };
         SetStaffStatusRequest: {
             isActive: boolean;
         };
@@ -2605,8 +2702,15 @@ export interface components {
             email: string;
             firstName: null | string;
             lastName: null | string;
+            middleName: null | string;
             fullName: null | string;
             phoneNumber: null | string;
+            /** Format: date */
+            dateOfBirth: null | string;
+            city: null | string;
+            country: null | string;
+            /** Format: double */
+            salary: null | number | string;
             isActive: boolean;
             /** Format: date-time */
             createdAt: string;
@@ -2722,6 +2826,16 @@ export interface components {
             /** Format: int32 */
             count: number | string;
         };
+        UpdateCalendarEventRequest: {
+            visibility: components["schemas"]["CalendarEventVisibility"];
+            title: string;
+            description: null | string;
+            /** Format: date-time */
+            startsAt: string;
+            /** Format: date-time */
+            endsAt: string;
+            isAllDay: boolean;
+        };
         UpdateCommentRequest: {
             comment: null | string;
         };
@@ -2764,6 +2878,11 @@ export interface components {
             firstName: null | string;
             lastName: null | string;
             phoneNumber: null | string;
+            middleName?: null | string;
+            /** Format: date */
+            dateOfBirth?: null | string;
+            city?: null | string;
+            country?: null | string;
         };
         UpdateParentInfoRequest: {
             firstName: string;
@@ -3125,6 +3244,68 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": components["schemas"]["SetStaffPermissionsRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaffMember"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+        };
+    };
+    SetStaffSalary: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SetStaffSalaryRequest"];
             };
         };
         responses: {
@@ -6183,6 +6364,247 @@ export interface operations {
                 content: {
                     "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
                 };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+        };
+    };
+    GetCalendarEvents: {
+        parameters: {
+            query?: {
+                from?: string;
+                to?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CalendarEventResponse"][];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+        };
+    };
+    CreateCalendarEvent: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateCalendarEventRequest"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CalendarEventResponse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+        };
+    };
+    GetCalendarEventById: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CalendarEventResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+        };
+    };
+    UpdateCalendarEvent: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateCalendarEventRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CalendarEventResponse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+        };
+    };
+    DeleteCalendarEvent: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Unauthorized */
             401: {

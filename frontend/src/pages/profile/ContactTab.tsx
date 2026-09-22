@@ -11,7 +11,7 @@ import { ApiError } from '@/api/errors'
 import { applyServerValidation } from '@/lib/applyServerValidation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import { Field } from '@/components/shared/Field'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 
@@ -26,7 +26,11 @@ export function ContactTab() {
       z.object({
         firstName: z.string().min(1, t('profile.contact.firstNameLabel')),
         lastName: z.string().min(1, t('profile.contact.lastNameLabel')),
+        middleName: z.string().optional(),
         phoneNumber: z.string().min(1, t('profile.contact.phoneLabel')),
+        dateOfBirth: z.string().optional(),
+        city: z.string().optional(),
+        country: z.string().optional(),
       }),
     [t],
   )
@@ -42,14 +46,26 @@ export function ContactTab() {
     values: {
       firstName: user?.contact?.firstName ?? '',
       lastName: user?.contact?.lastName ?? '',
+      middleName: user?.contact?.middleName ?? '',
       phoneNumber: user?.contact?.phoneNumber ?? '',
+      dateOfBirth: user?.contact?.dateOfBirth ?? '',
+      city: user?.contact?.city ?? '',
+      country: user?.contact?.country ?? '',
     },
   })
 
   async function onSubmit(values: FormValues) {
     setFormError(null)
     try {
-      await updateMyContact(values)
+      await updateMyContact({
+        firstName: values.firstName,
+        lastName: values.lastName,
+        phoneNumber: values.phoneNumber,
+        middleName: values.middleName || null,
+        dateOfBirth: values.dateOfBirth || null,
+        city: values.city || null,
+        country: values.country || null,
+      })
       await queryClient.invalidateQueries({ queryKey: ['auth', 'me'] })
       toast.success(t('profile.contact.saved'))
     } catch (err) {
@@ -82,31 +98,28 @@ export function ContactTab() {
               <AlertDescription>{formError}</AlertDescription>
             </Alert>
           )}
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="firstName">{t('profile.contact.firstNameLabel')}</Label>
-            <Input id="firstName" aria-invalid={!!errors.firstName} {...register('firstName')} />
-            {errors.firstName && (
-              <p className="text-xs text-destructive">{errors.firstName.message}</p>
-            )}
-          </div>
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="lastName">{t('profile.contact.lastNameLabel')}</Label>
-            <Input id="lastName" aria-invalid={!!errors.lastName} {...register('lastName')} />
-            {errors.lastName && (
-              <p className="text-xs text-destructive">{errors.lastName.message}</p>
-            )}
-          </div>
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="phoneNumber">{t('profile.contact.phoneLabel')}</Label>
-            <Input
-              id="phoneNumber"
-              type="tel"
-              aria-invalid={!!errors.phoneNumber}
-              {...register('phoneNumber')}
-            />
-            {errors.phoneNumber && (
-              <p className="text-xs text-destructive">{errors.phoneNumber.message}</p>
-            )}
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Field label={t('profile.contact.firstNameLabel')} error={errors.firstName?.message}>
+              <Input aria-invalid={!!errors.firstName} {...register('firstName')} />
+            </Field>
+            <Field label={t('profile.contact.lastNameLabel')} error={errors.lastName?.message}>
+              <Input aria-invalid={!!errors.lastName} {...register('lastName')} />
+            </Field>
+            <Field label={t('profile.contact.middleNameLabel')} error={errors.middleName?.message}>
+              <Input {...register('middleName')} />
+            </Field>
+            <Field label={t('profile.contact.phoneLabel')} error={errors.phoneNumber?.message}>
+              <Input type="tel" aria-invalid={!!errors.phoneNumber} {...register('phoneNumber')} />
+            </Field>
+            <Field label={t('profile.contact.dateOfBirthLabel')} error={errors.dateOfBirth?.message}>
+              <Input type="date" {...register('dateOfBirth')} />
+            </Field>
+            <Field label={t('profile.contact.cityLabel')} error={errors.city?.message}>
+              <Input {...register('city')} />
+            </Field>
+            <Field label={t('profile.contact.countryLabel')} error={errors.country?.message}>
+              <Input {...register('country')} />
+            </Field>
           </div>
           <Button type="submit" loading={isSubmitting} className="self-start">
             {t('common.save')}

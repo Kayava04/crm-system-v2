@@ -17,7 +17,7 @@ function mockUser(overrides: Partial<MeResponse> = {}): MeResponse {
     roles: [],
     permissions: [],
     profile: null,
-    contact: { firstName: null, lastName: null, fullName: null, phoneNumber: null },
+    contact: { firstName: null, lastName: null, middleName: null, fullName: null, phoneNumber: null, dateOfBirth: null, city: null, country: null, salary: null },
     hasPhoto: false,
     photoUrl: null,
     ...overrides,

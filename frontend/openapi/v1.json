@@ -13,7 +13,9 @@
   "paths": {
     "/api/auth/login": {
       "post": {
-        "tags": ["Identity"],
+        "tags": [
+          "Identity"
+        ],
         "summary": "Authenticate a user and issue an access token",
         "operationId": "Login",
         "requestBody": {
@@ -80,14 +82,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/auth/register": {
       "post": {
-        "tags": ["Identity"],
+        "tags": [
+          "Identity"
+        ],
         "summary": "Create a new user account",
         "operationId": "Register",
         "requestBody": {
@@ -164,14 +168,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/auth/change-password": {
       "post": {
-        "tags": ["Identity"],
+        "tags": [
+          "Identity"
+        ],
         "summary": "Change the current user's password",
         "operationId": "ChangePassword",
         "requestBody": {
@@ -211,14 +217,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/auth/me": {
       "get": {
-        "tags": ["Identity"],
+        "tags": [
+          "Identity"
+        ],
         "summary": "Who am I: account, roles, permissions and the student or teacher profile",
         "operationId": "GetMe",
         "responses": {
@@ -245,14 +253,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/auth/users": {
       "get": {
-        "tags": ["Identity"],
+        "tags": [
+          "Identity"
+        ],
         "summary": "List administrator and manager accounts (optionally only active or only deactivated ones)",
         "operationId": "ListStaff",
         "parameters": [
@@ -301,14 +311,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/auth/users/{id}/status": {
       "put": {
-        "tags": ["Identity"],
+        "tags": [
+          "Identity"
+        ],
         "summary": "Deactivate or reactivate an administrator account; nothing is deleted",
         "operationId": "SetStaffStatus",
         "parameters": [
@@ -376,14 +388,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/auth/users/{id}/permissions": {
       "put": {
-        "tags": ["Identity"],
+        "tags": [
+          "Identity"
+        ],
         "summary": "Replace the permissions of an administrator account",
         "operationId": "SetStaffPermissions",
         "parameters": [
@@ -461,15 +475,104 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/api/auth/users/{id}/salary": {
+      "put": {
+        "tags": [
+          "Identity"
+        ],
+        "summary": "Set or clear the salary of an administrator account; never self-service",
+        "operationId": "SetStaffSalary",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetStaffSalaryRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StaffMember"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/auth/me/contact": {
       "put": {
-        "tags": ["Identity"],
-        "summary": "Set the name and phone of an administrator or manager (not for the SuperAdmin, students and teachers)",
+        "tags": [
+          "Identity"
+        ],
+        "summary": "Set the name, birth date, city, country and phone of an administrator or manager (not for the SuperAdmin, students and teachers)",
         "operationId": "UpdateMyContact",
         "requestBody": {
           "content": {
@@ -535,14 +638,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/auth/me/photo": {
       "put": {
-        "tags": ["Identity"],
+        "tags": [
+          "Identity"
+        ],
         "summary": "Upload or replace my profile photo (multipart field 'file'; JPEG, PNG or WebP, up to 5 MB)",
         "operationId": "UploadMyPhoto",
         "requestBody": {
@@ -594,12 +699,14 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       },
       "get": {
-        "tags": ["Identity"],
+        "tags": [
+          "Identity"
+        ],
         "summary": "My profile photo as an image (supports If-None-Match, so the browser can cache it)",
         "operationId": "GetMyPhoto",
         "responses": {
@@ -619,12 +726,14 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       },
       "delete": {
-        "tags": ["Identity"],
+        "tags": [
+          "Identity"
+        ],
         "summary": "Remove my profile photo",
         "operationId": "DeleteMyPhoto",
         "responses": {
@@ -644,14 +753,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/auth/users/{id}/reset-password": {
       "post": {
-        "tags": ["Identity"],
+        "tags": [
+          "Identity"
+        ],
         "summary": "Reset a user's password to a new temporary one",
         "operationId": "ResetPassword",
         "parameters": [
@@ -709,14 +820,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/auth/refresh": {
       "post": {
-        "tags": ["Identity"],
+        "tags": [
+          "Identity"
+        ],
         "summary": "Exchange a refresh token for a new access token",
         "operationId": "Refresh",
         "requestBody": {
@@ -763,14 +876,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/auth/roles": {
       "get": {
-        "tags": ["Identity"],
+        "tags": [
+          "Identity"
+        ],
         "summary": "Get all roles",
         "operationId": "GetRoles",
         "responses": {
@@ -790,14 +905,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/auth/permissions": {
       "get": {
-        "tags": ["Identity"],
+        "tags": [
+          "Identity"
+        ],
         "summary": "Get all permissions",
         "operationId": "GetPermissions",
         "responses": {
@@ -817,14 +934,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/students": {
       "get": {
-        "tags": ["Students"],
+        "tags": [
+          "Students"
+        ],
         "summary": "Get all students",
         "operationId": "GetStudents",
         "parameters": [
@@ -875,7 +994,10 @@
             "in": "query",
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": ["integer", "string"],
+              "type": [
+                "integer",
+                "string"
+              ],
               "format": "int32",
               "default": 1
             }
@@ -885,7 +1007,10 @@
             "in": "query",
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": ["integer", "string"],
+              "type": [
+                "integer",
+                "string"
+              ],
               "format": "int32",
               "default": 20
             }
@@ -905,12 +1030,14 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       },
       "post": {
-        "tags": ["Students"],
+        "tags": [
+          "Students"
+        ],
         "summary": "Create a student",
         "operationId": "CreateStudent",
         "requestBody": {
@@ -957,14 +1084,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/students/me": {
       "get": {
-        "tags": ["Students"],
+        "tags": [
+          "Students"
+        ],
         "summary": "The profile of the current student",
         "operationId": "GetMyStudentProfile",
         "responses": {
@@ -991,14 +1120,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/students/{id}/photo": {
       "get": {
-        "tags": ["Students"],
+        "tags": [
+          "Students"
+        ],
         "summary": "The profile photo of a student (the one the student uploaded to their account)",
         "operationId": "GetStudentPhoto",
         "parameters": [
@@ -1029,14 +1160,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/students/{id}": {
       "get": {
-        "tags": ["Students"],
+        "tags": [
+          "Students"
+        ],
         "summary": "Get student by id",
         "operationId": "GetStudentById",
         "parameters": [
@@ -1084,12 +1217,14 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       },
       "put": {
-        "tags": ["Students"],
+        "tags": [
+          "Students"
+        ],
         "summary": "Update student",
         "operationId": "UpdateStudent",
         "parameters": [
@@ -1140,12 +1275,14 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       },
       "delete": {
-        "tags": ["Students"],
+        "tags": [
+          "Students"
+        ],
         "summary": "Delete student",
         "operationId": "DeleteStudent",
         "parameters": [
@@ -1186,14 +1323,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/students/bulk": {
       "post": {
-        "tags": ["Students"],
+        "tags": [
+          "Students"
+        ],
         "summary": "Create many students at once; every item gets its own result",
         "operationId": "BulkCreateStudents",
         "requestBody": {
@@ -1230,12 +1369,14 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       },
       "delete": {
-        "tags": ["Students"],
+        "tags": [
+          "Students"
+        ],
         "summary": "Delete many students; students with an account or enrollments are refused (deactivate them instead)",
         "operationId": "BulkDeleteStudents",
         "requestBody": {
@@ -1272,14 +1413,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/students/export": {
       "get": {
-        "tags": ["Students"],
+        "tags": [
+          "Students"
+        ],
         "summary": "Download students as an Excel (.xlsx) or JSON file; accepts the same filters as the list",
         "operationId": "ExportStudents",
         "parameters": [
@@ -1359,14 +1502,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/students/import-template": {
       "get": {
-        "tags": ["Students"],
+        "tags": [
+          "Students"
+        ],
         "summary": "Download an empty Excel template (with a help sheet) or a JSON sample for importing students",
         "operationId": "StudentImportTemplate",
         "parameters": [
@@ -1404,14 +1549,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/students/import": {
       "post": {
-        "tags": ["Students"],
+        "tags": [
+          "Students"
+        ],
         "summary": "Import students from an Excel (.xlsx) or JSON file (multipart form field 'file'). Use dryRun=true to check the file without saving.",
         "operationId": "ImportStudents",
         "parameters": [
@@ -1471,14 +1618,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/students/{id}/preferences": {
       "put": {
-        "tags": ["Students"],
+        "tags": [
+          "Students"
+        ],
         "summary": "Update student preferences",
         "operationId": "UpdateStudentPreferences",
         "parameters": [
@@ -1529,14 +1678,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/students/{id}/parent-info": {
       "post": {
-        "tags": ["Students"],
+        "tags": [
+          "Students"
+        ],
         "summary": "Add parent info for student",
         "operationId": "AddParentInfo",
         "parameters": [
@@ -1597,12 +1748,14 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       },
       "put": {
-        "tags": ["Students"],
+        "tags": [
+          "Students"
+        ],
         "summary": "Update parent info for student",
         "operationId": "UpdateParentInfo",
         "parameters": [
@@ -1653,12 +1806,14 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       },
       "delete": {
-        "tags": ["Students"],
+        "tags": [
+          "Students"
+        ],
         "summary": "Delete parent info for student",
         "operationId": "DeleteParentInfo",
         "parameters": [
@@ -1689,14 +1844,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/students/{id}/status": {
       "put": {
-        "tags": ["Students"],
+        "tags": [
+          "Students"
+        ],
         "summary": "Change student status",
         "operationId": "ChangeStudentStatus",
         "parameters": [
@@ -1764,14 +1921,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/students/{id}/comment": {
       "patch": {
-        "tags": ["Students"],
+        "tags": [
+          "Students"
+        ],
         "summary": "Update student comment",
         "operationId": "UpdateStudentComment",
         "parameters": [
@@ -1822,14 +1981,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/teachers": {
       "get": {
-        "tags": ["Teachers"],
+        "tags": [
+          "Teachers"
+        ],
         "summary": "Get all teachers",
         "operationId": "GetTeachers",
         "parameters": [
@@ -1859,7 +2020,10 @@
             "in": "query",
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": ["integer", "string"],
+              "type": [
+                "integer",
+                "string"
+              ],
               "format": "int32",
               "default": 1
             }
@@ -1869,7 +2033,10 @@
             "in": "query",
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": ["integer", "string"],
+              "type": [
+                "integer",
+                "string"
+              ],
               "format": "int32",
               "default": 20
             }
@@ -1889,12 +2056,14 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       },
       "post": {
-        "tags": ["Teachers"],
+        "tags": [
+          "Teachers"
+        ],
         "summary": "Create a teacher",
         "operationId": "CreateTeacher",
         "requestBody": {
@@ -1941,14 +2110,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/teachers/me/students": {
       "get": {
-        "tags": ["Teachers"],
+        "tags": [
+          "Teachers"
+        ],
         "summary": "Get students of the current teacher",
         "operationId": "GetMyStudents",
         "responses": {
@@ -1978,14 +2149,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/teachers/me": {
       "get": {
-        "tags": ["Teachers"],
+        "tags": [
+          "Teachers"
+        ],
         "summary": "The profile of the current teacher (including their salary rates)",
         "operationId": "GetMyTeacherProfile",
         "responses": {
@@ -2012,14 +2185,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/teachers/{id}/photo": {
       "get": {
-        "tags": ["Teachers"],
+        "tags": [
+          "Teachers"
+        ],
         "summary": "The profile photo of a teacher (the one the teacher uploaded to their account)",
         "operationId": "GetTeacherPhoto",
         "parameters": [
@@ -2050,14 +2225,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/teachers/{id}": {
       "get": {
-        "tags": ["Teachers"],
+        "tags": [
+          "Teachers"
+        ],
         "summary": "Get teacher by id",
         "operationId": "GetTeacherById",
         "parameters": [
@@ -2095,12 +2272,14 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       },
       "put": {
-        "tags": ["Teachers"],
+        "tags": [
+          "Teachers"
+        ],
         "summary": "Update a teacher",
         "operationId": "UpdateTeacher",
         "parameters": [
@@ -2151,12 +2330,14 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       },
       "delete": {
-        "tags": ["Teachers"],
+        "tags": [
+          "Teachers"
+        ],
         "summary": "Delete teacher",
         "operationId": "DeleteTeacher",
         "parameters": [
@@ -2197,14 +2378,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/teachers/bulk": {
       "post": {
-        "tags": ["Teachers"],
+        "tags": [
+          "Teachers"
+        ],
         "summary": "Create many teachers at once; every item gets its own result",
         "operationId": "BulkCreateTeachers",
         "requestBody": {
@@ -2241,12 +2424,14 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       },
       "delete": {
-        "tags": ["Teachers"],
+        "tags": [
+          "Teachers"
+        ],
         "summary": "Delete many teachers; teachers with an account, lessons or groups are refused (deactivate them instead)",
         "operationId": "BulkDeleteTeachers",
         "requestBody": {
@@ -2283,14 +2468,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/teachers/export": {
       "get": {
-        "tags": ["Teachers"],
+        "tags": [
+          "Teachers"
+        ],
         "summary": "Download teachers as an Excel (.xlsx) or JSON file; accepts the same filters as the list",
         "operationId": "ExportTeachers",
         "parameters": [
@@ -2349,14 +2536,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/teachers/import-template": {
       "get": {
-        "tags": ["Teachers"],
+        "tags": [
+          "Teachers"
+        ],
         "summary": "Download an empty Excel template (with a help sheet) or a JSON sample for importing teachers",
         "operationId": "TeacherImportTemplate",
         "parameters": [
@@ -2394,14 +2583,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/teachers/import": {
       "post": {
-        "tags": ["Teachers"],
+        "tags": [
+          "Teachers"
+        ],
         "summary": "Import teachers from an Excel (.xlsx) or JSON file (multipart form field 'file'). Use dryRun=true to check the file without saving.",
         "operationId": "ImportTeachers",
         "parameters": [
@@ -2461,14 +2652,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/teachers/{id}/status": {
       "put": {
-        "tags": ["Teachers"],
+        "tags": [
+          "Teachers"
+        ],
         "summary": "Change teacher status",
         "operationId": "ChangeTeacherStatus",
         "parameters": [
@@ -2536,14 +2729,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/teachers/{id}/salary-rates": {
       "post": {
-        "tags": ["Teachers"],
+        "tags": [
+          "Teachers"
+        ],
         "summary": "Add a new salary rate for a teacher",
         "operationId": "AddSalaryRate",
         "parameters": [
@@ -2604,14 +2799,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/teachers/{id}/comment": {
       "patch": {
-        "tags": ["Teachers"],
+        "tags": [
+          "Teachers"
+        ],
         "summary": "Update teacher comment",
         "operationId": "UpdateTeacherComment",
         "parameters": [
@@ -2662,14 +2859,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/courses": {
       "get": {
-        "tags": ["Courses"],
+        "tags": [
+          "Courses"
+        ],
         "summary": "Get all courses",
         "operationId": "GetCourses",
         "parameters": [
@@ -2720,7 +2919,10 @@
             "in": "query",
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": ["integer", "string"],
+              "type": [
+                "integer",
+                "string"
+              ],
               "format": "int32",
               "default": 1
             }
@@ -2730,7 +2932,10 @@
             "in": "query",
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": ["integer", "string"],
+              "type": [
+                "integer",
+                "string"
+              ],
               "format": "int32",
               "default": 20
             }
@@ -2750,12 +2955,14 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       },
       "post": {
-        "tags": ["Courses"],
+        "tags": [
+          "Courses"
+        ],
         "summary": "Create a course",
         "operationId": "CreateCourse",
         "requestBody": {
@@ -2802,14 +3009,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/courses/{id}": {
       "get": {
-        "tags": ["Courses"],
+        "tags": [
+          "Courses"
+        ],
         "summary": "Get course by id",
         "operationId": "GetCourseById",
         "parameters": [
@@ -2847,12 +3056,14 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       },
       "put": {
-        "tags": ["Courses"],
+        "tags": [
+          "Courses"
+        ],
         "summary": "Update a course",
         "operationId": "UpdateCourse",
         "parameters": [
@@ -2913,12 +3124,14 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       },
       "delete": {
-        "tags": ["Courses"],
+        "tags": [
+          "Courses"
+        ],
         "summary": "Delete a course",
         "operationId": "DeleteCourse",
         "parameters": [
@@ -2949,14 +3162,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/courses/{id}/archive": {
       "put": {
-        "tags": ["Courses"],
+        "tags": [
+          "Courses"
+        ],
         "summary": "Archive a course",
         "operationId": "ArchiveCourse",
         "parameters": [
@@ -2997,14 +3212,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/courses/{id}/activate": {
       "put": {
-        "tags": ["Courses"],
+        "tags": [
+          "Courses"
+        ],
         "summary": "Activate a course",
         "operationId": "ActivateCourse",
         "parameters": [
@@ -3045,14 +3262,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/enrollments": {
       "get": {
-        "tags": ["Enrollments"],
+        "tags": [
+          "Enrollments"
+        ],
         "summary": "Get all enrollments",
         "operationId": "GetEnrollments",
         "parameters": [
@@ -3084,7 +3303,10 @@
             "in": "query",
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": ["integer", "string"],
+              "type": [
+                "integer",
+                "string"
+              ],
               "format": "int32",
               "default": 1
             }
@@ -3094,7 +3316,10 @@
             "in": "query",
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": ["integer", "string"],
+              "type": [
+                "integer",
+                "string"
+              ],
               "format": "int32",
               "default": 20
             }
@@ -3114,12 +3339,14 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       },
       "post": {
-        "tags": ["Enrollments"],
+        "tags": [
+          "Enrollments"
+        ],
         "summary": "Create an enrollment",
         "operationId": "CreateEnrollment",
         "requestBody": {
@@ -3176,14 +3403,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/enrollments/my": {
       "get": {
-        "tags": ["Enrollments"],
+        "tags": [
+          "Enrollments"
+        ],
         "summary": "The enrollments (courses) of the current student, newest first",
         "operationId": "GetMyEnrollments",
         "responses": {
@@ -3213,14 +3442,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/enrollments/{id}": {
       "get": {
-        "tags": ["Enrollments"],
+        "tags": [
+          "Enrollments"
+        ],
         "summary": "Get enrollment by id",
         "operationId": "GetEnrollmentById",
         "parameters": [
@@ -3258,14 +3489,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/enrollments/{id}/activate": {
       "put": {
-        "tags": ["Enrollments"],
+        "tags": [
+          "Enrollments"
+        ],
         "summary": "Activate an enrollment and bring back its upcoming lessons",
         "operationId": "ActivateEnrollment",
         "parameters": [
@@ -3313,14 +3546,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/enrollments/{id}/suspend": {
       "put": {
-        "tags": ["Enrollments"],
+        "tags": [
+          "Enrollments"
+        ],
         "summary": "Suspend an enrollment and cancel its upcoming lessons",
         "operationId": "SuspendEnrollment",
         "parameters": [
@@ -3368,14 +3603,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/enrollments/{id}/complete": {
       "put": {
-        "tags": ["Enrollments"],
+        "tags": [
+          "Enrollments"
+        ],
         "summary": "Complete an enrollment and cancel its remaining upcoming lessons",
         "operationId": "CompleteEnrollment",
         "parameters": [
@@ -3423,14 +3660,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/enrollments/{id}/terminate": {
       "put": {
-        "tags": ["Enrollments"],
+        "tags": [
+          "Enrollments"
+        ],
         "summary": "Terminate an enrollment and cancel its upcoming lessons",
         "operationId": "TerminateEnrollment",
         "parameters": [
@@ -3478,14 +3717,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/enrollments/{id}/discount": {
       "put": {
-        "tags": ["Enrollments"],
+        "tags": [
+          "Enrollments"
+        ],
         "summary": "Apply discount to enrollment",
         "operationId": "ApplyDiscount",
         "parameters": [
@@ -3546,12 +3787,14 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       },
       "delete": {
-        "tags": ["Enrollments"],
+        "tags": [
+          "Enrollments"
+        ],
         "summary": "Remove discount from enrollment",
         "operationId": "RemoveDiscount",
         "parameters": [
@@ -3592,14 +3835,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/enrollments/{id}/price": {
       "put": {
-        "tags": ["Enrollments"],
+        "tags": [
+          "Enrollments"
+        ],
         "summary": "Update enrollment price",
         "operationId": "UpdateEnrollmentPrice",
         "parameters": [
@@ -3660,14 +3905,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/enrollments/{id}/comment": {
       "patch": {
-        "tags": ["Enrollments"],
+        "tags": [
+          "Enrollments"
+        ],
         "summary": "Update enrollment comment",
         "operationId": "UpdateEnrollmentComment",
         "parameters": [
@@ -3718,14 +3965,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/enrollments/{id}/preferred-schedule": {
       "patch": {
-        "tags": ["Enrollments"],
+        "tags": [
+          "Enrollments"
+        ],
         "summary": "Update the time the student prefers to attend",
         "operationId": "UpdateEnrollmentPreferredSchedule",
         "parameters": [
@@ -3776,14 +4025,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/schedules": {
       "get": {
-        "tags": ["Schedules"],
+        "tags": [
+          "Schedules"
+        ],
         "summary": "Get all schedules",
         "operationId": "GetSchedules",
         "parameters": [
@@ -3839,7 +4090,10 @@
             "in": "query",
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": ["integer", "string"],
+              "type": [
+                "integer",
+                "string"
+              ],
               "format": "int32",
               "default": 1
             }
@@ -3849,7 +4103,10 @@
             "in": "query",
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": ["integer", "string"],
+              "type": [
+                "integer",
+                "string"
+              ],
               "format": "int32",
               "default": 20
             }
@@ -3869,12 +4126,14 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       },
       "post": {
-        "tags": ["Schedules"],
+        "tags": [
+          "Schedules"
+        ],
         "summary": "Create a single lesson for an enrollment or a study group",
         "operationId": "CreateSchedule",
         "requestBody": {
@@ -3931,14 +4190,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/schedules/{id}": {
       "get": {
-        "tags": ["Schedules"],
+        "tags": [
+          "Schedules"
+        ],
         "summary": "Get schedule by id",
         "operationId": "GetScheduleById",
         "parameters": [
@@ -3976,12 +4237,14 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       },
       "put": {
-        "tags": ["Schedules"],
+        "tags": [
+          "Schedules"
+        ],
         "summary": "Update a schedule (teacher, duration, notes)",
         "operationId": "UpdateSchedule",
         "parameters": [
@@ -4042,14 +4305,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/schedules/generate": {
       "post": {
-        "tags": ["Schedules"],
+        "tags": [
+          "Schedules"
+        ],
         "summary": "Generate the recurring lessons of an enrollment or a study group from weekly slots",
         "operationId": "GenerateSchedule",
         "requestBody": {
@@ -4106,14 +4371,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/schedules/cancel-future": {
       "put": {
-        "tags": ["Schedules"],
+        "tags": [
+          "Schedules"
+        ],
         "summary": "Cancel all upcoming lessons of an enrollment or a group (before regenerating the schedule)",
         "operationId": "CancelFutureSchedule",
         "requestBody": {
@@ -4150,14 +4417,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/schedules/reassign-teacher": {
       "put": {
-        "tags": ["Schedules"],
+        "tags": [
+          "Schedules"
+        ],
         "summary": "Hand over the upcoming lessons and groups of a teacher to another teacher",
         "operationId": "ReassignTeacher",
         "requestBody": {
@@ -4214,14 +4483,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/schedules/{id}/complete": {
       "put": {
-        "tags": ["Schedules"],
+        "tags": [
+          "Schedules"
+        ],
         "summary": "Complete a schedule",
         "operationId": "CompleteSchedule",
         "parameters": [
@@ -4262,14 +4533,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/schedules/{id}/cancel": {
       "put": {
-        "tags": ["Schedules"],
+        "tags": [
+          "Schedules"
+        ],
         "summary": "Cancel a schedule",
         "operationId": "CancelSchedule",
         "parameters": [
@@ -4310,14 +4583,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/schedules/{id}/reschedule": {
       "put": {
-        "tags": ["Schedules"],
+        "tags": [
+          "Schedules"
+        ],
         "summary": "Reschedule a schedule to a new date",
         "operationId": "RescheduleSchedule",
         "parameters": [
@@ -4378,14 +4653,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/study-groups": {
       "get": {
-        "tags": ["Study groups"],
+        "tags": [
+          "Study groups"
+        ],
         "summary": "Get all study groups",
         "operationId": "GetStudyGroups",
         "parameters": [
@@ -4410,7 +4687,10 @@
             "in": "query",
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": ["integer", "string"],
+              "type": [
+                "integer",
+                "string"
+              ],
               "format": "int32",
               "default": 1
             }
@@ -4420,7 +4700,10 @@
             "in": "query",
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": ["integer", "string"],
+              "type": [
+                "integer",
+                "string"
+              ],
               "format": "int32",
               "default": 20
             }
@@ -4440,12 +4723,14 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       },
       "post": {
-        "tags": ["Study groups"],
+        "tags": [
+          "Study groups"
+        ],
         "summary": "Create a study group for a group course",
         "operationId": "CreateStudyGroup",
         "requestBody": {
@@ -4502,14 +4787,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/study-groups/{id}": {
       "get": {
-        "tags": ["Study groups"],
+        "tags": [
+          "Study groups"
+        ],
         "summary": "Get study group with its members",
         "operationId": "GetStudyGroupById",
         "parameters": [
@@ -4547,12 +4834,14 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       },
       "put": {
-        "tags": ["Study groups"],
+        "tags": [
+          "Study groups"
+        ],
         "summary": "Update study group name and teacher",
         "operationId": "UpdateStudyGroup",
         "parameters": [
@@ -4603,14 +4892,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/study-groups/{id}/members": {
       "post": {
-        "tags": ["Study groups"],
+        "tags": [
+          "Study groups"
+        ],
         "summary": "Add an enrollment to a study group",
         "operationId": "AddStudyGroupMember",
         "parameters": [
@@ -4671,14 +4962,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/study-groups/{id}/members/{enrollmentId}": {
       "delete": {
-        "tags": ["Study groups"],
+        "tags": [
+          "Study groups"
+        ],
         "summary": "Remove an enrollment from a study group",
         "operationId": "RemoveStudyGroupMember",
         "parameters": [
@@ -4718,14 +5011,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/calendar/my": {
       "get": {
-        "tags": ["Calendar"],
+        "tags": [
+          "Calendar"
+        ],
         "summary": "Get the calendar of the current teacher or student (defaults to the next 30 days)",
         "operationId": "GetMyCalendar",
         "parameters": [
@@ -4800,14 +5095,347 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/api/calendar/events": {
+      "get": {
+        "tags": [
+          "Calendar"
+        ],
+        "summary": "List the arbitrary calendar events visible to the current user (own ones plus everyone's), defaults to the next 30 days",
+        "operationId": "GetCalendarEvents",
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CalendarEventResponse"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Calendar"
+        ],
+        "summary": "Create a personal reminder, or (with CanManageSchedule) a school-wide notice",
+        "operationId": "CreateCalendarEvent",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCalendarEventRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CalendarEventResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/api/calendar/events/{id}": {
+      "get": {
+        "tags": [
+          "Calendar"
+        ],
+        "summary": "Get one calendar event, if it is visible to the current user",
+        "operationId": "GetCalendarEventById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CalendarEventResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Calendar"
+        ],
+        "summary": "Update a calendar event: its owner for a personal one, a schedule manager for one visible to everyone",
+        "operationId": "UpdateCalendarEvent",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCalendarEventRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CalendarEventResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Calendar"
+        ],
+        "summary": "Delete a calendar event: its owner for a personal one, a schedule manager for one visible to everyone",
+        "operationId": "DeleteCalendarEvent",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/billing/invoices": {
       "get": {
-        "tags": ["Billing - Invoices"],
+        "tags": [
+          "Billing - Invoices"
+        ],
         "summary": "Get all student invoices",
         "operationId": "GetInvoices",
         "parameters": [
@@ -4846,7 +5474,10 @@
             "in": "query",
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": ["integer", "string"],
+              "type": [
+                "integer",
+                "string"
+              ],
               "format": "int32",
               "default": 1
             }
@@ -4856,7 +5487,10 @@
             "in": "query",
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": ["integer", "string"],
+              "type": [
+                "integer",
+                "string"
+              ],
               "format": "int32",
               "default": 20
             }
@@ -4876,12 +5510,14 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       },
       "post": {
-        "tags": ["Billing - Invoices"],
+        "tags": [
+          "Billing - Invoices"
+        ],
         "summary": "Create a student invoice",
         "operationId": "CreateInvoice",
         "requestBody": {
@@ -4938,14 +5574,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/billing/invoices/my": {
       "get": {
-        "tags": ["Billing - Invoices"],
+        "tags": [
+          "Billing - Invoices"
+        ],
         "summary": "The invoices of the current student",
         "operationId": "GetMyInvoices",
         "parameters": [
@@ -4961,7 +5599,10 @@
             "in": "query",
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": ["integer", "string"],
+              "type": [
+                "integer",
+                "string"
+              ],
               "format": "int32",
               "default": 1
             }
@@ -4971,7 +5612,10 @@
             "in": "query",
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": ["integer", "string"],
+              "type": [
+                "integer",
+                "string"
+              ],
               "format": "int32",
               "default": 20
             }
@@ -5001,14 +5645,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/billing/invoices/{id}": {
       "get": {
-        "tags": ["Billing - Invoices"],
+        "tags": [
+          "Billing - Invoices"
+        ],
         "summary": "Get invoice by id",
         "operationId": "GetInvoiceById",
         "parameters": [
@@ -5046,14 +5692,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/billing/invoices/{id}/paid": {
       "put": {
-        "tags": ["Billing - Invoices"],
+        "tags": [
+          "Billing - Invoices"
+        ],
         "summary": "Mark an invoice as paid",
         "operationId": "MarkInvoicePaid",
         "parameters": [
@@ -5094,14 +5742,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/billing/invoices/mark-overdue": {
       "put": {
-        "tags": ["Billing - Invoices"],
+        "tags": [
+          "Billing - Invoices"
+        ],
         "summary": "Mark all pending invoices past their due date as overdue",
         "operationId": "MarkInvoicesOverdue",
         "responses": {
@@ -5118,14 +5768,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/billing/payrolls": {
       "get": {
-        "tags": ["Billing - Payrolls"],
+        "tags": [
+          "Billing - Payrolls"
+        ],
         "summary": "Get all teacher payrolls",
         "operationId": "GetPayrolls",
         "parameters": [
@@ -5156,7 +5808,10 @@
             "in": "query",
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": ["integer", "string"],
+              "type": [
+                "integer",
+                "string"
+              ],
               "format": "int32",
               "default": 1
             }
@@ -5166,7 +5821,10 @@
             "in": "query",
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": ["integer", "string"],
+              "type": [
+                "integer",
+                "string"
+              ],
               "format": "int32",
               "default": 20
             }
@@ -5186,12 +5844,14 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       },
       "post": {
-        "tags": ["Billing - Payrolls"],
+        "tags": [
+          "Billing - Payrolls"
+        ],
         "summary": "Calculate and create a teacher payroll for a period",
         "operationId": "CreatePayroll",
         "requestBody": {
@@ -5248,14 +5908,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/billing/payrolls/my": {
       "get": {
-        "tags": ["Billing - Payrolls"],
+        "tags": [
+          "Billing - Payrolls"
+        ],
         "summary": "The payrolls of the current teacher",
         "operationId": "GetMyPayrolls",
         "parameters": [
@@ -5278,7 +5940,10 @@
             "in": "query",
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": ["integer", "string"],
+              "type": [
+                "integer",
+                "string"
+              ],
               "format": "int32",
               "default": 1
             }
@@ -5288,7 +5953,10 @@
             "in": "query",
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": ["integer", "string"],
+              "type": [
+                "integer",
+                "string"
+              ],
               "format": "int32",
               "default": 20
             }
@@ -5318,14 +5986,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/billing/payrolls/{id}": {
       "get": {
-        "tags": ["Billing - Payrolls"],
+        "tags": [
+          "Billing - Payrolls"
+        ],
         "summary": "Get payroll by id",
         "operationId": "GetPayrollById",
         "parameters": [
@@ -5363,14 +6033,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/billing/payrolls/{id}/paid": {
       "put": {
-        "tags": ["Billing - Payrolls"],
+        "tags": [
+          "Billing - Payrolls"
+        ],
         "summary": "Mark a payroll as paid",
         "operationId": "MarkPayrollPaid",
         "parameters": [
@@ -5411,14 +6083,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/reports/students/summary": {
       "get": {
-        "tags": ["Reporting"],
+        "tags": [
+          "Reporting"
+        ],
         "summary": "Get students summary (total and by status)",
         "operationId": "GetStudentsSummary",
         "responses": {
@@ -5435,14 +6109,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/reports/teachers/summary": {
       "get": {
-        "tags": ["Reporting"],
+        "tags": [
+          "Reporting"
+        ],
         "summary": "Get teachers summary (total, by status, salary overview)",
         "operationId": "GetTeachersSummary",
         "responses": {
@@ -5459,14 +6135,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/reports/enrollments/summary": {
       "get": {
-        "tags": ["Reporting"],
+        "tags": [
+          "Reporting"
+        ],
         "summary": "Get enrollments summary (total, by status, by course)",
         "operationId": "GetEnrollmentsSummary",
         "responses": {
@@ -5483,14 +6161,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/reports/billing/summary": {
       "get": {
-        "tags": ["Reporting"],
+        "tags": [
+          "Reporting"
+        ],
         "summary": "Get billing summary for a period (defaults to the current month)",
         "operationId": "GetBillingSummary",
         "parameters": [
@@ -5535,14 +6215,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/notifications": {
       "get": {
-        "tags": ["Notifications"],
+        "tags": [
+          "Notifications"
+        ],
         "summary": "Get notifications of the current user",
         "operationId": "GetMyNotifications",
         "parameters": [
@@ -5559,7 +6241,10 @@
             "in": "query",
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": ["integer", "string"],
+              "type": [
+                "integer",
+                "string"
+              ],
               "format": "int32",
               "default": 1
             }
@@ -5569,7 +6254,10 @@
             "in": "query",
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": ["integer", "string"],
+              "type": [
+                "integer",
+                "string"
+              ],
               "format": "int32",
               "default": 20
             }
@@ -5599,14 +6287,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/notifications/unread-count": {
       "get": {
-        "tags": ["Notifications"],
+        "tags": [
+          "Notifications"
+        ],
         "summary": "Get the number of unread notifications of the current user",
         "operationId": "GetUnreadNotificationsCount",
         "responses": {
@@ -5633,14 +6323,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/notifications/{id}/read": {
       "put": {
-        "tags": ["Notifications"],
+        "tags": [
+          "Notifications"
+        ],
         "summary": "Mark a notification as read",
         "operationId": "MarkNotificationRead",
         "parameters": [
@@ -5681,14 +6373,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/notifications/read-all": {
       "put": {
-        "tags": ["Notifications"],
+        "tags": [
+          "Notifications"
+        ],
         "summary": "Mark all notifications of the current user as read",
         "operationId": "MarkAllNotificationsRead",
         "responses": {
@@ -5708,14 +6402,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/notifications/all": {
       "get": {
-        "tags": ["Notifications"],
+        "tags": [
+          "Notifications"
+        ],
         "summary": "Get notifications of all users (for administrators)",
         "operationId": "GetAllNotifications",
         "parameters": [
@@ -5747,7 +6443,10 @@
             "in": "query",
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": ["integer", "string"],
+              "type": [
+                "integer",
+                "string"
+              ],
               "format": "int32",
               "default": 1
             }
@@ -5757,7 +6456,10 @@
             "in": "query",
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": ["integer", "string"],
+              "type": [
+                "integer",
+                "string"
+              ],
               "format": "int32",
               "default": 20
             }
@@ -5777,14 +6479,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/notifications/send": {
       "post": {
-        "tags": ["Notifications"],
+        "tags": [
+          "Notifications"
+        ],
         "summary": "Send a message to specific users",
         "operationId": "SendNotification",
         "requestBody": {
@@ -5821,14 +6525,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/notifications/broadcast": {
       "post": {
-        "tags": ["Notifications"],
+        "tags": [
+          "Notifications"
+        ],
         "summary": "Send a message to every active user of a group (students, teachers, admins or everyone)",
         "operationId": "BroadcastNotification",
         "requestBody": {
@@ -5865,14 +6571,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/notifications/invoice-reminders": {
       "post": {
-        "tags": ["Notifications"],
+        "tags": [
+          "Notifications"
+        ],
         "summary": "Remind students about unpaid invoices that are due soon or overdue (each reminder is sent once)",
         "operationId": "SendInvoiceReminders",
         "requestBody": {
@@ -5909,14 +6617,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/notifications/lesson-reminders": {
       "post": {
-        "tags": ["Notifications"],
+        "tags": [
+          "Notifications"
+        ],
         "summary": "Remind students and teachers about lessons that start soon (each reminder is sent once)",
         "operationId": "SendLessonReminders",
         "requestBody": {
@@ -5953,14 +6663,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/materials": {
       "get": {
-        "tags": ["Materials"],
+        "tags": [
+          "Materials"
+        ],
         "summary": "Get all materials",
         "operationId": "GetMaterials",
         "parameters": [
@@ -5991,7 +6703,10 @@
             "in": "query",
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": ["integer", "string"],
+              "type": [
+                "integer",
+                "string"
+              ],
               "format": "int32",
               "default": 1
             }
@@ -6001,7 +6716,10 @@
             "in": "query",
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": ["integer", "string"],
+              "type": [
+                "integer",
+                "string"
+              ],
               "format": "int32",
               "default": 20
             }
@@ -6021,12 +6739,14 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       },
       "post": {
-        "tags": ["Materials"],
+        "tags": [
+          "Materials"
+        ],
         "summary": "Create a material (YouTube video, article or link)",
         "operationId": "CreateMaterial",
         "requestBody": {
@@ -6083,14 +6803,16 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
     "/api/materials/{id}": {
       "get": {
-        "tags": ["Materials"],
+        "tags": [
+          "Materials"
+        ],
         "summary": "Get material by id",
         "operationId": "GetMaterialById",
         "parameters": [
@@ -6128,12 +6850,14 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       },
       "put": {
-        "tags": ["Materials"],
+        "tags": [
+          "Materials"
+        ],
         "summary": "Update a material (author or admin only)",
         "operationId": "UpdateMaterial",
         "parameters": [
@@ -6194,12 +6918,14 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       },
       "delete": {
-        "tags": ["Materials"],
+        "tags": [
+          "Materials"
+        ],
         "summary": "Delete a material (author or admin only)",
         "operationId": "DeleteMaterial",
         "parameters": [
@@ -6240,7 +6966,7 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
@@ -6249,7 +6975,9 @@
   "components": {
     "schemas": {
       "AddGroupMemberRequest": {
-        "required": ["enrollmentId"],
+        "required": [
+          "enrollmentId"
+        ],
         "type": "object",
         "properties": {
           "enrollmentId": {
@@ -6259,7 +6987,13 @@
         }
       },
       "AddParentInfoRequest": {
-        "required": ["firstName", "lastName", "middleName", "phoneNumber", "email"],
+        "required": [
+          "firstName",
+          "lastName",
+          "middleName",
+          "phoneNumber",
+          "email"
+        ],
         "type": "object",
         "properties": {
           "firstName": {
@@ -6269,7 +7003,10 @@
             "type": "string"
           },
           "middleName": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "phoneNumber": {
             "type": "string"
@@ -6280,17 +7017,27 @@
         }
       },
       "AddSalaryRateRequest": {
-        "required": ["baseSalary", "lessonsRate", "effectiveFrom"],
+        "required": [
+          "baseSalary",
+          "lessonsRate",
+          "effectiveFrom"
+        ],
         "type": "object",
         "properties": {
           "baseSalary": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-            "type": ["number", "string"],
+            "type": [
+              "number",
+              "string"
+            ],
             "format": "double"
           },
           "lessonsRate": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-            "type": ["number", "string"],
+            "type": [
+              "number",
+              "string"
+            ],
             "format": "double"
           },
           "effectiveFrom": {
@@ -6337,18 +7084,26 @@
             "format": "date-time"
           },
           "readAt": {
-            "type": ["null", "string"],
+            "type": [
+              "null",
+              "string"
+            ],
             "format": "date-time"
           }
         }
       },
       "ApplyDiscountRequest": {
-        "required": ["discountedPrice"],
+        "required": [
+          "discountedPrice"
+        ],
         "type": "object",
         "properties": {
           "discountedPrice": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-            "type": ["number", "string"],
+            "type": [
+              "number",
+              "string"
+            ],
             "format": "double"
           }
         }
@@ -6376,41 +7131,68 @@
           },
           "income": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-            "type": ["number", "string"],
+            "type": [
+              "number",
+              "string"
+            ],
             "format": "double"
           },
           "expenses": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-            "type": ["number", "string"],
+            "type": [
+              "number",
+              "string"
+            ],
             "format": "double"
           },
           "netResult": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-            "type": ["number", "string"],
+            "type": [
+              "number",
+              "string"
+            ],
             "format": "double"
           },
           "pendingInvoicesAmount": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-            "type": ["number", "string"],
+            "type": [
+              "number",
+              "string"
+            ],
             "format": "double"
           },
           "overdueInvoicesAmount": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-            "type": ["number", "string"],
+            "type": [
+              "number",
+              "string"
+            ],
             "format": "double"
           },
           "pendingPayrollAmount": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-            "type": ["number", "string"],
+            "type": [
+              "number",
+              "string"
+            ],
             "format": "double"
           }
         }
       },
       "BroadcastAudience": {
-        "enum": ["Students", "Teachers", "Admins", "Everyone"]
+        "enum": [
+          "Students",
+          "Teachers",
+          "Admins",
+          "Everyone"
+        ]
       },
       "BroadcastNotificationRequest": {
-        "required": ["audience", "subject", "body"],
+        "required": [
+          "audience",
+          "subject",
+          "body"
+        ],
         "type": "object",
         "properties": {
           "audience": {
@@ -6425,18 +7207,25 @@
         }
       },
       "BroadcastNotificationResponse": {
-        "required": ["created"],
+        "required": [
+          "created"
+        ],
         "type": "object",
         "properties": {
           "created": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           }
         }
       },
       "BulkCreateStudentsRequest": {
-        "required": ["students"],
+        "required": [
+          "students"
+        ],
         "type": "object",
         "properties": {
           "students": {
@@ -6452,7 +7241,9 @@
         }
       },
       "BulkCreateTeachersRequest": {
-        "required": ["teachers"],
+        "required": [
+          "teachers"
+        ],
         "type": "object",
         "properties": {
           "teachers": {
@@ -6468,7 +7259,9 @@
         }
       },
       "BulkDeleteStudentsRequest": {
-        "required": ["ids"],
+        "required": [
+          "ids"
+        ],
         "type": "object",
         "properties": {
           "ids": {
@@ -6481,7 +7274,9 @@
         }
       },
       "BulkDeleteTeachersRequest": {
-        "required": ["ids"],
+        "required": [
+          "ids"
+        ],
         "type": "object",
         "properties": {
           "ids": {
@@ -6494,23 +7289,38 @@
         }
       },
       "BulkItemResult": {
-        "required": ["index", "success", "id", "key", "errors"],
+        "required": [
+          "index",
+          "success",
+          "id",
+          "key",
+          "errors"
+        ],
         "type": "object",
         "properties": {
           "index": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "success": {
             "type": "boolean"
           },
           "id": {
-            "type": ["null", "string"],
+            "type": [
+              "null",
+              "string"
+            ],
             "format": "uuid"
           },
           "key": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "errors": {
             "type": "array",
@@ -6521,22 +7331,36 @@
         }
       },
       "BulkOperationResponse": {
-        "required": ["total", "succeeded", "failed", "results"],
+        "required": [
+          "total",
+          "succeeded",
+          "failed",
+          "results"
+        ],
         "type": "object",
         "properties": {
           "total": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "succeeded": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "failed": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "results": {
@@ -6546,6 +7370,57 @@
             }
           }
         }
+      },
+      "CalendarEventResponse": {
+        "required": [
+          "id",
+          "visibility",
+          "title",
+          "description",
+          "startsAt",
+          "endsAt",
+          "isAllDay",
+          "isMine"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "visibility": {
+            "$ref": "#/components/schemas/CalendarEventVisibility"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "startsAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endsAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "isAllDay": {
+            "type": "boolean"
+          },
+          "isMine": {
+            "type": "boolean"
+          }
+        }
+      },
+      "CalendarEventVisibility": {
+        "enum": [
+          "Personal",
+          "Everyone"
+        ]
       },
       "CalendarItemResponse": {
         "required": [
@@ -6588,10 +7463,16 @@
             "type": "boolean"
           },
           "groupName": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "teacherName": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "students": {
             "type": "array",
@@ -6600,12 +7481,20 @@
             }
           },
           "notes": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },
       "CalendarResponse": {
-        "required": ["from", "to", "timeZone", "items"],
+        "required": [
+          "from",
+          "to",
+          "timeZone",
+          "items"
+        ],
         "type": "object",
         "properties": {
           "from": {
@@ -6628,32 +7517,50 @@
         }
       },
       "CancelFutureScheduleRequest": {
-        "required": ["enrollmentId", "groupId"],
+        "required": [
+          "enrollmentId",
+          "groupId"
+        ],
         "type": "object",
         "properties": {
           "enrollmentId": {
-            "type": ["null", "string"],
+            "type": [
+              "null",
+              "string"
+            ],
             "format": "uuid"
           },
           "groupId": {
-            "type": ["null", "string"],
+            "type": [
+              "null",
+              "string"
+            ],
             "format": "uuid"
           }
         }
       },
       "CancelFutureScheduleResponse": {
-        "required": ["cancelledCount"],
+        "required": [
+          "cancelledCount"
+        ],
         "type": "object",
         "properties": {
           "cancelledCount": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           }
         }
       },
       "ChangePasswordRequest": {
-        "required": ["oldPassword", "newPassword", "confirmNewPassword"],
+        "required": [
+          "oldPassword",
+          "newPassword",
+          "confirmNewPassword"
+        ],
         "type": "object",
         "properties": {
           "oldPassword": {
@@ -6668,7 +7575,9 @@
         }
       },
       "ChangeStudentStatusRequest": {
-        "required": ["status"],
+        "required": [
+          "status"
+        ],
         "type": "object",
         "properties": {
           "status": {
@@ -6689,27 +7598,42 @@
         "properties": {
           "suspendedEnrollments": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "cancelledLessons": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "resumedEnrollments": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "restoredLessons": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "lessonsLeftToSchedule": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "accountActive": {
@@ -6718,7 +7642,9 @@
         }
       },
       "ChangeTeacherStatusRequest": {
-        "required": ["status"],
+        "required": [
+          "status"
+        ],
         "type": "object",
         "properties": {
           "status": {
@@ -6738,24 +7664,36 @@
         "properties": {
           "cancelledLessons": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "restoredLessons": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "skippedLessons": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "accountActive": {
             "type": "boolean"
           },
           "hint": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },
@@ -6799,26 +7737,41 @@
           },
           "durationMonths": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "lessonsCount": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "lessonsPerWeek": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "price": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-            "type": ["number", "string"],
+            "type": [
+              "number",
+              "string"
+            ],
             "format": "double"
           },
           "description": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "status": {
             "$ref": "#/components/schemas/CourseStatus"
@@ -6828,13 +7781,20 @@
             "format": "date-time"
           },
           "updatedAt": {
-            "type": ["null", "string"],
+            "type": [
+              "null",
+              "string"
+            ],
             "format": "date-time"
           }
         }
       },
       "CourseEnrollmentsResponse": {
-        "required": ["courseId", "courseName", "count"],
+        "required": [
+          "courseId",
+          "courseName",
+          "count"
+        ],
         "type": "object",
         "properties": {
           "courseId": {
@@ -6846,13 +7806,25 @@
           },
           "count": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           }
         }
       },
       "CourseListResponse": {
-        "required": ["id", "name", "language", "level", "format", "lessonType", "price", "status"],
+        "required": [
+          "id",
+          "name",
+          "language",
+          "level",
+          "format",
+          "lessonType",
+          "price",
+          "status"
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -6876,7 +7848,10 @@
           },
           "price": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-            "type": ["number", "string"],
+            "type": [
+              "number",
+              "string"
+            ],
             "format": "double"
           },
           "status": {
@@ -6885,7 +7860,46 @@
         }
       },
       "CourseStatus": {
-        "enum": ["Active", "Archived"]
+        "enum": [
+          "Active",
+          "Archived"
+        ]
+      },
+      "CreateCalendarEventRequest": {
+        "required": [
+          "visibility",
+          "title",
+          "description",
+          "startsAt",
+          "endsAt",
+          "isAllDay"
+        ],
+        "type": "object",
+        "properties": {
+          "visibility": {
+            "$ref": "#/components/schemas/CalendarEventVisibility"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "startsAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endsAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "isAllDay": {
+            "type": "boolean"
+          }
+        }
       },
       "CreateCourseRequest": {
         "required": [
@@ -6919,31 +7933,49 @@
           },
           "durationMonths": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "lessonsCount": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "lessonsPerWeek": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "price": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-            "type": ["number", "string"],
+            "type": [
+              "number",
+              "string"
+            ],
             "format": "double"
           },
           "description": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },
       "CreateCourseResponse": {
-        "required": ["id", "name"],
+        "required": [
+          "id",
+          "name"
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -6980,14 +8012,24 @@
           },
           "discountedPrice": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-            "type": ["null", "number", "string"],
+            "type": [
+              "null",
+              "number",
+              "string"
+            ],
             "format": "double"
           },
           "comment": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "preferredSchedule": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },
@@ -7030,23 +8072,37 @@
           },
           "coursePrice": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-            "type": ["number", "string"],
+            "type": [
+              "number",
+              "string"
+            ],
             "format": "double"
           },
           "discountedPrice": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-            "type": ["null", "number", "string"],
+            "type": [
+              "null",
+              "number",
+              "string"
+            ],
             "format": "double"
           },
           "effectivePrice": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-            "type": ["number", "string"],
+            "type": [
+              "number",
+              "string"
+            ],
             "format": "double"
           }
         }
       },
       "CreateGroupRequest": {
-        "required": ["courseId", "teacherId", "name"],
+        "required": [
+          "courseId",
+          "teacherId",
+          "name"
+        ],
         "type": "object",
         "properties": {
           "courseId": {
@@ -7063,7 +8119,12 @@
         }
       },
       "CreateGroupResponse": {
-        "required": ["id", "courseId", "teacherId", "name"],
+        "required": [
+          "id",
+          "courseId",
+          "teacherId",
+          "name"
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -7084,7 +8145,12 @@
         }
       },
       "CreateInvoiceRequest": {
-        "required": ["enrollmentId", "period", "dueDate", "notes"],
+        "required": [
+          "enrollmentId",
+          "period",
+          "dueDate",
+          "notes"
+        ],
         "type": "object",
         "properties": {
           "enrollmentId": {
@@ -7099,12 +8165,23 @@
             "format": "date"
           },
           "notes": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },
       "CreateInvoiceResponse": {
-        "required": ["id", "enrollmentId", "studentId", "period", "amount", "dueDate", "status"],
+        "required": [
+          "id",
+          "enrollmentId",
+          "studentId",
+          "period",
+          "amount",
+          "dueDate",
+          "status"
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -7124,7 +8201,10 @@
           },
           "amount": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-            "type": ["number", "string"],
+            "type": [
+              "number",
+              "string"
+            ],
             "format": "double"
           },
           "dueDate": {
@@ -7137,7 +8217,14 @@
         }
       },
       "CreateMaterialRequest": {
-        "required": ["courseId", "type", "title", "description", "body", "url"],
+        "required": [
+          "courseId",
+          "type",
+          "title",
+          "description",
+          "body",
+          "url"
+        ],
         "type": "object",
         "properties": {
           "courseId": {
@@ -7151,18 +8238,30 @@
             "type": "string"
           },
           "description": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "body": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "url": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },
       "CreatePayrollRequest": {
-        "required": ["teacherId", "period"],
+        "required": [
+          "teacherId",
+          "period"
+        ],
         "type": "object",
         "properties": {
           "teacherId": {
@@ -7200,22 +8299,34 @@
           },
           "baseSalary": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-            "type": ["number", "string"],
+            "type": [
+              "number",
+              "string"
+            ],
             "format": "double"
           },
           "lessonsRate": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-            "type": ["number", "string"],
+            "type": [
+              "number",
+              "string"
+            ],
             "format": "double"
           },
           "completedLessonsCount": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "totalAmount": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-            "type": ["number", "string"],
+            "type": [
+              "number",
+              "string"
+            ],
             "format": "double"
           },
           "status": {
@@ -7252,7 +8363,10 @@
             "type": "string"
           },
           "middleName": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "dateOfBirth": {
             "type": "string",
@@ -7274,7 +8388,10 @@
             "type": "boolean"
           },
           "comment": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "learningGoal": {
             "$ref": "#/components/schemas/LearningGoal"
@@ -7287,7 +8404,10 @@
           },
           "intensity": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "currentLevel": {
@@ -7305,7 +8425,11 @@
         }
       },
       "CreateResponse": {
-        "required": ["id", "fullName", "email"],
+        "required": [
+          "id",
+          "fullName",
+          "email"
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -7332,11 +8456,17 @@
         "type": "object",
         "properties": {
           "enrollmentId": {
-            "type": ["null", "string"],
+            "type": [
+              "null",
+              "string"
+            ],
             "format": "uuid"
           },
           "groupId": {
-            "type": ["null", "string"],
+            "type": [
+              "null",
+              "string"
+            ],
             "format": "uuid"
           },
           "teacherId": {
@@ -7349,11 +8479,17 @@
           },
           "durationMinutes": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "notes": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },
@@ -7374,11 +8510,17 @@
             "format": "uuid"
           },
           "enrollmentId": {
-            "type": ["null", "string"],
+            "type": [
+              "null",
+              "string"
+            ],
             "format": "uuid"
           },
           "groupId": {
-            "type": ["null", "string"],
+            "type": [
+              "null",
+              "string"
+            ],
             "format": "uuid"
           },
           "teacherId": {
@@ -7391,7 +8533,10 @@
           },
           "durationMinutes": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "status": {
@@ -7422,7 +8567,10 @@
             "type": "string"
           },
           "middleName": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "dateOfBirth": {
             "type": "string",
@@ -7442,21 +8590,34 @@
           },
           "baseSalary": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-            "type": ["number", "string"],
+            "type": [
+              "number",
+              "string"
+            ],
             "format": "double"
           },
           "lessonsRate": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-            "type": ["number", "string"],
+            "type": [
+              "number",
+              "string"
+            ],
             "format": "double"
           },
           "comment": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },
       "CreateTeacherResponse": {
-        "required": ["id", "fullName", "email"],
+        "required": [
+          "id",
+          "fullName",
+          "email"
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -7472,7 +8633,15 @@
         }
       },
       "DayOfWeek": {
-        "enum": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+        "enum": [
+          "Sunday",
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday"
+        ]
       },
       "EnrollmentDetailResponse": {
         "required": [
@@ -7518,40 +8687,66 @@
           },
           "coursePrice": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-            "type": ["number", "string"],
+            "type": [
+              "number",
+              "string"
+            ],
             "format": "double"
           },
           "discountedPrice": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-            "type": ["null", "number", "string"],
+            "type": [
+              "null",
+              "number",
+              "string"
+            ],
             "format": "double"
           },
           "effectivePrice": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-            "type": ["number", "string"],
+            "type": [
+              "number",
+              "string"
+            ],
             "format": "double"
           },
           "status": {
             "$ref": "#/components/schemas/EnrollmentStatus"
           },
           "comment": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "preferredSchedule": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "createdAt": {
             "type": "string",
             "format": "date-time"
           },
           "updatedAt": {
-            "type": ["null", "string"],
+            "type": [
+              "null",
+              "string"
+            ],
             "format": "date-time"
           }
         }
       },
       "EnrollmentListResponse": {
-        "required": ["id", "enrollmentNumber", "startDate", "endDate", "effectivePrice", "status"],
+        "required": [
+          "id",
+          "enrollmentNumber",
+          "startDate",
+          "endDate",
+          "effectivePrice",
+          "status"
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -7571,7 +8766,10 @@
           },
           "effectivePrice": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-            "type": ["number", "string"],
+            "type": [
+              "number",
+              "string"
+            ],
             "format": "double"
           },
           "status": {
@@ -7580,19 +8778,29 @@
         }
       },
       "EnrollmentsSummaryResponse": {
-        "required": ["total", "byStatus", "byCourse"],
+        "required": [
+          "total",
+          "byStatus",
+          "byCourse"
+        ],
         "type": "object",
         "properties": {
           "total": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "byStatus": {
             "type": "object",
             "additionalProperties": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": ["integer", "string"],
+              "type": [
+                "integer",
+                "string"
+              ],
               "format": "int32"
             }
           },
@@ -7605,7 +8813,13 @@
         }
       },
       "EnrollmentStatus": {
-        "enum": ["Draft", "Active", "Suspended", "Completed", "Terminated"]
+        "enum": [
+          "Draft",
+          "Active",
+          "Suspended",
+          "Completed",
+          "Terminated"
+        ]
       },
       "EnrollmentStatusChangeResponse": {
         "required": [
@@ -7618,28 +8832,44 @@
         "properties": {
           "cancelledLessons": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "restoredLessons": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "skippedLessons": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "lessonsLeftToSchedule": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           }
         }
       },
       "Format": {
-        "enum": ["Online", "Offline", null]
+        "enum": [
+          "Online",
+          "Offline",
+          null
+        ]
       },
       "GenerateScheduleRequest": {
         "required": [
@@ -7654,15 +8884,24 @@
         "type": "object",
         "properties": {
           "enrollmentId": {
-            "type": ["null", "string"],
+            "type": [
+              "null",
+              "string"
+            ],
             "format": "uuid"
           },
           "groupId": {
-            "type": ["null", "string"],
+            "type": [
+              "null",
+              "string"
+            ],
             "format": "uuid"
           },
           "teacherId": {
-            "type": ["null", "string"],
+            "type": [
+              "null",
+              "string"
+            ],
             "format": "uuid"
           },
           "slots": {
@@ -7673,27 +8912,45 @@
           },
           "durationMinutes": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "startDate": {
-            "type": ["null", "string"],
+            "type": [
+              "null",
+              "string"
+            ],
             "format": "date"
           },
           "lessonsCount": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["null", "integer", "string"],
+            "type": [
+              "null",
+              "integer",
+              "string"
+            ],
             "format": "int32"
           }
         }
       },
       "GenerateScheduleResponse": {
-        "required": ["createdCount", "firstLessonAt", "lastLessonAt", "timeZone"],
+        "required": [
+          "createdCount",
+          "firstLessonAt",
+          "lastLessonAt",
+          "timeZone"
+        ],
         "type": "object",
         "properties": {
           "createdCount": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "firstLessonAt": {
@@ -7710,7 +8967,15 @@
         }
       },
       "GroupDetailResponse": {
-        "required": ["id", "courseId", "teacherId", "name", "members", "createdAt", "updatedAt"],
+        "required": [
+          "id",
+          "courseId",
+          "teacherId",
+          "name",
+          "members",
+          "createdAt",
+          "updatedAt"
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -7739,13 +9004,22 @@
             "format": "date-time"
           },
           "updatedAt": {
-            "type": ["null", "string"],
+            "type": [
+              "null",
+              "string"
+            ],
             "format": "date-time"
           }
         }
       },
       "GroupListResponse": {
-        "required": ["id", "courseId", "teacherId", "name", "membersCount"],
+        "required": [
+          "id",
+          "courseId",
+          "teacherId",
+          "name",
+          "membersCount"
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -7765,13 +9039,22 @@
           },
           "membersCount": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           }
         }
       },
       "GroupMemberResponse": {
-        "required": ["enrollmentId", "studentId", "studentName", "isActive", "joinedAt"],
+        "required": [
+          "enrollmentId",
+          "studentId",
+          "studentName",
+          "isActive",
+          "joinedAt"
+        ],
         "type": "object",
         "properties": {
           "enrollmentId": {
@@ -7798,21 +9081,37 @@
         "type": "object",
         "properties": {
           "type": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "title": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "status": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["null", "integer", "string"],
+            "type": [
+              "null",
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "detail": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "instance": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "errors": {
             "type": "object",
@@ -7857,17 +9156,26 @@
           },
           "total": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "succeeded": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "failed": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "ignoredColumns": {
@@ -7885,23 +9193,38 @@
         }
       },
       "ImportRowResult": {
-        "required": ["row", "success", "id", "key", "errors"],
+        "required": [
+          "row",
+          "success",
+          "id",
+          "key",
+          "errors"
+        ],
         "type": "object",
         "properties": {
           "row": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "success": {
             "type": "boolean"
           },
           "id": {
-            "type": ["null", "string"],
+            "type": [
+              "null",
+              "string"
+            ],
             "format": "uuid"
           },
           "key": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "errors": {
             "type": "array",
@@ -7944,7 +9267,10 @@
           },
           "amount": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-            "type": ["number", "string"],
+            "type": [
+              "number",
+              "string"
+            ],
             "format": "double"
           },
           "dueDate": {
@@ -7952,27 +9278,44 @@
             "format": "date"
           },
           "paidAt": {
-            "type": ["null", "string"],
+            "type": [
+              "null",
+              "string"
+            ],
             "format": "date-time"
           },
           "status": {
             "$ref": "#/components/schemas/InvoiceStatus"
           },
           "notes": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "createdAt": {
             "type": "string",
             "format": "date-time"
           },
           "updatedAt": {
-            "type": ["null", "string"],
+            "type": [
+              "null",
+              "string"
+            ],
             "format": "date-time"
           }
         }
       },
       "InvoiceListResponse": {
-        "required": ["id", "enrollmentId", "studentId", "period", "amount", "dueDate", "status"],
+        "required": [
+          "id",
+          "enrollmentId",
+          "studentId",
+          "period",
+          "amount",
+          "dueDate",
+          "status"
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -7992,7 +9335,10 @@
           },
           "amount": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-            "type": ["number", "string"],
+            "type": [
+              "number",
+              "string"
+            ],
             "format": "double"
           },
           "dueDate": {
@@ -8005,16 +9351,36 @@
         }
       },
       "InvoiceStatus": {
-        "enum": ["Pending", "Paid", "Overdue"]
+        "enum": [
+          "Pending",
+          "Paid",
+          "Overdue"
+        ]
       },
       "Language": {
-        "enum": ["English", "French", "German", "Polish", "Spanish", "Italian", null]
+        "enum": [
+          "English",
+          "French",
+          "German",
+          "Polish",
+          "Spanish",
+          "Italian",
+          null
+        ]
       },
       "LearningGoal": {
-        "enum": ["Work", "Relocation", "Study", "Personal"]
+        "enum": [
+          "Work",
+          "Relocation",
+          "Study",
+          "Personal"
+        ]
       },
       "LessonSlot": {
-        "required": ["dayOfWeek", "startTime"],
+        "required": [
+          "dayOfWeek",
+          "startTime"
+        ],
         "type": "object",
         "properties": {
           "dayOfWeek": {
@@ -8026,13 +9392,27 @@
         }
       },
       "LessonType": {
-        "enum": ["Individual", "Group"]
+        "enum": [
+          "Individual",
+          "Group"
+        ]
       },
       "Level": {
-        "enum": ["A1", "A2", "B1", "B2", "C1", "C2", null]
+        "enum": [
+          "A1",
+          "A2",
+          "B1",
+          "B2",
+          "C1",
+          "C2",
+          null
+        ]
       },
       "LoginRequest": {
-        "required": ["email", "password"],
+        "required": [
+          "email",
+          "password"
+        ],
         "type": "object",
         "properties": {
           "email": {
@@ -8044,7 +9424,11 @@
         }
       },
       "LoginResponse": {
-        "required": ["accessToken", "refreshToken", "mustChangePassword"],
+        "required": [
+          "accessToken",
+          "refreshToken",
+          "mustChangePassword"
+        ],
         "type": "object",
         "properties": {
           "accessToken": {
@@ -8059,12 +9443,17 @@
         }
       },
       "MarkInvoicesOverdueResponse": {
-        "required": ["updatedCount"],
+        "required": [
+          "updatedCount"
+        ],
         "type": "object",
         "properties": {
           "updatedCount": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           }
         }
@@ -8106,35 +9495,64 @@
             "type": "string"
           },
           "description": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "body": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "url": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "youTubeVideoId": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "embedUrl": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "thumbnailUrl": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "createdAt": {
             "type": "string",
             "format": "date-time"
           },
           "updatedAt": {
-            "type": ["null", "string"],
+            "type": [
+              "null",
+              "string"
+            ],
             "format": "date-time"
           }
         }
       },
       "MaterialListResponse": {
-        "required": ["id", "courseId", "type", "title", "description", "thumbnailUrl", "createdAt"],
+        "required": [
+          "id",
+          "courseId",
+          "type",
+          "title",
+          "description",
+          "thumbnailUrl",
+          "createdAt"
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -8152,10 +9570,16 @@
             "type": "string"
           },
           "description": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "thumbnailUrl": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "createdAt": {
             "type": "string",
@@ -8164,28 +9588,92 @@
         }
       },
       "MaterialType": {
-        "enum": ["Video", "Article", "Link"]
+        "enum": [
+          "Video",
+          "Article",
+          "Link"
+        ]
       },
       "MeContact": {
-        "required": ["firstName", "lastName", "fullName", "phoneNumber"],
+        "required": [
+          "firstName",
+          "lastName",
+          "middleName",
+          "fullName",
+          "phoneNumber",
+          "dateOfBirth",
+          "city",
+          "country",
+          "salary"
+        ],
         "type": "object",
         "properties": {
           "firstName": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "lastName": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "middleName": {
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "fullName": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "phoneNumber": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "dateOfBirth": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "city": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "country": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "salary": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": [
+              "null",
+              "number",
+              "string"
+            ],
+            "format": "double"
           }
         }
       },
       "MeProfile": {
-        "required": ["type", "id", "fullName"],
+        "required": [
+          "type",
+          "id",
+          "fullName"
+        ],
         "type": "object",
         "properties": {
           "type": {
@@ -8253,7 +9741,10 @@
             "type": "boolean"
           },
           "photoUrl": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },
@@ -8294,7 +9785,10 @@
           },
           "effectivePrice": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-            "type": ["number", "string"],
+            "type": [
+              "number",
+              "string"
+            ],
             "format": "double"
           },
           "status": {
@@ -8303,7 +9797,12 @@
         }
       },
       "MyStudentResponse": {
-        "required": ["id", "fullName", "email", "phoneNumber"],
+        "required": [
+          "id",
+          "fullName",
+          "email",
+          "phoneNumber"
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -8322,10 +9821,22 @@
         }
       },
       "NotificationAction": {
-        "enum": ["None", "ChangePassword"]
+        "enum": [
+          "None",
+          "ChangePassword"
+        ]
       },
       "NotificationResponse": {
-        "required": ["id", "type", "subject", "body", "action", "isRead", "createdAt", "readAt"],
+        "required": [
+          "id",
+          "type",
+          "subject",
+          "body",
+          "action",
+          "isRead",
+          "createdAt",
+          "readAt"
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -8352,16 +9863,30 @@
             "format": "date-time"
           },
           "readAt": {
-            "type": ["null", "string"],
+            "type": [
+              "null",
+              "string"
+            ],
             "format": "date-time"
           }
         }
       },
       "NotificationType": {
-        "enum": ["PasswordChangeRequired", "InvoiceReminder", "LessonReminder", "General"]
+        "enum": [
+          "PasswordChangeRequired",
+          "InvoiceReminder",
+          "LessonReminder",
+          "General"
+        ]
       },
       "PagedResponseOfAdminNotificationResponse": {
-        "required": ["items", "page", "pageSize", "totalCount", "totalPages"],
+        "required": [
+          "items",
+          "page",
+          "pageSize",
+          "totalCount",
+          "totalPages"
+        ],
         "type": "object",
         "properties": {
           "items": {
@@ -8372,28 +9897,46 @@
           },
           "page": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "pageSize": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "totalCount": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "totalPages": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           }
         }
       },
       "PagedResponseOfCourseListResponse": {
-        "required": ["items", "page", "pageSize", "totalCount", "totalPages"],
+        "required": [
+          "items",
+          "page",
+          "pageSize",
+          "totalCount",
+          "totalPages"
+        ],
         "type": "object",
         "properties": {
           "items": {
@@ -8404,28 +9947,46 @@
           },
           "page": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "pageSize": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "totalCount": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "totalPages": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           }
         }
       },
       "PagedResponseOfEnrollmentListResponse": {
-        "required": ["items", "page", "pageSize", "totalCount", "totalPages"],
+        "required": [
+          "items",
+          "page",
+          "pageSize",
+          "totalCount",
+          "totalPages"
+        ],
         "type": "object",
         "properties": {
           "items": {
@@ -8436,28 +9997,46 @@
           },
           "page": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "pageSize": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "totalCount": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "totalPages": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           }
         }
       },
       "PagedResponseOfGroupListResponse": {
-        "required": ["items", "page", "pageSize", "totalCount", "totalPages"],
+        "required": [
+          "items",
+          "page",
+          "pageSize",
+          "totalCount",
+          "totalPages"
+        ],
         "type": "object",
         "properties": {
           "items": {
@@ -8468,28 +10047,46 @@
           },
           "page": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "pageSize": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "totalCount": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "totalPages": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           }
         }
       },
       "PagedResponseOfInvoiceListResponse": {
-        "required": ["items", "page", "pageSize", "totalCount", "totalPages"],
+        "required": [
+          "items",
+          "page",
+          "pageSize",
+          "totalCount",
+          "totalPages"
+        ],
         "type": "object",
         "properties": {
           "items": {
@@ -8500,28 +10097,46 @@
           },
           "page": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "pageSize": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "totalCount": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "totalPages": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           }
         }
       },
       "PagedResponseOfMaterialListResponse": {
-        "required": ["items", "page", "pageSize", "totalCount", "totalPages"],
+        "required": [
+          "items",
+          "page",
+          "pageSize",
+          "totalCount",
+          "totalPages"
+        ],
         "type": "object",
         "properties": {
           "items": {
@@ -8532,28 +10147,46 @@
           },
           "page": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "pageSize": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "totalCount": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "totalPages": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           }
         }
       },
       "PagedResponseOfNotificationResponse": {
-        "required": ["items", "page", "pageSize", "totalCount", "totalPages"],
+        "required": [
+          "items",
+          "page",
+          "pageSize",
+          "totalCount",
+          "totalPages"
+        ],
         "type": "object",
         "properties": {
           "items": {
@@ -8564,28 +10197,46 @@
           },
           "page": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "pageSize": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "totalCount": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "totalPages": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           }
         }
       },
       "PagedResponseOfPayrollListResponse": {
-        "required": ["items", "page", "pageSize", "totalCount", "totalPages"],
+        "required": [
+          "items",
+          "page",
+          "pageSize",
+          "totalCount",
+          "totalPages"
+        ],
         "type": "object",
         "properties": {
           "items": {
@@ -8596,28 +10247,46 @@
           },
           "page": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "pageSize": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "totalCount": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "totalPages": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           }
         }
       },
       "PagedResponseOfScheduleListResponse": {
-        "required": ["items", "page", "pageSize", "totalCount", "totalPages"],
+        "required": [
+          "items",
+          "page",
+          "pageSize",
+          "totalCount",
+          "totalPages"
+        ],
         "type": "object",
         "properties": {
           "items": {
@@ -8628,28 +10297,46 @@
           },
           "page": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "pageSize": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "totalCount": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "totalPages": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           }
         }
       },
       "PagedResponseOfStudentListResponse": {
-        "required": ["items", "page", "pageSize", "totalCount", "totalPages"],
+        "required": [
+          "items",
+          "page",
+          "pageSize",
+          "totalCount",
+          "totalPages"
+        ],
         "type": "object",
         "properties": {
           "items": {
@@ -8660,28 +10347,46 @@
           },
           "page": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "pageSize": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "totalCount": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "totalPages": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           }
         }
       },
       "PagedResponseOfTeacherListResponse": {
-        "required": ["items", "page", "pageSize", "totalCount", "totalPages"],
+        "required": [
+          "items",
+          "page",
+          "pageSize",
+          "totalCount",
+          "totalPages"
+        ],
         "type": "object",
         "properties": {
           "items": {
@@ -8692,28 +10397,46 @@
           },
           "page": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "pageSize": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "totalCount": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "totalPages": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           }
         }
       },
       "ParentInfoResponse": {
-        "required": ["firstName", "lastName", "middleName", "phoneNumber", "email"],
+        "required": [
+          "firstName",
+          "lastName",
+          "middleName",
+          "phoneNumber",
+          "email"
+        ],
         "type": "object",
         "properties": {
           "firstName": {
@@ -8723,7 +10446,10 @@
             "type": "string"
           },
           "middleName": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "phoneNumber": {
             "type": "string"
@@ -8762,29 +10488,44 @@
           },
           "baseSalary": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-            "type": ["number", "string"],
+            "type": [
+              "number",
+              "string"
+            ],
             "format": "double"
           },
           "lessonsRate": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-            "type": ["number", "string"],
+            "type": [
+              "number",
+              "string"
+            ],
             "format": "double"
           },
           "completedLessonsCount": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "totalAmount": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-            "type": ["number", "string"],
+            "type": [
+              "number",
+              "string"
+            ],
             "format": "double"
           },
           "status": {
             "$ref": "#/components/schemas/PayrollStatus"
           },
           "paidAt": {
-            "type": ["null", "string"],
+            "type": [
+              "null",
+              "string"
+            ],
             "format": "date-time"
           },
           "createdAt": {
@@ -8792,13 +10533,23 @@
             "format": "date-time"
           },
           "updatedAt": {
-            "type": ["null", "string"],
+            "type": [
+              "null",
+              "string"
+            ],
             "format": "date-time"
           }
         }
       },
       "PayrollListResponse": {
-        "required": ["id", "teacherId", "period", "completedLessonsCount", "totalAmount", "status"],
+        "required": [
+          "id",
+          "teacherId",
+          "period",
+          "completedLessonsCount",
+          "totalAmount",
+          "status"
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -8814,12 +10565,18 @@
           },
           "completedLessonsCount": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "totalAmount": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-            "type": ["number", "string"],
+            "type": [
+              "number",
+              "string"
+            ],
             "format": "double"
           },
           "status": {
@@ -8828,10 +10585,16 @@
         }
       },
       "PayrollStatus": {
-        "enum": ["Pending", "Paid"]
+        "enum": [
+          "Pending",
+          "Paid"
+        ]
       },
       "PermissionResponse": {
-        "required": ["id", "name"],
+        "required": [
+          "id",
+          "name"
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -8844,25 +10607,44 @@
         }
       },
       "PhotoResponse": {
-        "required": ["hasPhoto", "url", "contentType", "sizeBytes", "uploadedAt"],
+        "required": [
+          "hasPhoto",
+          "url",
+          "contentType",
+          "sizeBytes",
+          "uploadedAt"
+        ],
         "type": "object",
         "properties": {
           "hasPhoto": {
             "type": "boolean"
           },
           "url": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "contentType": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "sizeBytes": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["null", "integer", "string"],
+            "type": [
+              "null",
+              "integer",
+              "string"
+            ],
             "format": "int64"
           },
           "uploadedAt": {
-            "type": ["null", "string"],
+            "type": [
+              "null",
+              "string"
+            ],
             "format": "date-time"
           }
         }
@@ -8871,26 +10653,45 @@
         "type": "object",
         "properties": {
           "type": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "title": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "status": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["null", "integer", "string"],
+            "type": [
+              "null",
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "detail": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "instance": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },
       "ReassignTeacherRequest": {
-        "required": ["fromTeacherId", "toTeacherId"],
+        "required": [
+          "fromTeacherId",
+          "toTeacherId"
+        ],
         "type": "object",
         "properties": {
           "fromTeacherId": {
@@ -8908,28 +10709,43 @@
         }
       },
       "ReassignTeacherResponse": {
-        "required": ["reassignedCount", "restoredCount", "updatedGroupsCount"],
+        "required": [
+          "reassignedCount",
+          "restoredCount",
+          "updatedGroupsCount"
+        ],
         "type": "object",
         "properties": {
           "reassignedCount": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "restoredCount": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "updatedGroupsCount": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           }
         }
       },
       "RefreshRequest": {
-        "required": ["refreshToken"],
+        "required": [
+          "refreshToken"
+        ],
         "type": "object",
         "properties": {
           "refreshToken": {
@@ -8938,7 +10754,10 @@
         }
       },
       "RefreshResponse": {
-        "required": ["accessToken", "refreshToken"],
+        "required": [
+          "accessToken",
+          "refreshToken"
+        ],
         "type": "object",
         "properties": {
           "accessToken": {
@@ -8950,7 +10769,13 @@
         }
       },
       "RegisterRequest": {
-        "required": ["email", "role", "permissionIds", "profileType", "profileId"],
+        "required": [
+          "email",
+          "role",
+          "permissionIds",
+          "profileType",
+          "profileId"
+        ],
         "type": "object",
         "properties": {
           "email": {
@@ -8960,32 +10785,88 @@
             "$ref": "#/components/schemas/SystemRole"
           },
           "permissionIds": {
-            "type": ["null", "array"],
+            "type": [
+              "null",
+              "array"
+            ],
             "items": {
               "type": "string",
               "format": "uuid"
             }
           },
           "profileType": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "profileId": {
-            "type": ["null", "string"],
+            "type": [
+              "null",
+              "string"
+            ],
             "format": "uuid"
           },
           "firstName": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "lastName": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "phoneNumber": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "middleName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "dateOfBirth": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "city": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "country": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "salary": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": [
+              "null",
+              "number",
+              "string"
+            ],
+            "format": "double"
           }
         }
       },
       "RegisterResponse": {
-        "required": ["userId", "email", "temporaryPassword"],
+        "required": [
+          "userId",
+          "email",
+          "temporaryPassword"
+        ],
         "type": "object",
         "properties": {
           "userId": {
@@ -9001,7 +10882,9 @@
         }
       },
       "RescheduleScheduleRequest": {
-        "required": ["scheduledDate"],
+        "required": [
+          "scheduledDate"
+        ],
         "type": "object",
         "properties": {
           "scheduledDate": {
@@ -9011,7 +10894,11 @@
         }
       },
       "ResetPasswordResponse": {
-        "required": ["userId", "email", "temporaryPassword"],
+        "required": [
+          "userId",
+          "email",
+          "temporaryPassword"
+        ],
         "type": "object",
         "properties": {
           "userId": {
@@ -9027,7 +10914,10 @@
         }
       },
       "RoleResponse": {
-        "required": ["id", "name"],
+        "required": [
+          "id",
+          "name"
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -9059,11 +10949,17 @@
             "format": "uuid"
           },
           "enrollmentId": {
-            "type": ["null", "string"],
+            "type": [
+              "null",
+              "string"
+            ],
             "format": "uuid"
           },
           "groupId": {
-            "type": ["null", "string"],
+            "type": [
+              "null",
+              "string"
+            ],
             "format": "uuid"
           },
           "teacherId": {
@@ -9076,21 +10972,30 @@
           },
           "durationMinutes": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "status": {
             "$ref": "#/components/schemas/ScheduleStatus"
           },
           "notes": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "createdAt": {
             "type": "string",
             "format": "date-time"
           },
           "updatedAt": {
-            "type": ["null", "string"],
+            "type": [
+              "null",
+              "string"
+            ],
             "format": "date-time"
           }
         }
@@ -9112,11 +11017,17 @@
             "format": "uuid"
           },
           "enrollmentId": {
-            "type": ["null", "string"],
+            "type": [
+              "null",
+              "string"
+            ],
             "format": "uuid"
           },
           "groupId": {
-            "type": ["null", "string"],
+            "type": [
+              "null",
+              "string"
+            ],
             "format": "uuid"
           },
           "teacherId": {
@@ -9129,7 +11040,10 @@
           },
           "durationMinutes": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "status": {
@@ -9138,14 +11052,22 @@
         }
       },
       "ScheduleStatus": {
-        "enum": ["Scheduled", "Completed", "Cancelled", "Rescheduled"]
+        "enum": [
+          "Scheduled",
+          "Completed",
+          "Cancelled",
+          "Rescheduled"
+        ]
       },
       "SendInvoiceRemindersRequest": {
         "type": "object",
         "properties": {
           "daysBeforeDue": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32",
             "default": 3
           },
@@ -9156,27 +11078,44 @@
         }
       },
       "SendInvoiceRemindersResponse": {
-        "required": ["invoicesFound", "created", "skippedAlreadySent", "skippedNoAccount"],
+        "required": [
+          "invoicesFound",
+          "created",
+          "skippedAlreadySent",
+          "skippedNoAccount"
+        ],
         "type": "object",
         "properties": {
           "invoicesFound": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "created": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "skippedAlreadySent": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "skippedNoAccount": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           }
         }
@@ -9186,35 +11125,55 @@
         "properties": {
           "hoursAhead": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32",
             "default": 24
           }
         }
       },
       "SendLessonRemindersResponse": {
-        "required": ["lessonsFound", "created", "skippedAlreadySent"],
+        "required": [
+          "lessonsFound",
+          "created",
+          "skippedAlreadySent"
+        ],
         "type": "object",
         "properties": {
           "lessonsFound": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "created": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "skippedAlreadySent": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           }
         }
       },
       "SendNotificationRequest": {
-        "required": ["recipientUserIds", "subject", "body"],
+        "required": [
+          "recipientUserIds",
+          "subject",
+          "body"
+        ],
         "type": "object",
         "properties": {
           "recipientUserIds": {
@@ -9233,22 +11192,32 @@
         }
       },
       "SendNotificationResponse": {
-        "required": ["created"],
+        "required": [
+          "created"
+        ],
         "type": "object",
         "properties": {
           "created": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           }
         }
       },
       "SetStaffPermissionsRequest": {
-        "required": ["permissionIds"],
+        "required": [
+          "permissionIds"
+        ],
         "type": "object",
         "properties": {
           "permissionIds": {
-            "type": ["null", "array"],
+            "type": [
+              "null",
+              "array"
+            ],
             "items": {
               "type": "string",
               "format": "uuid"
@@ -9256,8 +11225,27 @@
           }
         }
       },
+      "SetStaffSalaryRequest": {
+        "required": [
+          "salary"
+        ],
+        "type": "object",
+        "properties": {
+          "salary": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": [
+              "null",
+              "number",
+              "string"
+            ],
+            "format": "double"
+          }
+        }
+      },
       "SetStaffStatusRequest": {
-        "required": ["isActive"],
+        "required": [
+          "isActive"
+        ],
         "type": "object",
         "properties": {
           "isActive": {
@@ -9271,8 +11259,13 @@
           "email",
           "firstName",
           "lastName",
+          "middleName",
           "fullName",
           "phoneNumber",
+          "dateOfBirth",
+          "city",
+          "country",
+          "salary",
           "isActive",
           "createdAt",
           "permissions"
@@ -9287,16 +11280,62 @@
             "type": "string"
           },
           "firstName": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "lastName": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "middleName": {
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "fullName": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "phoneNumber": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "dateOfBirth": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "city": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "country": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "salary": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": [
+              "null",
+              "number",
+              "string"
+            ],
+            "format": "double"
           },
           "isActive": {
             "type": "boolean"
@@ -9345,7 +11384,10 @@
             "type": "string"
           },
           "middleName": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "dateOfBirth": {
             "type": "string",
@@ -9367,7 +11409,10 @@
             "type": "boolean"
           },
           "comment": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "status": {
             "$ref": "#/components/schemas/StudentStatus"
@@ -9397,7 +11442,13 @@
         }
       },
       "StudentListResponse": {
-        "required": ["id", "fullName", "email", "phoneNumber", "isChild"],
+        "required": [
+          "id",
+          "fullName",
+          "email",
+          "phoneNumber",
+          "isChild"
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -9440,7 +11491,10 @@
           },
           "intensity": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "currentLevel": {
@@ -9452,29 +11506,48 @@
         }
       },
       "StudentsSummaryResponse": {
-        "required": ["total", "byStatus"],
+        "required": [
+          "total",
+          "byStatus"
+        ],
         "type": "object",
         "properties": {
           "total": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "byStatus": {
             "type": "object",
             "additionalProperties": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": ["integer", "string"],
+              "type": [
+                "integer",
+                "string"
+              ],
               "format": "int32"
             }
           }
         }
       },
       "StudentStatus": {
-        "enum": ["Active", "Suspended", "Graduated", "Withdrawn"]
+        "enum": [
+          "Active",
+          "Suspended",
+          "Graduated",
+          "Withdrawn"
+        ]
       },
       "SystemRole": {
-        "enum": ["SuperAdmin", "Admin", "Teacher", "Student"]
+        "enum": [
+          "SuperAdmin",
+          "Admin",
+          "Teacher",
+          "Student"
+        ]
       },
       "TeacherDetailResponse": {
         "required": [
@@ -9501,7 +11574,10 @@
             "format": "uuid"
           },
           "userId": {
-            "type": ["null", "string"],
+            "type": [
+              "null",
+              "string"
+            ],
             "format": "uuid"
           },
           "firstName": {
@@ -9511,7 +11587,10 @@
             "type": "string"
           },
           "middleName": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "dateOfBirth": {
             "type": "string",
@@ -9533,7 +11612,10 @@
             "$ref": "#/components/schemas/TeacherStatus"
           },
           "comment": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "hasAccount": {
             "type": "boolean"
@@ -9557,7 +11639,13 @@
         }
       },
       "TeacherListResponse": {
-        "required": ["id", "fullName", "email", "phoneNumber", "status"],
+        "required": [
+          "id",
+          "fullName",
+          "email",
+          "phoneNumber",
+          "status"
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -9589,28 +11677,45 @@
         "properties": {
           "teachersWithRate": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "totalBaseSalary": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-            "type": ["number", "string"],
+            "type": [
+              "number",
+              "string"
+            ],
             "format": "double"
           },
           "averageBaseSalary": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-            "type": ["number", "string"],
+            "type": [
+              "number",
+              "string"
+            ],
             "format": "double"
           },
           "averageLessonsRate": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-            "type": ["number", "string"],
+            "type": [
+              "number",
+              "string"
+            ],
             "format": "double"
           }
         }
       },
       "TeacherSalaryRateResponse": {
-        "required": ["id", "baseSalary", "lessonsRate", "effectiveFrom"],
+        "required": [
+          "id",
+          "baseSalary",
+          "lessonsRate",
+          "effectiveFrom"
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -9619,12 +11724,18 @@
           },
           "baseSalary": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-            "type": ["number", "string"],
+            "type": [
+              "number",
+              "string"
+            ],
             "format": "double"
           },
           "lessonsRate": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-            "type": ["number", "string"],
+            "type": [
+              "number",
+              "string"
+            ],
             "format": "double"
           },
           "effectiveFrom": {
@@ -9634,19 +11745,29 @@
         }
       },
       "TeachersSummaryResponse": {
-        "required": ["total", "byStatus", "salaryOverview"],
+        "required": [
+          "total",
+          "byStatus",
+          "salaryOverview"
+        ],
         "type": "object",
         "properties": {
           "total": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "byStatus": {
             "type": "object",
             "additionalProperties": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": ["integer", "string"],
+              "type": [
+                "integer",
+                "string"
+              ],
               "format": "int32"
             }
           },
@@ -9656,25 +11777,77 @@
         }
       },
       "TeacherStatus": {
-        "enum": ["Probation", "Employed", "OnLeave", "Resigned", "Dismissed"]
+        "enum": [
+          "Probation",
+          "Employed",
+          "OnLeave",
+          "Resigned",
+          "Dismissed"
+        ]
       },
       "UnreadCountResponse": {
-        "required": ["count"],
+        "required": [
+          "count"
+        ],
         "type": "object",
         "properties": {
           "count": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           }
         }
       },
+      "UpdateCalendarEventRequest": {
+        "required": [
+          "visibility",
+          "title",
+          "description",
+          "startsAt",
+          "endsAt",
+          "isAllDay"
+        ],
+        "type": "object",
+        "properties": {
+          "visibility": {
+            "$ref": "#/components/schemas/CalendarEventVisibility"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "startsAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endsAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "isAllDay": {
+            "type": "boolean"
+          }
+        }
+      },
       "UpdateCommentRequest": {
-        "required": ["comment"],
+        "required": [
+          "comment"
+        ],
         "type": "object",
         "properties": {
           "comment": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },
@@ -9710,51 +11883,79 @@
           },
           "durationMonths": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "lessonsCount": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "lessonsPerWeek": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "price": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-            "type": ["number", "string"],
+            "type": [
+              "number",
+              "string"
+            ],
             "format": "double"
           },
           "description": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },
       "UpdateEnrollmentCommentRequest": {
-        "required": ["comment"],
+        "required": [
+          "comment"
+        ],
         "type": "object",
         "properties": {
           "comment": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },
       "UpdateEnrollmentPriceRequest": {
-        "required": ["coursePrice"],
+        "required": [
+          "coursePrice"
+        ],
         "type": "object",
         "properties": {
           "coursePrice": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-            "type": ["number", "string"],
+            "type": [
+              "number",
+              "string"
+            ],
             "format": "double"
           }
         }
       },
       "UpdateGroupRequest": {
-        "required": ["name", "teacherId"],
+        "required": [
+          "name",
+          "teacherId"
+        ],
         "type": "object",
         "properties": {
           "name": {
@@ -9767,7 +11968,13 @@
         }
       },
       "UpdateMaterialRequest": {
-        "required": ["type", "title", "description", "body", "url"],
+        "required": [
+          "type",
+          "title",
+          "description",
+          "body",
+          "url"
+        ],
         "type": "object",
         "properties": {
           "type": {
@@ -9777,33 +11984,86 @@
             "type": "string"
           },
           "description": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "body": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "url": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },
       "UpdateMyContactRequest": {
-        "required": ["firstName", "lastName", "phoneNumber"],
+        "required": [
+          "firstName",
+          "lastName",
+          "phoneNumber"
+        ],
         "type": "object",
         "properties": {
           "firstName": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "lastName": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "phoneNumber": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "middleName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "dateOfBirth": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "city": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "country": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },
       "UpdateParentInfoRequest": {
-        "required": ["firstName", "lastName", "middleName", "phoneNumber", "email"],
+        "required": [
+          "firstName",
+          "lastName",
+          "middleName",
+          "phoneNumber",
+          "email"
+        ],
         "type": "object",
         "properties": {
           "firstName": {
@@ -9813,7 +12073,10 @@
             "type": "string"
           },
           "middleName": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "phoneNumber": {
             "type": "string"
@@ -9846,7 +12109,10 @@
           },
           "intensity": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "currentLevel": {
@@ -9864,11 +12130,16 @@
         }
       },
       "UpdatePreferredScheduleRequest": {
-        "required": ["preferredSchedule"],
+        "required": [
+          "preferredSchedule"
+        ],
         "type": "object",
         "properties": {
           "preferredSchedule": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },
@@ -9892,7 +12163,10 @@
             "type": "string"
           },
           "middleName": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "dateOfBirth": {
             "type": "string",
@@ -9913,7 +12187,11 @@
         }
       },
       "UpdateScheduleRequest": {
-        "required": ["teacherId", "durationMinutes", "notes"],
+        "required": [
+          "teacherId",
+          "durationMinutes",
+          "notes"
+        ],
         "type": "object",
         "properties": {
           "teacherId": {
@@ -9922,11 +12200,17 @@
           },
           "durationMinutes": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": ["integer", "string"],
+            "type": [
+              "integer",
+              "string"
+            ],
             "format": "int32"
           },
           "notes": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },
@@ -9949,7 +12233,10 @@
             "type": "string"
           },
           "middleName": {
-            "type": ["null", "string"]
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "dateOfBirth": {
             "type": "string",

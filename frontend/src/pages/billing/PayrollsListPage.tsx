@@ -114,7 +114,7 @@ export function PayrollsListPage() {
       </div>
 
       <div className="flex flex-wrap items-end gap-3">
-        <div className="min-w-48">
+        <div className="min-w-56 flex-1">
           <EmployeeSearchInput
             value={employee}
             onChange={setEmployee}

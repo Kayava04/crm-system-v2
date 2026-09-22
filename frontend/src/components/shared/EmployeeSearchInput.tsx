@@ -59,8 +59,8 @@ export function EmployeeSearchInput({ value, onChange, placeholder }: EmployeeSe
 
   if (value) {
     return (
-      <div className="flex items-center justify-between rounded-md border border-input px-3 py-2 text-sm">
-        <span>
+      <div className="flex items-center justify-between gap-2 rounded-md border border-input px-3 py-2 text-sm">
+        <span className="min-w-0 flex-1 truncate">
           {value.fullName}{' '}
           <span className="text-xs text-muted-foreground">
             {value.kind === 'teacher' ? t('billing.payroll.kindTeacher') : t('billing.payroll.kindStaff')}
@@ -68,7 +68,7 @@ export function EmployeeSearchInput({ value, onChange, placeholder }: EmployeeSe
         </span>
         <button
           type="button"
-          className="text-xs text-muted-foreground hover:text-foreground"
+          className="shrink-0 text-xs text-muted-foreground hover:text-foreground"
           onClick={() => onChange(null)}
         >
           {t('common.cancel')}
@@ -86,14 +86,14 @@ export function EmployeeSearchInput({ value, onChange, placeholder }: EmployeeSe
             <button
               key={`${pick.kind}-${pick.id}`}
               type="button"
-              className="flex items-center justify-between px-3 py-1.5 text-left text-sm hover:bg-muted"
+              className="flex items-center justify-between gap-2 px-3 py-1.5 text-left text-sm hover:bg-muted"
               onClick={() => {
                 onChange(pick)
                 setQuery('')
               }}
             >
-              <span>{pick.fullName}</span>
-              <span className="text-xs text-muted-foreground">
+              <span className="min-w-0 flex-1 truncate">{pick.fullName}</span>
+              <span className="shrink-0 text-xs text-muted-foreground">
                 {pick.kind === 'teacher' ? t('billing.payroll.kindTeacher') : t('billing.payroll.kindStaff')}
               </span>
             </button>

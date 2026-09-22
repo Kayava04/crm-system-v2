@@ -78,6 +78,47 @@ public class TeacherAndUserTests
     }
 
     [Fact]
+    public void SetContact_fills_in_every_personal_detail_and_trims_blank_ones_away()
+    {
+        var user = User.Create("a@example.test");
+        var dateOfBirth = new DateOnly(1990, 5, 6);
+
+        user.SetContact(" Olena ", " Kovalenko ", " +380501234567 ", " Petrivna ", dateOfBirth, " Lviv ", " Ukraine ");
+
+        Assert.Equal("Olena", user.FirstName);
+        Assert.Equal("Kovalenko", user.LastName);
+        Assert.Equal("Petrivna", user.MiddleName);
+        Assert.Equal("+380501234567", user.PhoneNumber);
+        Assert.Equal(dateOfBirth, user.DateOfBirth);
+        Assert.Equal("Lviv", user.City);
+        Assert.Equal("Ukraine", user.Country);
+        Assert.NotNull(user.UpdatedAt);
+
+        user.SetContact("Olena", "Kovalenko", null);
+
+        Assert.Null(user.PhoneNumber);
+        Assert.Null(user.MiddleName);
+        Assert.Null(user.DateOfBirth);
+        Assert.Null(user.City);
+        Assert.Null(user.Country);
+    }
+
+    [Fact]
+    public void SetSalary_is_independent_of_the_rest_of_the_contact_details()
+    {
+        var user = User.Create("a@example.test");
+        user.SetContact("Olena", "Kovalenko", null);
+
+        user.SetSalary(45000m);
+
+        Assert.Equal(45000m, user.Salary);
+        Assert.Equal("Olena", user.FirstName);
+
+        user.SetSalary(null);
+        Assert.Null(user.Salary);
+    }
+
+    [Fact]
     public void Notification_is_unread_until_read_and_keeps_the_first_read_time()
     {
         var notification = Notification.Create(Guid.NewGuid(), NotificationType.General, "s", "b");

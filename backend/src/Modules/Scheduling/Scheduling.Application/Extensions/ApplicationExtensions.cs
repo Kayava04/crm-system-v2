@@ -8,9 +8,13 @@ using Scheduling.Application.Features.AddGroupMember;
 using Scheduling.Application.Features.CancelFutureSchedule;
 using Scheduling.Application.Features.CancelSchedule;
 using Scheduling.Application.Features.CompleteSchedule;
+using Scheduling.Application.Features.CreateCalendarEvent;
 using Scheduling.Application.Features.CreateGroup;
 using Scheduling.Application.Features.CreateSchedule;
+using Scheduling.Application.Features.DeleteCalendarEvent;
 using Scheduling.Application.Features.GenerateSchedule;
+using Scheduling.Application.Features.GetCalendarEventById;
+using Scheduling.Application.Features.GetCalendarEvents;
 using Scheduling.Application.Features.GetGroupById;
 using Scheduling.Application.Features.GetGroups;
 using Scheduling.Application.Features.GetMyCalendar;
@@ -19,6 +23,7 @@ using Scheduling.Application.Features.GetSchedules;
 using Scheduling.Application.Features.ReassignTeacher;
 using Scheduling.Application.Features.RemoveGroupMember;
 using Scheduling.Application.Features.RescheduleSchedule;
+using Scheduling.Application.Features.UpdateCalendarEvent;
 using Scheduling.Application.Features.UpdateGroup;
 using Scheduling.Application.Features.UpdateSchedule;
 using Scheduling.Application.Services;
@@ -78,6 +83,11 @@ public static class ApplicationExtensions
                           .WithTags("Calendar");
 
         GetMyCalendarEndpoint.Map(calendar);
+        GetCalendarEventsEndpoint.Map(calendar);
+        GetCalendarEventByIdEndpoint.Map(calendar);
+        CreateCalendarEventEndpoint.Map(calendar);
+        UpdateCalendarEventEndpoint.Map(calendar);
+        DeleteCalendarEventEndpoint.Map(calendar);
 
         return app;
     }

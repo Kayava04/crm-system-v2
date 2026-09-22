@@ -54,17 +54,19 @@ No administrator permission is needed, only the role:
 
 | Endpoint | Role | Returns |
 |---|---|---|
-| `GET /api/auth/me` | any | account, roles, permissions, the linked student or teacher profile, and `contact` (name and phone kept on the account itself, for administrators and managers) |
-| `PUT /api/auth/me/contact` | any without a student/teacher record | set my first name, last name and phone (administrators and managers); the SuperAdmin system account has none (403); students and teachers change theirs in their own record (409) |
-| `GET /api/auth/users[?isActive=]` | `CanManageAdmins` | list administrator and manager accounts with contact details, status and permissions (the SuperAdmin, students and teachers are not listed) |
+| `GET /api/auth/me` | any | account, roles, permissions, the linked student or teacher profile, and `contact` (name, middle name, phone, date of birth, city, country and salary kept on the account itself, for administrators and managers) |
+| `PUT /api/auth/me/contact` | any without a student/teacher record | set my first/last/middle name, phone, date of birth, city and country (administrators and managers); salary is never self-service; the SuperAdmin system account has none (403); students and teachers change theirs in their own record (409) |
+| `GET /api/auth/users[?isActive=]` | `CanManageAdmins` | list administrator and manager accounts with contact details, salary, status and permissions (the SuperAdmin, students and teachers are not listed) |
 | `PUT /api/auth/users/{id}/status` | `CanManageAdmins` | deactivate or reactivate an administrator; nothing is deleted, refresh tokens are revoked on deactivation |
 | `PUT /api/auth/users/{id}/permissions` | `CanManageAdmins` | replace the permissions of an administrator; you cannot change yourself, the SuperAdmin (403) or a student/teacher account (409) |
+| `PUT /api/auth/users/{id}/salary` | `CanManageAdmins` | set or clear an administrator's salary; same "not yourself, not the SuperAdmin" rule as above |
 | `GET /api/students/me` | Student | own profile |
 | `GET /api/teachers/me` | Teacher | own profile with salary rates |
 | `GET /api/enrollments/my` | Student | own enrollments with course names |
 | `GET /api/billing/invoices/my` | Student | own invoices (`status`, paging) |
 | `GET /api/billing/payrolls/my` | Teacher | own payrolls |
 | `GET /api/calendar/my`, `GET /api/notifications` | Student, Teacher | own calendar, own notifications |
+| `GET/POST/PUT/DELETE /api/calendar/events` | any | arbitrary calendar entries that are not lessons: a personal reminder only its owner ever sees, or (with `CanManageSchedule`) a notice visible to everyone; a personal event of someone else is a 404, not a 403 |
 
 ### Notifications and the periodic job
 

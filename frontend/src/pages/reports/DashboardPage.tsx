@@ -89,7 +89,7 @@ function StatTile({
     <Card className="animate-in fade-in-0 slide-in-from-bottom-1 duration-500">
       <CardContent className="flex h-full flex-col gap-3 py-4">
         <div className="flex items-start justify-between gap-2">
-          <span className="line-clamp-2 min-h-10 text-sm leading-tight text-muted-foreground">
+          <span className="line-clamp-2 min-h-10 min-w-0 flex-1 text-sm leading-tight break-words text-muted-foreground">
             {label}
           </span>
           {Icon && (
@@ -103,8 +103,8 @@ function StatTile({
             </span>
           )}
         </div>
-        <span className="flex items-baseline gap-1">
-          <span className="text-2xl font-semibold tracking-tight">{value}</span>
+        <span className="flex flex-wrap items-baseline gap-1">
+          <span className="text-2xl font-semibold tracking-tight break-words">{value}</span>
           {unit && <span className="text-sm font-normal text-muted-foreground">{unit}</span>}
         </span>
       </CardContent>
@@ -404,7 +404,7 @@ export function DashboardPage() {
               </p>
 
               <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_auto]">
-                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                   <MoneyStatTile
                     label={t('reports.billing.income')}
                     amount={billing.income}

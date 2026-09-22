@@ -54,8 +54,8 @@ public class ConcurrencyTests(CrmApiFactory factory) : ApiTest(factory)
         }, Admin)));
 
         Assert.DoesNotContain(responses, r => r.Code >= 500);
-        Assert.Equal(1, responses.Count(r => r.Code == 201));   // the others get 409, the teacher has one lesson at that time
-        Assert.Equal(1, (await Data.LessonsAsync(teacherId: teacher)).Count);
+        Assert.Single(responses, r => r.Code == 201);   // the others get 409, the teacher has one lesson at that time
+        Assert.Single(await Data.LessonsAsync(teacherId: teacher));
     }
 
     [Fact]

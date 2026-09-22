@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import { useAuth } from '@/features/auth/AuthProvider'
+import { useAuth } from '@/features/auth/useAuth'
 import { useHasRole } from '@/features/auth/useCan'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'

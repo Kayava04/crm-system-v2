@@ -1,16 +1,8 @@
-import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
+import { useEffect, useMemo, useState, type ReactNode } from 'react'
+import { ThemeContext, type Theme, type ThemeContextValue } from './useTheme'
 
-type Theme = 'light' | 'dark'
 const STORAGE_KEY = 'crm.theme'
 const DEFAULT_THEME: Theme = 'light'
-
-interface ThemeContextValue {
-  theme: Theme
-  setTheme: (theme: Theme) => void
-  toggleTheme: () => void
-}
-
-const ThemeContext = createContext<ThemeContextValue | null>(null)
 
 function readStoredTheme(): Theme {
   // Anything other than an explicit 'dark' (including a stale 'system' value from
@@ -46,10 +38,4 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   )
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
-}
-
-export function useTheme() {
-  const ctx = useContext(ThemeContext)
-  if (!ctx) throw new Error('useTheme must be used within ThemeProvider')
-  return ctx
 }

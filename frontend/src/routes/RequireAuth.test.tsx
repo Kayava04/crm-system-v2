@@ -1,11 +1,11 @@
 import { describe, expect, it, vi, beforeEach, type Mock } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
-import { useAuth } from '@/features/auth/AuthProvider'
+import { useAuth } from '@/features/auth/useAuth'
 import { RequireAuth } from './RequireAuth'
 import type { MeResponse } from '@/api/types'
 
-vi.mock('@/features/auth/AuthProvider', () => ({
+vi.mock('@/features/auth/useAuth', () => ({
   useAuth: vi.fn(),
 }))
 

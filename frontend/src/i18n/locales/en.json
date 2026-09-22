@@ -1,31 +1,20 @@
 {
   "common": {
     "appName": "Language School CRM",
-    "loading": "Loading…",
     "save": "Save",
     "cancel": "Cancel",
     "close": "Close",
     "confirm": "Confirm",
-    "retry": "Retry",
-    "search": "Search",
-    "actions": "Actions",
     "yes": "Yes",
     "no": "No",
     "back": "Back",
-    "comingSoon": "This section is still being built",
     "unknownError": "Something went wrong. Please try again.",
     "networkError": "Can't reach the server. Check your connection.",
     "lightTheme": "Light theme",
     "darkTheme": "Dark theme",
     "language": "Language",
-    "edit": "Edit",
     "delete": "Delete",
-    "add": "Add",
-    "create": "Create",
     "download": "Download",
-    "upload": "Upload",
-    "filters": "Filters",
-    "apply": "Apply",
     "remove": "Remove",
     "optional": "optional",
     "middleName": "Middle name",
@@ -38,8 +27,6 @@
     "passwordLabel": "Password",
     "loginButton": "Sign in",
     "invalidCredentials": "Incorrect email or password",
-    "accountLocked": "This account is temporarily locked after too many failed attempts. Try again later.",
-    "accountDeactivated": "This account has been deactivated. Contact an administrator.",
     "tooManyAttempts": "Too many attempts. Try again in {{seconds}}s.",
     "mustChangePasswordTitle": "You need to change your password",
     "mustChangePasswordDescription": "This is your first sign-in, or your password was reset. Set a new password to continue.",
@@ -277,8 +264,7 @@
     "clearSelection": "Clear selection",
     "bulkDeleteConfirmTitle": "Delete the selected records?",
     "bulkDeleteConfirmDesc": "Only records with no account or history can be deleted. This can't be undone.",
-    "bulkDeleteResult": "Deleted {{succeeded}} of {{total}}",
-    "hasAccount": "Has account"
+    "bulkDeleteResult": "Deleted {{succeeded}} of {{total}}"
   },
   "import": {
     "title": "Import",
@@ -294,8 +280,7 @@
     "rowsFailed": "Failed: {{count}}",
     "ignoredColumns": "Ignored columns: {{columns}}",
     "rowNumber": "Row",
-    "close": "Close",
-    "noFile": "No file selected"
+    "close": "Close"
   },
   "students": {
     "title": "Students",
@@ -316,8 +301,7 @@
       "name": "Full name",
       "email": "Email",
       "phone": "Phone",
-      "child": "Minor",
-      "actions": "Actions"
+      "child": "Minor"
     },
     "detail": {
       "backToList": "Back to students",
@@ -369,7 +353,6 @@
       "title": "New student",
       "sectionPersonal": "Personal details",
       "sectionPreferences": "Learning preferences",
-      "sectionParent": "Parent contacts (minor)",
       "submit": "Create student",
       "success": "Student created"
     }
@@ -388,8 +371,7 @@
       "name": "Full name",
       "email": "Email",
       "phone": "Phone",
-      "status": "Status",
-      "actions": "Actions"
+      "status": "Status"
     },
     "detail": {
       "backToList": "Back to teachers",
@@ -456,8 +438,7 @@
       "language": "Language",
       "level": "Level",
       "price": "Price",
-      "status": "Status",
-      "actions": "Actions"
+      "status": "Status"
     },
     "fields": {
       "name": "Course name",
@@ -470,8 +451,7 @@
       "lessonsCount": "Number of lessons",
       "lessonsPerWeek": "Lessons per week",
       "price": "Price",
-      "description": "Description",
-      "lessonTypeHint": "Only courses with lesson type \"Group\" can be selected when creating a study group. Workflow: course → (for groups) group → student enrollment → teacher."
+      "description": "Description"
     },
     "detail": {
       "backToList": "Back to courses",
@@ -520,7 +500,6 @@
       "coursePrice": "Course price",
       "discountedPrice": "Discounted price",
       "effectivePrice": "Effective price",
-      "status": "Status",
       "commentLabel": "Internal comment",
       "commentPlaceholder": "Staff notes",
       "commentSaved": "Comment saved",
@@ -553,8 +532,6 @@
       "removeDiscount": "Remove discount",
       "discountSaved": "Discount applied",
       "discountRemoved": "Discount removed",
-      "viewStudent": "Student profile",
-      "viewCourse": "Course profile",
       "resolving": "Resolving student/course…"
     },
     "createDialog": {
@@ -591,7 +568,6 @@
       "clear": "Clear filters"
     },
     "emptyRange": "No lessons in this period",
-    "createLesson": "New lesson",
     "newEvent": "New event",
     "generate": "Generate lessons",
     "reassignTeacher": "Reassign teacher",
@@ -611,7 +587,6 @@
       "group": "Group",
       "duration": "Duration (min)",
       "notes": "Notes",
-      "status": "Status",
       "reschedule": "Reschedule",
       "cancel": "Cancel",
       "complete": "Complete",
@@ -628,21 +603,13 @@
       "format": "Format"
     },
     "createDialog": {
-      "title": "New lesson",
-      "targetType": "Linked to",
       "individual": "Individual (enrollment)",
       "group": "Group",
       "enrollmentLabel": "Enrollment",
       "enrollmentSearchPlaceholder": "Search student to pick an enrollment…",
       "groupLabel": "Group",
       "teacherLabel": "Teacher",
-      "teacherSearchPlaceholder": "Search teacher by name…",
-      "dateLabel": "Date and time",
-      "durationLabel": "Duration (min)",
-      "notesLabel": "Notes (optional)",
-      "submit": "Create lesson",
-      "success": "Lesson created",
-      "description": "This creates a lesson (individual or group) tied to a course/group and a teacher. Other event types (interview, meeting, delivery, etc.) aren't supported yet."
+      "teacherSearchPlaceholder": "Search teacher by name…"
     },
     "generateDialog": {
       "title": "Generate lessons from a schedule pattern",
@@ -652,14 +619,10 @@
       "durationLabel": "Lesson duration (min)",
       "slotsLabel": "Schedule slots",
       "addSlot": "Add slot",
-      "removeSlot": "Remove",
-      "dayOfWeekLabel": "Day of week",
-      "startTimeLabel": "Start time",
       "submit": "Generate",
       "success": "Lessons created: {{count}}"
     },
     "reassignDialog": {
-      "title": "Reassign teacher",
       "fromLabel": "From teacher",
       "toLabel": "To teacher",
       "updateGroupsLabel": "Also update assigned groups",
@@ -688,7 +651,6 @@
   "studyGroups": {
     "title": "Study groups",
     "add": "Create group",
-    "searchPlaceholder": "Search by name…",
     "filters": {
       "course": "Course",
       "teacher": "Teacher",
@@ -699,8 +661,7 @@
       "name": "Name",
       "course": "Course",
       "teacher": "Teacher",
-      "members": "Members",
-      "actions": "Actions"
+      "members": "Members"
     },
     "detail": {
       "backToList": "Back to groups",
@@ -710,7 +671,6 @@
       "profileSaved": "Group updated",
       "membersTitle": "Members",
       "addMember": "Add student",
-      "removeMember": "Remove",
       "confirmRemoveMemberTitle": "Remove this student from the group?",
       "confirmRemoveMemberDesc": "Future group lessons will no longer be scheduled for this student.",
       "noMembers": "This group has no members yet",
@@ -741,7 +701,6 @@
       "add": "Issue invoice",
       "markOverdue": "Mark overdue",
       "markOverdueResult": "Marked overdue: {{count}}",
-      "searchPlaceholder": "Search for a student to pick an enrollment…",
       "empty": "No invoices found",
       "filters": {
         "searchPlaceholder": "Search by student, course or period…",
@@ -905,17 +864,11 @@
       "any": "Any",
       "clear": "Clear filters"
     },
-    "card": {
-      "openLink": "Open link"
-    },
     "detail": {
-      "title": "Material",
       "course": "Course",
-      "type": "Type",
       "author": "Author",
       "description": "Description",
       "body": "Text",
-      "url": "Link",
       "openLink": "Open link",
       "edit": "Edit",
       "save": "Save",
@@ -1002,7 +955,6 @@
     "active": "Active",
     "inactive": "Inactive",
     "detail": {
-      "title": "Staff member",
       "permissionsTitle": "Permissions",
       "save": "Save permissions",
       "saved": "Permissions updated",
@@ -1022,7 +974,6 @@
       "city": "City",
       "country": "Country",
       "salaryTitle": "Salary",
-      "salaryLabel": "Amount",
       "salaryPlaceholder": "Not set",
       "salarySave": "Save salary",
       "salarySaved": "Salary updated",
@@ -1037,7 +988,6 @@
       "phoneLabel": "Phone",
       "permissionsLabel": "Permissions",
       "submit": "Create",
-      "success": "Staff member created",
       "middleNameLabel": "Middle name",
       "dateOfBirthLabel": "Date of birth",
       "cityLabel": "City",
@@ -1077,7 +1027,6 @@
     "deselectAll": "Deselect all"
   },
   "myStudents": {
-    "note": "This roster is built from your lesson calendar (the last and next 90 days), since the backend has no dedicated \"my students\" endpoint.",
     "empty": "No lessons found — the student list is empty.",
     "columns": {
       "name": "Student",

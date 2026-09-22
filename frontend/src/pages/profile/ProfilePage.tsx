@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useSearchParams } from 'react-router-dom'
-import { useAuth } from '@/features/auth/AuthProvider'
+import { useAuth } from '@/features/auth/useAuth'
 import { useHasRole } from '@/features/auth/useCan'
 import { useAuthenticatedBlobUrl } from '@/lib/useAuthenticatedBlobUrl'
 import { cn } from '@/lib/utils'

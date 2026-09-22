@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { Navigate } from 'react-router-dom'
-import { useAuth } from '@/features/auth/AuthProvider'
+import { useAuth } from '@/features/auth/useAuth'
 import type { Permission, Role } from '@/lib/permissions'
 
 interface RequireAccessProps {

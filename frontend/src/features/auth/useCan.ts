@@ -1,4 +1,4 @@
-import { useAuth } from './AuthProvider'
+import { useAuth } from './useAuth'
 import type { Permission, Role } from '@/lib/permissions'
 
 /** True if the current user holds the given permission (SuperAdmin/roles never do). */

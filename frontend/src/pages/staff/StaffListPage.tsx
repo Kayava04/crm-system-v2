@@ -6,6 +6,7 @@ import { getStaff } from '@/features/staff/api'
 import type { StaffMember } from '@/features/staff/api'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { Input } from '@/components/ui/input'
 import {
   Select,
   SelectContent,
@@ -22,6 +23,7 @@ export function StaffListPage() {
   const { t } = useTranslation()
   const queryClient = useQueryClient()
 
+  const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
   const [createOpen, setCreateOpen] = useState(false)
   const [selectedId, setSelectedId] = useState<string | null>(null)
@@ -39,6 +41,17 @@ export function StaffListPage() {
   })
 
   const selected = data?.find((m) => m.id === selectedId) ?? null
+
+  // GET /api/auth/users only filters by isActive server-side, so name/email/
+  // phone search is done client-side over the already-fetched (short) staff list.
+  const filteredStaff = (data ?? []).filter((m) => {
+    if (!search) return true
+    const term = search.toLowerCase()
+    const haystack = [m.fullName ?? '', m.email, m.phoneNumber ?? ''].join(' ').toLowerCase()
+    return haystack.includes(term)
+  })
+
+  const hasFilters = !!(search || statusFilter)
 
   function invalidate() {
     queryClient.invalidateQueries({ queryKey: ['staff'] })
@@ -87,6 +100,13 @@ export function StaffListPage() {
       </div>
 
       <div className="flex flex-wrap items-end gap-3">
+        <div className="min-w-56 flex-1">
+          <Input
+            placeholder={t('staff.searchPlaceholder')}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
         <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v === 'any' ? '' : v)}>
           <SelectTrigger className="w-40">
             <SelectValue placeholder={t('staff.filters.status')} />
@@ -97,8 +117,14 @@ export function StaffListPage() {
             <SelectItem value="inactive">{t('staff.filters.inactive')}</SelectItem>
           </SelectContent>
         </Select>
-        {statusFilter && (
-          <Button variant="ghost" onClick={() => setStatusFilter('')}>
+        {hasFilters && (
+          <Button
+            variant="ghost"
+            onClick={() => {
+              setSearch('')
+              setStatusFilter('')
+            }}
+          >
             {t('staff.filters.clear')}
           </Button>
         )}
@@ -106,7 +132,7 @@ export function StaffListPage() {
 
       <DataTable
         columns={columns}
-        rows={data ?? []}
+        rows={filteredStaff}
         rowKey={(row) => row.id}
         isLoading={isPending}
         emptyMessage={t('staff.empty')}

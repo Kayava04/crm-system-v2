@@ -2,6 +2,7 @@ volumes:
   postgres-data:
   seq-data:
   uploads:
+  logs:
 
 services:
   postgres:
@@ -50,6 +51,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      seq:
+        condition: service_started
     environment:
       ASPNETCORE_ENVIRONMENT: Production
       ConnectionStrings__Default: Host=postgres;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}
@@ -59,8 +62,13 @@ services:
       Database__MigrateOnStartup: "true"
       Storage__Path: /app/uploads
       Cors__AllowedOrigins__0: ${FRONTEND_ORIGIN:-http://localhost:5173}
+      # "localhost" from appsettings.json means the api container itself, not the seq container;
+      # inside the compose network Seq is reachable by its service name instead. Index 2 is the
+      # Seq entry in appsettings.json's Serilog:WriteTo array (Console, File, Seq) — keep them in sync.
+      Serilog__WriteTo__2__Args__serverUrl: http://seq:5341
     volumes:
       - uploads:/app/uploads
+      - logs:/app/Logs
     ports:
       - "8080:8080"
 

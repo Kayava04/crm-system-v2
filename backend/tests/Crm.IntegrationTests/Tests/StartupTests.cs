@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Crm.IntegrationTests.Tests;
 
@@ -61,6 +63,22 @@ public class StartupTests(CrmApiFactory factory) : ApiTest(factory)
                      "IX_notifications_RecipientUserId_ReadAt", "IX_student_invoices_EnrollmentId_Period"
                  })
             Assert.Contains(expected, indexes!);
+    }
+
+    // Seq is only reachable at "localhost" when the API runs on the host; inside a Docker container it is
+    // reachable only by its compose service name. docker-compose.yml overrides the same config key with an
+    // env var shaped exactly like this. If this breaks, the override in docker-compose.yml lost its target.
+    [Fact]
+    public void The_seq_sink_is_configured_in_every_environment_and_its_address_can_be_overridden()
+    {
+        var defaultUrl = Factory.Services.GetRequiredService<IConfiguration>()["Serilog:WriteTo:2:Args:serverUrl"];
+        Assert.Equal("http://localhost:5341", defaultUrl);
+        Assert.Equal("Seq", Factory.Services.GetRequiredService<IConfiguration>()["Serilog:WriteTo:2:Name"]);
+
+        using var inContainer = Factory.WithWebHostBuilder(builder =>
+            builder.UseSetting("Serilog:WriteTo:2:Args:serverUrl", "http://seq:5341"));
+
+        Assert.Equal("http://seq:5341", inContainer.Services.GetRequiredService<IConfiguration>()["Serilog:WriteTo:2:Args:serverUrl"]);
     }
 
     private static string Flatten(Exception ex)

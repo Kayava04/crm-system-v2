@@ -64,7 +64,7 @@ No administrator permission is needed, only the role:
 | `GET /api/teachers/me` | Teacher | own profile with salary rates |
 | `GET /api/enrollments/my` | Student | own enrollments with course names |
 | `GET /api/billing/invoices/my` | Student | own invoices (`status`, paging) |
-| `GET /api/billing/payrolls/my` | Teacher | own payrolls |
+| `GET /api/billing/payrolls/my` | any | own payrolls: a teacher's from lessons taught, anyone else's (administrators and managers) from their Salary; simply empty for a role that has neither |
 | `GET /api/calendar/my`, `GET /api/notifications` | Student, Teacher | own calendar, own notifications |
 | `GET/POST/PUT/DELETE /api/calendar/events` | any | arbitrary calendar entries that are not lessons: a personal reminder only its owner ever sees, or (with `CanManageSchedule`) a notice visible to everyone; a personal event of someone else is a 404, not a 403 |
 

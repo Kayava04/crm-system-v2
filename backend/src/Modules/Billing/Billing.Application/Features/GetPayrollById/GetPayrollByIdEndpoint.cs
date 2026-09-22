@@ -9,7 +9,8 @@ namespace Billing.Application.Features.GetPayrollById;
 
 public sealed record PayrollDetailResponse(
     Guid Id,
-    Guid TeacherId,
+    Guid? TeacherId,
+    Guid? UserId,
     string Period,
     decimal BaseSalary,
     decimal LessonsRate,
@@ -49,6 +50,7 @@ public static class GetPayrollByIdEndpoint
         var response = new PayrollDetailResponse(
             payroll.Id,
             payroll.TeacherId,
+            payroll.UserId,
             payroll.Period,
             payroll.BaseSalary,
             payroll.LessonsRate,

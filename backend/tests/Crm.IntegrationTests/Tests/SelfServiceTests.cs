@@ -274,17 +274,43 @@ public class SelfServiceTests(CrmApiFactory factory) : ApiTest(factory)
     }
 
     [Fact]
-    public async Task Own_finances_are_closed_to_the_wrong_role()
+    public async Task Own_invoices_are_closed_to_the_wrong_role()
     {
-        var student = await Data.StudentUserAsync(await Data.StudentAsync());
         var teacher = await Data.TeacherUserAsync(await Data.TeacherAsync());
 
         (await Api.GetAsync("/api/billing/invoices/my", teacher.Token)).Expect(403);
-        (await Api.GetAsync("/api/billing/payrolls/my", student.Token)).Expect(403);
         (await Api.GetAsync("/api/billing/invoices/my", Admin)).Expect(403);
-        (await Api.GetAsync("/api/billing/payrolls/my", Admin)).Expect(403);
         (await Api.GetAsync("/api/billing/invoices/my")).Expect(401);
         (await Api.GetAsync("/api/billing/invoices/my", (await Data.UserAsync("Student")).Token)).Expect(404);
-        (await Api.GetAsync("/api/billing/payrolls/my", (await Data.UserAsync("Teacher")).Token)).Expect(404);
+    }
+
+    [Fact]
+    public async Task Own_payrolls_are_open_to_any_account_scoped_to_that_account_alone()
+    {
+        var student = await Data.StudentUserAsync(await Data.StudentAsync());
+        var bareTeacherAccount = await Data.UserAsync("Teacher");   // Teacher role, no linked teacher profile
+
+        // nobody else's payroll exists for these accounts, so the list is simply empty - not a 403 or a 404
+        Assert.Equal(0, (await Api.GetAsync("/api/billing/payrolls/my", student.Token)).Expect(200)["totalCount"].GetValue<int>());
+        Assert.Equal(0, (await Api.GetAsync("/api/billing/payrolls/my", Admin)).Expect(200)["totalCount"].GetValue<int>());
+        Assert.Equal(0, (await Api.GetAsync("/api/billing/payrolls/my", bareTeacherAccount.Token)).Expect(200)["totalCount"].GetValue<int>());
+        (await Api.GetAsync("/api/billing/payrolls/my")).Expect(401);
+    }
+
+    [Fact]
+    public async Task An_administrator_sees_their_own_accrued_salary_history_the_same_way_a_teacher_does()
+    {
+        var manager = await Data.UserAsync("Admin", permissionIds: await Data.PermissionIdsAsync("CanManagePayments"));
+        (await Api.PutAsync($"/api/auth/users/{manager.UserId}/salary", new { salary = 25000 }, Admin)).Expect(200);
+
+        var mine = (await Api.PostAsync("/api/billing/payrolls", new { userId = manager.UserId, period = "2035-04" }, Admin)).Expect(201);
+        Assert.Equal(25000m, mine["totalAmount"].GetValue<decimal>());
+        Assert.Null(mine.Json!["teacherId"]);
+        Assert.Equal(manager.UserId, mine["userId"].GetValue<Guid>());
+
+        var payrolls = (await Api.GetAsync("/api/billing/payrolls/my", manager.Token)).Expect(200);
+        Assert.Equal(1, payrolls["totalCount"].GetValue<int>());
+        Assert.Equal(mine.Id, payrolls.Items[0]!["id"]!.GetValue<Guid>());
+        Assert.Equal(25000m, payrolls.Items[0]!["totalAmount"]!.GetValue<decimal>());
     }
 }

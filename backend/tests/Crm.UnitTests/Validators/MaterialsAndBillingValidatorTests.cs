@@ -68,7 +68,7 @@ public class MaterialsAndBillingValidatorTests
     public void Invoice_and_payroll_period_is_yyyy_mm(string period, bool valid)
     {
         var invoice = new CreateInvoiceRequest(Guid.NewGuid(), period, new DateOnly(2030, 2, 1), null);
-        var payroll = new CreatePayrollRequest(Guid.NewGuid(), period);
+        var payroll = new CreatePayrollRequest(Guid.NewGuid(), null, period);
 
         Assert.Equal(valid, new CreateInvoiceValidator().Validate(invoice).IsValid);
         Assert.Equal(valid, new CreatePayrollValidator().Validate(payroll).IsValid);
@@ -78,6 +78,19 @@ public class MaterialsAndBillingValidatorTests
     public void Invoice_and_payroll_need_their_owner()
     {
         Assert.False(new CreateInvoiceValidator().Validate(new CreateInvoiceRequest(Guid.Empty, "2030-01", new DateOnly(2030, 2, 1), null)).IsValid);
-        Assert.False(new CreatePayrollValidator().Validate(new CreatePayrollRequest(Guid.Empty, "2030-01")).IsValid);
+        Assert.False(new CreatePayrollValidator().Validate(new CreatePayrollRequest(Guid.Empty, null, "2030-01")).IsValid);
+        Assert.False(new CreatePayrollValidator().Validate(new CreatePayrollRequest(null, Guid.Empty, "2030-01")).IsValid);
+    }
+
+    [Fact]
+    public void A_payroll_belongs_to_exactly_one_of_a_teacher_or_a_staff_member()
+    {
+        var teacherId = Guid.NewGuid();
+        var userId = Guid.NewGuid();
+
+        Assert.True(new CreatePayrollValidator().Validate(new CreatePayrollRequest(teacherId, null, "2030-01")).IsValid);
+        Assert.True(new CreatePayrollValidator().Validate(new CreatePayrollRequest(null, userId, "2030-01")).IsValid);
+        Assert.False(new CreatePayrollValidator().Validate(new CreatePayrollRequest(teacherId, userId, "2030-01")).IsValid);
+        Assert.False(new CreatePayrollValidator().Validate(new CreatePayrollRequest(null, null, "2030-01")).IsValid);
     }
 }

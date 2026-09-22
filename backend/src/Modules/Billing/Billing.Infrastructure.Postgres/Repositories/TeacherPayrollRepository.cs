@@ -41,8 +41,17 @@ internal sealed class TeacherPayrollRepository(BillingDbContext context) : ITeac
             .AsNoTracking()
             .AnyAsync(p => p.TeacherId == teacherId && p.Period == period, ct);
 
+    public async Task<bool> ExistsByUserAndPeriodAsync(
+        Guid userId,
+        string period,
+        CancellationToken ct = default) =>
+        await context.TeacherPayrolls
+            .AsNoTracking()
+            .AnyAsync(p => p.UserId == userId && p.Period == period, ct);
+
     public async Task<(IReadOnlyList<TeacherPayroll> Payrolls, int TotalCount)> GetAllAsync(
         Guid? teacherId,
+        Guid? userId,
         string? period,
         PayrollStatus? status,
         int page,
@@ -56,6 +65,9 @@ internal sealed class TeacherPayrollRepository(BillingDbContext context) : ITeac
 
         if (teacherId.HasValue)
             query = query.Where(p => p.TeacherId == teacherId.Value);
+
+        if (userId.HasValue)
+            query = query.Where(p => p.UserId == userId.Value);
 
         if (!string.IsNullOrWhiteSpace(period))
             query = query.Where(p => p.Period == period);

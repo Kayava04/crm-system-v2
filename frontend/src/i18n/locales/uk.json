@@ -1,31 +1,20 @@
 {
   "common": {
     "appName": "CRM школи іноземних мов",
-    "loading": "Завантаження…",
     "save": "Зберегти",
     "cancel": "Скасувати",
     "close": "Закрити",
     "confirm": "Підтвердити",
-    "retry": "Повторити",
-    "search": "Пошук",
-    "actions": "Дії",
     "yes": "Так",
     "no": "Ні",
     "back": "Назад",
-    "comingSoon": "Цей розділ ще в розробці",
     "unknownError": "Щось пішло не так. Спробуйте ще раз.",
     "networkError": "Немає з'єднання з сервером. Перевірте мережу.",
     "lightTheme": "Світла тема",
     "darkTheme": "Темна тема",
     "language": "Мова",
-    "edit": "Редагувати",
     "delete": "Видалити",
-    "add": "Додати",
-    "create": "Створити",
     "download": "Завантажити",
-    "upload": "Завантажити файл",
-    "filters": "Фільтри",
-    "apply": "Застосувати",
     "remove": "Видалити",
     "optional": "необов'язково",
     "middleName": "По батькові",
@@ -38,8 +27,6 @@
     "passwordLabel": "Пароль",
     "loginButton": "Увійти",
     "invalidCredentials": "Неправильна пошта або пароль",
-    "accountLocked": "Обліковий запис тимчасово заблоковано через забагато невдалих спроб входу. Спробуйте пізніше.",
-    "accountDeactivated": "Обліковий запис деактивовано. Зверніться до адміністратора.",
     "tooManyAttempts": "Забагато спроб. Спробуйте через {{seconds}} с.",
     "mustChangePasswordTitle": "Потрібно змінити пароль",
     "mustChangePasswordDescription": "Це ваш перший вхід або пароль було скинуто. Встановіть новий пароль, щоб продовжити.",
@@ -277,8 +264,7 @@
     "clearSelection": "Скасувати вибір",
     "bulkDeleteConfirmTitle": "Видалити вибрані записи?",
     "bulkDeleteConfirmDesc": "Видалити можна лише записи без акаунта чи історії. Дію не можна скасувати.",
-    "bulkDeleteResult": "Видалено {{succeeded}} з {{total}}",
-    "hasAccount": "Є акаунт"
+    "bulkDeleteResult": "Видалено {{succeeded}} з {{total}}"
   },
   "import": {
     "title": "Імпорт",
@@ -294,8 +280,7 @@
     "rowsFailed": "З помилками: {{count}}",
     "ignoredColumns": "Проігноровані колонки: {{columns}}",
     "rowNumber": "Рядок",
-    "close": "Закрити",
-    "noFile": "Файл не обрано"
+    "close": "Закрити"
   },
   "students": {
     "title": "Студенти",
@@ -316,8 +301,7 @@
       "name": "ПІБ",
       "email": "Пошта",
       "phone": "Телефон",
-      "child": "Неповнолітній",
-      "actions": "Дії"
+      "child": "Неповнолітній"
     },
     "detail": {
       "backToList": "До списку студентів",
@@ -369,7 +353,6 @@
       "title": "Новий студент",
       "sectionPersonal": "Особисті дані",
       "sectionPreferences": "Побажання щодо навчання",
-      "sectionParent": "Контакти батьків (неповнолітній)",
       "submit": "Створити студента",
       "success": "Студента створено"
     }
@@ -388,8 +371,7 @@
       "name": "ПІБ",
       "email": "Пошта",
       "phone": "Телефон",
-      "status": "Статус",
-      "actions": "Дії"
+      "status": "Статус"
     },
     "detail": {
       "backToList": "До списку викладачів",
@@ -456,8 +438,7 @@
       "language": "Мова",
       "level": "Рівень",
       "price": "Ціна",
-      "status": "Статус",
-      "actions": "Дії"
+      "status": "Статус"
     },
     "fields": {
       "name": "Назва курсу",
@@ -470,8 +451,7 @@
       "lessonsCount": "Кількість занять",
       "lessonsPerWeek": "Занять на тиждень",
       "price": "Ціна",
-      "description": "Опис",
-      "lessonTypeHint": "Лише курси з типом \"Групове\" можна обрати при створенні групи. Послідовність: курс → (для груп) група → зарахування студента → викладач."
+      "description": "Опис"
     },
     "detail": {
       "backToList": "До списку курсів",
@@ -520,7 +500,6 @@
       "coursePrice": "Ціна курсу",
       "discountedPrice": "Ціна зі знижкою",
       "effectivePrice": "Фактична ціна",
-      "status": "Статус",
       "commentLabel": "Внутрішній коментар",
       "commentPlaceholder": "Нотатки для персоналу",
       "commentSaved": "Коментар збережено",
@@ -553,8 +532,6 @@
       "removeDiscount": "Скасувати знижку",
       "discountSaved": "Знижку застосовано",
       "discountRemoved": "Знижку скасовано",
-      "viewStudent": "Профіль студента",
-      "viewCourse": "Профіль курсу",
       "resolving": "Визначення студента/курсу…"
     },
     "createDialog": {
@@ -591,7 +568,6 @@
       "clear": "Скинути фільтри"
     },
     "emptyRange": "На цей період занять немає",
-    "createLesson": "Нове заняття",
     "newEvent": "Нова подія",
     "generate": "Згенерувати заняття",
     "reassignTeacher": "Замінити викладача",
@@ -611,7 +587,6 @@
       "group": "Група",
       "duration": "Тривалість (хв)",
       "notes": "Нотатки",
-      "status": "Статус",
       "reschedule": "Перенести",
       "cancel": "Скасувати",
       "complete": "Провести",
@@ -628,21 +603,13 @@
       "format": "Формат"
     },
     "createDialog": {
-      "title": "Нове заняття",
-      "targetType": "Прив'язка",
       "individual": "Індивідуальне (зарахування)",
       "group": "Групове (група)",
       "enrollmentLabel": "Зарахування",
       "enrollmentSearchPlaceholder": "Пошук студента для вибору зарахування…",
       "groupLabel": "Група",
       "teacherLabel": "Викладач",
-      "teacherSearchPlaceholder": "Пошук викладача за іменем…",
-      "dateLabel": "Дата й час",
-      "durationLabel": "Тривалість (хв)",
-      "notesLabel": "Нотатки (необов'язково)",
-      "submit": "Створити заняття",
-      "success": "Заняття створено",
-      "description": "Тут можна створити лише навчальне заняття (індивідуальне або групове) — воно завжди прив'язане до курсу/групи та викладача. Інші типи подій (співбесіда, зустріч, доставка тощо) поки не підтримуються."
+      "teacherSearchPlaceholder": "Пошук викладача за іменем…"
     },
     "generateDialog": {
       "title": "Згенерувати заняття за розкладом",
@@ -652,14 +619,10 @@
       "durationLabel": "Тривалість заняття (хв)",
       "slotsLabel": "Слоти розкладу",
       "addSlot": "Додати слот",
-      "removeSlot": "Прибрати",
-      "dayOfWeekLabel": "День тижня",
-      "startTimeLabel": "Час початку",
       "submit": "Згенерувати",
       "success": "Створено занять: {{count}}"
     },
     "reassignDialog": {
-      "title": "Замінити викладача",
       "fromLabel": "Від викладача",
       "toLabel": "До викладача",
       "updateGroupsLabel": "Оновити й закріплених груп",
@@ -688,7 +651,6 @@
   "studyGroups": {
     "title": "Навчальні групи",
     "add": "Створити групу",
-    "searchPlaceholder": "Пошук за назвою…",
     "filters": {
       "course": "Курс",
       "teacher": "Викладач",
@@ -699,8 +661,7 @@
       "name": "Назва",
       "course": "Курс",
       "teacher": "Викладач",
-      "members": "Учасників",
-      "actions": "Дії"
+      "members": "Учасників"
     },
     "detail": {
       "backToList": "До списку груп",
@@ -710,7 +671,6 @@
       "profileSaved": "Групу оновлено",
       "membersTitle": "Учасники",
       "addMember": "Додати студента",
-      "removeMember": "Видалити",
       "confirmRemoveMemberTitle": "Видалити студента з групи?",
       "confirmRemoveMemberDesc": "Майбутні групові заняття для цього студента більше не плануватимуться.",
       "noMembers": "У групі ще немає учасників",
@@ -741,7 +701,6 @@
       "add": "Виставити рахунок",
       "markOverdue": "Позначити прострочені",
       "markOverdueResult": "Позначено прострочених: {{count}}",
-      "searchPlaceholder": "Пошук студента для вибору зарахування…",
       "empty": "Рахунків не знайдено",
       "filters": {
         "searchPlaceholder": "Пошук за студентом, курсом або періодом…",
@@ -905,17 +864,11 @@
       "any": "Будь-який",
       "clear": "Скинути фільтри"
     },
-    "card": {
-      "openLink": "Відкрити посилання"
-    },
     "detail": {
-      "title": "Матеріал",
       "course": "Курс",
-      "type": "Тип",
       "author": "Автор",
       "description": "Опис",
       "body": "Текст",
-      "url": "Посилання",
       "openLink": "Відкрити посилання",
       "edit": "Редагувати",
       "save": "Зберегти",
@@ -1002,7 +955,6 @@
     "active": "Активний",
     "inactive": "Неактивний",
     "detail": {
-      "title": "Співробітник",
       "permissionsTitle": "Права доступу",
       "save": "Зберегти права",
       "saved": "Права оновлено",
@@ -1022,7 +974,6 @@
       "city": "Місто",
       "country": "Країна",
       "salaryTitle": "Зарплата",
-      "salaryLabel": "Сума",
       "salaryPlaceholder": "Не встановлено",
       "salarySave": "Зберегти зарплату",
       "salarySaved": "Зарплату оновлено",
@@ -1037,7 +988,6 @@
       "phoneLabel": "Телефон",
       "permissionsLabel": "Права доступу",
       "submit": "Створити",
-      "success": "Співробітника створено",
       "middleNameLabel": "По батькові",
       "dateOfBirthLabel": "Дата народження",
       "cityLabel": "Місто",
@@ -1077,7 +1027,6 @@
     "deselectAll": "Зняти всі"
   },
   "myStudents": {
-    "note": "Список складено на основі вашого календаря занять (за останні та найближчі 90 днів), оскільки окремого списку «моїх студентів» бекенд не надає.",
     "empty": "Занять не знайдено — список студентів порожній.",
     "columns": {
       "name": "Студент",

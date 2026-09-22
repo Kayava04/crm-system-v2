@@ -1,21 +1,9 @@
-import { createContext, useContext, useMemo, type ReactNode } from 'react'
+import { useMemo, type ReactNode } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { tokenStore } from '@/api/tokenStore'
 import { fetchMe, login as loginRequest, changePassword as changePasswordRequest } from './api'
-import type { MeResponse } from '@/api/types'
-import type { Schemas } from '@/api/types'
+import { AuthContext, type AuthContextValue, type AuthStatus } from './useAuth'
 
-export type AuthStatus = 'loading' | 'authenticated' | 'unauthenticated'
-
-interface AuthContextValue {
-  user: MeResponse | null
-  status: AuthStatus
-  login: (email: string, password: string) => Promise<MeResponse>
-  logout: () => void
-  changePassword: (input: Schemas['ChangePasswordRequest']) => Promise<void>
-}
-
-const AuthContext = createContext<AuthContextValue | null>(null)
 const ME_QUERY_KEY = ['auth', 'me'] as const
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -64,10 +52,4 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
-}
-
-export function useAuth() {
-  const ctx = useContext(AuthContext)
-  if (!ctx) throw new Error('useAuth must be used within AuthProvider')
-  return ctx
 }

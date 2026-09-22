@@ -2,7 +2,7 @@ import type { LucideIcon } from 'lucide-react'
 import { Navigate, Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { CalendarDays, Users, FolderOpen, ClipboardList, Wallet, ArrowRight } from 'lucide-react'
-import { useAuth } from '@/features/auth/AuthProvider'
+import { useAuth } from '@/features/auth/useAuth'
 import { useCan, useHasRole } from '@/features/auth/useCan'
 import { Card, CardContent } from '@/components/ui/card'
 

@@ -1,10 +1,10 @@
 import { describe, expect, it, vi, beforeEach, type Mock } from 'vitest'
 import { renderHook } from '@testing-library/react'
-import { useAuth } from './AuthProvider'
+import { useAuth } from './useAuth'
 import { useCan, useCanAny, useHasRole, useIsStaff } from './useCan'
 import type { MeResponse } from '@/api/types'
 
-vi.mock('./AuthProvider', () => ({
+vi.mock('./useAuth', () => ({
   useAuth: vi.fn(),
 }))
 

@@ -2,7 +2,7 @@ import { NavLink } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { GraduationCap } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { useAuth } from '@/features/auth/AuthProvider'
+import { useAuth } from '@/features/auth/useAuth'
 import { navSections, isNavItemVisible } from '@/routes/navConfig'
 
 interface SidebarNavProps {

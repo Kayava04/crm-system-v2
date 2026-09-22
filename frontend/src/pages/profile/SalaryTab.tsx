@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { useQuery } from '@tanstack/react-query'
-import { useAuth } from '@/features/auth/AuthProvider'
+import { useAuth } from '@/features/auth/useAuth'
 import { getMyPayrolls } from '@/features/billing/api'
 import { enumLabel } from '@/lib/enumLabels'
 import { formatCurrency } from '@/lib/utils'

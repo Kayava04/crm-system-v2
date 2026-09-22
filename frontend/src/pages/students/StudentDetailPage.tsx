@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import { ArrowLeft, Pencil, UserX, UserCheck, Trash2, Plus } from 'lucide-react'
+import { ArrowLeft, Pencil, UserCheck, RefreshCw, Trash2, Plus } from 'lucide-react'
 import {
   getStudentById,
   updateStudent,
@@ -18,6 +18,7 @@ import {
   updateParentInfo,
   deleteParentInfo,
 } from '@/features/students/api'
+import type { StudentStatus } from '@/features/students/api'
 import { getEnrollments } from '@/features/enrollments/api'
 import { getInvoices } from '@/features/billing/api'
 import { useResolvedInvoices } from '@/features/billing/useResolvedInvoices'
@@ -65,7 +66,7 @@ import { Field } from '@/components/shared/Field'
 
 const LANGUAGES = ['English', 'French', 'German', 'Polish', 'Spanish', 'Italian'] as const
 const LEVELS = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'] as const
-const INACTIVE_STATUSES = ['Suspended', 'Graduated', 'Withdrawn'] as const
+const ALL_STATUSES: StudentStatus[] = ['Active', 'Suspended', 'Graduated', 'Withdrawn']
 
 function statusVariant(status: string): 'success' | 'warning' | 'secondary' | 'destructive' {
   if (status === 'Active') return 'success'
@@ -84,11 +85,9 @@ export function StudentDetailPage() {
   const canCreateAccount = useCan('CanManageAdmins')
 
   const [activeTab, setActiveTab] = useState<string | null>(null)
-  const [deactivateOpen, setDeactivateOpen] = useState(false)
-  const [reactivateOpen, setReactivateOpen] = useState(false)
+  const [statusDialogOpen, setStatusDialogOpen] = useState(false)
+  const [statusTarget, setStatusTarget] = useState<StudentStatus>('Active')
   const [deleteOpen, setDeleteOpen] = useState(false)
-  const [deactivateTarget, setDeactivateTarget] =
-    useState<(typeof INACTIVE_STATUSES)[number]>('Suspended')
   const [createAccountOpen, setCreateAccountOpen] = useState(false)
   const [createdAccount, setCreatedAccount] = useState<{
     email: string
@@ -111,8 +110,7 @@ export function StudentDetailPage() {
   const photoUrl = useAuthenticatedBlobUrl(student ? `/api/students/${id}/photo` : null)
 
   const statusMutation = useMutation({
-    mutationFn: (status: 'Active' | 'Suspended' | 'Graduated' | 'Withdrawn') =>
-      changeStudentStatus(id, status),
+    mutationFn: (status: StudentStatus) => changeStudentStatus(id, status),
     onSuccess: async (result) => {
       await queryClient.invalidateQueries({ queryKey: ['students', id] })
       await queryClient.invalidateQueries({ queryKey: ['students'] })
@@ -185,6 +183,11 @@ export function StudentDetailPage() {
     .join(' ')
   const initials = `${student.firstName[0] ?? ''}${student.lastName[0] ?? ''}`.toUpperCase()
 
+  function openStatusDialog() {
+    setStatusTarget(ALL_STATUSES.find((s) => s !== student?.status) ?? 'Active')
+    setStatusDialogOpen(true)
+  }
+
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-6">
       <div className="flex flex-col gap-4">
@@ -196,31 +199,30 @@ export function StudentDetailPage() {
           {t('students.detail.backToList')}
         </Link>
 
-        <div className="flex flex-wrap items-center gap-4">
-          <Avatar className="size-16">
-            {photoUrl && <AvatarImage src={photoUrl} alt="" />}
-            <AvatarFallback className="text-lg">{initials || '?'}</AvatarFallback>
-          </Avatar>
-          <div className="flex flex-col gap-1">
-            <h1 className="text-2xl font-semibold tracking-tight">{fullName}</h1>
-            <div className="flex flex-wrap items-center gap-2">
-              <Badge variant={statusVariant(student.status)}>
-                {enumLabel(t, 'studentStatus', student.status)}
-              </Badge>
-              {student.isChild && (
-                <Badge variant="outline">{t('profile.studentData.isChild')}</Badge>
-              )}
-              {student.hasAccount && (
-                <Badge variant={student.status === 'Withdrawn' ? 'secondary' : 'success'}>
-                  {student.status === 'Withdrawn'
-                    ? t('accountLink.accountDeactivated')
-                    : t('accountLink.accountActive')}
+        <div className="flex flex-col gap-3">
+          <div className="flex flex-wrap items-center gap-4">
+            <Avatar className="size-16">
+              {photoUrl && <AvatarImage src={photoUrl} alt="" />}
+              <AvatarFallback className="text-lg">{initials || '?'}</AvatarFallback>
+            </Avatar>
+            <div className="flex min-w-0 flex-col gap-1">
+              <h1 className="text-2xl font-semibold tracking-tight">{fullName}</h1>
+              <div className="flex flex-wrap items-center gap-2">
+                <Badge variant={statusVariant(student.status)}>
+                  {enumLabel(t, 'studentStatus', student.status)}
                 </Badge>
-              )}
+                {student.hasAccount && (
+                  <Badge variant={student.status === 'Withdrawn' ? 'secondary' : 'success'}>
+                    {student.status === 'Withdrawn'
+                      ? t('accountLink.accountDeactivated')
+                      : t('accountLink.accountActive')}
+                  </Badge>
+                )}
+              </div>
             </div>
           </div>
 
-          <div className="ml-auto flex flex-wrap gap-2">
+          <div className="flex flex-wrap justify-end gap-2">
             {canCreateAccount && !student.hasAccount && (
               <Button variant="outline" onClick={() => setCreateAccountOpen(true)}>
                 <UserCheck />
@@ -229,17 +231,10 @@ export function StudentDetailPage() {
             )}
             {canManage && (
               <>
-                {student.status === 'Active' ? (
-                  <Button variant="outline" onClick={() => setDeactivateOpen(true)}>
-                    <UserX />
-                    {t('students.detail.deactivate')}
-                  </Button>
-                ) : (
-                  <Button variant="outline" onClick={() => setReactivateOpen(true)}>
-                    <UserCheck />
-                    {t('students.detail.reactivate')}
-                  </Button>
-                )}
+                <Button variant="outline" onClick={openStatusDialog}>
+                  <RefreshCw />
+                  {t('students.detail.changeStatus')}
+                </Button>
                 {canDelete && (
                   <Button variant="outline" onClick={() => setDeleteOpen(true)}>
                     <Trash2 />
@@ -299,22 +294,19 @@ export function StudentDetailPage() {
         </TabsContent>
       </Tabs>
 
-      <Dialog open={deactivateOpen} onOpenChange={setDeactivateOpen}>
+      <Dialog open={statusDialogOpen} onOpenChange={setStatusDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{t('students.detail.confirmDeactivateTitle')}</DialogTitle>
-            <DialogDescription>{t('students.detail.confirmDeactivateDesc')}</DialogDescription>
+            <DialogTitle>{t('students.detail.changeStatusTitle')}</DialogTitle>
+            <DialogDescription>{t('students.detail.changeStatusDesc')}</DialogDescription>
           </DialogHeader>
           <Field label={t('students.detail.newStatusLabel')}>
-            <Select
-              value={deactivateTarget}
-              onValueChange={(v) => setDeactivateTarget(v as typeof deactivateTarget)}
-            >
+            <Select value={statusTarget} onValueChange={(v) => setStatusTarget(v as StudentStatus)}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {INACTIVE_STATUSES.map((v) => (
+                {ALL_STATUSES.filter((v) => v !== student.status).map((v) => (
                   <SelectItem key={v} value={v}>
                     {enumLabel(t, 'studentStatus', v)}
                   </SelectItem>
@@ -325,17 +317,16 @@ export function StudentDetailPage() {
           <DialogFooter>
             <Button
               variant="outline"
-              onClick={() => setDeactivateOpen(false)}
+              onClick={() => setStatusDialogOpen(false)}
               disabled={statusMutation.isPending}
             >
               {t('common.cancel')}
             </Button>
             <Button
-              variant="destructive"
               loading={statusMutation.isPending}
               onClick={async () => {
-                await statusMutation.mutateAsync(deactivateTarget)
-                setDeactivateOpen(false)
+                await statusMutation.mutateAsync(statusTarget)
+                setStatusDialogOpen(false)
               }}
             >
               {t('common.confirm')}
@@ -343,15 +334,6 @@ export function StudentDetailPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      <ConfirmDialog
-        open={reactivateOpen}
-        onOpenChange={setReactivateOpen}
-        title={t('students.detail.confirmReactivateTitle')}
-        description={t('students.detail.confirmReactivateDesc')}
-        onConfirm={async () => {
-          await statusMutation.mutateAsync('Active')
-        }}
-      />
       <ConfirmDialog
         open={deleteOpen}
         onOpenChange={setDeleteOpen}
@@ -974,10 +956,7 @@ function ParentTab({
           <Field label={t('profile.contact.lastNameLabel')} error={errors.lastName?.message}>
             <Input {...register('lastName')} aria-invalid={!!errors.lastName} />
           </Field>
-          <Field
-            label={`${t('common.middleName')} (${t('common.optional')})`}
-            error={errors.middleName?.message}
-          >
+          <Field label={t('common.middleName')} error={errors.middleName?.message}>
             <Input {...register('middleName')} />
           </Field>
           <Field label={t('profile.contact.phoneLabel')} error={errors.phoneNumber?.message}>
@@ -1109,6 +1088,7 @@ const LESSONS_PAGE_SIZE = 10
 function LessonsTab({ studentId }: { studentId: string }) {
   const { t, i18n } = useTranslation()
   const lang = i18n.language === 'en' ? 'en' : 'uk'
+  const navigate = useNavigate()
   const { rows, isLoading } = useStudentLessons(studentId)
   const [page, setPage] = useState(1)
 
@@ -1171,6 +1151,7 @@ function LessonsTab({ studentId }: { studentId: string }) {
           rowKey={(r) => r.row.id}
           isLoading={isLoading}
           emptyMessage={t('students.detail.noLessons')}
+          onRowClick={() => navigate('/calendar')}
         />
         {rows.length > 0 && (
           <Pagination
@@ -1188,6 +1169,7 @@ function LessonsTab({ studentId }: { studentId: string }) {
 function InvoicesTab({ studentId }: { studentId: string }) {
   const { t, i18n } = useTranslation()
   const lang = i18n.language === 'en' ? 'en' : 'uk'
+  const navigate = useNavigate()
   const [page, setPage] = useState(1)
 
   const { data, isPending } = useQuery({
@@ -1245,6 +1227,7 @@ function InvoicesTab({ studentId }: { studentId: string }) {
           rowKey={(r) => r.row.id}
           isLoading={isPending}
           emptyMessage={t('billing.invoices.empty')}
+          onRowClick={() => navigate('/billing/invoices')}
         />
         {data && (
           <Pagination

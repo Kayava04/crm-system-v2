@@ -58,7 +58,7 @@ export function SalaryTab() {
           {payrolls?.items.map((p) => (
             <div
               key={p.id}
-              className="flex items-center justify-between rounded-md border p-3 text-sm"
+              className="flex flex-wrap items-center justify-between gap-2 rounded-md border p-3 text-sm"
             >
               <span className="font-medium">{p.period}</span>
               <span>{formatCurrency(p.totalAmount, lang)}</span>

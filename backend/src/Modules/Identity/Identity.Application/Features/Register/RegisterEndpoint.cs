@@ -25,7 +25,8 @@ public sealed record RegisterRequest(
     string? MiddleName = null,
     DateOnly? DateOfBirth = null,
     string? City = null,
-    string? Country = null
+    string? Country = null,
+    decimal? Salary = null
 );
 
 public sealed record RegisterResponse(
@@ -58,6 +59,9 @@ public sealed class RegisterValidator : AbstractValidator<RegisterRequest>
         RuleFor(x => x.DateOfBirth)
             .LessThan(DateOnly.FromDateTime(DateTime.UtcNow)).WithMessage("Invalid date of birth.")
             .When(x => x.DateOfBirth is not null);
+        RuleFor(x => x.Salary)
+            .GreaterThanOrEqualTo(0).WithMessage("Salary cannot be negative.")
+            .When(x => x.Salary is not null);
 
         RuleFor(x => x.ProfileId)
             .NotNull()
@@ -165,6 +169,14 @@ public static class RegisterEndpoint
                 {
                     foreach (var permissionId in request.PermissionIds)
                         await userRepository.AssignPermissionAsync(created.Id, permissionId, token);
+                }
+
+                // A teacher's pay is TeacherSalaryRate/payroll instead; User.Salary is only meaningful
+                // for accounts without their own record (see StaffEndpoints.SetSalary).
+                if (request.Role == SystemRole.Admin && request.Salary is not null)
+                {
+                    created.SetSalary(request.Salary);
+                    await userRepository.UpdateAsync(created, token);
                 }
 
                 if (linker is not null)

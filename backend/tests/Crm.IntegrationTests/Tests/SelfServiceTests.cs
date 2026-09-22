@@ -34,7 +34,7 @@ public class SelfServiceTests(CrmApiFactory factory) : ApiTest(factory)
         var teacherMe = (await Api.GetAsync("/api/auth/me", teacher.Token)).Expect(200);
         Assert.Equal("Teacher", teacherMe["profile"]!["type"]!.GetValue<string>());
         Assert.Equal(teacherId, teacherMe["profile"]!["id"]!.GetValue<Guid>());
-        Assert.Equal(["CanManageMaterials", "CanViewMaterials"], teacherMe["permissions"].AsArray().Select(p => p!.GetValue<string>()));
+        Assert.Equal(["CanManageMaterials", "CanViewCourses", "CanViewMaterials"], teacherMe["permissions"].AsArray().Select(p => p!.GetValue<string>()));
 
         var adminMe = (await Api.GetAsync("/api/auth/me", admin.Token)).Expect(200);
         Assert.Null(adminMe.Json!["profile"]);

@@ -104,7 +104,8 @@ public sealed class IdentitySeeder(
     // Permissions every user of a role gets by default (additive, safe to run on each start)
     private static readonly Dictionary<SystemRole, SystemPermission[]> DefaultRolePermissions = new()
     {
-        [SystemRole.Teacher] = [SystemPermission.CanViewMaterials, SystemPermission.CanManageMaterials],
+        // CanViewCourses: teachers pick the course when creating a material (see CreateMaterialDialog)
+        [SystemRole.Teacher] = [SystemPermission.CanViewMaterials, SystemPermission.CanManageMaterials, SystemPermission.CanViewCourses],
         [SystemRole.Student] = [SystemPermission.CanViewMaterials]
     };
 

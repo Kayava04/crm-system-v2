@@ -45,9 +45,14 @@ export function EmployeeSearchInput({ value, onChange, placeholder }: EmployeeSe
       teacherPage?.items.map((t) => ({ id: t.id, fullName: t.fullName, kind: 'teacher' as const })) ?? []
 
     const term = debouncedQuery.trim().toLowerCase()
-    const staffMatches: EmployeePick[] = (staff ?? [])
-      .filter((s) => (s.fullName ?? s.email).toLowerCase().includes(term) || s.email.toLowerCase().includes(term))
-      .map((s) => ({ id: s.id, fullName: s.fullName ?? s.email, kind: 'staff' as const }))
+    // An empty term would otherwise match everyone - String.includes('') is always true - and
+    // React Query keeps serving the staff list's cached data even once this box goes inactive,
+    // so without this guard every staff member reappears on its own after a first search.
+    const staffMatches: EmployeePick[] = term
+      ? (staff ?? [])
+          .filter((s) => (s.fullName ?? s.email).toLowerCase().includes(term) || s.email.toLowerCase().includes(term))
+          .map((s) => ({ id: s.id, fullName: s.fullName ?? s.email, kind: 'staff' as const }))
+      : []
 
     return [...teacherMatches, ...staffMatches]
   }, [teacherPage, staff, debouncedQuery])
@@ -75,7 +80,7 @@ export function EmployeeSearchInput({ value, onChange, placeholder }: EmployeeSe
   return (
     <div className="flex flex-col gap-1">
       <Input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={placeholder} />
-      {matches.length > 0 && (
+      {active && matches.length > 0 && (
         <div className="flex flex-col rounded-md border border-border">
           {matches.map((pick) => (
             <button

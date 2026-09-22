@@ -164,6 +164,34 @@ public class StaffManagementTests(CrmApiFactory factory) : ApiTest(factory)
     }
 
     [Fact]
+    public async Task Salary_can_also_be_set_right_when_the_account_is_registered()
+    {
+        var email = TestData.Email("manager");
+        var registered = (await Api.PostAsync("/api/auth/register", new
+        {
+            email, role = "Admin", firstName = "Olena", lastName = "Kovalenko", salary = 30000
+        }, Admin)).Expect(201);
+        var token = await Data.LoginAsync(email, registered["temporaryPassword"].GetValue<string>());
+
+        Assert.Equal(30000m, (await Api.GetAsync("/api/auth/me", token)).Expect(200)["contact"]!["salary"]!.GetValue<decimal>());
+
+        // meaningless for a role with its own pay record (teacher payroll, or no pay record at all
+        // for a student), so a Salary sent for a non-Admin role is silently not applied
+        var studentId = await Data.StudentAsync();
+        var studentEmail = TestData.Email("student");
+        var studentRegistered = (await Api.PostAsync("/api/auth/register",
+            new { email = studentEmail, role = "Student", profileType = "Student", profileId = studentId, salary = 1000 }, Admin)).Expect(201);
+        var studentUserId = studentRegistered["userId"].GetValue<Guid>();
+        Assert.Equal("", await Sql($"select \"Salary\" from identity.users where \"Id\" = '{studentUserId}'"));
+    }
+
+    [Fact]
+    public async Task A_negative_salary_at_registration_is_refused()
+    {
+        (await Api.PostAsync("/api/auth/register", new { email = TestData.Email(), role = "Admin", salary = -5 }, Admin)).Expect(400);
+    }
+
+    [Fact]
     public async Task A_negative_salary_is_refused()
     {
         var target = await Data.UserAsync("Admin");

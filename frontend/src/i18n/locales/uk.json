@@ -110,7 +110,11 @@
       "lastNameLabel": "Прізвище",
       "phoneLabel": "Телефон",
       "saved": "Контактні дані збережено",
-      "conflict": "Ці дані редагуються у вашому профілі студента/викладача, а не тут."
+      "conflict": "Ці дані редагуються у вашому профілі студента/викладача, а не тут.",
+      "middleNameLabel": "По батькові",
+      "dateOfBirthLabel": "Дата народження",
+      "cityLabel": "Місто",
+      "countryLabel": "Країна"
     },
     "photo": {
       "description": "JPEG, PNG або WebP, до 5 МБ.",
@@ -583,6 +587,7 @@
     },
     "emptyRange": "На цей період занять немає",
     "createLesson": "Нове заняття",
+    "newEvent": "Нова подія",
     "generate": "Згенерувати заняття",
     "reassignTeacher": "Замінити викладача",
     "selectLessons": "Обрати заняття",
@@ -1004,7 +1009,18 @@
       "resetPassword": "Скинути пароль",
       "confirmResetTitle": "Скинути пароль співробітника?",
       "confirmResetDesc": "Буде згенеровано новий тимчасовий пароль. Поточний пароль перестане діяти.",
-      "createdAt": "Створено"
+      "createdAt": "Створено",
+      "middleName": "По батькові",
+      "dateOfBirth": "Дата народження",
+      "city": "Місто",
+      "country": "Країна",
+      "salaryTitle": "Зарплата",
+      "salaryLabel": "Сума",
+      "salaryPlaceholder": "Не встановлено",
+      "salarySave": "Зберегти зарплату",
+      "salarySaved": "Зарплату оновлено",
+      "salaryClear": "Прибрати",
+      "salaryInvalid": "Введіть невід'ємне число"
     },
     "createDialog": {
       "title": "Новий співробітник",
@@ -1014,7 +1030,11 @@
       "phoneLabel": "Телефон",
       "permissionsLabel": "Права доступу",
       "submit": "Створити",
-      "success": "Співробітника створено"
+      "success": "Співробітника створено",
+      "middleNameLabel": "По батькові",
+      "dateOfBirthLabel": "Дата народження",
+      "cityLabel": "Місто",
+      "countryLabel": "Країна"
     },
     "tempPasswordDialog": {
       "title": "Тимчасовий пароль",
@@ -1085,5 +1105,32 @@
     "submit": "Створити",
     "accountActive": "Обліковий запис активний",
     "accountDeactivated": "Обліковий запис деактивовано"
+  },
+  "calendarEvents": {
+    "title": "Мої нагадування та оголошення",
+    "add": "Додати подію",
+    "addPersonal": "Особисте нагадування",
+    "empty": "Немає подій у цьому періоді",
+    "mine": "моє",
+    "everyone": "для всіх",
+    "visibilityLabel": "Видимість",
+    "visibilityPersonal": "Тільки я",
+    "visibilityEveryone": "Всі користувачі",
+    "titleLabel": "Назва",
+    "descriptionLabel": "Опис",
+    "descriptionOptional": "необов'язково",
+    "startLabel": "Початок",
+    "endLabel": "Кінець",
+    "allDayLabel": "Увесь день",
+    "save": "Зберегти",
+    "edit": "Редагувати подію",
+    "delete": "Видалити",
+    "confirmDeleteTitle": "Видалити подію?",
+    "confirmDeleteDesc": "Цю дію не можна скасувати.",
+    "created": "Подію створено",
+    "updated": "Подію оновлено",
+    "deleted": "Подію видалено",
+    "endBeforeStart": "Подія не може закінчуватись раніше, ніж почалась",
+    "titleRequired": "Назва обов'язкова"
   }
 }

@@ -25,6 +25,8 @@ export function changePassword(input: ChangePasswordInput) {
   return unwrap(api.POST('/api/auth/change-password', { body: input }))
 }
 
+export type MeContact = Schemas['MeContact']
+
 export function updateMyContact(input: Schemas['UpdateMyContactRequest']) {
   return unwrap(api.PUT('/api/auth/me/contact', { body: input }))
 }

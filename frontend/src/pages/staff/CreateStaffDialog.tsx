@@ -23,7 +23,12 @@ const schema = z.object({
   email: z.string().email(),
   firstName: z.string().optional(),
   lastName: z.string().optional(),
+  middleName: z.string().optional(),
   phoneNumber: z.string().optional(),
+  dateOfBirth: z.string().optional(),
+  city: z.string().optional(),
+  country: z.string().optional(),
+  salary: z.string().optional(),
 })
 type FormValues = z.infer<typeof schema>
 
@@ -69,7 +74,12 @@ export function CreateStaffDialog({ open, onOpenChange, onCreated }: CreateStaff
         email: values.email,
         firstName: values.firstName || null,
         lastName: values.lastName || null,
+        middleName: values.middleName || null,
         phoneNumber: values.phoneNumber || null,
+        dateOfBirth: values.dateOfBirth || null,
+        city: values.city || null,
+        country: values.country || null,
+        salary: values.salary ? Number(values.salary) : null,
         permissionIds: Array.from(selectedIds),
       })
       onCreated({ email: result.email, temporaryPassword: result.temporaryPassword })
@@ -106,10 +116,25 @@ export function CreateStaffDialog({ open, onOpenChange, onCreated }: CreateStaff
             <Field label={t('staff.createDialog.lastNameLabel')}>
               <Input {...register('lastName')} />
             </Field>
+            <Field label={t('staff.createDialog.middleNameLabel')}>
+              <Input {...register('middleName')} />
+            </Field>
+            <Field label={t('staff.createDialog.phoneLabel')}>
+              <Input {...register('phoneNumber')} />
+            </Field>
+            <Field label={t('staff.createDialog.dateOfBirthLabel')}>
+              <Input type="date" {...register('dateOfBirth')} />
+            </Field>
+            <Field label={t('staff.createDialog.cityLabel')}>
+              <Input {...register('city')} />
+            </Field>
+            <Field label={t('staff.createDialog.countryLabel')}>
+              <Input {...register('country')} />
+            </Field>
+            <Field label={t('staff.detail.salaryTitle')}>
+              <Input type="number" min={0} step="0.01" {...register('salary')} />
+            </Field>
           </div>
-          <Field label={t('staff.createDialog.phoneLabel')}>
-            <Input {...register('phoneNumber')} />
-          </Field>
 
           <Field label={t('staff.createDialog.permissionsLabel')}>
             <PermissionCheckboxGrid

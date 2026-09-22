@@ -110,7 +110,11 @@
       "lastNameLabel": "Last name",
       "phoneLabel": "Phone",
       "saved": "Contact details saved",
-      "conflict": "This is edited in your student/teacher profile, not here."
+      "conflict": "This is edited in your student/teacher profile, not here.",
+      "middleNameLabel": "Middle name",
+      "dateOfBirthLabel": "Date of birth",
+      "cityLabel": "City",
+      "countryLabel": "Country"
     },
     "photo": {
       "description": "JPEG, PNG or WebP, up to 5 MB.",
@@ -583,6 +587,7 @@
     },
     "emptyRange": "No lessons in this period",
     "createLesson": "New lesson",
+    "newEvent": "New event",
     "generate": "Generate lessons",
     "reassignTeacher": "Reassign teacher",
     "selectLessons": "Select lessons",
@@ -1004,7 +1009,18 @@
       "resetPassword": "Reset password",
       "confirmResetTitle": "Reset this staff member's password?",
       "confirmResetDesc": "A new temporary password will be generated. The current password will stop working.",
-      "createdAt": "Created"
+      "createdAt": "Created",
+      "middleName": "Middle name",
+      "dateOfBirth": "Date of birth",
+      "city": "City",
+      "country": "Country",
+      "salaryTitle": "Salary",
+      "salaryLabel": "Amount",
+      "salaryPlaceholder": "Not set",
+      "salarySave": "Save salary",
+      "salarySaved": "Salary updated",
+      "salaryClear": "Clear",
+      "salaryInvalid": "Enter a non-negative number"
     },
     "createDialog": {
       "title": "New staff member",
@@ -1014,7 +1030,11 @@
       "phoneLabel": "Phone",
       "permissionsLabel": "Permissions",
       "submit": "Create",
-      "success": "Staff member created"
+      "success": "Staff member created",
+      "middleNameLabel": "Middle name",
+      "dateOfBirthLabel": "Date of birth",
+      "cityLabel": "City",
+      "countryLabel": "Country"
     },
     "tempPasswordDialog": {
       "title": "Temporary password",
@@ -1085,5 +1105,32 @@
     "submit": "Create",
     "accountActive": "Account active",
     "accountDeactivated": "Account deactivated"
+  },
+  "calendarEvents": {
+    "title": "My reminders and notices",
+    "add": "Add event",
+    "addPersonal": "Personal reminder",
+    "empty": "No events in this period",
+    "mine": "mine",
+    "everyone": "everyone",
+    "visibilityLabel": "Visibility",
+    "visibilityPersonal": "Only me",
+    "visibilityEveryone": "Everyone",
+    "titleLabel": "Title",
+    "descriptionLabel": "Description",
+    "descriptionOptional": "optional",
+    "startLabel": "Start",
+    "endLabel": "End",
+    "allDayLabel": "All day",
+    "save": "Save",
+    "edit": "Edit event",
+    "delete": "Delete",
+    "confirmDeleteTitle": "Delete this event?",
+    "confirmDeleteDesc": "This cannot be undone.",
+    "created": "Event created",
+    "updated": "Event updated",
+    "deleted": "Event deleted",
+    "endBeforeStart": "An event cannot end before it starts",
+    "titleRequired": "Title is required"
   }
 }

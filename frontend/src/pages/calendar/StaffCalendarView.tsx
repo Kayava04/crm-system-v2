@@ -23,7 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { TeacherSearchInput } from '@/components/shared/TeacherSearchInput'
+import { Input } from '@/components/ui/input'
 import { Checkbox } from '@/components/ui/checkbox'
 import { CreateLessonDialog } from './CreateLessonDialog'
 import { GenerateScheduleDialog } from './GenerateScheduleDialog'
@@ -56,7 +56,7 @@ export function StaffCalendarView() {
   const canManage = useCan('CanManageSchedule')
 
   const { from, to, weekStart, weekEnd, goPrev, goNext, goToday } = useWeekRange()
-  const [teacherFilter, setTeacherFilter] = useState<{ id: string; fullName: string } | null>(null)
+  const [search, setSearch] = useState('')
   const [groupFilter, setGroupFilter] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
 
@@ -82,13 +82,12 @@ export function StaffCalendarView() {
       // rollover), so a bare end-of-week date would cut off that whole last
       // day's lessons. Ask for one day past `to` to include it fully.
       dateTo: addOneDay(to),
-      teacherId: teacherFilter?.id || undefined,
       groupId: groupFilter || undefined,
       status: (statusFilter || undefined) as ScheduleStatus | undefined,
       page: 1,
       pageSize: 200,
     }),
-    [from, to, teacherFilter, groupFilter, statusFilter],
+    [from, to, groupFilter, statusFilter],
   )
 
   const { data, isLoading } = useQuery({
@@ -99,9 +98,21 @@ export function StaffCalendarView() {
   const rows: ScheduleListItem[] = data?.items ?? []
   const resolved = useResolvedSchedules(rows)
 
+  const filteredResolved = useMemo(() => {
+    const term = search.trim().toLowerCase()
+    if (!term) return resolved
+    return resolved.filter((r) => {
+      const haystack = [r.courseName, r.teacherName, r.groupName, r.studentName]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase()
+      return haystack.includes(term)
+    })
+  }, [resolved, search])
+
   const grouped = useMemo(() => {
     const byDay = new Map<string, ResolvedScheduleRow[]>()
-    for (const r of resolved) {
+    for (const r of filteredResolved) {
       const key = r.row.scheduledDate.slice(0, 10)
       const list = byDay.get(key) ?? []
       list.push(r)
@@ -118,7 +129,7 @@ export function StaffCalendarView() {
       cursor.setDate(cursor.getDate() + 1)
     }
     return days
-  }, [resolved, weekStart])
+  }, [filteredResolved, weekStart])
 
   function invalidate() {
     queryClient.invalidateQueries({ queryKey: ['schedules'] })
@@ -138,15 +149,15 @@ export function StaffCalendarView() {
     })
   }
 
-  const hasFilters = !!(teacherFilter || groupFilter || statusFilter)
+  const hasFilters = !!(search || groupFilter || statusFilter)
   const rangeLabel = `${weekStart.toLocaleDateString(lang, { day: 'numeric', month: 'short' })} – ${weekEnd.toLocaleDateString(lang, { day: 'numeric', month: 'short' })}`
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="flex flex-col gap-3">
         <h1 className="text-2xl font-semibold tracking-tight">{t('calendar.title')}</h1>
         {canManage && (
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap justify-end gap-2">
             <Button size="sm" onClick={() => setCreateOpen(true)}>
               <Plus />
               {t('calendar.createLesson')}
@@ -192,11 +203,11 @@ export function StaffCalendarView() {
         </div>
 
         <div className="flex flex-wrap items-end gap-3">
-          <div className="min-w-48">
-            <TeacherSearchInput
-              value={teacherFilter}
-              onChange={setTeacherFilter}
-              placeholder={t('calendar.filters.teacher')}
+          <div className="min-w-56 flex-1">
+            <Input
+              placeholder={t('calendar.filters.searchPlaceholder')}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
             />
           </div>
           <Select value={groupFilter} onValueChange={(v) => setGroupFilter(v === 'any' ? '' : v)}>
@@ -230,7 +241,7 @@ export function StaffCalendarView() {
               variant="ghost"
               size="sm"
               onClick={() => {
-                setTeacherFilter(null)
+                setSearch('')
                 setGroupFilter('')
                 setStatusFilter('')
               }}
@@ -248,7 +259,7 @@ export function StaffCalendarView() {
         </div>
       )}
 
-      {!isLoading && rows.length === 0 && (
+      {!isLoading && filteredResolved.length === 0 && (
         <p className="text-sm text-muted-foreground">{t('calendar.emptyRange')}</p>
       )}
 

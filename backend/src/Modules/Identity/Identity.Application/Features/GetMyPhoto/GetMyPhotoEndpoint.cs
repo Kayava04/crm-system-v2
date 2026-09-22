@@ -36,7 +36,7 @@ public static class GetMyPhotoEndpoint
             return Results.Problem(detail: "You have no photo.", statusCode: StatusCodes.Status404NotFound);
 
         // The browser must not guess a different type from the content, and must ask again before reusing a cached copy
-        http.Response.Headers["X-Content-Type-Options"] = "nosniff";
+        http.Response.Headers.XContentTypeOptions = "nosniff";
         http.Response.Headers.CacheControl = "private, no-cache";
 
         return Results.File(

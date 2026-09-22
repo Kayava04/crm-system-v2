@@ -5790,6 +5790,14 @@
             }
           },
           {
+            "name": "userId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
             "name": "period",
             "in": "query",
             "schema": {
@@ -5852,7 +5860,7 @@
         "tags": [
           "Billing - Payrolls"
         ],
-        "summary": "Calculate and create a teacher payroll for a period",
+        "summary": "Calculate and create a payroll for a period: a teacher's from lessons taught, a staff member's from their Salary",
         "operationId": "CreatePayroll",
         "requestBody": {
           "content": {
@@ -5918,7 +5926,7 @@
         "tags": [
           "Billing - Payrolls"
         ],
-        "summary": "The payrolls of the current teacher",
+        "summary": "The payrolls of the current account: a teacher's from lessons taught, a staff member's from their Salary",
         "operationId": "GetMyPayrolls",
         "parameters": [
           {
@@ -5973,8 +5981,8 @@
               }
             }
           },
-          "404": {
-            "description": "Not Found",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "application/problem+json": {
                 "schema": {
@@ -8260,12 +8268,23 @@
       "CreatePayrollRequest": {
         "required": [
           "teacherId",
+          "userId",
           "period"
         ],
         "type": "object",
         "properties": {
           "teacherId": {
-            "type": "string",
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "userId": {
+            "type": [
+              "null",
+              "string"
+            ],
             "format": "uuid"
           },
           "period": {
@@ -8277,6 +8296,7 @@
         "required": [
           "id",
           "teacherId",
+          "userId",
           "period",
           "baseSalary",
           "lessonsRate",
@@ -8291,7 +8311,17 @@
             "format": "uuid"
           },
           "teacherId": {
-            "type": "string",
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "userId": {
+            "type": [
+              "null",
+              "string"
+            ],
             "format": "uuid"
           },
           "period": {
@@ -10463,6 +10493,7 @@
         "required": [
           "id",
           "teacherId",
+          "userId",
           "period",
           "baseSalary",
           "lessonsRate",
@@ -10480,7 +10511,17 @@
             "format": "uuid"
           },
           "teacherId": {
-            "type": "string",
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "userId": {
+            "type": [
+              "null",
+              "string"
+            ],
             "format": "uuid"
           },
           "period": {
@@ -10545,6 +10586,7 @@
         "required": [
           "id",
           "teacherId",
+          "userId",
           "period",
           "completedLessonsCount",
           "totalAmount",
@@ -10557,7 +10599,17 @@
             "format": "uuid"
           },
           "teacherId": {
-            "type": "string",
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "userId": {
+            "type": [
+              "null",
+              "string"
+            ],
             "format": "uuid"
           },
           "period": {

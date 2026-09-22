@@ -16,7 +16,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { Field } from '@/components/shared/Field'
-import { TeacherSearchInput } from '@/components/shared/TeacherSearchInput'
+import { EmployeeSearchInput, type EmployeePick } from '@/components/shared/EmployeeSearchInput'
 
 interface CreatePayrollDialogProps {
   open: boolean
@@ -31,7 +31,7 @@ type FormValues = z.infer<typeof schema>
 
 export function CreatePayrollDialog({ open, onOpenChange, onCreated }: CreatePayrollDialogProps) {
   const { t } = useTranslation()
-  const [teacher, setTeacher] = useState<{ id: string; fullName: string } | null>(null)
+  const [employee, setEmployee] = useState<EmployeePick | null>(null)
   const [formError, setFormError] = useState<string | null>(null)
 
   const {
@@ -44,7 +44,7 @@ export function CreatePayrollDialog({ open, onOpenChange, onCreated }: CreatePay
   function handleClose(next: boolean) {
     if (!next) {
       reset()
-      setTeacher(null)
+      setEmployee(null)
       setFormError(null)
     }
     onOpenChange(next)
@@ -52,12 +52,16 @@ export function CreatePayrollDialog({ open, onOpenChange, onCreated }: CreatePay
 
   async function onSubmit(values: FormValues) {
     setFormError(null)
-    if (!teacher) {
+    if (!employee) {
       setFormError(t('billing.payroll.createDialog.teacherLabel'))
       return
     }
     try {
-      await createPayroll({ teacherId: teacher.id, period: values.period })
+      await createPayroll({
+        teacherId: employee.kind === 'teacher' ? employee.id : null,
+        userId: employee.kind === 'staff' ? employee.id : null,
+        period: values.period,
+      })
       toast.success(t('billing.payroll.createDialog.success'))
       onCreated()
       handleClose(false)
@@ -78,7 +82,7 @@ export function CreatePayrollDialog({ open, onOpenChange, onCreated }: CreatePay
           {formError && <p className="text-sm text-destructive">{formError}</p>}
 
           <Field label={t('billing.payroll.createDialog.teacherLabel')}>
-            <TeacherSearchInput value={teacher} onChange={setTeacher} />
+            <EmployeeSearchInput value={employee} onChange={setEmployee} />
           </Field>
           <Field
             label={t('billing.payroll.createDialog.periodLabel')}

@@ -96,7 +96,8 @@
       "contact": "Contact details",
       "profileData": "Profile data",
       "photo": "Photo",
-      "password": "Password"
+      "password": "Password",
+      "salary": "Salary"
     },
     "account": {
       "emailLabel": "Email",
@@ -164,6 +165,10 @@
       "effectiveFrom": "Effective from",
       "noRates": "No rates set yet",
       "editNote": "Edited by school staff."
+    },
+    "salary": {
+      "description": "Your salary is set by an administrator with staff-management rights.",
+      "historyTitle": "Accrual history"
     }
   },
   "enums": {
@@ -783,13 +788,13 @@
       "add": "Run payroll",
       "empty": "No payroll records found",
       "filters": {
-        "teacher": "Teacher",
+        "teacher": "Employee",
         "status": "Status",
         "any": "Any",
         "clear": "Clear filters"
       },
       "columns": {
-        "teacher": "Teacher",
+        "teacher": "Employee",
         "period": "Period",
         "lessonsCount": "Lessons completed",
         "amount": "Amount",
@@ -797,7 +802,7 @@
       },
       "detail": {
         "title": "Payroll",
-        "teacher": "Teacher",
+        "teacher": "Employee",
         "period": "Period",
         "baseSalary": "Base salary",
         "lessonsRate": "Lesson rate",
@@ -811,11 +816,13 @@
       },
       "createDialog": {
         "title": "Run payroll",
-        "teacherLabel": "Teacher",
+        "teacherLabel": "Employee",
         "periodLabel": "Period (e.g. 2026-09)",
         "submit": "Calculate",
         "success": "Payroll created"
-      }
+      },
+      "kindTeacher": "Teacher",
+      "kindStaff": "Staff"
     }
   },
   "notifications": {

@@ -1,15 +1,16 @@
-import { useQueries } from '@tanstack/react-query'
+import { useQueries, useQuery } from '@tanstack/react-query'
 import type { PayrollListItem } from './api'
 import { getTeacherById } from '@/features/teachers/api'
+import { getStaff } from '@/features/staff/api'
 
 export interface ResolvedPayrollRow {
   row: PayrollListItem
-  teacherName?: string
+  employeeName?: string
 }
 
-/** `GET /api/billing/payrolls` rows carry a raw teacherId but no display name. */
+/** `GET /api/billing/payrolls` rows carry a raw teacherId or userId but no display name. */
 export function useResolvedPayrolls(rows: PayrollListItem[]): ResolvedPayrollRow[] {
-  const teacherIds = Array.from(new Set(rows.map((r) => r.teacherId).filter(Boolean)))
+  const teacherIds = Array.from(new Set(rows.map((r) => r.teacherId).filter((id): id is string => !!id)))
   const teacherQueries = useQueries({
     queries: teacherIds.map((id) => ({
       queryKey: ['teachers', id, 'lookup-name'],
@@ -24,5 +25,17 @@ export function useResolvedPayrolls(rows: PayrollListItem[]): ResolvedPayrollRow
       .map((q) => [q.data!.id, `${q.data!.lastName} ${q.data!.firstName}`]),
   )
 
-  return rows.map((row) => ({ row, teacherName: teacherNameById.get(row.teacherId) }))
+  const hasStaffRows = rows.some((r) => !!r.userId)
+  const { data: staff } = useQuery({
+    queryKey: ['staff', 'list', 'lookup-name'],
+    queryFn: () => getStaff(),
+    enabled: hasStaffRows,
+    staleTime: 60_000,
+  })
+  const staffNameById = new Map((staff ?? []).map((s) => [s.id, s.fullName ?? s.email]))
+
+  return rows.map((row) => ({
+    row,
+    employeeName: row.teacherId ? teacherNameById.get(row.teacherId) : staffNameById.get(row.userId ?? ''),
+  }))
 }

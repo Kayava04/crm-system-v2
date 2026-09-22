@@ -1280,7 +1280,7 @@ export interface paths {
         /** Get all teacher payrolls */
         get: operations["GetPayrolls"];
         put?: never;
-        /** Calculate and create a teacher payroll for a period */
+        /** Calculate and create a payroll for a period: a teacher's from lessons taught, a staff member's from their Salary */
         post: operations["CreatePayroll"];
         delete?: never;
         options?: never;
@@ -1295,7 +1295,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** The payrolls of the current teacher */
+        /** The payrolls of the current account: a teacher's from lessons taught, a staff member's from their Salary */
         get: operations["GetMyPayrolls"];
         put?: never;
         post?: never;
@@ -1939,14 +1939,18 @@ export interface components {
         };
         CreatePayrollRequest: {
             /** Format: uuid */
-            teacherId: string;
+            teacherId: null | string;
+            /** Format: uuid */
+            userId: null | string;
             period: string;
         };
         CreatePayrollResponse: {
             /** Format: uuid */
             id: string;
             /** Format: uuid */
-            teacherId: string;
+            teacherId: null | string;
+            /** Format: uuid */
+            userId: null | string;
             period: string;
             /** Format: double */
             baseSalary: number | string;
@@ -2490,7 +2494,9 @@ export interface components {
             /** Format: uuid */
             id: string;
             /** Format: uuid */
-            teacherId: string;
+            teacherId: null | string;
+            /** Format: uuid */
+            userId: null | string;
             period: string;
             /** Format: double */
             baseSalary: number | string;
@@ -2512,7 +2518,9 @@ export interface components {
             /** Format: uuid */
             id: string;
             /** Format: uuid */
-            teacherId: string;
+            teacherId: null | string;
+            /** Format: uuid */
+            userId: null | string;
             period: string;
             /** Format: int32 */
             completedLessonsCount: number | string;
@@ -6839,6 +6847,7 @@ export interface operations {
         parameters: {
             query?: {
                 teacherId?: string;
+                userId?: string;
                 period?: string;
                 status?: components["schemas"]["PayrollStatus"];
                 page?: number | string;
@@ -6935,8 +6944,8 @@ export interface operations {
                     "application/json": components["schemas"]["PagedResponseOfPayrollListResponse"];
                 };
             };
-            /** @description Not Found */
-            404: {
+            /** @description Unauthorized */
+            401: {
                 headers: {
                     [name: string]: unknown;
                 };

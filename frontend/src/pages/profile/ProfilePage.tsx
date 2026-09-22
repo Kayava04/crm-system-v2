@@ -11,6 +11,7 @@ import { ContactTab } from './ContactTab'
 import { ProfileDataTab } from './ProfileDataTab'
 import { PhotoTab } from './PhotoTab'
 import { PasswordTab } from './PasswordTab'
+import { SalaryTab } from './SalaryTab'
 
 interface Section {
   value: string
@@ -32,6 +33,7 @@ export function ProfilePage() {
   const sections = useMemo<Section[]>(() => {
     const list: Section[] = [{ value: 'account', labelKey: 'profile.tabs.account' }]
     if (isAdmin) list.push({ value: 'contact', labelKey: 'profile.tabs.contact' })
+    if (isAdmin) list.push({ value: 'salary', labelKey: 'profile.tabs.salary' })
     if (hasProfile) list.push({ value: 'profile-data', labelKey: 'profile.tabs.profileData' })
     list.push({ value: 'photo', labelKey: 'profile.tabs.photo' })
     list.push({ value: 'password', labelKey: 'profile.tabs.password' })
@@ -90,6 +92,7 @@ export function ProfilePage() {
         <div className="min-w-0 flex-1">
           {activeSection === 'account' && <AccountTab />}
           {activeSection === 'contact' && isAdmin && <ContactTab />}
+          {activeSection === 'salary' && isAdmin && <SalaryTab />}
           {activeSection === 'profile-data' && hasProfile && <ProfileDataTab />}
           {activeSection === 'photo' && <PhotoTab />}
           {activeSection === 'password' && <PasswordTab />}

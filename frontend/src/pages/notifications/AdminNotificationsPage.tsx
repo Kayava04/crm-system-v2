@@ -447,7 +447,7 @@ function LogCard() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-wrap items-end gap-3">
+      <div className="flex flex-wrap items-center gap-3">
         <Select
           value={type}
           onValueChange={(v) => {

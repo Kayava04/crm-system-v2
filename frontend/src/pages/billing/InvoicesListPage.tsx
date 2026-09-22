@@ -9,10 +9,13 @@ import {
   useResolvedInvoices,
   type ResolvedInvoiceRow,
 } from '@/features/billing/useResolvedInvoices'
+import { getAllCoursesForLookup } from '@/features/courses/api'
 import { useCan } from '@/features/auth/useCan'
 import { enumLabel } from '@/lib/enumLabels'
 import { toNum, formatCurrency, formatDate } from '@/lib/utils'
+import { useDebouncedValue } from '@/lib/useDebouncedValue'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import {
   Select,
@@ -42,6 +45,9 @@ export function InvoicesListPage() {
 
   const [page, setPage] = useState(1)
   const [status, setStatus] = useState('')
+  const [searchInput, setSearchInput] = useState('')
+  const debouncedSearch = useDebouncedValue(searchInput)
+  const [courseFilter, setCourseFilter] = useState('')
   const [createOpen, setCreateOpen] = useState(false)
   const [selected, setSelected] = useState<ResolvedInvoiceRow | null>(null)
 
@@ -57,6 +63,30 @@ export function InvoicesListPage() {
   })
 
   const resolved = useResolvedInvoices(data?.items ?? [])
+
+  /** `GET /api/billing/invoices` has no free-text search or courseId filter
+   * param (only studentId/enrollmentId/period/status), so search and the
+   * course filter are applied client-side over the already-resolved current
+   * page rather than sent to the server - a documented backend limitation,
+   * same pattern as useResolvedInvoices/useResolvedEnrollments above. */
+  const { data: courses } = useQuery({
+    queryKey: ['courses', 'lookup-all'],
+    queryFn: getAllCoursesForLookup,
+    staleTime: 5 * 60_000,
+  })
+
+  const filteredResolved = useMemo(() => {
+    const term = debouncedSearch.trim().toLowerCase()
+    return resolved.filter((r) => {
+      if (courseFilter && r.courseId !== courseFilter) return false
+      if (!term) return true
+      return (
+        (r.studentName ?? '').toLowerCase().includes(term) ||
+        (r.courseName ?? '').toLowerCase().includes(term) ||
+        r.row.period.toLowerCase().includes(term)
+      )
+    })
+  }, [resolved, debouncedSearch, courseFilter])
 
   function invalidate() {
     queryClient.invalidateQueries({ queryKey: ['invoices'] })
@@ -124,6 +154,26 @@ export function InvoicesListPage() {
       </div>
 
       <div className="flex flex-wrap items-end gap-3">
+        <div className="min-w-56 flex-1">
+          <Input
+            placeholder={t('billing.invoices.filters.searchPlaceholder')}
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+          />
+        </div>
+        <Select value={courseFilter} onValueChange={(v) => setCourseFilter(v === 'any' ? '' : v)}>
+          <SelectTrigger className="w-48">
+            <SelectValue placeholder={t('billing.invoices.filters.course')} />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="any">{t('billing.invoices.filters.any')}</SelectItem>
+            {courses?.map((c) => (
+              <SelectItem key={c.id} value={c.id}>
+                {c.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
         <Select
           value={status}
           onValueChange={(v) => {
@@ -143,11 +193,13 @@ export function InvoicesListPage() {
             ))}
           </SelectContent>
         </Select>
-        {status && (
+        {(status || searchInput || courseFilter) && (
           <Button
             variant="ghost"
             onClick={() => {
               setStatus('')
+              setSearchInput('')
+              setCourseFilter('')
               setPage(1)
             }}
           >
@@ -159,7 +211,7 @@ export function InvoicesListPage() {
       <div className={isPlaceholderData ? 'opacity-60 transition-opacity' : undefined}>
         <DataTable
           columns={columns}
-          rows={resolved}
+          rows={filteredResolved}
           rowKey={(row) => row.row.id}
           isLoading={isPending}
           emptyMessage={t('billing.invoices.empty')}

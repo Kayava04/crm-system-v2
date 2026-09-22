@@ -9,35 +9,88 @@ import { ChangePasswordPage } from '@/pages/auth/ChangePasswordPage'
 import { ForbiddenPage } from '@/pages/errors/ForbiddenPage'
 import { NotFoundPage } from '@/pages/errors/NotFoundPage'
 import { HomePage } from '@/pages/HomePage'
-import { ProfilePage } from '@/pages/profile/ProfilePage'
-import { StudentsListPage } from '@/pages/students/StudentsListPage'
-import { StudentCreatePage } from '@/pages/students/StudentCreatePage'
-import { StudentDetailPage } from '@/pages/students/StudentDetailPage'
-import { TeachersListPage } from '@/pages/teachers/TeachersListPage'
-import { TeacherCreatePage } from '@/pages/teachers/TeacherCreatePage'
-import { TeacherDetailPage } from '@/pages/teachers/TeacherDetailPage'
-import { CoursesListPage } from '@/pages/courses/CoursesListPage'
-import { CourseCreatePage } from '@/pages/courses/CourseCreatePage'
-import { CourseDetailPage } from '@/pages/courses/CourseDetailPage'
-import { EnrollmentDetailPage } from '@/pages/enrollments/EnrollmentDetailPage'
-import { EnrollmentsPage } from '@/pages/enrollments/EnrollmentsPage'
-import { CalendarPage } from '@/pages/calendar/CalendarPage'
-import { StudyGroupsListPage } from '@/pages/studyGroups/StudyGroupsListPage'
-import { StudyGroupCreatePage } from '@/pages/studyGroups/StudyGroupCreatePage'
-import { StudyGroupDetailPage } from '@/pages/studyGroups/StudyGroupDetailPage'
-import { InvoicesListPage } from '@/pages/billing/InvoicesListPage'
-import { MyInvoicesPage } from '@/pages/billing/MyInvoicesPage'
-import { PayrollsListPage } from '@/pages/billing/PayrollsListPage'
-import { MyPayrollsPage } from '@/pages/billing/MyPayrollsPage'
-import { NotificationsPage } from '@/pages/notifications/NotificationsPage'
-import { AdminNotificationsPage } from '@/pages/notifications/AdminNotificationsPage'
-import { MaterialsListPage } from '@/pages/materials/MaterialsListPage'
-import { StaffListPage } from '@/pages/staff/StaffListPage'
-import { MyStudentsPage } from '@/pages/teachers/MyStudentsPage'
 
+// Every page behind the app shell is loaded on demand: nobody pays for the staff, billing or
+// reporting screens' code just to see their own calendar. Login, the shell and the error pages
+// stay eager since they are on the critical path for everyone.
+const ProfilePage = lazy(() => import('@/pages/profile/ProfilePage').then((m) => ({ default: m.ProfilePage })))
+const StudentsListPage = lazy(() =>
+  import('@/pages/students/StudentsListPage').then((m) => ({ default: m.StudentsListPage })),
+)
+const StudentCreatePage = lazy(() =>
+  import('@/pages/students/StudentCreatePage').then((m) => ({ default: m.StudentCreatePage })),
+)
+const StudentDetailPage = lazy(() =>
+  import('@/pages/students/StudentDetailPage').then((m) => ({ default: m.StudentDetailPage })),
+)
+const TeachersListPage = lazy(() =>
+  import('@/pages/teachers/TeachersListPage').then((m) => ({ default: m.TeachersListPage })),
+)
+const TeacherCreatePage = lazy(() =>
+  import('@/pages/teachers/TeacherCreatePage').then((m) => ({ default: m.TeacherCreatePage })),
+)
+const TeacherDetailPage = lazy(() =>
+  import('@/pages/teachers/TeacherDetailPage').then((m) => ({ default: m.TeacherDetailPage })),
+)
+const MyStudentsPage = lazy(() =>
+  import('@/pages/teachers/MyStudentsPage').then((m) => ({ default: m.MyStudentsPage })),
+)
+const CoursesListPage = lazy(() =>
+  import('@/pages/courses/CoursesListPage').then((m) => ({ default: m.CoursesListPage })),
+)
+const CourseCreatePage = lazy(() =>
+  import('@/pages/courses/CourseCreatePage').then((m) => ({ default: m.CourseCreatePage })),
+)
+const CourseDetailPage = lazy(() =>
+  import('@/pages/courses/CourseDetailPage').then((m) => ({ default: m.CourseDetailPage })),
+)
+const EnrollmentDetailPage = lazy(() =>
+  import('@/pages/enrollments/EnrollmentDetailPage').then((m) => ({ default: m.EnrollmentDetailPage })),
+)
+const EnrollmentsPage = lazy(() =>
+  import('@/pages/enrollments/EnrollmentsPage').then((m) => ({ default: m.EnrollmentsPage })),
+)
+const CalendarPage = lazy(() => import('@/pages/calendar/CalendarPage').then((m) => ({ default: m.CalendarPage })))
+const StudyGroupsListPage = lazy(() =>
+  import('@/pages/studyGroups/StudyGroupsListPage').then((m) => ({ default: m.StudyGroupsListPage })),
+)
+const StudyGroupCreatePage = lazy(() =>
+  import('@/pages/studyGroups/StudyGroupCreatePage').then((m) => ({ default: m.StudyGroupCreatePage })),
+)
+const StudyGroupDetailPage = lazy(() =>
+  import('@/pages/studyGroups/StudyGroupDetailPage').then((m) => ({ default: m.StudyGroupDetailPage })),
+)
+const InvoicesListPage = lazy(() =>
+  import('@/pages/billing/InvoicesListPage').then((m) => ({ default: m.InvoicesListPage })),
+)
+const MyInvoicesPage = lazy(() =>
+  import('@/pages/billing/MyInvoicesPage').then((m) => ({ default: m.MyInvoicesPage })),
+)
+const PayrollsListPage = lazy(() =>
+  import('@/pages/billing/PayrollsListPage').then((m) => ({ default: m.PayrollsListPage })),
+)
+const MyPayrollsPage = lazy(() =>
+  import('@/pages/billing/MyPayrollsPage').then((m) => ({ default: m.MyPayrollsPage })),
+)
+const NotificationsPage = lazy(() =>
+  import('@/pages/notifications/NotificationsPage').then((m) => ({ default: m.NotificationsPage })),
+)
+const AdminNotificationsPage = lazy(() =>
+  import('@/pages/notifications/AdminNotificationsPage').then((m) => ({ default: m.AdminNotificationsPage })),
+)
+const MaterialsListPage = lazy(() =>
+  import('@/pages/materials/MaterialsListPage').then((m) => ({ default: m.MaterialsListPage })),
+)
+const StaffListPage = lazy(() => import('@/pages/staff/StaffListPage').then((m) => ({ default: m.StaffListPage })))
 const DashboardPage = lazy(() =>
   import('@/pages/reports/DashboardPage').then((m) => ({ default: m.DashboardPage })),
 )
+
+// Wraps a lazily-loaded page's element with the shared Suspense fallback, so every route below reads
+// the same way whether or not it happens to be code-split.
+function Lazy({ children }: { children: React.ReactNode }) {
+  return <Suspense fallback={<PageSpinner />}>{children}</Suspense>
+}
 
 export default function App() {
   return (
@@ -65,9 +118,9 @@ export default function App() {
           path="dashboard"
           element={
             <RequireAccess permission="CanViewReports">
-              <Suspense fallback={<PageSpinner />}>
+              <Lazy>
                 <DashboardPage />
-              </Suspense>
+              </Lazy>
             </RequireAccess>
           }
         />
@@ -75,7 +128,9 @@ export default function App() {
           path="calendar"
           element={
             <RequireAccess permission="CanViewSchedule" roles={['Teacher', 'Student']}>
-              <CalendarPage />
+              <Lazy>
+                <CalendarPage />
+              </Lazy>
             </RequireAccess>
           }
         />
@@ -83,7 +138,9 @@ export default function App() {
           path="students"
           element={
             <RequireAccess permission="CanViewStudents">
-              <StudentsListPage />
+              <Lazy>
+                <StudentsListPage />
+              </Lazy>
             </RequireAccess>
           }
         />
@@ -91,7 +148,9 @@ export default function App() {
           path="students/new"
           element={
             <RequireAccess permission="CanCreateStudents">
-              <StudentCreatePage />
+              <Lazy>
+                <StudentCreatePage />
+              </Lazy>
             </RequireAccess>
           }
         />
@@ -99,7 +158,9 @@ export default function App() {
           path="students/:id"
           element={
             <RequireAccess permission="CanViewStudents">
-              <StudentDetailPage />
+              <Lazy>
+                <StudentDetailPage />
+              </Lazy>
             </RequireAccess>
           }
         />
@@ -107,7 +168,9 @@ export default function App() {
           path="teachers"
           element={
             <RequireAccess permission="CanViewTeachers">
-              <TeachersListPage />
+              <Lazy>
+                <TeachersListPage />
+              </Lazy>
             </RequireAccess>
           }
         />
@@ -115,7 +178,9 @@ export default function App() {
           path="teachers/new"
           element={
             <RequireAccess permission="CanCreateTeachers">
-              <TeacherCreatePage />
+              <Lazy>
+                <TeacherCreatePage />
+              </Lazy>
             </RequireAccess>
           }
         />
@@ -123,7 +188,9 @@ export default function App() {
           path="teachers/:id"
           element={
             <RequireAccess permission="CanViewTeachers">
-              <TeacherDetailPage />
+              <Lazy>
+                <TeacherDetailPage />
+              </Lazy>
             </RequireAccess>
           }
         />
@@ -131,7 +198,9 @@ export default function App() {
           path="my-students"
           element={
             <RequireAccess roles={['Teacher']}>
-              <MyStudentsPage />
+              <Lazy>
+                <MyStudentsPage />
+              </Lazy>
             </RequireAccess>
           }
         />
@@ -139,7 +208,9 @@ export default function App() {
           path="courses"
           element={
             <RequireAccess permission="CanViewCourses">
-              <CoursesListPage />
+              <Lazy>
+                <CoursesListPage />
+              </Lazy>
             </RequireAccess>
           }
         />
@@ -147,7 +218,9 @@ export default function App() {
           path="courses/new"
           element={
             <RequireAccess permission="CanManageCourses">
-              <CourseCreatePage />
+              <Lazy>
+                <CourseCreatePage />
+              </Lazy>
             </RequireAccess>
           }
         />
@@ -155,7 +228,9 @@ export default function App() {
           path="courses/:id"
           element={
             <RequireAccess permission="CanViewCourses">
-              <CourseDetailPage />
+              <Lazy>
+                <CourseDetailPage />
+              </Lazy>
             </RequireAccess>
           }
         />
@@ -163,7 +238,9 @@ export default function App() {
           path="enrollments"
           element={
             <RequireAccess permission="CanViewEnrollments" roles={['Student']}>
-              <EnrollmentsPage />
+              <Lazy>
+                <EnrollmentsPage />
+              </Lazy>
             </RequireAccess>
           }
         />
@@ -171,7 +248,9 @@ export default function App() {
           path="enrollments/:id"
           element={
             <RequireAccess permission="CanViewEnrollments">
-              <EnrollmentDetailPage />
+              <Lazy>
+                <EnrollmentDetailPage />
+              </Lazy>
             </RequireAccess>
           }
         />
@@ -179,7 +258,9 @@ export default function App() {
           path="study-groups"
           element={
             <RequireAccess permission="CanViewSchedule">
-              <StudyGroupsListPage />
+              <Lazy>
+                <StudyGroupsListPage />
+              </Lazy>
             </RequireAccess>
           }
         />
@@ -187,7 +268,9 @@ export default function App() {
           path="study-groups/new"
           element={
             <RequireAccess permission="CanManageSchedule">
-              <StudyGroupCreatePage />
+              <Lazy>
+                <StudyGroupCreatePage />
+              </Lazy>
             </RequireAccess>
           }
         />
@@ -195,7 +278,9 @@ export default function App() {
           path="study-groups/:id"
           element={
             <RequireAccess permission="CanViewSchedule">
-              <StudyGroupDetailPage />
+              <Lazy>
+                <StudyGroupDetailPage />
+              </Lazy>
             </RequireAccess>
           }
         />
@@ -203,7 +288,9 @@ export default function App() {
           path="billing/invoices"
           element={
             <RequireAccess permission="CanViewPayments">
-              <InvoicesListPage />
+              <Lazy>
+                <InvoicesListPage />
+              </Lazy>
             </RequireAccess>
           }
         />
@@ -211,7 +298,9 @@ export default function App() {
           path="billing/payroll"
           element={
             <RequireAccess permission="CanViewPayments">
-              <PayrollsListPage />
+              <Lazy>
+                <PayrollsListPage />
+              </Lazy>
             </RequireAccess>
           }
         />
@@ -219,7 +308,9 @@ export default function App() {
           path="invoices"
           element={
             <RequireAccess roles={['Student']}>
-              <MyInvoicesPage />
+              <Lazy>
+                <MyInvoicesPage />
+              </Lazy>
             </RequireAccess>
           }
         />
@@ -227,7 +318,9 @@ export default function App() {
           path="payroll"
           element={
             <RequireAccess roles={['Teacher']}>
-              <MyPayrollsPage />
+              <Lazy>
+                <MyPayrollsPage />
+              </Lazy>
             </RequireAccess>
           }
         />
@@ -235,16 +328,27 @@ export default function App() {
           path="materials"
           element={
             <RequireAccess permission="CanViewMaterials" roles={['Teacher', 'Student']}>
-              <MaterialsListPage />
+              <Lazy>
+                <MaterialsListPage />
+              </Lazy>
             </RequireAccess>
           }
         />
-        <Route path="notifications" element={<NotificationsPage />} />
+        <Route
+          path="notifications"
+          element={
+            <Lazy>
+              <NotificationsPage />
+            </Lazy>
+          }
+        />
         <Route
           path="notifications/admin"
           element={
             <RequireAccess permission="CanManageNotifications">
-              <AdminNotificationsPage />
+              <Lazy>
+                <AdminNotificationsPage />
+              </Lazy>
             </RequireAccess>
           }
         />
@@ -252,11 +356,20 @@ export default function App() {
           path="staff"
           element={
             <RequireAccess permission="CanManageAdmins">
-              <StaffListPage />
+              <Lazy>
+                <StaffListPage />
+              </Lazy>
             </RequireAccess>
           }
         />
-        <Route path="profile" element={<ProfilePage />} />
+        <Route
+          path="profile"
+          element={
+            <Lazy>
+              <ProfilePage />
+            </Lazy>
+          }
+        />
         <Route path="403" element={<ForbiddenPage />} />
       </Route>
 

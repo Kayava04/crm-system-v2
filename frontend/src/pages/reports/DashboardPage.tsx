@@ -513,7 +513,7 @@ export function DashboardPage() {
                   <p className="text-sm text-muted-foreground">
                     {t('reports.teachers.salaryOverview.title')}
                   </p>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                     <StatTile
                       label={t('reports.teachers.salaryOverview.teachersWithRate')}
                       value={toNum(teachers.salaryOverview.teachersWithRate)}

@@ -15,6 +15,7 @@ import {
   deleteCourse,
 } from '@/features/courses/api'
 import { getEnrollments } from '@/features/enrollments/api'
+import { useCourseTeachers } from '@/features/courses/useCourseTeachers'
 import { ApiError } from '@/api/errors'
 import { applyServerValidation } from '@/lib/applyServerValidation'
 import { enumLabel } from '@/lib/enumLabels'
@@ -65,6 +66,7 @@ export function CourseDetailPage() {
     queryFn: () => getCourseById(id),
     enabled: !!id,
   })
+  const { teachers, isLoading: teachersLoading } = useCourseTeachers(id)
 
   const { data: enrollments } = useQuery({
     queryKey: ['enrollments', { courseId: id }],
@@ -194,7 +196,7 @@ export function CourseDetailPage() {
           {t('courses.detail.backToList')}
         </Link>
 
-        <div className="flex flex-wrap items-center gap-4">
+        <div className="flex flex-col gap-3">
           <div className="flex flex-col gap-1">
             <h1 className="text-2xl font-semibold tracking-tight">{course.name}</h1>
             <div className="flex flex-wrap items-center gap-2">
@@ -208,7 +210,7 @@ export function CourseDetailPage() {
           </div>
 
           {canManage && (
-            <div className="ml-auto flex flex-wrap gap-2">
+            <div className="flex flex-wrap justify-end gap-2">
               {course.status === 'Active' ? (
                 <Button variant="outline" onClick={() => setArchiveOpen(true)}>
                   <Archive />
@@ -266,6 +268,16 @@ export function CourseDetailPage() {
                 <ReadField
                   label={t('courses.fields.lessonType')}
                   value={enumLabel(t, 'lessonType', course.lessonType)}
+                />
+                <ReadField
+                  label={t('courses.fields.teachers')}
+                  value={
+                    teachersLoading
+                      ? '…'
+                      : teachers.length > 0
+                        ? teachers.map((tch) => tch.name).join(', ')
+                        : '—'
+                  }
                 />
                 <ReadField
                   label={t('courses.fields.durationMonths')}

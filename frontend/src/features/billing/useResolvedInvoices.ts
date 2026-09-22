@@ -7,6 +7,7 @@ import { getAllCoursesForLookup } from '@/features/courses/api'
 export interface ResolvedInvoiceRow {
   row: InvoiceListItem
   studentName?: string
+  courseId?: string
   courseName?: string
 }
 
@@ -56,6 +57,7 @@ export function useResolvedInvoices(rows: InvoiceListItem[]): ResolvedInvoiceRow
     return {
       row,
       studentName: studentNameById.get(row.studentId),
+      courseId,
       courseName: courseId ? courseNameById.get(courseId) : undefined,
     }
   })

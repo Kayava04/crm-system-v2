@@ -6,10 +6,13 @@ import { Plus } from 'lucide-react'
 import { getEnrollments } from '@/features/enrollments/api'
 import type { EnrollmentStatus } from '@/features/enrollments/api'
 import { useResolvedEnrollments } from '@/features/enrollments/useResolvedEnrollments'
+import { getAllCoursesForLookup } from '@/features/courses/api'
 import { enumLabel } from '@/lib/enumLabels'
 import { toNum, formatCurrency, formatDate } from '@/lib/utils'
+import { useDebouncedValue } from '@/lib/useDebouncedValue'
 import { useCan } from '@/features/auth/useCan'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import {
   Select,
@@ -58,17 +61,21 @@ export function StaffEnrollmentsListPage() {
 
   const [searchParams, setSearchParams] = useSearchParams()
   const [createOpen, setCreateOpen] = useState(false)
+  const [searchInput, setSearchInput] = useState('')
+  const debouncedSearch = useDebouncedValue(searchInput)
 
   const page = Number(searchParams.get('page') ?? '1')
   const status = (searchParams.get('status') ?? '') as EnrollmentStatus | ''
+  const courseId = searchParams.get('courseId') ?? ''
 
   const filters = useMemo(
     () => ({
       status: status || undefined,
+      courseId: courseId || undefined,
       page,
       pageSize: 20,
     }),
-    [status, page],
+    [status, courseId, page],
   )
 
   const { data, isPending, isPlaceholderData } = useQuery({
@@ -77,18 +84,40 @@ export function StaffEnrollmentsListPage() {
     placeholderData: keepPreviousData,
   })
 
+  /** `GET /api/enrollments` accepts a real `courseId` filter (applied
+   * server-side above) but has no free-text search param, so - same as the
+   * invoices list - name search is applied client-side over the resolved
+   * current page. */
+  const { data: courses } = useQuery({
+    queryKey: ['courses', 'lookup-all'],
+    queryFn: getAllCoursesForLookup,
+    staleTime: 5 * 60_000,
+  })
+
   const resolved = useResolvedEnrollments(data?.items ?? [])
-  const rows: EnrollmentRow[] = resolved.map((r) => ({
-    id: r.row.id,
-    enrollmentNumber: r.row.enrollmentNumber,
-    status: r.row.status,
-    startDate: r.row.startDate,
-    endDate: r.row.endDate,
-    effectivePrice: r.row.effectivePrice,
-    studentName: r.studentName,
-    courseName: r.courseName,
-    isResolving: r.isResolving,
-  }))
+  const rows: EnrollmentRow[] = useMemo(() => {
+    const term = debouncedSearch.trim().toLowerCase()
+    return resolved
+      .map((r) => ({
+        id: r.row.id,
+        enrollmentNumber: r.row.enrollmentNumber,
+        status: r.row.status,
+        startDate: r.row.startDate,
+        endDate: r.row.endDate,
+        effectivePrice: r.row.effectivePrice,
+        studentName: r.studentName,
+        courseName: r.courseName,
+        isResolving: r.isResolving,
+      }))
+      .filter((row) => {
+        if (!term) return true
+        return (
+          row.enrollmentNumber.toLowerCase().includes(term) ||
+          (row.studentName ?? '').toLowerCase().includes(term) ||
+          (row.courseName ?? '').toLowerCase().includes(term)
+        )
+      })
+  }, [resolved, debouncedSearch])
 
   function updateParam(key: string, value: string) {
     const next = new URLSearchParams(searchParams)
@@ -150,12 +179,35 @@ export function StaffEnrollmentsListPage() {
       </div>
 
       <div className="flex flex-wrap items-end gap-3">
+        <div className="min-w-56 flex-1">
+          <Input
+            placeholder={t('enrollments.filters.searchPlaceholder')}
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+          />
+        </div>
+        <Select
+          value={courseId}
+          onValueChange={(v) => updateParam('courseId', v === 'any' ? '' : v)}
+        >
+          <SelectTrigger className="w-48">
+            <SelectValue placeholder={t('enrollments.filters.course')} />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="any">{t('enrollments.filters.any')}</SelectItem>
+            {courses?.map((c) => (
+              <SelectItem key={c.id} value={c.id}>
+                {c.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
         <Select value={status} onValueChange={(v) => updateParam('status', v === 'any' ? '' : v)}>
           <SelectTrigger className="w-40">
             <SelectValue placeholder={t('enrollments.columns.status')} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="any">{t('students.filters.any')}</SelectItem>
+            <SelectItem value="any">{t('enrollments.filters.any')}</SelectItem>
             {STATUSES.map((s) => (
               <SelectItem key={s} value={s}>
                 {enumLabel(t, 'enrollmentStatus', s)}
@@ -163,9 +215,19 @@ export function StaffEnrollmentsListPage() {
             ))}
           </SelectContent>
         </Select>
-        {status && (
-          <Button variant="ghost" onClick={() => updateParam('status', '')}>
-            {t('students.filters.clear')}
+        {(status || courseId || searchInput) && (
+          <Button
+            variant="ghost"
+            onClick={() => {
+              setSearchInput('')
+              const next = new URLSearchParams(searchParams)
+              next.delete('status')
+              next.delete('courseId')
+              next.delete('page')
+              setSearchParams(next, { replace: true })
+            }}
+          >
+            {t('enrollments.filters.clear')}
           </Button>
         )}
       </div>

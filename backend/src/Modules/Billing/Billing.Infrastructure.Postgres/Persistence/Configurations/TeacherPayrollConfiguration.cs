@@ -8,15 +8,18 @@ internal sealed class TeacherPayrollConfiguration : IEntityTypeConfiguration<Tea
 {
     public void Configure(EntityTypeBuilder<TeacherPayroll> builder)
     {
-        builder.ToTable("teacher_payrolls");
+        builder.ToTable("teacher_payrolls", t => t.HasCheckConstraint(
+            "ck_teacher_payrolls_target",
+            "(\"TeacherId\" IS NOT NULL) <> (\"UserId\" IS NOT NULL)"));
 
         builder.HasKey(p => p.Id);
 
         builder.Property(p => p.Id)
             .ValueGeneratedNever();
 
-        builder.Property(p => p.TeacherId)
-            .IsRequired();
+        builder.Property(p => p.TeacherId);
+
+        builder.Property(p => p.UserId);
 
         builder.Property(p => p.Period)
             .IsRequired()
@@ -45,6 +48,9 @@ internal sealed class TeacherPayrollConfiguration : IEntityTypeConfiguration<Tea
             .IsRequired();
 
         builder.HasIndex(p => new { p.TeacherId, p.Period })
+            .IsUnique();
+
+        builder.HasIndex(p => new { p.UserId, p.Period })
             .IsUnique();
     }
 }

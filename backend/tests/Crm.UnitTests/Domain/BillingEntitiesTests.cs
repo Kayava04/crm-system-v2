@@ -11,7 +11,7 @@ public class BillingEntitiesTests
     [InlineData(0, 250.5, 4, 1002)]
     public void Payroll_total_is_base_plus_rate_times_completed_lessons(decimal baseSalary, decimal rate, int lessons, decimal expected)
     {
-        var payroll = TeacherPayroll.Create(Guid.NewGuid(), "2030-05", baseSalary, rate, lessons);
+        var payroll = TeacherPayroll.CreateForTeacher(Guid.NewGuid(), "2030-05", baseSalary, rate, lessons);
 
         Assert.Equal(expected, payroll.TotalAmount);
         Assert.Equal(PayrollStatus.Pending, payroll.Status);
@@ -21,12 +21,28 @@ public class BillingEntitiesTests
     [Fact]
     public void Payroll_MarkPaid_sets_status_and_time()
     {
-        var payroll = TeacherPayroll.Create(Guid.NewGuid(), "2030-05", 1000, 100, 1);
+        var payroll = TeacherPayroll.CreateForTeacher(Guid.NewGuid(), "2030-05", 1000, 100, 1);
 
         payroll.MarkPaid();
 
         Assert.Equal(PayrollStatus.Paid, payroll.Status);
         Assert.NotNull(payroll.PaidAt);
+    }
+
+    [Fact]
+    public void A_staff_payroll_is_the_flat_salary_with_no_lesson_component()
+    {
+        var userId = Guid.NewGuid();
+
+        var payroll = TeacherPayroll.CreateForStaff(userId, "2030-05", 25000m);
+
+        Assert.Null(payroll.TeacherId);
+        Assert.Equal(userId, payroll.UserId);
+        Assert.Equal(25000m, payroll.BaseSalary);
+        Assert.Equal(0m, payroll.LessonsRate);
+        Assert.Equal(0, payroll.CompletedLessonsCount);
+        Assert.Equal(25000m, payroll.TotalAmount);
+        Assert.Equal(PayrollStatus.Pending, payroll.Status);
     }
 
     [Fact]

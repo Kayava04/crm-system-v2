@@ -10,7 +10,8 @@ namespace Billing.Application.Features.GetPayrolls;
 
 public sealed record PayrollListResponse(
     Guid Id,
-    Guid TeacherId,
+    Guid? TeacherId,
+    Guid? UserId,
     string Period,
     int CompletedLessonsCount,
     decimal TotalAmount,
@@ -32,6 +33,7 @@ public static class GetPayrollsEndpoint
         ITeacherPayrollRepository repository,
         CancellationToken ct,
         Guid? teacherId = null,
+        Guid? userId = null,
         string? period = null,
         PayrollStatus? status = null,
         int page = 1,
@@ -43,11 +45,12 @@ public static class GetPayrollsEndpoint
         if (pageSize > 100) pageSize = 100;
 
         var (payrolls, totalCount) = await repository.GetAllAsync(
-            teacherId, period, status, page, pageSize, ct);
+            teacherId, userId, period, status, page, pageSize, ct);
 
         var items = payrolls.Select(p => new PayrollListResponse(
             p.Id,
             p.TeacherId,
+            p.UserId,
             p.Period,
             p.CompletedLessonsCount,
             p.TotalAmount,

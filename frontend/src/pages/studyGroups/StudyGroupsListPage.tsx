@@ -125,7 +125,7 @@ export function StudyGroupsListPage() {
             ))}
           </SelectContent>
         </Select>
-        <div className="min-w-48">
+        <div className="min-w-56 flex-1">
           <TeacherSearchInput
             value={teacherId ? { id: teacherId, fullName: teacherName } : null}
             onChange={(v) =>

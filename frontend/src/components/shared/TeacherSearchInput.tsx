@@ -27,11 +27,11 @@ export function TeacherSearchInput({ value, onChange, placeholder }: TeacherSear
 
   if (value) {
     return (
-      <div className="flex items-center justify-between rounded-md border border-input px-3 py-2 text-sm">
-        <span>{value.fullName}</span>
+      <div className="flex items-center justify-between gap-2 rounded-md border border-input px-3 py-2 text-sm">
+        <span className="min-w-0 flex-1 truncate">{value.fullName}</span>
         <button
           type="button"
-          className="text-xs text-muted-foreground hover:text-foreground"
+          className="shrink-0 text-xs text-muted-foreground hover:text-foreground"
           onClick={() => onChange(null)}
         >
           {t('common.cancel')}

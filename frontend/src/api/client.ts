@@ -4,7 +4,12 @@ import { tokenStore } from './tokenStore'
 import { toApiError } from './errors'
 import { createSingleFlight } from './singleFlight'
 
-export const API_BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8080'
+// Empty by default: every call is a relative /api/... path, resolved by the browser
+// against whatever origin served the page. nginx (Docker) and the Vite dev server
+// (see vite.config.ts) both proxy that path to the backend, so the same build works
+// unchanged from localhost, a phone on the LAN, or a real domain — nothing to
+// configure per environment or device.
+export const API_BASE_URL = import.meta.env.VITE_API_URL ?? ''
 
 const runRefresh = createSingleFlight<string | null>()
 

@@ -156,11 +156,13 @@ i18next (Ukrainian default, English second). The typed API client is generated f
 ```bash
 cd frontend
 npm install
-npm run dev            # http://localhost:5173, expects the API at VITE_API_URL (see .env.example)
+npm run dev            # http://localhost:5173
 ```
 
-The backend must be running (`docker compose --profile app up -d --build` at the repo root) and its
-CORS `FRONTEND_ORIGIN` must match the dev server's origin (`http://localhost:5173` by default).
+The app calls relative `/api/...` paths; the Vite dev server proxies them to the backend at
+`http://localhost:8080` (see `server.proxy` in `vite.config.ts`), so the backend just needs to be
+running (`docker compose --profile app up -d --build` at the repo root) — no CORS setup and nothing
+to point at each other manually.
 
 ### Scripts
 
@@ -176,18 +178,19 @@ CORS `FRONTEND_ORIGIN` must match the dev server's origin (`http://localhost:517
 
 `frontend/Dockerfile` builds the SPA with Vite and serves the static output with nginx
 (`frontend/nginx.conf` — SPA fallback to `index.html` so client-side routes survive a hard refresh).
-`VITE_API_URL` is a **build-time** value baked into the bundle (Vite only reads `import.meta.env.VITE_*`
-at build time, not when the container starts), so it's passed as a build arg, not a runtime environment
-variable:
+No API URL is baked into the bundle: the app calls relative `/api/...` paths, and nginx reverse-proxies
+them to the `api` service over the compose network. The browser only ever talks to one origin — whatever
+host or IP it used to reach the frontend — so the same image works unchanged from `localhost`, from
+another device on the LAN, or behind a real domain, with nothing to rebuild or reconfigure per
+environment:
 
 ```bash
-docker build -t crm-web --build-arg VITE_API_URL=http://localhost:8080 frontend
+docker build -t crm-web frontend
 docker run -p 5173:80 crm-web
 ```
 
-Via compose it's part of the `app` profile (see Backend → Docker above) — `VITE_API_URL` there defaults to
-`http://localhost:8080` and can be overridden in the root `.env`; it must be an origin the browser can
-reach and must match the API's `FRONTEND_ORIGIN` (CORS) for the built app to actually work.
+Via compose it's part of the `app` profile (see Backend → Docker above). To reach it from another
+device on the same network, open `http://<this machine's LAN IP>:5173` — no config changes needed.
 
 ### Notes
 

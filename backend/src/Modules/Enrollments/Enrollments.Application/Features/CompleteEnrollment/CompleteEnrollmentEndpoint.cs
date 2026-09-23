@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
+using Scheduling.Contracts;
+using Shared.Kernel.Abstractions;
 
 namespace Enrollments.Application.Features.CompleteEnrollment;
 
@@ -17,8 +19,8 @@ public static class CompleteEnrollmentEndpoint
         group.MapPut("/{id:guid}/complete", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanManageEnrollments))
              .WithName("CompleteEnrollment")
-             .WithSummary("Complete an enrollment")
-             .Produces(StatusCodes.Status204NoContent)
+             .WithSummary("Complete an enrollment and cancel its remaining upcoming lessons")
+             .Produces<EnrollmentStatusChangeResponse>(StatusCodes.Status200OK)
              .ProducesProblem(StatusCodes.Status404NotFound)
              .ProducesProblem(StatusCodes.Status409Conflict);
     }
@@ -27,6 +29,8 @@ public static class CompleteEnrollmentEndpoint
         Guid id,
         IEnrollmentRepository repository,
         IEnrollmentUnitOfWork unitOfWork,
+        ITransactionCoordinator transaction,
+        IScheduleLifecycle scheduleLifecycle,
         ILogger<CompleteEnrollmentRequest> logger,
         CancellationToken ct
     )
@@ -44,13 +48,21 @@ public static class CompleteEnrollmentEndpoint
                 statusCode: StatusCodes.Status409Conflict
             );
 
-        enrollment.Complete();
+        // The new status and its effect on the calendar are saved together or not at all
+        var response = await transaction.ExecuteAsync(async token =>
+        {
+            enrollment.Complete();
 
-        await repository.UpdateAsync(enrollment, ct);
-        await unitOfWork.SaveChangesAsync(ct);
+            await repository.UpdateAsync(enrollment, token);
+            await unitOfWork.SaveChangesAsync(token);
+
+            var cancelled = await scheduleLifecycle.CancelForEnrollmentAsync(id, token);
+
+            return new EnrollmentStatusChangeResponse(cancelled, 0, 0, 0);
+        }, ct);
 
         logger.LogInformation("Enrollment completed: {EnrollmentId}", id);
 
-        return Results.NoContent();
+        return Results.Ok(response);
     }
 }

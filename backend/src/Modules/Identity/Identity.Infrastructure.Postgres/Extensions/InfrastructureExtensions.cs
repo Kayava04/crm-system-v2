@@ -4,7 +4,7 @@ using Identity.Domain.Entities;
 using Identity.Infrastructure.Postgres.Persistence;
 using Identity.Infrastructure.Postgres.Repositories;
 using Identity.Infrastructure.Postgres.Services;
-using Microsoft.EntityFrameworkCore;
+using Shared.Infrastructure.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -19,7 +19,7 @@ public static class InfrastructureExtensions
     {
         services
             .AddDatabase(configuration)
-            .AddIdentityCore()
+            .AddIdentityCore(configuration)
             .AddRepositories()
             .AddServices()
             .AddSeeding();
@@ -32,18 +32,14 @@ public static class InfrastructureExtensions
         IConfiguration configuration
     )
     {
-        var connectionString = configuration.GetConnectionString("Default")
-            ?? throw new InvalidOperationException(
-                "Connection string 'Default' not found in configuration.");
-
-        services.AddDbContext<IdentityDbContext>(options => options.UseNpgsql(connectionString));
+services.AddModuleDbContext<IdentityDbContext>();
 
         services.AddScoped<IIdentityUnitOfWork>(sp => sp.GetRequiredService<IdentityDbContext>());
 
         return services;
     }
 
-    private static IServiceCollection AddIdentityCore(this IServiceCollection services)
+    private static IServiceCollection AddIdentityCore(this IServiceCollection services, IConfiguration configuration)
     {
         services
             .AddIdentityCore<User>(options =>
@@ -52,6 +48,12 @@ public static class InfrastructureExtensions
                 options.Password.RequireUppercase = true;
                 options.Password.RequiredLength = 8;
                 options.User.RequireUniqueEmail = true;
+
+                // Five wrong passwords lock the account for 15 minutes by default
+                options.Lockout.AllowedForNewUsers = true;
+                options.Lockout.MaxFailedAccessAttempts = Math.Max(1, configuration.GetValue("Identity:Lockout:MaxAttempts", 5));
+                options.Lockout.DefaultLockoutTimeSpan =
+                    TimeSpan.FromMinutes(Math.Max(0.01, configuration.GetValue("Identity:Lockout:DurationMinutes", 15.0)));
             })
             .AddEntityFrameworkStores<IdentityDbContext>();
 
@@ -64,6 +66,7 @@ public static class InfrastructureExtensions
         services.AddScoped<IRoleRepository, RoleRepository>();
         services.AddScoped<IPermissionRepository, PermissionRepository>();
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+        services.AddScoped<IUserPhotoRepository, UserPhotoRepository>();
 
         return services;
     }

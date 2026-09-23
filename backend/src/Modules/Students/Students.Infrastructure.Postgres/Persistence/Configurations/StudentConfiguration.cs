@@ -39,6 +39,9 @@ internal sealed class StudentConfiguration : IEntityTypeConfiguration<Student>
             .IsRequired()
             .HasMaxLength(100);
 
+        // "which student is this account?" is asked on every calendar request
+        builder.HasIndex(s => s.UserId);
+
         builder.HasIndex(s => s.Email)
             .IsUnique();
 

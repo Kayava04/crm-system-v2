@@ -1,14 +1,17 @@
 using Enrollments.Application.Features.ActivateEnrollment;
+using Enrollments.Contracts;
 using Enrollments.Application.Features.ApplyDiscount;
 using Enrollments.Application.Features.CompleteEnrollment;
 using Enrollments.Application.Features.CreateEnrollment;
 using Enrollments.Application.Features.GetEnrollmentById;
 using Enrollments.Application.Features.GetEnrollments;
+using Enrollments.Application.Features.GetMyEnrollments;
 using Enrollments.Application.Features.RemoveDiscount;
 using Enrollments.Application.Features.SuspendEnrollment;
 using Enrollments.Application.Features.TerminateEnrollment;
 using Enrollments.Application.Features.UpdateEnrollmentComment;
 using Enrollments.Application.Features.UpdateEnrollmentPrice;
+using Enrollments.Application.Features.UpdatePreferredSchedule;
 using FluentValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -24,6 +27,11 @@ public static class ApplicationExtensions
         // Register FluentValidation
         services.AddValidatorsFromAssembly(typeof(ApplicationExtensions).Assembly);
 
+        services.AddScoped<IEnrollmentLookup, EnrollmentLookupService>();
+        services.AddScoped<IEnrollmentLifecycle, EnrollmentLifecycleService>();
+
+        services.AddScoped<IEnrollmentStatistics, EnrollmentStatisticsService>();
+
         return services;
     }
 
@@ -33,6 +41,7 @@ public static class ApplicationExtensions
                        .WithTags("Enrollments");
 
         GetAllEndpoint.Map(group);
+        GetMyEnrollmentsEndpoint.Map(group);
         GetByIdEndpoint.Map(group);
         CreateEndpoint.Map(group);
 
@@ -47,6 +56,7 @@ public static class ApplicationExtensions
         UpdateEnrollmentPriceEndpoint.Map(group);
 
         UpdateEnrollmentCommentEndpoint.Map(group);
+        UpdatePreferredScheduleEndpoint.Map(group);
 
         return app;
     }

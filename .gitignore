@@ -16,6 +16,9 @@ obj/
 # ASP.NET
 artifacts/
 
+# Uploaded files (profile photos)
+uploads/
+
 # EF Core
 *.db
 *.db-shm

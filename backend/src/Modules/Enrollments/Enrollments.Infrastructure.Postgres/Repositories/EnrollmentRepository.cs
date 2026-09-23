@@ -45,6 +45,16 @@ internal sealed class EnrollmentRepository(EnrollmentsDbContext context) : IEnro
                 && e.Status != EnrollmentStatus.Completed, ct
             );
 
+    public async Task<IReadOnlyList<Guid>> GetStudentIdsByEnrollmentIdsAsync(
+        IReadOnlyCollection<Guid> enrollmentIds,
+        CancellationToken ct = default) =>
+        await context.Enrollments
+            .AsNoTracking()
+            .Where(e => enrollmentIds.Contains(e.Id))
+            .Select(e => e.StudentId)
+            .Distinct()
+            .ToListAsync(ct);
+
     public async Task<(IReadOnlyList<Enrollment> Enrollments, int TotalCount)> GetAllAsync(
         Guid? studentId,
         Guid? courseId,
@@ -77,4 +87,59 @@ internal sealed class EnrollmentRepository(EnrollmentsDbContext context) : IEnro
 
         return (enrollments, totalCount);
     }
+
+    public async Task<IReadOnlyDictionary<EnrollmentStatus, int>> GetCountsByStatusAsync(CancellationToken ct = default) =>
+        await context.Enrollments
+            .AsNoTracking()
+            .GroupBy(e => e.Status)
+            .Select(g => new { Status = g.Key, Count = g.Count() })
+            .ToDictionaryAsync(x => x.Status, x => x.Count, ct);
+
+    public async Task<IReadOnlyDictionary<Guid, int>> GetCountsByCourseAsync(CancellationToken ct = default) =>
+        await context.Enrollments
+            .AsNoTracking()
+            .GroupBy(e => e.CourseId)
+            .Select(g => new { CourseId = g.Key, Count = g.Count() })
+            .ToDictionaryAsync(x => x.CourseId, x => x.Count, ct);
+
+    public async Task<IReadOnlyList<Enrollment>> GetByIdsAsync(
+        IReadOnlyCollection<Guid> ids,
+        CancellationToken ct = default) =>
+        await context.Enrollments
+            .AsNoTracking()
+            .Where(e => ids.Contains(e.Id))
+            .ToListAsync(ct);
+
+    public async Task<IReadOnlyList<Enrollment>> GetActiveByStudentAsync(Guid studentId, CancellationToken ct = default) =>
+        await context.Enrollments
+            .Where(e => e.StudentId == studentId && e.Status == EnrollmentStatus.Active)
+            .ToListAsync(ct);
+
+    public async Task<IReadOnlyList<Enrollment>> GetAutoSuspendedByStudentAsync(Guid studentId, CancellationToken ct = default) =>
+        await context.Enrollments
+            .Where(e => e.StudentId == studentId && e.Status == EnrollmentStatus.Suspended && e.AutoSuspended)
+            .ToListAsync(ct);
+
+    public async Task<IReadOnlyList<Enrollment>> GetByStudentAsync(Guid studentId, CancellationToken ct = default) =>
+        await context.Enrollments
+            .AsNoTracking()
+            .Where(e => e.StudentId == studentId)
+            .ToListAsync(ct);
+
+    public async Task<IReadOnlySet<Guid>> GetStudentIdsWithEnrollmentsAsync(
+        IReadOnlyCollection<Guid> studentIds,
+        CancellationToken ct = default) =>
+        (await context.Enrollments
+            .AsNoTracking()
+            .Where(e => studentIds.Contains(e.StudentId))
+            .Select(e => e.StudentId)
+            .Distinct()
+            .ToListAsync(ct)).ToHashSet();
+
+    public async Task<IReadOnlyList<Guid>> GetIdsByStudentAsync(Guid studentId, CancellationToken ct = default) =>
+        await context.Enrollments
+            .AsNoTracking()
+            .Where(e => e.StudentId == studentId)
+            .Select(e => e.Id)
+            .ToListAsync(ct);
 }

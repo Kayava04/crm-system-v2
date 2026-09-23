@@ -9,5 +9,7 @@ public enum SystemPermission
     CanViewSchedule, CanManageSchedule,
     CanViewEnrollments, CanManageEnrollments,
     CanViewReports,
+    CanViewMaterials, CanManageMaterials,
+    CanManageNotifications,
     CanManageAdmins
 }

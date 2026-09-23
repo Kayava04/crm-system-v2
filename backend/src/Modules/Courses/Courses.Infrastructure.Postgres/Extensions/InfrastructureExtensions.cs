@@ -1,7 +1,7 @@
 using Courses.Application.Abstractions;
 using Courses.Infrastructure.Postgres.Persistence;
 using Courses.Infrastructure.Postgres.Repositories;
-using Microsoft.EntityFrameworkCore;
+using Shared.Infrastructure.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -26,11 +26,7 @@ public static class InfrastructureExtensions
         IConfiguration configuration
     )
     {
-        var connectionString = configuration.GetConnectionString("Default")
-            ?? throw new InvalidOperationException(
-                "Connection string 'Default' not found in configuration.");
-
-        services.AddDbContext<CoursesDbContext>(options => options.UseNpgsql(connectionString));
+services.AddModuleDbContext<CoursesDbContext>();
 
         services.AddScoped<ICoursesUnitOfWork>(sp => sp.GetRequiredService<CoursesDbContext>());
 

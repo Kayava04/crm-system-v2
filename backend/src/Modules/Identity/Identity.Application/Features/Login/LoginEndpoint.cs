@@ -3,6 +3,7 @@ using Identity.Application.Abstractions;
 using Identity.Domain.Entities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
 
@@ -41,7 +42,10 @@ public static class LoginEndpoint
              .WithSummary("Authenticate a user and issue an access token")
              .Produces<LoginResponse>(StatusCodes.Status200OK)
              .ProducesValidationProblem()
-             .ProducesProblem(StatusCodes.Status401Unauthorized);
+             .ProducesProblem(StatusCodes.Status401Unauthorized)
+             .ProducesProblem(StatusCodes.Status403Forbidden)
+             .ProducesProblem(StatusCodes.Status429TooManyRequests)
+             .RequireRateLimiting("auth");
     }
 
     private static async Task<IResult> Handle(
@@ -70,14 +74,37 @@ public static class LoginEndpoint
                 statusCode: StatusCodes.Status401Unauthorized);
         }
 
+        // A locked account is refused before the password is even looked at, so it cannot be guessed while locked
+        var lockedFor = await identityService.GetLockoutRemainingAsync(user, ct);
+        if (lockedFor is { } remaining)
+        {
+            logger.LogWarning("Login refused: account {Email} is locked after too many failed attempts", request.Email);
+
+            return Results.Problem(
+                detail: $"Too many failed attempts. The account is locked, try again in {Math.Max(1, (int)Math.Ceiling(remaining.TotalMinutes))} minute(s).",
+                statusCode: StatusCodes.Status429TooManyRequests);
+        }
+
         var passwordValid = await identityService.CheckPasswordAsync(user, request.Password, ct);
         if (!passwordValid)
         {
+            await identityService.RecordFailedLoginAsync(user, ct);
             logger.LogWarning("Login failed: invalid password for {Email}", request.Email);
 
             return Results.Problem(
                 detail: "Invalid email or password.",
                 statusCode: StatusCodes.Status401Unauthorized);
+        }
+
+        await identityService.RecordSuccessfulLoginAsync(user, ct);
+
+        if (!user.IsActive)
+        {
+            logger.LogWarning("Login refused: account {Email} is deactivated", request.Email);
+
+            return Results.Problem(
+                detail: "Account is deactivated. Contact the administrator.",
+                statusCode: StatusCodes.Status403Forbidden);
         }
 
         var roles = await userRepository.GetUserRolesAsync(user.Id, ct);

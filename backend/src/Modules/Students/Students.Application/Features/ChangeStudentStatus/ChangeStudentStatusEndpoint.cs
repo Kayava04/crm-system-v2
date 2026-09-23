@@ -3,13 +3,26 @@ using Identity.Contracts.Enums;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
+using Enrollments.Contracts;
+using Identity.Contracts;
 using Microsoft.Extensions.Logging;
+using Shared.Kernel.Abstractions;
 using Students.Application.Abstractions;
 using Students.Domain.Enums;
 
 namespace Students.Application.Features.ChangeStudentStatus;
 
 public sealed record ChangeStudentStatusRequest(StudentStatus Status);
+
+// What the status change did to the student's enrollments and calendar
+public sealed record ChangeStudentStatusResponse(
+    int SuspendedEnrollments,
+    int CancelledLessons,
+    int ResumedEnrollments,
+    int RestoredLessons,
+    int LessonsLeftToSchedule,
+    bool AccountActive
+);
 
 public sealed class ChangeStudentStatusValidator : AbstractValidator<ChangeStudentStatusRequest>
 {
@@ -28,7 +41,7 @@ public static class ChangeStudentStatusEndpoint
              .RequireAuthorization(nameof(SystemPermission.CanManageStudents))
              .WithName("ChangeStudentStatus")
              .WithSummary("Change student status")
-             .Produces(StatusCodes.Status204NoContent)
+             .Produces<ChangeStudentStatusResponse>(StatusCodes.Status200OK)
              .ProducesValidationProblem()
              .ProducesProblem(StatusCodes.Status404NotFound)
              .ProducesProblem(StatusCodes.Status409Conflict);
@@ -40,6 +53,9 @@ public static class ChangeStudentStatusEndpoint
         IValidator<ChangeStudentStatusRequest> validator,
         IStudentRepository repository,
         IStudentUnitOfWork unitOfWork,
+        ITransactionCoordinator transaction,
+        IEnrollmentLifecycle enrollmentLifecycle,
+        IUserAccountManager accountManager,
         ILogger<ChangeStudentStatusRequest> logger,
         CancellationToken ct
     )
@@ -65,13 +81,43 @@ public static class ChangeStudentStatusEndpoint
             );
         }
 
-        student.ChangeStatus(request.Status);
+        var wasActive = student.Status == StudentStatus.Active;
 
-        await repository.UpdateAsync(student, ct);
-        await unitOfWork.SaveChangesAsync(ct);
+        // Only a student who left (Withdrawn) loses access; a pause or graduation keeps the account
+        var accountActive = request.Status != StudentStatus.Withdrawn;
+
+        // Status, account, enrollments and calendar change together or not at all
+        var response = await transaction.ExecuteAsync(async token =>
+        {
+            student.ChangeStatus(request.Status);
+
+            await repository.UpdateAsync(student, token);
+            await unitOfWork.SaveChangesAsync(token);
+
+            if (student.UserId is { } userId)
+                await accountManager.SetActiveAsync(userId, accountActive, token);
+
+            if (request.Status == StudentStatus.Active)
+            {
+                var resumed = await enrollmentLifecycle.RestoreForStudentAsync(id, token);
+
+                return new ChangeStudentStatusResponse(
+                    0, 0, resumed.EnrollmentsCount, resumed.RestoredLessons, resumed.LessonsLeftToSchedule, accountActive);
+            }
+
+            if (wasActive)
+            {
+                var suspended = await enrollmentLifecycle.SuspendForStudentAsync(id, token);
+
+                return new ChangeStudentStatusResponse(
+                    suspended.EnrollmentsCount, suspended.CancelledLessons, 0, 0, 0, accountActive);
+            }
+
+            return new ChangeStudentStatusResponse(0, 0, 0, 0, 0, accountActive);
+        }, ct);
 
         logger.LogInformation("Student {StudentId} status changed to {Status}", id, request.Status);
 
-        return Results.NoContent();
+        return Results.Ok(response);
     }
 }

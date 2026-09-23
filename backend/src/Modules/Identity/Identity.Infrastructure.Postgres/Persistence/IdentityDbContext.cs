@@ -14,6 +14,7 @@ internal sealed class IdentityDbContext(DbContextOptions<IdentityDbContext> opti
     public DbSet<RolePermission> RolePermissions => Set<RolePermission>();
     public DbSet<UserPermission> UserPermissions => Set<UserPermission>();
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
+    public DbSet<UserPhoto> UserPhotos => Set<UserPhoto>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -15,6 +15,13 @@ public sealed class Enrollment : AuditableEntity
     public EnrollmentStatus Status { get; private set; }
     public string? Comment { get; private set; }
 
+    // Free text: when the student can attend (e.g. "Tue/Thu after 18:00"); used by an admin to build the schedule
+    public string? PreferredSchedule { get; private set; }
+
+    // True when the system paused this enrollment because the student became inactive.
+    // Only such enrollments are resumed automatically when the student returns.
+    public bool AutoSuspended { get; private set; }
+
     public decimal EffectivePrice => DiscountedPrice ?? CoursePrice;
 
     private Enrollment() { }
@@ -27,7 +34,8 @@ public sealed class Enrollment : AuditableEntity
         int durationMonths,
         decimal coursePrice,
         decimal? discountedPrice = null,
-        string? comment = null
+        string? comment = null,
+        string? preferredSchedule = null
     )
     {
         return new Enrollment
@@ -42,6 +50,7 @@ public sealed class Enrollment : AuditableEntity
             DiscountedPrice = discountedPrice,
             Status = EnrollmentStatus.Draft,
             Comment = comment,
+            PreferredSchedule = preferredSchedule,
             CreatedAt = DateTime.UtcNow
         };
     }
@@ -49,24 +58,28 @@ public sealed class Enrollment : AuditableEntity
     public void Activate()
     {
         Status = EnrollmentStatus.Active;
+        AutoSuspended = false;
         UpdatedAt = DateTime.UtcNow;
     }
 
-    public void Suspend()
+    public void Suspend(bool bySystem = false)
     {
         Status = EnrollmentStatus.Suspended;
+        AutoSuspended = bySystem;
         UpdatedAt = DateTime.UtcNow;
     }
 
     public void Complete()
     {
         Status = EnrollmentStatus.Completed;
+        AutoSuspended = false;
         UpdatedAt = DateTime.UtcNow;
     }
 
     public void Terminate()
     {
         Status = EnrollmentStatus.Terminated;
+        AutoSuspended = false;
         UpdatedAt = DateTime.UtcNow;
     }
 
@@ -85,6 +98,12 @@ public sealed class Enrollment : AuditableEntity
     public void UpdateComment(string? comment)
     {
         Comment = comment;
+        UpdatedAt = DateTime.UtcNow;
+    }
+
+    public void UpdatePreferredSchedule(string? preferredSchedule)
+    {
+        PreferredSchedule = preferredSchedule;
         UpdatedAt = DateTime.UtcNow;
     }
 

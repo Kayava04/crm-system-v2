@@ -11,3 +11,6 @@ var app = builder.Build();
 app.Configure();
 
 app.Run();
+
+// Lets the integration tests start the whole application
+public partial class Program;

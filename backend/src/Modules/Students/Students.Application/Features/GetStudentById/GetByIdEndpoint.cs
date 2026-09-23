@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
 using Students.Application.Abstractions;
+using Students.Domain.Entities;
 using Students.Domain.Enums;
 
 namespace Students.Application.Features.GetStudentById;
@@ -43,7 +44,53 @@ public sealed record StudentDetailResponse(
     StudentPreferencesResponse Preferences,
     IReadOnlyList<Language> Languages,
     ParentInfoResponse? ParentInfo
-);
+)
+{
+    // null when the student has no preferences (a data integrity problem the caller reports)
+    internal static StudentDetailResponse? From(Student student)
+    {
+        if (student.Preferences is null)
+            return null;
+
+        var preferences = new StudentPreferencesResponse(
+            student.Preferences.LearningGoal,
+            student.Preferences.Format,
+            student.Preferences.LessonType,
+            student.Preferences.Intensity,
+            student.Preferences.CurrentLevel,
+            student.Preferences.HadPreviousCourses
+        );
+
+        var parentInfo = student.IsChild && student.ParentInfo is not null
+            ? new ParentInfoResponse(
+                student.ParentInfo.FirstName,
+                student.ParentInfo.LastName,
+                student.ParentInfo.MiddleName,
+                student.ParentInfo.PhoneNumber,
+                student.ParentInfo.Email
+            )
+            : null;
+
+        return new StudentDetailResponse(
+            student.Id,
+            student.FirstName,
+            student.LastName,
+            student.MiddleName,
+            student.DateOfBirth,
+            student.PhoneNumber,
+            student.Email,
+            student.City,
+            student.Country,
+            student.IsChild,
+            student.Comment,
+            student.Status,
+            student.UserId is not null,
+            preferences,
+            student.Languages.Select(l => l.Language).ToList(),
+            parentInfo
+        );
+    }
+}
 
 public static class GetByIdEndpoint
 {
@@ -72,7 +119,8 @@ public static class GetByIdEndpoint
                 statusCode: StatusCodes.Status404NotFound
             );
 
-        if (student.Preferences is null)
+        var response = StudentDetailResponse.From(student);
+        if (response is null)
         {
             logger.LogError("Student {StudentId} has no preferences — data integrity issue", id);
 
@@ -81,48 +129,6 @@ public static class GetByIdEndpoint
                 statusCode: StatusCodes.Status500InternalServerError
             );
         }
-
-        var preferences = new StudentPreferencesResponse(
-            student.Preferences.LearningGoal,
-            student.Preferences.Format,
-            student.Preferences.LessonType,
-            student.Preferences.Intensity,
-            student.Preferences.CurrentLevel,
-            student.Preferences.HadPreviousCourses
-        );
-
-        var languages = student.Languages
-            .Select(l => l.Language)
-            .ToList();
-
-        var parentInfo = student.IsChild && student.ParentInfo is not null
-            ? new ParentInfoResponse(
-                student.ParentInfo.FirstName,
-                student.ParentInfo.LastName,
-                student.ParentInfo.MiddleName,
-                student.ParentInfo.PhoneNumber,
-                student.ParentInfo.Email
-            )
-            : null;
-
-        var response = new StudentDetailResponse(
-            student.Id,
-            student.FirstName,
-            student.LastName,
-            student.MiddleName,
-            student.DateOfBirth,
-            student.PhoneNumber,
-            student.Email,
-            student.City,
-            student.Country,
-            student.IsChild,
-            student.Comment,
-            student.Status,
-            student.UserId is not null,
-            preferences,
-            languages,
-            parentInfo
-        );
 
         return Results.Ok(response);
     }

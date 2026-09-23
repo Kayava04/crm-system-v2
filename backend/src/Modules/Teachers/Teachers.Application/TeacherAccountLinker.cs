@@ -10,12 +10,24 @@ internal sealed class TeacherAccountLinker(
 {
     public string ProfileType => "Teacher";
 
+    public async Task<LinkedProfile?> FindByUserAsync(Guid userId, CancellationToken ct = default)
+    {
+        var teacher = await repository.GetByUserIdAsync(userId, ct);
+
+        return teacher is null
+            ? null
+            : new LinkedProfile(ProfileType, teacher.Id, $"{teacher.LastName} {teacher.FirstName}");
+    }
+
     public async Task LinkAsync(Guid profileId, Guid userId, CancellationToken ct = default)
     {
         var teacher = await repository.GetByIdAsync(profileId, ct);
 
         if (teacher is null)
-            throw new InvalidOperationException($"Teacher with id '{profileId}' not found.");
+            throw new ProfileNotFoundException($"Teacher with id '{profileId}' not found.");
+
+        if (teacher.UserId is not null)
+            throw new ProfileAlreadyLinkedException($"Teacher with id '{profileId}' already has an account.");
 
         teacher.LinkUserAccount(userId);
 

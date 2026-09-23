@@ -576,6 +576,7 @@
     "selectedCount": "{{count}} lessons selected",
     "clearSelection": "Clear selection",
     "reassignSelectedTeacher": "Reassign teacher for selected",
+    "hideSelected": "Hide selected",
     "cancelFuture": "Cancel future lessons",
     "online": "Online",
     "offline": "Offline",

@@ -362,38 +362,40 @@ export function DashboardPage() {
           <CardTitle className="text-base font-medium">{t('reports.billing.title')}</CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
-          <div className="flex flex-wrap items-end gap-3">
-            <div className="w-40">
+          <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-end">
+            <div className="w-full sm:w-40">
               <Field label={t('reports.dateFrom')}>
                 <Input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} />
               </Field>
             </div>
-            <div className="w-40">
+            <div className="w-full sm:w-40">
               <Field label={t('reports.dateTo')}>
                 <Input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} />
               </Field>
             </div>
-            <Button
-              size="sm"
-              onClick={() =>
-                setAppliedRange({ from: dateFrom || undefined, to: dateTo || undefined })
-              }
-            >
-              {t('reports.apply')}
-            </Button>
-            {(dateFrom || dateTo) && (
+            <div className="flex gap-3">
               <Button
                 size="sm"
-                variant="ghost"
-                onClick={() => {
-                  setDateFrom('')
-                  setDateTo('')
-                  setAppliedRange({})
-                }}
+                onClick={() =>
+                  setAppliedRange({ from: dateFrom || undefined, to: dateTo || undefined })
+                }
               >
-                {t('reports.resetToCurrentMonth')}
+                {t('reports.apply')}
               </Button>
-            )}
+              {(dateFrom || dateTo) && (
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => {
+                    setDateFrom('')
+                    setDateTo('')
+                    setAppliedRange({})
+                  }}
+                >
+                  {t('reports.resetToCurrentMonth')}
+                </Button>
+              )}
+            </div>
           </div>
 
           {billingLoading && <Skeleton className="h-24 w-full" />}

@@ -43,8 +43,12 @@ public sealed class GenerateScheduleValidator : AbstractValidator<GenerateSchedu
             .WithName("EnrollmentId")
             .WithMessage("Specify either an enrollment or a study group.");
 
+        // Unlike EnrollmentId/GroupId above, this rule's When() gates on a different
+        // field, so TeacherId can still be null when it runs - both null and
+        // Guid.Empty need rejecting here, not just Guid.Empty.
         RuleFor(x => x.TeacherId)
-            .NotEmpty().WithMessage("Teacher is required for an enrollment.")
+            .Must(id => id.HasValue && id != Guid.Empty)
+            .WithMessage("Teacher is required for an enrollment.")
             .When(x => x.EnrollmentId is not null);
 
         RuleFor(x => x.Slots)

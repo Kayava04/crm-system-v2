@@ -241,7 +241,7 @@ export function StaffCalendarView() {
           )}
         </div>
         {hiddenLessonIds.size > 0 && (
-          <div className="flex flex-wrap items-center gap-2 border-t border-border pt-3">
+          <div className="flex flex-wrap items-center justify-end gap-2 border-t border-border pt-3">
             <Button
               size="sm"
               variant={showHidden ? 'default' : 'outline'}

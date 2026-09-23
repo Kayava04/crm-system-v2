@@ -34,6 +34,15 @@ public class SchedulingValidatorTests
     }
 
     [Fact]
+    public void An_empty_enrollment_or_group_id_is_rejected()
+    {
+        var validator = new CreateScheduleValidator();
+
+        Assert.False(validator.Validate(Lesson(enrollment: Guid.Empty)).IsValid);
+        Assert.False(validator.Validate(Lesson(group: Guid.Empty)).IsValid);
+    }
+
+    [Fact]
     public void Lesson_cannot_be_in_the_past()
     {
         var result = new CreateScheduleValidator().Validate(Lesson(enrollment: Guid.NewGuid(), date: DateTime.UtcNow.AddHours(-1)));
@@ -81,6 +90,16 @@ public class SchedulingValidatorTests
     public void Generation_for_a_group_does_not_need_a_teacher()
     {
         Assert.True(new GenerateScheduleValidator().Validate(Generate(group: Guid.NewGuid())).IsValid);
+    }
+
+    [Fact]
+    public void Generation_for_an_enrollment_rejects_an_empty_teacher_id()
+    {
+        Assert.False(
+            new GenerateScheduleValidator()
+                .Validate(Generate(enrollment: Guid.NewGuid(), teacher: Guid.Empty))
+                .IsValid
+        );
     }
 
     [Fact]

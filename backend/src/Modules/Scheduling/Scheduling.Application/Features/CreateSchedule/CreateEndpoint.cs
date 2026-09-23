@@ -42,12 +42,14 @@ public sealed class CreateScheduleValidator : AbstractValidator<CreateScheduleRe
             .WithName("EnrollmentId")
             .WithMessage("Specify either an enrollment or a study group.");
 
+        // NotEmpty() on a nullable Guid only rejects null, not Guid.Empty - an explicit
+        // comparison is needed here to actually catch an empty-but-present id.
         RuleFor(x => x.EnrollmentId)
-            .NotEmpty().WithMessage("Enrollment must not be empty.")
+            .Must(id => id != Guid.Empty).WithMessage("Enrollment must not be empty.")
             .When(x => x.EnrollmentId is not null);
 
         RuleFor(x => x.GroupId)
-            .NotEmpty().WithMessage("Study group must not be empty.")
+            .Must(id => id != Guid.Empty).WithMessage("Study group must not be empty.")
             .When(x => x.GroupId is not null);
 
         RuleFor(x => x.TeacherId)

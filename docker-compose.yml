@@ -61,6 +61,9 @@ services:
       SuperAdmin__Password: ${SUPERADMIN_PASSWORD}
       Database__MigrateOnStartup: "true"
       Storage__Path: /app/uploads
+      # Normal browser traffic goes through nginx's /api proxy (same origin, no CORS
+      # involved); this only matters for something calling the API directly from a
+      # different origin, e.g. `npm run dev` without the Vite proxy.
       Cors__AllowedOrigins__0: ${FRONTEND_ORIGIN:-http://localhost:5173}
       # "localhost" from appsettings.json means the api container itself, not the seq container;
       # inside the compose network Seq is reachable by its service name instead. Index 2 is the
@@ -72,17 +75,15 @@ services:
     ports:
       - "8080:8080"
 
-  # The SPA, built and served by nginx. Same profile as the API, so
-  # `docker compose --profile app up -d --build` brings up the whole app.
-  # VITE_API_URL is baked into the static bundle at build time (see frontend/Dockerfile) —
-  # it must be an origin the browser can reach, and it must match FRONTEND_ORIGIN above so
-  # the API's CORS accepts it.
+  # The SPA, built and served by nginx, which also reverse-proxies /api to the
+  # `api` service over the compose network (see frontend/nginx.conf). Same profile
+  # as the API, so `docker compose --profile app up -d --build` brings up the whole
+  # app. No VITE_API_URL to set: works the same from localhost, a phone on the LAN,
+  # or a real domain, with no rebuild per environment.
   web:
     profiles: ["app"]
     build:
       context: ./frontend
-      args:
-        VITE_API_URL: ${VITE_API_URL:-http://localhost:8080}
     container_name: crm-web
     restart: unless-stopped
     depends_on:

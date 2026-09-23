@@ -12,6 +12,12 @@ export default defineConfig({
   },
   server: {
     port: 5173,
+    // The app calls relative /api/... paths (see src/api/client.ts); this forwards
+    // them to the backend so `npm run dev` works the same way nginx does in Docker,
+    // with no per-machine API URL to configure.
+    proxy: {
+      '/api': { target: 'http://localhost:8080', changeOrigin: true },
+    },
   },
   test: {
     environment: 'jsdom',

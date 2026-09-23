@@ -233,25 +233,6 @@ export function StaffCalendarView() {
                 <ListChecks />
                 {selectMode ? t('calendar.exitSelectLessons') : t('calendar.selectLessons')}
               </Button>
-              {hiddenLessonIds.size > 0 && (
-                <>
-                  <Button
-                    size="sm"
-                    variant={showHidden ? 'default' : 'outline'}
-                    onClick={() => setShowHidden((v) => !v)}
-                  >
-                    <Eye />
-                    {showHidden
-                      ? t('calendar.stopShowingHidden')
-                      : t('calendar.showHidden', { count: hiddenLessonIds.size })}
-                  </Button>
-                  {showHidden && (
-                    <Button size="sm" variant="ghost" onClick={restoreAllHidden}>
-                      {t('calendar.restoreAllHidden')}
-                    </Button>
-                  )}
-                </>
-              )}
               <Button size="sm" variant="outline" onClick={() => setCancelFutureOpen(true)}>
                 <Ban />
                 {t('calendar.cancelFuture')}
@@ -259,6 +240,25 @@ export function StaffCalendarView() {
             </>
           )}
         </div>
+        {hiddenLessonIds.size > 0 && (
+          <div className="flex flex-wrap justify-end gap-2">
+            <Button
+              size="sm"
+              variant={showHidden ? 'default' : 'outline'}
+              onClick={() => setShowHidden((v) => !v)}
+            >
+              <Eye />
+              {showHidden
+                ? t('calendar.stopShowingHidden')
+                : t('calendar.showHidden', { count: hiddenLessonIds.size })}
+            </Button>
+            {showHidden && (
+              <Button size="sm" variant="ghost" onClick={restoreAllHidden}>
+                {t('calendar.restoreAllHidden')}
+              </Button>
+            )}
+          </div>
+        )}
       </div>
 
       <CalendarEventsPanel ref={eventsPanelRef} from={from} to={to} showAddButton={false} />

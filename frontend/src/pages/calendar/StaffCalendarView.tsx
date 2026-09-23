@@ -1,7 +1,16 @@
 import { useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { ChevronLeft, ChevronRight, Plus, CalendarPlus, Users, Ban, ListChecks } from 'lucide-react'
+import {
+  ChevronLeft,
+  ChevronRight,
+  Plus,
+  CalendarPlus,
+  Users,
+  Ban,
+  ListChecks,
+  EyeOff,
+} from 'lucide-react'
 import { getSchedules } from '@/features/scheduling/api'
 import type { ScheduleListItem, ScheduleStatus } from '@/features/scheduling/api'
 import {
@@ -68,6 +77,10 @@ export function StaffCalendarView() {
   const [selectMode, setSelectMode] = useState(false)
   const [selectedLessonIds, setSelectedLessonIds] = useState<Set<string>>(new Set())
   const [reassignSelectedOpen, setReassignSelectedOpen] = useState(false)
+  // View-only: hides rows in this browser tab, nothing is changed on the server.
+  // Lessons are never deleted from the system (see calendar.item.cancel for that),
+  // so this is purely a "declutter what I'm looking at" aid.
+  const [hiddenLessonIds, setHiddenLessonIds] = useState<Set<string>>(new Set())
 
   const { data: groups } = useQuery({
     queryKey: ['study-groups', 'lookup-all'],
@@ -100,15 +113,16 @@ export function StaffCalendarView() {
 
   const filteredResolved = useMemo(() => {
     const term = search.trim().toLowerCase()
-    if (!term) return resolved
     return resolved.filter((r) => {
+      if (hiddenLessonIds.has(r.row.id)) return false
+      if (!term) return true
       const haystack = [r.courseName, r.teacherName, r.groupName, r.studentName]
         .filter(Boolean)
         .join(' ')
         .toLowerCase()
       return haystack.includes(term)
     })
-  }, [resolved, search])
+  }, [resolved, search, hiddenLessonIds])
 
   const grouped = useMemo(() => {
     const byDay = new Map<string, ResolvedScheduleRow[]>()
@@ -147,6 +161,11 @@ export function StaffCalendarView() {
       else next.delete(id)
       return next
     })
+  }
+
+  function hideSelectedLessons() {
+    setHiddenLessonIds((prev) => new Set([...prev, ...selectedLessonIds]))
+    setSelectedLessonIds(new Set())
   }
 
   const hasFilters = !!(search || groupFilter || statusFilter)
@@ -345,6 +364,10 @@ export function StaffCalendarView() {
             <Button size="sm" onClick={() => setReassignSelectedOpen(true)}>
               <Users />
               {t('calendar.reassignSelectedTeacher')}
+            </Button>
+            <Button size="sm" variant="outline" onClick={hideSelectedLessons}>
+              <EyeOff />
+              {t('calendar.hideSelected')}
             </Button>
           </div>
         </div>

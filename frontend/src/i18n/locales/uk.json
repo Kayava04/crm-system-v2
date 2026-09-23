@@ -576,6 +576,7 @@
     "selectedCount": "Обрано занять: {{count}}",
     "clearSelection": "Скасувати вибір",
     "reassignSelectedTeacher": "Замінити викладача для обраних",
+    "hideSelected": "Приховати обрані",
     "cancelFuture": "Скасувати майбутні заняття",
     "online": "Онлайн",
     "offline": "Офлайн",

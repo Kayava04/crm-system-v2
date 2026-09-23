@@ -1,0 +1,10 @@
+**/bin/
+**/obj/
+**/Logs/
+**/uploads/
+tests/
+.vs/
+.idea/
+*.user
+Dockerfile
+.dockerignore

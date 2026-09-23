@@ -28,6 +28,9 @@ namespace Enrollments.Infrastructure.Postgres.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
 
+                    b.Property<bool>("AutoSuspended")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Comment")
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
@@ -54,6 +57,10 @@ namespace Enrollments.Infrastructure.Postgres.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)");
 
+                    b.Property<string>("PreferredSchedule")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
                     b.Property<DateOnly>("StartDate")
                         .HasColumnType("date");
 
@@ -69,8 +76,12 @@ namespace Enrollments.Infrastructure.Postgres.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CourseId");
+
                     b.HasIndex("EnrollmentNumber")
                         .IsUnique();
+
+                    b.HasIndex("StudentId");
 
                     b.ToTable("enrollments", "enrollments");
                 });

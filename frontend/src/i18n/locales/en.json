@@ -1,0 +1,1098 @@
+{
+  "common": {
+    "appName": "Language School CRM",
+    "save": "Save",
+    "cancel": "Cancel",
+    "close": "Close",
+    "confirm": "Confirm",
+    "yes": "Yes",
+    "no": "No",
+    "back": "Back",
+    "unknownError": "Something went wrong. Please try again.",
+    "networkError": "Can't reach the server. Check your connection.",
+    "lightTheme": "Light theme",
+    "darkTheme": "Dark theme",
+    "language": "Language",
+    "delete": "Delete",
+    "download": "Download",
+    "remove": "Remove",
+    "optional": "optional",
+    "middleName": "Middle name",
+    "required": "Required"
+  },
+  "auth": {
+    "loginTitle": "Sign in",
+    "loginSubtitle": "Sign in with your work email",
+    "emailLabel": "Email",
+    "passwordLabel": "Password",
+    "loginButton": "Sign in",
+    "invalidCredentials": "Incorrect email or password",
+    "tooManyAttempts": "Too many attempts. Try again in {{seconds}}s.",
+    "mustChangePasswordTitle": "You need to change your password",
+    "mustChangePasswordDescription": "This is your first sign-in, or your password was reset. Set a new password to continue.",
+    "oldPasswordLabel": "Current password",
+    "newPasswordLabel": "New password",
+    "confirmNewPasswordLabel": "Confirm new password",
+    "changePasswordButton": "Change password",
+    "passwordChanged": "Password changed",
+    "passwordMinLength": "Password must be at least 8 characters",
+    "passwordsDontMatch": "Passwords don't match",
+    "logout": "Log out",
+    "sessionExpired": "Your session has ended. Please sign in again."
+  },
+  "home": {
+    "welcome": "Welcome, {{name}}"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "students": "Students",
+    "teachers": "Teachers",
+    "courses": "Courses",
+    "enrollments": "Enrollments",
+    "studyGroups": "Study groups",
+    "calendar": "Calendar",
+    "invoices": "Invoices",
+    "payroll": "Payroll",
+    "notifications": "Notifications",
+    "materials": "Materials",
+    "staff": "Administrators",
+    "profile": "Profile",
+    "myStudents": "My students",
+    "myCalendar": "My calendar",
+    "myEnrollments": "My enrollments",
+    "myInvoices": "My invoices",
+    "myPayroll": "My payroll"
+  },
+  "roles": {
+    "SuperAdmin": "Super admin",
+    "Admin": "Administrator",
+    "Teacher": "Teacher",
+    "Student": "Student"
+  },
+  "errors": {
+    "forbidden403Title": "Access denied",
+    "forbidden403Desc": "You don't have the permissions to view this page.",
+    "notFound404Title": "Page not found",
+    "notFound404Desc": "Check the address or go back home.",
+    "goHome": "Go home"
+  },
+  "profile": {
+    "title": "Profile",
+    "tabs": {
+      "account": "Account",
+      "contact": "Contact details",
+      "profileData": "Profile data",
+      "photo": "Photo",
+      "password": "Password",
+      "salary": "Salary"
+    },
+    "account": {
+      "emailLabel": "Email",
+      "rolesLabel": "Roles",
+      "permissionsLabel": "Permissions",
+      "noPermissions": "No permissions granted"
+    },
+    "contact": {
+      "description": "Other staff at the school can see this information.",
+      "firstNameLabel": "First name",
+      "lastNameLabel": "Last name",
+      "phoneLabel": "Phone",
+      "saved": "Contact details saved",
+      "conflict": "This is edited in your student/teacher profile, not here.",
+      "middleNameLabel": "Middle name",
+      "dateOfBirthLabel": "Date of birth",
+      "cityLabel": "City",
+      "countryLabel": "Country"
+    },
+    "photo": {
+      "description": "JPEG, PNG or WebP, up to 5 MB.",
+      "upload": "Upload photo",
+      "replace": "Replace photo",
+      "remove": "Remove photo",
+      "uploaded": "Photo updated",
+      "removed": "Photo removed",
+      "confirmRemoveTitle": "Remove your profile photo?",
+      "confirmRemoveDesc": "You can undo this by uploading a new one later.",
+      "tooLarge": "File is larger than 5 MB",
+      "wrongType": "Allowed formats: JPEG, PNG, WebP"
+    },
+    "studentData": {
+      "fullName": "Full name",
+      "dateOfBirth": "Date of birth",
+      "phone": "Phone",
+      "email": "Email",
+      "city": "City",
+      "country": "Country",
+      "status": "Status",
+      "isChild": "Minor",
+      "languages": "Languages",
+      "preferencesTitle": "Learning preferences",
+      "learningGoal": "Learning goal",
+      "format": "Format",
+      "lessonType": "Lesson type",
+      "intensity": "Intensity (lessons/week)",
+      "currentLevel": "Current level",
+      "hadPreviousCourses": "Studied the language before",
+      "parentTitle": "Parent contacts",
+      "noParent": "No parent contacts on file",
+      "editNote": "Edited by school staff."
+    },
+    "teacherData": {
+      "fullName": "Full name",
+      "dateOfBirth": "Date of birth",
+      "phone": "Phone",
+      "email": "Email",
+      "city": "City",
+      "country": "Country",
+      "status": "Status",
+      "salaryTitle": "Salary rates",
+      "currentRate": "Current rate",
+      "baseSalary": "Base salary",
+      "lessonsRate": "Per-lesson rate",
+      "effectiveFrom": "Effective from",
+      "noRates": "No rates set yet",
+      "editNote": "Edited by school staff."
+    },
+    "salary": {
+      "description": "Your salary is set by an administrator with staff-management rights.",
+      "historyTitle": "Accrual history"
+    }
+  },
+  "enums": {
+    "studentStatus": {
+      "Active": "Active",
+      "Suspended": "Suspended",
+      "Graduated": "Graduated",
+      "Withdrawn": "Withdrawn"
+    },
+    "teacherStatus": {
+      "Probation": "Probation",
+      "Employed": "Employed",
+      "OnLeave": "On leave",
+      "Resigned": "Resigned",
+      "Dismissed": "Dismissed"
+    },
+    "learningGoal": {
+      "Work": "Work",
+      "Relocation": "Relocation",
+      "Study": "Study",
+      "Personal": "Personal"
+    },
+    "format": {
+      "Online": "Online",
+      "Offline": "Offline"
+    },
+    "lessonType": {
+      "Individual": "Individual",
+      "Group": "Group"
+    },
+    "level": {
+      "A1": "A1",
+      "A2": "A2",
+      "B1": "B1",
+      "B2": "B2",
+      "C1": "C1",
+      "C2": "C2"
+    },
+    "language": {
+      "English": "English",
+      "French": "French",
+      "German": "German",
+      "Polish": "Polish",
+      "Spanish": "Spanish",
+      "Italian": "Italian"
+    },
+    "courseStatus": {
+      "Active": "Active",
+      "Archived": "Archived"
+    },
+    "enrollmentStatus": {
+      "Draft": "Draft",
+      "Active": "Active",
+      "Suspended": "Suspended",
+      "Completed": "Completed",
+      "Terminated": "Terminated"
+    },
+    "scheduleStatus": {
+      "Scheduled": "Scheduled",
+      "Completed": "Completed",
+      "Cancelled": "Cancelled",
+      "Rescheduled": "Rescheduled"
+    },
+    "dayOfWeek": {
+      "Sunday": "Sunday",
+      "Monday": "Monday",
+      "Tuesday": "Tuesday",
+      "Wednesday": "Wednesday",
+      "Thursday": "Thursday",
+      "Friday": "Friday",
+      "Saturday": "Saturday"
+    },
+    "invoiceStatus": {
+      "Pending": "Pending",
+      "Paid": "Paid",
+      "Overdue": "Overdue"
+    },
+    "payrollStatus": {
+      "Pending": "Pending",
+      "Paid": "Paid"
+    },
+    "notificationType": {
+      "PasswordChangeRequired": "Password change required",
+      "InvoiceReminder": "Invoice reminder",
+      "LessonReminder": "Lesson reminder",
+      "General": "General"
+    },
+    "broadcastAudience": {
+      "Students": "Students",
+      "Teachers": "Teachers",
+      "Admins": "Admins",
+      "Everyone": "Everyone"
+    },
+    "materialType": {
+      "Video": "Video",
+      "Article": "Article",
+      "Link": "Link"
+    }
+  },
+  "table": {
+    "empty": "Nothing found",
+    "pageOf": "Page {{page}} of {{totalPages}}",
+    "totalCount": "{{count}} records",
+    "next": "Next",
+    "selected": "{{count}} selected",
+    "clearSelection": "Clear selection",
+    "bulkDeleteConfirmTitle": "Delete the selected records?",
+    "bulkDeleteConfirmDesc": "Only records with no account or history can be deleted. This can't be undone.",
+    "bulkDeleteResult": "Deleted {{succeeded}} of {{total}}"
+  },
+  "import": {
+    "title": "Import",
+    "description": "Excel (.xlsx) or JSON, up to 5 MB and 2000 rows.",
+    "downloadTemplate": "Download template",
+    "selectFile": "Choose file",
+    "dryRun": "Check only (don't save)",
+    "allOrNothing": "All or nothing (save nothing if any row fails)",
+    "run": "Import",
+    "checking": "Checking…",
+    "importing": "Importing…",
+    "rowsSucceeded": "Succeeded: {{count}}",
+    "rowsFailed": "Failed: {{count}}",
+    "ignoredColumns": "Ignored columns: {{columns}}",
+    "rowNumber": "Row",
+    "close": "Close"
+  },
+  "students": {
+    "title": "Students",
+    "add": "Add student",
+    "searchPlaceholder": "Search by name, email, phone…",
+    "filters": {
+      "city": "City",
+      "isChild": "Minor",
+      "any": "Any",
+      "yes": "Yes",
+      "no": "No",
+      "language": "Language",
+      "level": "Level",
+      "format": "Format",
+      "clear": "Clear filters"
+    },
+    "columns": {
+      "name": "Full name",
+      "email": "Email",
+      "phone": "Phone",
+      "child": "Minor"
+    },
+    "detail": {
+      "backToList": "Back to students",
+      "edit": "Edit",
+      "save": "Save",
+      "cancelEdit": "Cancel",
+      "changeStatus": "Change status",
+      "changeStatusTitle": "Change the student's status",
+      "changeStatusDesc": "Enrollments and lessons will be updated to match the new status.",
+      "delete": "Delete",
+      "deleteConflictTitle": "Can't delete",
+      "deleteConflictDesc": "This student has an account or history (enrollments, lessons). Deactivate instead.",
+      "confirmDeleteTitle": "Delete this student permanently?",
+      "confirmDeleteDesc": "This can't be undone. Only possible for students with no account and no history.",
+      "statusChangeResultTitle": "Done",
+      "suspendedEnrollments": "Enrollments suspended: {{count}}",
+      "cancelledLessons": "Lessons cancelled: {{count}}",
+      "resumedEnrollments": "Enrollments resumed: {{count}}",
+      "restoredLessons": "Lessons restored: {{count}}",
+      "lessonsLeftToSchedule": "Lessons left to schedule: {{count}}",
+      "tabs": {
+        "profile": "Profile",
+        "preferences": "Preferences",
+        "parent": "Parent",
+        "comment": "Comment",
+        "enrollments": "Enrollments",
+        "lessons": "Lessons",
+        "invoices": "Invoices",
+        "lessonsColumns": {
+          "course": "Course",
+          "status": "Status"
+        }
+      },
+      "commentLabel": "Internal comment",
+      "commentPlaceholder": "Staff notes — not visible to the student",
+      "commentSaved": "Comment saved",
+      "noParent": "No parent contacts on file",
+      "addParent": "Add parent contacts",
+      "editParent": "Edit parent contacts",
+      "removeParent": "Remove parent contacts",
+      "confirmRemoveParentTitle": "Remove parent contacts?",
+      "profileSaved": "Profile updated",
+      "preferencesSaved": "Preferences updated",
+      "noEnrollments": "This student has no enrollments yet",
+      "newStatusLabel": "New status",
+      "noLessons": "This student has no lessons yet."
+    },
+    "create": {
+      "title": "New student",
+      "sectionPersonal": "Personal details",
+      "sectionPreferences": "Learning preferences",
+      "submit": "Create student",
+      "success": "Student created"
+    }
+  },
+  "teachers": {
+    "title": "Teachers",
+    "add": "Add teacher",
+    "searchPlaceholder": "Search by name, email, phone…",
+    "filters": {
+      "city": "City",
+      "status": "Status",
+      "any": "Any",
+      "clear": "Clear filters"
+    },
+    "columns": {
+      "name": "Full name",
+      "email": "Email",
+      "phone": "Phone",
+      "status": "Status"
+    },
+    "detail": {
+      "backToList": "Back to teachers",
+      "edit": "Edit",
+      "save": "Save",
+      "cancelEdit": "Cancel",
+      "changeStatus": "Change status",
+      "delete": "Delete",
+      "deleteConflictTitle": "Can't delete",
+      "deleteConflictDesc": "This teacher has an account or history (lessons, payroll). Deactivate instead.",
+      "confirmDeleteTitle": "Delete this teacher permanently?",
+      "confirmDeleteDesc": "This can't be undone. Only possible for teachers with no account and no history.",
+      "changeStatusTitle": "Change the teacher's status",
+      "changeStatusDesc": "Lessons and account access will be updated to match the new status.",
+      "statusChangeResultTitle": "Done",
+      "cancelledLessons": "Lessons cancelled: {{count}}",
+      "restoredLessons": "Lessons restored: {{count}}",
+      "skippedLessons": "Lessons skipped: {{count}}",
+      "tabs": {
+        "profile": "Profile",
+        "salary": "Salary rates",
+        "comment": "Comment",
+        "lessons": "Lessons",
+        "payroll": "Payroll",
+        "lessonsColumns": {
+          "course": "Course",
+          "with": "Students/group",
+          "status": "Status"
+        }
+      },
+      "commentLabel": "Internal comment",
+      "commentPlaceholder": "Staff notes",
+      "commentSaved": "Comment saved",
+      "profileSaved": "Profile updated",
+      "addRate": "New rate",
+      "addRateTitle": "New salary rate",
+      "rateSaved": "Rate added",
+      "newStatusLabel": "New status",
+      "noLessons": "This teacher has no lessons yet."
+    },
+    "create": {
+      "title": "New teacher",
+      "sectionPersonal": "Personal details",
+      "sectionSalary": "Starting salary rate",
+      "submit": "Create teacher",
+      "success": "Teacher created"
+    }
+  },
+  "courses": {
+    "title": "Courses",
+    "add": "Add course",
+    "searchPlaceholder": "Search by name…",
+    "filters": {
+      "language": "Language",
+      "level": "Level",
+      "format": "Format",
+      "lessonType": "Lesson type",
+      "status": "Status",
+      "any": "Any",
+      "clear": "Clear filters"
+    },
+    "columns": {
+      "name": "Name",
+      "language": "Language",
+      "level": "Level",
+      "price": "Price",
+      "status": "Status"
+    },
+    "fields": {
+      "name": "Course name",
+      "language": "Language",
+      "level": "Level",
+      "format": "Format",
+      "lessonType": "Lesson type",
+      "teachers": "Teachers",
+      "durationMonths": "Duration (months)",
+      "lessonsCount": "Number of lessons",
+      "lessonsPerWeek": "Lessons per week",
+      "price": "Price",
+      "description": "Description"
+    },
+    "detail": {
+      "backToList": "Back to courses",
+      "edit": "Edit",
+      "save": "Save",
+      "cancelEdit": "Cancel",
+      "activate": "Activate",
+      "archive": "Archive",
+      "delete": "Delete",
+      "confirmActivateTitle": "Activate this course?",
+      "confirmActivateDesc": "The course will be open for new enrollments again.",
+      "confirmArchiveTitle": "Archive this course?",
+      "confirmArchiveDesc": "New enrollments on this course will no longer be possible. This can be reversed.",
+      "confirmDeleteTitle": "Delete this course permanently?",
+      "confirmDeleteDesc": "This can't be undone.",
+      "profileSaved": "Course updated",
+      "tabs": {
+        "profile": "Profile",
+        "enrollments": "Enrollments"
+      },
+      "enroll": "Enroll a student",
+      "noEnrollments": "No one is enrolled in this course yet"
+    },
+    "create": {
+      "title": "New course",
+      "sectionDetails": "Course details",
+      "submit": "Create course",
+      "success": "Course created"
+    }
+  },
+  "enrollments": {
+    "columns": {
+      "number": "No.",
+      "student": "Student",
+      "course": "Course",
+      "dates": "Period",
+      "price": "Price",
+      "status": "Status"
+    },
+    "detail": {
+      "title": "Enrollment {{number}}",
+      "student": "Student",
+      "course": "Course",
+      "startDate": "Start",
+      "endDate": "End",
+      "coursePrice": "Course price",
+      "discountedPrice": "Discounted price",
+      "effectivePrice": "Effective price",
+      "commentLabel": "Internal comment",
+      "commentPlaceholder": "Staff notes",
+      "commentSaved": "Comment saved",
+      "preferredScheduleLabel": "Preferred schedule",
+      "preferredSchedulePlaceholder": "When the student can attend",
+      "preferredScheduleSaved": "Preferred schedule saved",
+      "activate": "Activate",
+      "suspend": "Suspend",
+      "complete": "Complete",
+      "terminate": "Terminate",
+      "confirmActivateTitle": "Activate this enrollment?",
+      "confirmActivateDesc": "Scheduled lessons will be restored where possible.",
+      "confirmSuspendTitle": "Suspend this enrollment?",
+      "confirmSuspendDesc": "Future lessons will be cancelled. This can be reversed.",
+      "confirmCompleteTitle": "Complete this enrollment?",
+      "confirmCompleteDesc": "The course will be marked as completed. This can't be undone.",
+      "confirmTerminateTitle": "Terminate this enrollment?",
+      "confirmTerminateDesc": "All future lessons will be cancelled. This can't be undone.",
+      "statusChangeResultTitle": "Done",
+      "cancelledLessons": "Lessons cancelled: {{count}}",
+      "restoredLessons": "Lessons restored: {{count}}",
+      "skippedLessons": "Lessons skipped: {{count}}",
+      "lessonsLeftToSchedule": "Lessons left to schedule: {{count}}",
+      "setPriceTitle": "Change course price",
+      "setPriceLabel": "New course price",
+      "priceSaved": "Price updated",
+      "discountTitle": "Discount",
+      "discountLabel": "Discounted price",
+      "applyDiscount": "Apply discount",
+      "removeDiscount": "Remove discount",
+      "discountSaved": "Discount applied",
+      "discountRemoved": "Discount removed",
+      "resolving": "Resolving student/course…"
+    },
+    "createDialog": {
+      "title": "New enrollment",
+      "studentLabel": "Student",
+      "studentSearchPlaceholder": "Search student by name, email…",
+      "courseLabel": "Course",
+      "startDateLabel": "Start date",
+      "discountedPriceLabel": "Discounted price (optional)",
+      "commentLabel": "Comment (optional)",
+      "preferredScheduleLabel": "Preferred schedule (optional)",
+      "submit": "Create enrollment",
+      "success": "Enrollment created"
+    },
+    "filters": {
+      "searchPlaceholder": "Search by student, course or number…",
+      "course": "Course",
+      "any": "Any",
+      "clear": "Clear filters"
+    }
+  },
+  "calendar": {
+    "title": "Calendar",
+    "prev": "Previous",
+    "next": "Next",
+    "today": "Today",
+    "filters": {
+      "searchPlaceholder": "Search by course, teacher, student…",
+      "searchPlaceholderTeacher": "Search by course, student…",
+      "searchPlaceholderStudent": "Search by course, teacher…",
+      "group": "Group",
+      "status": "Status",
+      "any": "Any",
+      "clear": "Clear filters"
+    },
+    "emptyRange": "No lessons in this period",
+    "newEvent": "New event",
+    "generate": "Generate lessons",
+    "reassignTeacher": "Reassign teacher",
+    "selectLessons": "Select lessons",
+    "exitSelectLessons": "Done selecting",
+    "selectedCount": "{{count}} lessons selected",
+    "clearSelection": "Clear selection",
+    "reassignSelectedTeacher": "Reassign teacher for selected",
+    "hideSelected": "Hide selected",
+    "showHidden": "Show hidden ({{count}})",
+    "stopShowingHidden": "Stop showing hidden",
+    "restoreAllHidden": "Restore all",
+    "unhide": "Restore",
+    "hiddenBadge": "Hidden",
+    "cancelFuture": "Cancel future lessons",
+    "online": "Online",
+    "offline": "Offline",
+    "item": {
+      "title": "Lesson",
+      "teacher": "Teacher",
+      "students": "Students",
+      "course": "Course",
+      "group": "Group",
+      "duration": "Duration (min)",
+      "notes": "Notes",
+      "reschedule": "Reschedule",
+      "cancel": "Cancel",
+      "complete": "Complete",
+      "confirmCancelTitle": "Cancel this lesson?",
+      "confirmCancelDesc": "This can be reversed by rescheduling.",
+      "confirmCompleteTitle": "Mark this lesson as completed?",
+      "confirmCompleteDesc": "Used to calculate the teacher's payroll.",
+      "rescheduleLabel": "New date and time",
+      "rescheduleSubmit": "Reschedule",
+      "rescheduledToast": "Lesson rescheduled",
+      "cancelledToast": "Lesson cancelled",
+      "completedToast": "Lesson marked completed",
+      "time": "Time",
+      "format": "Format"
+    },
+    "createDialog": {
+      "individual": "Individual (enrollment)",
+      "group": "Group",
+      "enrollmentLabel": "Enrollment",
+      "enrollmentSearchPlaceholder": "Search student to pick an enrollment…",
+      "groupLabel": "Group",
+      "teacherLabel": "Teacher",
+      "teacherSearchPlaceholder": "Search teacher by name…"
+    },
+    "generateDialog": {
+      "title": "Generate lessons from a schedule pattern",
+      "targetType": "Linked to",
+      "startDateLabel": "Start date (optional)",
+      "lessonsCountLabel": "Number of lessons (optional)",
+      "durationLabel": "Lesson duration (min)",
+      "slotsLabel": "Schedule slots",
+      "addSlot": "Add slot",
+      "submit": "Generate",
+      "success": "Lessons created: {{count}}"
+    },
+    "reassignDialog": {
+      "fromLabel": "From teacher",
+      "toLabel": "To teacher",
+      "updateGroupsLabel": "Also update assigned groups",
+      "submit": "Reassign",
+      "success": "Done",
+      "reassignedCount": "Lessons reassigned: {{count}}",
+      "restoredCount": "Lessons restored: {{count}}",
+      "updatedGroupsCount": "Groups updated: {{count}}",
+      "description": "This replacement applies to all of the selected teacher's future lessons at once. To reassign only individual lessons, use the \"Select lessons\" button in the calendar instead."
+    },
+    "reassignSelectedDialog": {
+      "title": "Reassign teacher for selected lessons",
+      "description": "The new teacher will be assigned only to the {{count}} selected lessons — all other lessons, for this teacher or any other, stay unchanged.",
+      "toLabel": "New teacher",
+      "submit": "Reassign",
+      "success": "Teacher reassigned for {{count}} lessons",
+      "someFailed": "Could not reassign {{count}} lessons (time conflict or teacher unavailable)"
+    },
+    "cancelFutureDialog": {
+      "title": "Cancel future lessons",
+      "targetType": "Linked to",
+      "submit": "Cancel lessons",
+      "success": "Lessons cancelled: {{count}}"
+    }
+  },
+  "studyGroups": {
+    "title": "Study groups",
+    "add": "Create group",
+    "filters": {
+      "course": "Course",
+      "teacher": "Teacher",
+      "any": "Any",
+      "clear": "Clear filters"
+    },
+    "columns": {
+      "name": "Name",
+      "course": "Course",
+      "teacher": "Teacher",
+      "members": "Members"
+    },
+    "detail": {
+      "backToList": "Back to groups",
+      "edit": "Edit",
+      "save": "Save",
+      "cancelEdit": "Cancel",
+      "profileSaved": "Group updated",
+      "membersTitle": "Members",
+      "addMember": "Add student",
+      "confirmRemoveMemberTitle": "Remove this student from the group?",
+      "confirmRemoveMemberDesc": "Future group lessons will no longer be scheduled for this student.",
+      "noMembers": "This group has no members yet",
+      "memberAdded": "Student added to the group",
+      "memberRemoved": "Student removed from the group",
+      "joinedAt": "Member since"
+    },
+    "create": {
+      "title": "New group",
+      "nameLabel": "Group name",
+      "courseLabel": "Course",
+      "teacherLabel": "Teacher",
+      "submit": "Create group",
+      "success": "Group created",
+      "noGroupCourses": "There are no active courses with a group lesson type. Create or activate one first."
+    },
+    "addMemberDialog": {
+      "title": "Add a student to the group",
+      "studentSearchPlaceholder": "Search student by name, email…",
+      "noEligibleEnrollment": "This student has no enrollment in the group's course",
+      "pickEnrollment": "Pick an enrollment",
+      "submit": "Add"
+    }
+  },
+  "billing": {
+    "invoices": {
+      "title": "Invoices",
+      "add": "Issue invoice",
+      "markOverdue": "Mark overdue",
+      "markOverdueResult": "Marked overdue: {{count}}",
+      "empty": "No invoices found",
+      "filters": {
+        "searchPlaceholder": "Search by student, course or period…",
+        "course": "Course",
+        "status": "Status",
+        "any": "Any",
+        "clear": "Clear filters"
+      },
+      "columns": {
+        "student": "Student",
+        "course": "Course",
+        "period": "Period",
+        "amount": "Amount",
+        "dueDate": "Due date",
+        "status": "Status"
+      },
+      "detail": {
+        "title": "Invoice",
+        "student": "Student",
+        "course": "Course",
+        "period": "Period",
+        "amount": "Amount",
+        "dueDate": "Due date",
+        "paidAt": "Paid at",
+        "notes": "Notes",
+        "markPaid": "Mark as paid",
+        "markPaidSuccess": "Invoice marked as paid",
+        "confirmMarkPaidTitle": "Mark this invoice as paid?",
+        "confirmMarkPaidDesc": "This action cannot be undone from the interface."
+      },
+      "createDialog": {
+        "title": "New invoice",
+        "enrollmentLabel": "Enrollment",
+        "enrollmentSearchPlaceholder": "Search for a student to pick an enrollment…",
+        "periodLabel": "Period (e.g. 2026-09)",
+        "dueDateLabel": "Due date",
+        "notesLabel": "Notes (optional)",
+        "submit": "Issue invoice",
+        "success": "Invoice created"
+      }
+    },
+    "payroll": {
+      "title": "Payroll",
+      "add": "Run payroll",
+      "empty": "No payroll records found",
+      "filters": {
+        "teacher": "Employee",
+        "status": "Status",
+        "any": "Any",
+        "clear": "Clear filters"
+      },
+      "columns": {
+        "teacher": "Employee",
+        "period": "Period",
+        "lessonsCount": "Lessons completed",
+        "amount": "Amount",
+        "status": "Status"
+      },
+      "detail": {
+        "title": "Payroll",
+        "teacher": "Employee",
+        "period": "Period",
+        "baseSalary": "Base salary",
+        "lessonsRate": "Lesson rate",
+        "lessonsCount": "Lessons completed",
+        "totalAmount": "Total",
+        "paidAt": "Paid at",
+        "markPaid": "Mark as paid",
+        "markPaidSuccess": "Payroll marked as paid",
+        "confirmMarkPaidTitle": "Mark this payroll as paid?",
+        "confirmMarkPaidDesc": "This action cannot be undone from the interface."
+      },
+      "createDialog": {
+        "title": "Run payroll",
+        "teacherLabel": "Employee",
+        "periodLabel": "Period (e.g. 2026-09)",
+        "submit": "Calculate",
+        "success": "Payroll created"
+      },
+      "kindTeacher": "Teacher",
+      "kindStaff": "Staff"
+    }
+  },
+  "notifications": {
+    "title": "Notifications",
+    "unreadOnly": "Unread only",
+    "markAllRead": "Mark all as read",
+    "markAllReadSuccess": "All notifications marked as read",
+    "empty": "No notifications",
+    "changePasswordAction": "Change password",
+    "admin": {
+      "title": "Manage notifications",
+      "tabs": {
+        "tools": "Tools",
+        "log": "Log"
+      },
+      "broadcast": {
+        "title": "Broadcast to a group",
+        "audienceLabel": "Audience",
+        "subjectLabel": "Subject",
+        "bodyLabel": "Message",
+        "submit": "Broadcast",
+        "success": "Notifications sent: {{count}}"
+      },
+      "send": {
+        "title": "Send to specific users",
+        "recipientsLabel": "Recipients",
+        "sourceStudent": "Student",
+        "sourceTeacher": "Teacher",
+        "searchStudentPlaceholder": "Search for a student by name, email…",
+        "searchTeacherPlaceholder": "Search for a teacher by name…",
+        "subjectLabel": "Subject",
+        "bodyLabel": "Message",
+        "submit": "Send",
+        "success": "Notifications sent: {{count}}",
+        "noRecipients": "Add at least one recipient"
+      },
+      "invoiceReminders": {
+        "title": "Invoice reminders",
+        "description": "Reminds students of unpaid invoices due soon or already overdue. Each reminder is only sent once.",
+        "daysBeforeDueLabel": "Days before due date",
+        "includeOverdueLabel": "Include overdue invoices",
+        "submit": "Send reminders",
+        "result": "Invoices found: {{found}}, sent: {{created}}, already sent: {{skippedSent}}, no account: {{skippedNoAccount}}"
+      },
+      "lessonReminders": {
+        "title": "Lesson reminders",
+        "description": "Reminds students and teachers of lessons starting soon. Each reminder is only sent once.",
+        "hoursAheadLabel": "Hours before lesson",
+        "submit": "Send reminders",
+        "result": "Lessons found: {{found}}, sent: {{created}}, already sent: {{skippedSent}}"
+      },
+      "log": {
+        "filters": {
+          "type": "Type",
+          "unreadOnly": "Unread only",
+          "any": "Any",
+          "clear": "Clear filters"
+        },
+        "columns": {
+          "recipient": "Recipient",
+          "type": "Type",
+          "subject": "Subject",
+          "status": "Status",
+          "createdAt": "Created"
+        },
+        "unread": "Unread",
+        "read": "Read",
+        "empty": "No records found"
+      }
+    }
+  },
+  "materials": {
+    "title": "Materials",
+    "add": "Add material",
+    "searchPlaceholder": "Search by title…",
+    "empty": "No materials found",
+    "filters": {
+      "course": "Course",
+      "type": "Type",
+      "any": "Any",
+      "clear": "Clear filters"
+    },
+    "detail": {
+      "course": "Course",
+      "author": "Author",
+      "description": "Description",
+      "body": "Text",
+      "openLink": "Open link",
+      "edit": "Edit",
+      "save": "Save",
+      "cancelEdit": "Cancel",
+      "delete": "Delete",
+      "deleteConfirmTitle": "Delete this material?",
+      "deleteConfirmDesc": "This action cannot be undone.",
+      "deleted": "Material deleted",
+      "saved": "Material updated",
+      "createdAt": "Created"
+    },
+    "createDialog": {
+      "title": "New material",
+      "courseLabel": "Course",
+      "typeLabel": "Type",
+      "titleLabel": "Title",
+      "descriptionLabel": "Short description (optional)",
+      "urlLabel": "Link (URL)",
+      "urlHintVideo": "A link to a YouTube video",
+      "bodyLabel": "Article text (optional)",
+      "submit": "Add material",
+      "success": "Material added"
+    }
+  },
+  "reports": {
+    "title": "Reports",
+    "dateFrom": "From",
+    "dateTo": "To",
+    "apply": "Apply",
+    "resetToCurrentMonth": "Current month",
+    "billing": {
+      "title": "Finance",
+      "income": "Income",
+      "expenses": "Expenses",
+      "netResult": "Net result",
+      "pendingInvoices": "Pending payment",
+      "overdueInvoices": "Overdue",
+      "pendingPayroll": "Pending payout (payroll)",
+      "incomeVsExpenses": "Income vs. expenses"
+    },
+    "students": {
+      "title": "Students",
+      "total": "Total students",
+      "byStatus": "By status"
+    },
+    "teachers": {
+      "title": "Teachers",
+      "total": "Total teachers",
+      "byStatus": "By status",
+      "salaryOverview": {
+        "title": "Rates overview",
+        "teachersWithRate": "Teachers with a rate",
+        "totalBaseSalary": "Total base salary",
+        "averageBaseSalary": "Average base salary",
+        "averageLessonsRate": "Average lesson rate"
+      }
+    },
+    "enrollments": {
+      "title": "Enrollments",
+      "total": "Total enrollments",
+      "byStatus": "By status",
+      "byCourse": "By course"
+    }
+  },
+  "staff": {
+    "title": "Administrators",
+    "add": "Add staff member",
+    "searchPlaceholder": "Search by name, email, phone…",
+    "empty": "No staff members found",
+    "filters": {
+      "status": "Status",
+      "active": "Active",
+      "inactive": "Inactive",
+      "any": "All",
+      "clear": "Clear filters"
+    },
+    "columns": {
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone",
+      "status": "Status",
+      "permissions": "Permissions"
+    },
+    "active": "Active",
+    "inactive": "Inactive",
+    "detail": {
+      "permissionsTitle": "Permissions",
+      "save": "Save permissions",
+      "saved": "Permissions updated",
+      "deactivate": "Deactivate",
+      "reactivate": "Reactivate",
+      "confirmDeactivateTitle": "Deactivate this account?",
+      "confirmDeactivateDesc": "This staff member will no longer be able to sign in. No data is deleted.",
+      "confirmReactivateTitle": "Reactivate this account?",
+      "confirmReactivateDesc": "This staff member will be able to sign in again.",
+      "statusChanged": "Status updated",
+      "resetPassword": "Reset password",
+      "confirmResetTitle": "Reset this staff member's password?",
+      "confirmResetDesc": "A new temporary password will be generated. The current password will stop working.",
+      "createdAt": "Created",
+      "middleName": "Middle name",
+      "dateOfBirth": "Date of birth",
+      "city": "City",
+      "country": "Country",
+      "salaryTitle": "Salary",
+      "salaryPlaceholder": "Not set",
+      "salarySave": "Save salary",
+      "salarySaved": "Salary updated",
+      "salaryClear": "Clear",
+      "salaryInvalid": "Enter a non-negative number"
+    },
+    "createDialog": {
+      "title": "New staff member",
+      "emailLabel": "Email",
+      "firstNameLabel": "First name",
+      "lastNameLabel": "Last name",
+      "phoneLabel": "Phone",
+      "permissionsLabel": "Permissions",
+      "submit": "Create",
+      "middleNameLabel": "Middle name",
+      "dateOfBirthLabel": "Date of birth",
+      "cityLabel": "City",
+      "countryLabel": "Country"
+    },
+    "tempPasswordDialog": {
+      "title": "Temporary password",
+      "description": "Give this password to the staff member in person. It is shown only once and will be required on first sign-in — they'll be prompted to change it right away.",
+      "copy": "Copy",
+      "copied": "Copied",
+      "close": "Close"
+    }
+  },
+  "permissions": {
+    "CanCreateStudents": "Create students",
+    "CanViewStudents": "View students",
+    "CanManageStudents": "Manage students",
+    "CanDeleteStudents": "Delete students",
+    "CanCreateTeachers": "Create teachers",
+    "CanViewTeachers": "View teachers",
+    "CanManageTeachers": "Manage teachers",
+    "CanDeleteTeachers": "Delete teachers",
+    "CanViewCourses": "View courses",
+    "CanManageCourses": "Manage courses",
+    "CanViewPayments": "View payments",
+    "CanManagePayments": "Manage payments",
+    "CanViewSchedule": "View schedule",
+    "CanManageSchedule": "Manage schedule",
+    "CanViewEnrollments": "View enrollments",
+    "CanManageEnrollments": "Manage enrollments",
+    "CanViewReports": "View reports",
+    "CanViewMaterials": "View materials",
+    "CanManageMaterials": "Manage materials",
+    "CanManageNotifications": "Manage notifications",
+    "CanManageAdmins": "Manage staff",
+    "selectAll": "Select all",
+    "deselectAll": "Deselect all"
+  },
+  "myStudents": {
+    "empty": "No lessons found — the student list is empty.",
+    "columns": {
+      "name": "Student",
+      "courses": "Courses",
+      "lessons": "Lessons",
+      "nextLesson": "Next lesson",
+      "lastLesson": "Last lesson"
+    },
+    "searchPlaceholder": "Search student…",
+    "filters": {
+      "course": "Course",
+      "group": "Group",
+      "anyGroup": "All groups",
+      "any": "All courses",
+      "clear": "Clear filters"
+    },
+    "detail": {
+      "title": "Lessons — {{name}}",
+      "columns": {
+        "date": "Date",
+        "course": "Course",
+        "status": "Status"
+      },
+      "empty": "No lessons found"
+    }
+  },
+  "accountLink": {
+    "createButton": "Create login account",
+    "dialogTitle": "Create a login account",
+    "dialogDescription": "This creates a login and temporary password linked to this profile.",
+    "emailLabel": "Login email",
+    "submit": "Create",
+    "accountActive": "Account active",
+    "accountDeactivated": "Account deactivated"
+  },
+  "calendarEvents": {
+    "title": "My reminders and notices",
+    "add": "Add event",
+    "addPersonal": "Personal reminder",
+    "empty": "No events in this period",
+    "mine": "mine",
+    "everyone": "everyone",
+    "visibilityLabel": "Visibility",
+    "visibilityPersonal": "Only me",
+    "visibilityEveryone": "Everyone",
+    "titleLabel": "Title",
+    "descriptionLabel": "Description",
+    "descriptionOptional": "optional",
+    "startLabel": "Start",
+    "endLabel": "End",
+    "allDayLabel": "All day",
+    "save": "Save",
+    "edit": "Edit event",
+    "delete": "Delete",
+    "confirmDeleteTitle": "Delete this event?",
+    "confirmDeleteDesc": "This cannot be undone.",
+    "created": "Event created",
+    "updated": "Event updated",
+    "deleted": "Event deleted",
+    "endBeforeStart": "An event cannot end before it starts",
+    "titleRequired": "Title is required"
+  }
+}

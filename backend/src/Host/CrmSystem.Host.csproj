@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="../Shared/Shared.Infrastructure/Shared.Infrastructure.csproj" />
     <ProjectReference Include="../Modules/Students/Students.Infrastructure.Postgres/Students.Infrastructure.Postgres.csproj" />
     <ProjectReference Include="..\Modules\Identity\Identity.Application\Identity.Application.csproj" />
     <ProjectReference Include="..\Modules\Identity\Identity.Infrastructure.Jwt\Identity.Infrastructure.Jwt.csproj" />
@@ -30,6 +31,15 @@
     <ProjectReference Include="../Modules/Courses/Courses.Application/Courses.Application.csproj" />
     <ProjectReference Include="../Modules/Enrollments/Enrollments.Infrastructure.Postgres/Enrollments.Infrastructure.Postgres.csproj" />
     <ProjectReference Include="../Modules/Enrollments/Enrollments.Application/Enrollments.Application.csproj" />
+    <ProjectReference Include="../Modules/Scheduling/Scheduling.Infrastructure.Postgres/Scheduling.Infrastructure.Postgres.csproj" />
+    <ProjectReference Include="../Modules/Scheduling/Scheduling.Application/Scheduling.Application.csproj" />
+    <ProjectReference Include="../Modules/Billing/Billing.Infrastructure.Postgres/Billing.Infrastructure.Postgres.csproj" />
+    <ProjectReference Include="../Modules/Billing/Billing.Application/Billing.Application.csproj" />
+    <ProjectReference Include="../Modules/Reporting/Reporting.Application/Reporting.Application.csproj" />
+    <ProjectReference Include="../Modules/Notifications/Notifications.Infrastructure.Postgres/Notifications.Infrastructure.Postgres.csproj" />
+    <ProjectReference Include="../Modules/Notifications/Notifications.Application/Notifications.Application.csproj" />
+    <ProjectReference Include="../Modules/Materials/Materials.Infrastructure.Postgres/Materials.Infrastructure.Postgres.csproj" />
+    <ProjectReference Include="../Modules/Materials/Materials.Application/Materials.Application.csproj" />
   </ItemGroup>
 
 </Project>

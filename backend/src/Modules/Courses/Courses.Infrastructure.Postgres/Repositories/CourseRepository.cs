@@ -83,4 +83,12 @@ internal sealed class CourseRepository(CoursesDbContext context) : ICourseReposi
 
         return (courses, totalCount);
     }
+
+    public async Task<IReadOnlyList<Course>> GetByIdsAsync(
+        IReadOnlyCollection<Guid> ids,
+        CancellationToken ct = default) =>
+        await context.Courses
+            .AsNoTracking()
+            .Where(c => ids.Contains(c.Id))
+            .ToListAsync(ct);
 }

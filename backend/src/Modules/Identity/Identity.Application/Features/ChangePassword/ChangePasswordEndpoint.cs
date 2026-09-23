@@ -1,10 +1,13 @@
 using System.Security.Claims;
 using FluentValidation;
 using Identity.Application.Abstractions;
+using Identity.Application.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
+using Notifications.Contracts;
+using Shared.Kernel.Abstractions;
 
 namespace Identity.Application.Features.ChangePassword;
 
@@ -53,6 +56,8 @@ public static class ChangePasswordEndpoint
         IUserRepository userRepository,
         IIdentityService identityService,
         IIdentityUnitOfWork unitOfWork,
+        ITransactionCoordinator transaction,
+        INotificationSender notificationSender,
         ILogger<ChangePasswordRequest> logger,
         CancellationToken ct
     )
@@ -90,19 +95,25 @@ public static class ChangePasswordEndpoint
                 statusCode: StatusCodes.Status400BadRequest);
         }
 
-        await identityService.ChangePasswordAsync(
-            existingUser,
-            request.OldPassword,
-            request.NewPassword,
-            ct
-        );
+        // The new password and the cleared "must change" flag are saved together or not at all
+        await transaction.ExecuteAsync(async token =>
+        {
+            await identityService.ChangePasswordAsync(
+                existingUser,
+                request.OldPassword,
+                request.NewPassword,
+                token
+            );
 
-        existingUser.CompletePasswordChange();
+            existingUser.CompletePasswordChange();
 
-        await userRepository.UpdateAsync(existingUser, ct);
-        await unitOfWork.SaveChangesAsync(ct);
+            await userRepository.UpdateAsync(existingUser, token);
+            await unitOfWork.SaveChangesAsync(token);
+        }, ct);
 
         logger.LogInformation("User {UserId} changed their password", parsedUserId);
+
+        await PasswordNotifications.ResolveChangeRequiredAsync(notificationSender, parsedUserId, logger, ct);
 
         return Results.NoContent();
     }

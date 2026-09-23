@@ -136,6 +136,8 @@ namespace Students.Infrastructure.Postgres.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
+                    b.HasIndex("UserId");
+
                     b.ToTable("students", "students");
                 });
 

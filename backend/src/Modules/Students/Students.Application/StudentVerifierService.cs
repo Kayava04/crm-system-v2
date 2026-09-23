@@ -7,4 +7,7 @@ internal sealed class StudentVerifierService(IStudentRepository repository) : IS
 {
     public async Task<bool> ExistsAsync(Guid studentId, CancellationToken ct = default) =>
         await repository.ExistsByIdAsync(studentId, ct);
+
+    public async Task<bool> IsActiveAsync(Guid studentId, CancellationToken ct = default) =>
+        await repository.IsActiveByIdAsync(studentId, ct);
 }

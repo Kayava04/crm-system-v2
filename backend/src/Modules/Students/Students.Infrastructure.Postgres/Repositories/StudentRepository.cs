@@ -2,6 +2,7 @@ using Education.Contracts.Enums;
 using Microsoft.EntityFrameworkCore;
 using Students.Application.Abstractions;
 using Students.Domain.Entities;
+using Students.Domain.Enums;
 using Students.Infrastructure.Postgres.Persistence;
 
 namespace Students.Infrastructure.Postgres.Repositories;
@@ -98,4 +99,93 @@ internal sealed class StudentRepository(StudentsDbContext context) : IStudentRep
         await context.Students
             .AsNoTracking()
             .AnyAsync(s => s.Id == id, ct);
+
+    public async Task<IReadOnlyList<Student>> GetByIdsAsync(
+        IReadOnlyCollection<Guid> ids,
+        CancellationToken ct = default) =>
+        await context.Students
+            .AsNoTracking()
+            .Where(s => ids.Contains(s.Id))
+            .OrderBy(s => s.LastName)
+            .ThenBy(s => s.FirstName)
+            .ToListAsync(ct);
+
+    public async Task<IReadOnlyDictionary<StudentStatus, int>> GetCountsByStatusAsync(CancellationToken ct = default) =>
+        await context.Students
+            .AsNoTracking()
+            .GroupBy(s => s.Status)
+            .Select(g => new { Status = g.Key, Count = g.Count() })
+            .ToDictionaryAsync(x => x.Status, x => x.Count, ct);
+
+    public async Task<Student?> GetByUserIdAsync(Guid userId, CancellationToken ct = default) =>
+        await context.Students
+            .AsNoTracking()
+            .Include(s => s.Preferences)
+            .Include(s => s.ParentInfo)
+            .Include(s => s.Languages)
+            .FirstOrDefaultAsync(s => s.UserId == userId, ct);
+
+    public async Task<bool> IsActiveByIdAsync(Guid id, CancellationToken ct = default) =>
+        await context.Students
+            .AsNoTracking()
+            .AnyAsync(s => s.Id == id && s.Status == StudentStatus.Active, ct);
+
+    public async Task<HashSet<string>> GetExistingEmailsAsync(IReadOnlyCollection<string> emails, CancellationToken ct = default)
+    {
+        var lowered = emails.Select(e => e.ToLower()).ToList();
+
+        return (await context.Students
+            .AsNoTracking()
+            .Where(s => lowered.Contains(s.Email.ToLower()))
+            .Select(s => s.Email.ToLower())
+            .ToListAsync(ct)).ToHashSet();
+    }
+
+    public async Task<IReadOnlyList<Student>> GetByIdsForUpdateAsync(IReadOnlyCollection<Guid> ids, CancellationToken ct = default) =>
+        await context.Students
+            .Where(s => ids.Contains(s.Id))
+            .ToListAsync(ct);
+
+    public async Task<IReadOnlyList<Student>> GetForExportAsync(
+        string? search,
+        string? city,
+        bool? isChild,
+        Language? language,
+        Level? currentLevel,
+        Format? format,
+        int limit,
+        CancellationToken ct = default)
+    {
+        var query = context.Students
+            .AsNoTracking()
+            .Include(s => s.Preferences)
+            .Include(s => s.Languages)
+            .AsQueryable();
+
+        if (!string.IsNullOrEmpty(search))
+            query = query.Where(s =>
+                s.FirstName.ToLower().Contains(search.ToLower()) ||
+                s.LastName.ToLower().Contains(search.ToLower()));
+
+        if (!string.IsNullOrEmpty(city))
+            query = query.Where(s => s.City.ToLower() == city.ToLower());
+
+        if (isChild.HasValue)
+            query = query.Where(s => s.IsChild == isChild.Value);
+
+        if (currentLevel.HasValue)
+            query = query.Where(s => s.Preferences!.CurrentLevel == currentLevel.Value);
+
+        if (format.HasValue)
+            query = query.Where(s => s.Preferences!.Format == format.Value);
+
+        if (language.HasValue)
+            query = query.Where(s => s.Languages.Any(l => l.Language == language.Value));
+
+        return await query
+            .OrderBy(s => s.LastName)
+            .ThenBy(s => s.FirstName)
+            .Take(limit)
+            .ToListAsync(ct);
+    }
 }

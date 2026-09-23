@@ -9,6 +9,7 @@ import {
   Users,
   Ban,
   ListChecks,
+  Eye,
   EyeOff,
 } from 'lucide-react'
 import { getSchedules } from '@/features/scheduling/api'
@@ -20,6 +21,7 @@ import {
 import { getAllGroupsForLookup } from '@/features/studyGroups/api'
 import { useWeekRange, toIsoDate } from '@/lib/useWeekRange'
 import { enumLabel } from '@/lib/enumLabels'
+import { cn } from '@/lib/utils'
 import { useCan } from '@/features/auth/useCan'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -81,6 +83,7 @@ export function StaffCalendarView() {
   // Lessons are never deleted from the system (see calendar.item.cancel for that),
   // so this is purely a "declutter what I'm looking at" aid.
   const [hiddenLessonIds, setHiddenLessonIds] = useState<Set<string>>(new Set())
+  const [showHidden, setShowHidden] = useState(false)
 
   const { data: groups } = useQuery({
     queryKey: ['study-groups', 'lookup-all'],
@@ -114,7 +117,7 @@ export function StaffCalendarView() {
   const filteredResolved = useMemo(() => {
     const term = search.trim().toLowerCase()
     return resolved.filter((r) => {
-      if (hiddenLessonIds.has(r.row.id)) return false
+      if (hiddenLessonIds.has(r.row.id) && !showHidden) return false
       if (!term) return true
       const haystack = [r.courseName, r.teacherName, r.groupName, r.studentName]
         .filter(Boolean)
@@ -122,7 +125,7 @@ export function StaffCalendarView() {
         .toLowerCase()
       return haystack.includes(term)
     })
-  }, [resolved, search, hiddenLessonIds])
+  }, [resolved, search, hiddenLessonIds, showHidden])
 
   const grouped = useMemo(() => {
     const byDay = new Map<string, ResolvedScheduleRow[]>()
@@ -168,6 +171,19 @@ export function StaffCalendarView() {
     setSelectedLessonIds(new Set())
   }
 
+  function unhideLesson(id: string) {
+    setHiddenLessonIds((prev) => {
+      const next = new Set(prev)
+      next.delete(id)
+      return next
+    })
+  }
+
+  function restoreAllHidden() {
+    setHiddenLessonIds(new Set())
+    setShowHidden(false)
+  }
+
   const hasFilters = !!(search || groupFilter || statusFilter)
   const rangeLabel = `${weekStart.toLocaleDateString(lang, { day: 'numeric', month: 'short' })} – ${weekEnd.toLocaleDateString(lang, { day: 'numeric', month: 'short' })}`
 
@@ -201,6 +217,25 @@ export function StaffCalendarView() {
                 <ListChecks />
                 {selectMode ? t('calendar.exitSelectLessons') : t('calendar.selectLessons')}
               </Button>
+              {hiddenLessonIds.size > 0 && (
+                <>
+                  <Button
+                    size="sm"
+                    variant={showHidden ? 'default' : 'outline'}
+                    onClick={() => setShowHidden((v) => !v)}
+                  >
+                    <Eye />
+                    {showHidden
+                      ? t('calendar.stopShowingHidden')
+                      : t('calendar.showHidden', { count: hiddenLessonIds.size })}
+                  </Button>
+                  {showHidden && (
+                    <Button size="sm" variant="ghost" onClick={restoreAllHidden}>
+                      {t('calendar.restoreAllHidden')}
+                    </Button>
+                  )}
+                </>
+              )}
               <Button size="sm" variant="outline" onClick={() => setCancelFutureOpen(true)}>
                 <Ban />
                 {t('calendar.cancelFuture')}
@@ -303,12 +338,14 @@ export function StaffCalendarView() {
               </h2>
               <div className="flex flex-col gap-2">
                 {day.items.map((r) => {
-                  const isOpenLesson =
-                    r.row.status === 'Scheduled' || r.row.status === 'Rescheduled'
+                  const isHidden = hiddenLessonIds.has(r.row.id)
                   return (
                     <Card
                       key={r.row.id}
-                      className="cursor-pointer transition-colors hover:bg-muted/40"
+                      className={cn(
+                        'cursor-pointer transition-colors hover:bg-muted/40',
+                        isHidden && 'opacity-60',
+                      )}
                       onClick={() => (selectMode ? undefined : setSelectedRow(r))}
                     >
                       <CardContent className="flex flex-wrap items-center justify-between gap-3 py-3">
@@ -316,7 +353,6 @@ export function StaffCalendarView() {
                           {selectMode && (
                             <Checkbox
                               checked={selectedLessonIds.has(r.row.id)}
-                              disabled={!isOpenLesson}
                               onClick={(e) => e.stopPropagation()}
                               onCheckedChange={(checked) =>
                                 toggleLessonSelected(r.row.id, checked === true)
@@ -334,6 +370,9 @@ export function StaffCalendarView() {
                               <Badge variant={statusVariant(r.row.status)}>
                                 {enumLabel(t, 'scheduleStatus', r.row.status)}
                               </Badge>
+                              {isHidden && (
+                                <Badge variant="secondary">{t('calendar.hiddenBadge')}</Badge>
+                              )}
                             </div>
                             <span className="text-sm">{r.courseName ?? '—'}</span>
                             <span className="text-xs text-muted-foreground">
@@ -343,6 +382,19 @@ export function StaffCalendarView() {
                             </span>
                           </div>
                         </div>
+                        {isHidden && (
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              unhideLesson(r.row.id)
+                            }}
+                          >
+                            <Eye />
+                            {t('calendar.unhide')}
+                          </Button>
+                        )}
                       </CardContent>
                     </Card>
                   )

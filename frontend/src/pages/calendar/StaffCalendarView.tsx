@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import {
@@ -60,6 +60,17 @@ function statusVariant(status: string): 'success' | 'secondary' | 'destructive' 
   return 'secondary'
 }
 
+const HIDDEN_LESSONS_KEY = 'crm.calendar.hiddenLessons'
+
+function readStoredHiddenLessons(): Set<string> {
+  try {
+    const raw = localStorage.getItem(HIDDEN_LESSONS_KEY)
+    return raw ? new Set(JSON.parse(raw)) : new Set()
+  } catch {
+    return new Set()
+  }
+}
+
 export function StaffCalendarView() {
   const { t, i18n } = useTranslation()
   const lang = i18n.language === 'en' ? 'en' : 'uk'
@@ -79,11 +90,16 @@ export function StaffCalendarView() {
   const [selectMode, setSelectMode] = useState(false)
   const [selectedLessonIds, setSelectedLessonIds] = useState<Set<string>>(new Set())
   const [reassignSelectedOpen, setReassignSelectedOpen] = useState(false)
-  // View-only: hides rows in this browser tab, nothing is changed on the server.
+  // View-only: hides rows in this browser, nothing is changed on the server.
   // Lessons are never deleted from the system (see calendar.item.cancel for that),
-  // so this is purely a "declutter what I'm looking at" aid.
-  const [hiddenLessonIds, setHiddenLessonIds] = useState<Set<string>>(new Set())
+  // so this is purely a "declutter what I'm looking at" aid, persisted to
+  // localStorage so it survives a reload but never leaves this browser.
+  const [hiddenLessonIds, setHiddenLessonIds] = useState<Set<string>>(readStoredHiddenLessons)
   const [showHidden, setShowHidden] = useState(false)
+
+  useEffect(() => {
+    localStorage.setItem(HIDDEN_LESSONS_KEY, JSON.stringify([...hiddenLessonIds]))
+  }, [hiddenLessonIds])
 
   const { data: groups } = useQuery({
     queryKey: ['study-groups', 'lookup-all'],

@@ -10,6 +10,7 @@ import { ApiError } from '@/api/errors'
 import { applyServerValidation } from '@/lib/applyServerValidation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { DateInput } from '@/components/ui/date-input'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
@@ -102,7 +103,7 @@ export function TeacherCreatePage() {
               <Input {...register('middleName')} />
             </Field>
             <Field label={t('profile.teacherData.dateOfBirth')} error={errors.dateOfBirth?.message}>
-              <Input type="date" {...register('dateOfBirth')} aria-invalid={!!errors.dateOfBirth} />
+              <DateInput {...register('dateOfBirth')} aria-invalid={!!errors.dateOfBirth} />
             </Field>
             <Field label={t('profile.contact.phoneLabel')} error={errors.phoneNumber?.message}>
               <Input type="tel" {...register('phoneNumber')} aria-invalid={!!errors.phoneNumber} />

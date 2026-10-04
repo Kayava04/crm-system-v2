@@ -10,7 +10,7 @@ import {
 } from '@/features/reports/api'
 import { toNum, formatDate } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { DateInput } from '@/components/ui/date-input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Field } from '@/components/shared/Field'
@@ -71,12 +71,12 @@ export function DashboardPage() {
           <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-end">
             <div className="w-full sm:w-40">
               <Field label={t('reports.dateFrom')}>
-                <Input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} />
+                <DateInput value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} />
               </Field>
             </div>
             <div className="w-full sm:w-40">
               <Field label={t('reports.dateTo')}>
-                <Input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} />
+                <DateInput value={dateTo} onChange={(e) => setDateTo(e.target.value)} />
               </Field>
             </div>
             <div className="flex gap-3">

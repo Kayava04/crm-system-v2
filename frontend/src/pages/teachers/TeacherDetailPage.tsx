@@ -28,6 +28,7 @@ import { toNum, formatCurrency, formatDate, formatDateTime } from '@/lib/utils'
 import { useCan } from '@/features/auth/useCan'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { DateInput } from '@/components/ui/date-input'
 import { Textarea } from '@/components/ui/textarea'
 import {
   Select,
@@ -454,7 +455,7 @@ function ProfileTab({
             <Input {...register('middleName')} />
           </Field>
           <Field label={t('profile.teacherData.dateOfBirth')} error={errors.dateOfBirth?.message}>
-            <Input type="date" {...register('dateOfBirth')} aria-invalid={!!errors.dateOfBirth} />
+            <DateInput {...register('dateOfBirth')} aria-invalid={!!errors.dateOfBirth} />
           </Field>
           <Field label={t('profile.contact.phoneLabel')} error={errors.phoneNumber?.message}>
             <Input type="tel" {...register('phoneNumber')} aria-invalid={!!errors.phoneNumber} />
@@ -630,11 +631,7 @@ function SalaryTab({
               label={t('profile.teacherData.effectiveFrom')}
               error={errors.effectiveFrom?.message}
             >
-              <Input
-                type="date"
-                {...register('effectiveFrom')}
-                aria-invalid={!!errors.effectiveFrom}
-              />
+              <DateInput {...register('effectiveFrom')} aria-invalid={!!errors.effectiveFrom} />
             </Field>
             <DialogFooter>
               <Button

@@ -261,7 +261,7 @@ export function StudentsListPage() {
       </div>
 
       {selected.size > 0 && (
-        <div className="flex items-center gap-3 rounded-md border border-border bg-muted/40 px-3 py-2">
+        <div className="flex items-center gap-3 rounded-lg border border-border bg-muted/40 px-3 py-2">
           <span className="text-sm">{t('table.selected', { count: selected.size })}</span>
           <Button variant="ghost" size="sm" onClick={() => setSelected(new Set())}>
             {t('table.clearSelection')}

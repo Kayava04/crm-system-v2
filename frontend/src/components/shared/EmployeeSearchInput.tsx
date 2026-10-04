@@ -59,7 +59,7 @@ export function EmployeeSearchInput({ value, onChange, placeholder }: EmployeeSe
 
   if (value) {
     return (
-      <div className="flex items-center justify-between gap-2 rounded-md border border-input px-3 py-2 text-sm">
+      <div className="flex items-center justify-between gap-2 rounded-lg border border-input px-3 py-2 text-sm">
         <span className="min-w-0 flex-1 truncate">
           {value.fullName}{' '}
           <span className="text-xs text-muted-foreground">
@@ -81,7 +81,7 @@ export function EmployeeSearchInput({ value, onChange, placeholder }: EmployeeSe
     <div className="flex flex-col gap-1">
       <Input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={placeholder} />
       {active && matches.length > 0 && (
-        <div className="flex flex-col rounded-md border border-border">
+        <div className="flex flex-col rounded-lg border border-border">
           {matches.map((pick) => (
             <button
               key={`${pick.kind}-${pick.id}`}

@@ -279,7 +279,7 @@ function SendToUsersCard() {
               }
             />
             {results && results.length > 0 && (
-              <div className="flex flex-col rounded-md border border-border">
+              <div className="flex flex-col rounded-lg border border-border">
                 {results.map((p) => (
                   <button
                     key={p.id}

@@ -48,7 +48,7 @@ export function EnrollmentPicker({
 
   if (value) {
     return (
-      <div className="flex items-center justify-between rounded-md border border-input px-3 py-2 text-sm">
+      <div className="flex items-center justify-between rounded-lg border border-input px-3 py-2 text-sm">
         <span>{value.label}</span>
         <button
           type="button"
@@ -77,7 +77,7 @@ export function EnrollmentPicker({
             {t('common.cancel')}
           </button>
         </div>
-        <div className="flex flex-col gap-1 rounded-md border border-border">
+        <div className="flex flex-col gap-1 rounded-lg border border-border">
           {enrollments?.items.map((e) => (
             <button
               key={e.id}
@@ -107,7 +107,7 @@ export function EnrollmentPicker({
         placeholder={studentSearchPlaceholder}
       />
       {studentResults && studentResults.items.length > 0 && (
-        <div className="flex flex-col rounded-md border border-border">
+        <div className="flex flex-col rounded-lg border border-border">
           {studentResults.items.map((s) => (
             <button
               key={s.id}

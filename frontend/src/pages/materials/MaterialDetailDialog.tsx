@@ -211,7 +211,7 @@ export function MaterialDetailDialog({
                 </div>
               )}
               {detail?.embedUrl && (
-                <div className="aspect-video w-full overflow-hidden rounded-md border border-border">
+                <div className="aspect-video w-full overflow-hidden rounded-lg border border-border">
                   <iframe
                     src={detail.embedUrl}
                     className="size-full"

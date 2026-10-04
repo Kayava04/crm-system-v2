@@ -179,7 +179,7 @@ export function StudyGroupDetailPage() {
           {group.members.map((m) => (
             <div
               key={m.enrollmentId}
-              className={`flex items-center justify-between rounded-md border border-border px-3 py-2 text-sm${m.isActive ? '' : ' opacity-50'}`}
+              className={`flex items-center justify-between rounded-lg border border-border px-3 py-2 text-sm${m.isActive ? '' : ' opacity-50'}`}
             >
               <div className="flex flex-col">
                 <span>{m.studentName}</span>

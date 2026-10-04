@@ -46,3 +46,20 @@
     backdrop-filter: none;
   }
 }
+
+/* Soft brand-tinted wash behind standalone glass cards (auth screens), so the
+   frosted surface has something to refract instead of a flat fill. */
+@utility backdrop-wash {
+  background-color: var(--background);
+  background-image:
+    radial-gradient(
+      55% 45% at 15% 0%,
+      color-mix(in oklch, var(--primary) 16%, transparent),
+      transparent
+    ),
+    radial-gradient(
+      45% 40% at 90% 100%,
+      color-mix(in oklch, var(--chart-1) 12%, transparent),
+      transparent
+    );
+}

@@ -903,6 +903,16 @@
       "success": "Material added"
     }
   },
+  "datePicker": {
+    "open": "Open calendar",
+    "previous": "Previous",
+    "next": "Next",
+    "chooseYear": "Choose month and year",
+    "today": "Today",
+    "clear": "Clear",
+    "time": "Time",
+    "done": "Done"
+  },
   "reports": {
     "total": "Total",
     "title": "Reports",

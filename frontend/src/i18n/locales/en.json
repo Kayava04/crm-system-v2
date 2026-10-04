@@ -924,6 +924,20 @@
     }
   },
   "reports": {
+    "trend": {
+      "title": "Finance trend",
+      "subtitle": "Income and expenses by month",
+      "span": "Chart period",
+      "months": "{{count}} mo"
+    },
+    "lessons": {
+      "title": "Lessons by weekday",
+      "subtitle": "Last 4 weeks, cancelled excluded",
+      "peak": "Busiest day",
+      "total": "{{count}} in total",
+      "empty": "No lessons in the last 4 weeks",
+      "lessons": "Lessons"
+    },
     "period": "Period",
     "total": "Total",
     "title": "Reports",

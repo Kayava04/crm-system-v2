@@ -12,6 +12,7 @@ import { ApiError } from '@/api/errors'
 import { useDebouncedValue } from '@/lib/useDebouncedValue'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { DateInput } from '@/components/ui/date-input'
 import { Textarea } from '@/components/ui/textarea'
 import {
   Select,
@@ -212,7 +213,7 @@ export function CreateEnrollmentDialog({
             label={t('enrollments.createDialog.startDateLabel')}
             error={errors.startDate?.message}
           >
-            <Input type="date" {...register('startDate')} aria-invalid={!!errors.startDate} />
+            <DateInput {...register('startDate')} aria-invalid={!!errors.startDate} />
           </Field>
           <Field label={t('enrollments.createDialog.discountedPriceLabel')}>
             <Input type="number" min={0} step="0.01" {...register('discountedPrice')} />

@@ -11,6 +11,7 @@ import { ApiError } from '@/api/errors'
 import { applyServerValidation } from '@/lib/applyServerValidation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { DateInput } from '@/components/ui/date-input'
 import { Field } from '@/components/shared/Field'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
@@ -112,7 +113,7 @@ export function ContactTab() {
               <Input type="tel" aria-invalid={!!errors.phoneNumber} {...register('phoneNumber')} />
             </Field>
             <Field label={t('profile.contact.dateOfBirthLabel')} error={errors.dateOfBirth?.message}>
-              <Input type="date" {...register('dateOfBirth')} />
+              <DateInput {...register('dateOfBirth')} />
             </Field>
             <Field label={t('profile.contact.cityLabel')} error={errors.city?.message}>
               <Input {...register('city')} />

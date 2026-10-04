@@ -9,6 +9,7 @@ import { ApiError } from '@/api/errors'
 import { applyServerValidation } from '@/lib/applyServerValidation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { DateInput } from '@/components/ui/date-input'
 import {
   Dialog,
   DialogContent,
@@ -123,7 +124,7 @@ export function CreateStaffDialog({ open, onOpenChange, onCreated }: CreateStaff
               <Input {...register('phoneNumber')} />
             </Field>
             <Field label={t('staff.createDialog.dateOfBirthLabel')}>
-              <Input type="date" {...register('dateOfBirth')} />
+              <DateInput {...register('dateOfBirth')} />
             </Field>
             <Field label={t('staff.createDialog.cityLabel')}>
               <Input {...register('city')} />

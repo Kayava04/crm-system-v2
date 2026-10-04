@@ -25,9 +25,11 @@ automatically at start-up with `Database:MigrateOnStartup=true`.
 
 ### Docker (optional)
 
-`docker compose up -d` starts only Postgres and Seq. To run the whole application in containers too
-(API and frontend), add to `.env` `JWT_SECRET_KEY` (32+ characters), `SUPERADMIN_EMAIL`,
-`SUPERADMIN_PASSWORD` (and `FRONTEND_ORIGIN`, default `http://localhost:5173`), then:
+Compose reads its settings from a `.env` file in the repo root; copy the template first with
+`cp .env.example .env` and fill it in. `docker compose up -d` starts only Postgres and Seq. To run the
+whole application in containers too (API and frontend), `.env` also needs `JWT_SECRET_KEY` (32+
+characters), `SUPERADMIN_EMAIL` and `SUPERADMIN_PASSWORD` (and optionally `FRONTEND_ORIGIN`, default
+`http://localhost:5173`), then:
 
 ```bash
 docker compose --profile app up -d --build     # API on :8080, frontend on :5173

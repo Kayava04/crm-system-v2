@@ -231,7 +231,7 @@ export function TeacherDetailPage() {
       </div>
 
       {deleteConflict && (
-        <div className="rounded-md border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
+        <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
           <strong>{t('teachers.detail.deleteConflictTitle')}</strong> —{' '}
           {t('teachers.detail.deleteConflictDesc')}
         </div>
@@ -559,7 +559,7 @@ function SalaryTab({
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         {teacher.currentSalaryRate && (
-          <div className="rounded-md border border-border p-3">
+          <div className="rounded-lg border border-border p-3">
             <p className="mb-2 text-xs font-medium text-muted-foreground">
               {t('profile.teacherData.currentRate')}
             </p>
@@ -585,7 +585,7 @@ function SalaryTab({
             {teacher.salaryRates.map((rate) => (
               <div
                 key={rate.id}
-                className="flex flex-wrap items-center gap-4 rounded-md border border-border p-3 text-sm"
+                className="flex flex-wrap items-center gap-4 rounded-lg border border-border p-3 text-sm"
               >
                 <span>{formatCurrency(rate.baseSalary, lang)}</span>
                 <span className="text-muted-foreground">

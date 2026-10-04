@@ -145,7 +145,7 @@ export function CreateEnrollmentDialog({
             {fixedStudentId ? (
               <Input value={fixedStudentLabel} disabled />
             ) : pickedStudent ? (
-              <div className="flex items-center justify-between rounded-md border border-input px-3 py-2 text-sm">
+              <div className="flex items-center justify-between rounded-lg border border-input px-3 py-2 text-sm">
                 <span>{pickedStudent.fullName}</span>
                 <button
                   type="button"
@@ -163,7 +163,7 @@ export function CreateEnrollmentDialog({
                   placeholder={t('enrollments.createDialog.studentSearchPlaceholder')}
                 />
                 {studentResults && studentResults.items.length > 0 && (
-                  <div className="flex flex-col rounded-md border border-border">
+                  <div className="flex flex-col rounded-lg border border-border">
                     {studentResults.items.map((s) => (
                       <button
                         key={s.id}

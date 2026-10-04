@@ -45,7 +45,13 @@ export function LessonsByWeekday({ lang }: { lang: string }) {
   const longDay = new Intl.DateTimeFormat(locale, { weekday: 'long' })
   const data = Array.from({ length: 7 }, (_, i) => {
     const sample = new Date(2024, 0, 1 + i)
-    return { day: i + 1, short: shortDay.format(sample), long: longDay.format(sample), count: 0 }
+    return {
+      day: i + 1,
+      short: shortDay.format(sample),
+      long: longDay.format(sample),
+      count: 0,
+      track: 0,
+    }
   })
   for (const lesson of lessons ?? []) {
     if (lesson.status === 'Cancelled') continue
@@ -54,6 +60,9 @@ export function LessonsByWeekday({ lang }: { lang: string }) {
 
   const total = data.reduce((sum, d) => sum + d.count, 0)
   const peak = data.reduce((best, d) => (d.count > best.count ? d : best), data[0])
+  // Full-height tracks are their own series: Recharts skips zero-height bars,
+  // and their `background` with them, so empty weekdays would lose the track.
+  for (const d of data) d.track = Math.max(1, peak.count)
 
   return (
     <div className="flex h-full flex-col gap-4">
@@ -78,6 +87,7 @@ export function LessonsByWeekday({ lang }: { lang: string }) {
               data={data}
               margin={{ top: 20, right: 0, left: 0, bottom: 0 }}
               barCategoryGap="22%"
+              barGap="-100%"
               onMouseMove={(state) =>
                 setActive(
                   state.activeTooltipIndex != null ? Number(state.activeTooltipIndex) : null,
@@ -112,10 +122,16 @@ export function LessonsByWeekday({ lang }: { lang: string }) {
                 }}
               />
               <Bar
+                dataKey="track"
+                fill="var(--foreground)"
+                fillOpacity={0.05}
+                radius={8}
+                isAnimationActive={false}
+              />
+              <Bar
                 dataKey="count"
                 fill={`url(#${gradientId})`}
                 radius={8}
-                background={{ fill: 'var(--foreground)', fillOpacity: 0.05, radius: 8 }}
                 animationDuration={800}
                 animationEasing="ease-out"
               >

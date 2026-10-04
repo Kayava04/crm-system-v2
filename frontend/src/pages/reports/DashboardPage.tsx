@@ -10,7 +10,7 @@ import {
 } from '@/features/reports/api'
 import { toNum, formatDate } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
-import { DateInput } from '@/components/ui/date-input'
+import { DateRangePicker } from '@/components/ui/date-range-picker'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Field } from '@/components/shared/Field'
@@ -69,25 +69,19 @@ export function DashboardPage() {
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
           <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-end">
-            <div className="w-full sm:w-40">
-              <Field label={t('reports.dateFrom')}>
-                <DateInput value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} />
-              </Field>
-            </div>
-            <div className="w-full sm:w-40">
-              <Field label={t('reports.dateTo')}>
-                <DateInput value={dateTo} onChange={(e) => setDateTo(e.target.value)} />
+            <div className="w-full sm:w-72">
+              <Field label={t('reports.period')}>
+                <DateRangePicker
+                  value={{ from: dateFrom, to: dateTo }}
+                  onChange={(range) => {
+                    setDateFrom(range.from)
+                    setDateTo(range.to)
+                    setAppliedRange({ from: range.from || undefined, to: range.to || undefined })
+                  }}
+                />
               </Field>
             </div>
             <div className="flex gap-3">
-              <Button
-                size="sm"
-                onClick={() =>
-                  setAppliedRange({ from: dateFrom || undefined, to: dateTo || undefined })
-                }
-              >
-                {t('reports.apply')}
-              </Button>
               {(dateFrom || dateTo) && (
                 <Button
                   size="sm"

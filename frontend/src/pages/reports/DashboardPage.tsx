@@ -86,7 +86,7 @@ function StatTile({
   tone?: Tone
 }) {
   return (
-    <Card className="animate-in fade-in-0 slide-in-from-bottom-1 duration-500">
+    <Card className="animate-rise-in">
       <CardContent className="flex h-full flex-col gap-3 py-4">
         <div className="flex items-start justify-between gap-2">
           <span className="line-clamp-2 min-h-10 min-w-0 flex-1 text-sm leading-tight break-words text-muted-foreground">
@@ -135,7 +135,8 @@ function tooltipStyle() {
   return {
     background: 'var(--popover)',
     border: '1px solid var(--border)',
-    borderRadius: 8,
+    borderRadius: 'calc(var(--radius) - 2px)',
+    boxShadow: 'var(--glass-shadow)',
     color: 'var(--popover-foreground)',
     fontSize: 12,
   }
@@ -170,7 +171,7 @@ function StatusDonut({
 
   return (
     <div className="flex flex-col items-center gap-4 sm:flex-row">
-      <div className="relative size-[168px] shrink-0">
+      <div className="relative size-42 shrink-0">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
@@ -294,23 +295,21 @@ function IncomeExpenseBars({
   // rows, so labels and bars never quite lined up. Flexbox rows with fixed
   // label/value columns guarantee both rows share the exact same baseline.
   return (
-    <div className="flex h-[92px] flex-col justify-center gap-3">
+    <div className="flex h-23 flex-col justify-center gap-3">
       {rows.map((row) => {
         const { value: amountValue, unit } = formatCurrencyParts(row.value, lang)
         const pct = row.value > 0 ? Math.max(4, (row.value / max) * 100) : 0
         return (
           <div key={row.key} className="flex items-center gap-3">
-            <span className="w-[72px] shrink-0 truncate text-xs text-muted-foreground">
-              {row.name}
-            </span>
-            <div className="h-5 flex-1 overflow-hidden rounded-sm bg-muted/40">
+            <span className="w-18 shrink-0 truncate text-xs text-muted-foreground">{row.name}</span>
+            <div className="h-2 flex-1 overflow-hidden rounded-full bg-foreground/6">
               <div
-                className="h-full rounded-r-[4px] transition-[width] duration-500 ease-out"
-                style={{ width: `${pct}%`, background: row.color }}
+                className="h-full origin-left transition-transform duration-300 ease-out-soft"
+                style={{ transform: `scaleX(${pct / 100})`, background: row.color }}
                 title={`${row.name}: ${amountValue}${unit ? ` ${unit}` : ''}`}
               />
             </div>
-            <span className="w-[84px] shrink-0 text-right text-xs font-medium tabular-nums">
+            <span className="w-21 shrink-0 text-right text-xs font-medium tabular-nums">
               {amountValue}
               {unit && <span className="ml-0.5 font-normal text-muted-foreground">{unit}</span>}
             </span>
@@ -355,7 +354,7 @@ export function DashboardPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="text-2xl font-semibold tracking-tight">{t('reports.title')}</h1>
+      <h1>{t('reports.title')}</h1>
 
       <Card>
         <CardHeader>

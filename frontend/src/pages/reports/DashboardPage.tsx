@@ -207,7 +207,7 @@ export function DashboardPage() {
         )}
       </div>
 
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <DashCard title={t('reports.students.title')} description={t('reports.students.byStatus')}>
           {studentsLoading && <Skeleton className="h-44 w-full" />}
           {students && (
@@ -228,21 +228,36 @@ export function DashboardPage() {
             />
           )}
         </DashCard>
-        <DashCard
-          title={t('reports.enrollments.title')}
-          description={t('reports.enrollments.byStatus')}
-          className="md:col-span-2 xl:col-span-1"
-        >
-          {enrollmentsLoading && <Skeleton className="h-44 w-full" />}
-          {enrollments && (
-            <StatusDonut
-              data={enrollments.byStatus}
-              category="enrollmentStatus"
-              order={ENROLLMENT_STATUS_ORDER}
-            />
-          )}
-        </DashCard>
       </div>
+
+      <DashCard
+        title={t('reports.enrollments.title')}
+        description={
+          enrollments ? t('reports.enrollments.total') + ': ' + toNum(enrollments.total) : undefined
+        }
+      >
+        {enrollmentsLoading && <Skeleton className="h-44 w-full" />}
+        {enrollments && (
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-0">
+            <section className="flex flex-col gap-4 lg:pr-8">
+              <h4 className="text-sm font-medium text-muted-foreground">
+                {t('reports.enrollments.byStatus')}
+              </h4>
+              <StatusDonut
+                data={enrollments.byStatus}
+                category="enrollmentStatus"
+                order={ENROLLMENT_STATUS_ORDER}
+              />
+            </section>
+            <section className="flex flex-col gap-4 border-t border-foreground/8 pt-8 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-8">
+              <h4 className="text-sm font-medium text-muted-foreground">
+                {t('reports.enrollments.byCourse')}
+              </h4>
+              <RankingBars data={byCourseData} />
+            </section>
+          </div>
+        )}
+      </DashCard>
 
       <DashCard title={t('reports.teachers.salaryOverview.title')}>
         {teachersLoading && <Skeleton className="h-24 w-full" />}
@@ -269,16 +284,6 @@ export function DashboardPage() {
             />
           </div>
         )}
-      </DashCard>
-
-      <DashCard
-        title={t('reports.enrollments.byCourse')}
-        description={
-          enrollments ? t('reports.enrollments.total') + ': ' + toNum(enrollments.total) : undefined
-        }
-      >
-        {enrollmentsLoading && <Skeleton className="h-32 w-full" />}
-        {enrollments && <RankingBars data={byCourseData} />}
       </DashCard>
     </div>
   )

@@ -15,35 +15,38 @@ export function RankingBars({ data }: { data: { name: string; value: number }[] 
   const max = Math.max(1, ...data.map((d) => d.value))
 
   return (
-    <ol className="grid grid-cols-1 gap-x-8 gap-y-1 md:grid-cols-2">
-      {data.map((d, i) => (
-        <li
-          key={d.name}
-          onMouseEnter={() => setActive(i)}
-          onMouseLeave={() => setActive(null)}
-          className={cn(
-            'grid grid-cols-[1.75rem_1fr] items-center gap-x-2 rounded-lg px-2 py-2 transition-[background-color,opacity]',
-            active === i && 'bg-muted',
-            active !== null && active !== i && 'opacity-55',
-          )}
-        >
-          <span className="row-span-2 text-xs font-medium text-muted-foreground tabular-nums">
-            {String(i + 1).padStart(2, '0')}
-          </span>
-          <div className="flex items-baseline justify-between gap-3 text-sm">
-            <span className="truncate" title={d.name}>
-              {d.name}
+    // Two columns only when the list has the room (full-width card), not in a half.
+    <div className="@container">
+      <ol className="grid grid-cols-1 gap-x-8 gap-y-1 @3xl:grid-cols-2">
+        {data.map((d, i) => (
+          <li
+            key={d.name}
+            onMouseEnter={() => setActive(i)}
+            onMouseLeave={() => setActive(null)}
+            className={cn(
+              'grid grid-cols-[1.75rem_1fr] items-center gap-x-2 rounded-lg px-2 py-2 transition-[background-color,opacity]',
+              active === i && 'bg-muted',
+              active !== null && active !== i && 'opacity-55',
+            )}
+          >
+            <span className="row-span-2 text-xs font-medium text-muted-foreground tabular-nums">
+              {String(i + 1).padStart(2, '0')}
             </span>
-            <span className="shrink-0 font-medium tabular-nums">{d.value}</span>
-          </div>
-          <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-foreground/6">
-            <div
-              className="h-full origin-left animate-grow-x rounded-full bg-linear-to-r from-(--chart-gradient-from) to-(--chart-gradient-to)"
-              style={{ transform: `scaleX(${d.value / max})`, animationDelay: `${i * 50}ms` }}
-            />
-          </div>
-        </li>
-      ))}
-    </ol>
+            <div className="flex items-baseline justify-between gap-3 text-sm">
+              <span className="truncate" title={d.name}>
+                {d.name}
+              </span>
+              <span className="shrink-0 font-medium tabular-nums">{d.value}</span>
+            </div>
+            <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-foreground/6">
+              <div
+                className="h-full origin-left animate-grow-x rounded-full bg-linear-to-r from-(--chart-gradient-from) to-(--chart-gradient-to)"
+                style={{ transform: `scaleX(${d.value / max})`, animationDelay: `${i * 50}ms` }}
+              />
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
   )
 }

@@ -904,6 +904,7 @@
     }
   },
   "reports": {
+    "total": "Total",
     "title": "Reports",
     "dateFrom": "From",
     "dateTo": "To",

@@ -167,8 +167,8 @@ export function DateRangePicker({
           <ChevronDown className="size-4 shrink-0 text-muted-foreground" />
         </button>
       </PopoverTrigger>
-      <PopoverContent align="start" className="w-auto">
-        <div className="mb-3 grid grid-cols-3 gap-1.5">
+      <PopoverContent align="start">
+        <div className="mb-3 grid w-70 grid-cols-2 gap-1.5">
           {PRESETS.map((key) => (
             <button
               key={key}

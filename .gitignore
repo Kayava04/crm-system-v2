@@ -53,6 +53,16 @@ docker-compose.override.yml
 
 # Environment
 .env
+.env.*
+!.env.example
+*.local
+
+# Frontend (Node / Vite)
+node_modules/
+dist/
+dist-ssr/
+coverage/
+*.tsbuildinfo
 
 # OS-specific
 .DS_Store

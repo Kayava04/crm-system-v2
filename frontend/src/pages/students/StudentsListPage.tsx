@@ -159,7 +159,7 @@ export function StudentsListPage() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-2xl font-semibold tracking-tight">{t('students.title')}</h1>
+        <h1>{t('students.title')}</h1>
         <div className="flex flex-wrap items-center gap-2">
           <ExportMenu
             buildUrl={(fmt, lang) => getStudentExportUrl(filters, fmt, lang)}
@@ -261,7 +261,7 @@ export function StudentsListPage() {
       </div>
 
       {selected.size > 0 && (
-        <div className="flex items-center gap-3 rounded-md border border-border bg-muted/40 px-3 py-2">
+        <div className="flex items-center gap-3 rounded-lg border border-border bg-muted/40 px-3 py-2">
           <span className="text-sm">{t('table.selected', { count: selected.size })}</span>
           <Button variant="ghost" size="sm" onClick={() => setSelected(new Set())}>
             {t('table.clearSelection')}

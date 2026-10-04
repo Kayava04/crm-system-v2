@@ -99,7 +99,7 @@ export function StudyGroupsListPage() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-2xl font-semibold tracking-tight">{t('studyGroups.title')}</h1>
+        <h1>{t('studyGroups.title')}</h1>
         {canCreate && (
           <Button onClick={() => navigate('/study-groups/new')}>
             <Plus />

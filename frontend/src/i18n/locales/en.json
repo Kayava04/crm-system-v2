@@ -18,7 +18,11 @@
     "remove": "Remove",
     "optional": "optional",
     "middleName": "Middle name",
-    "required": "Required"
+    "required": "Required",
+    "loading": "Loading",
+    "openMenu": "Open menu",
+    "breadcrumbs": "Breadcrumb",
+    "home": "Home"
   },
   "auth": {
     "loginTitle": "Sign in",
@@ -899,10 +903,44 @@
       "success": "Material added"
     }
   },
+  "datePicker": {
+    "open": "Open calendar",
+    "previous": "Previous",
+    "next": "Next",
+    "chooseYear": "Choose month and year",
+    "today": "Today",
+    "clear": "Clear",
+    "time": "Time",
+    "done": "Done",
+    "pickRange": "Pick a period",
+    "range": "Range",
+    "presets": {
+      "today": "Today",
+      "thisWeek": "This week",
+      "thisMonth": "This month",
+      "last7Days": "Last 7 days",
+      "last30Days": "Last 30 days",
+      "lastMonth": "Last month"
+    }
+  },
   "reports": {
-    "title": "Reports",
-    "dateFrom": "From",
-    "dateTo": "To",
+    "trend": {
+      "title": "Finance trend",
+      "subtitle": "Income and expenses by month",
+      "span": "Chart period",
+      "months": "{{count}} mo"
+    },
+    "lessons": {
+      "title": "Lessons by weekday",
+      "subtitle": "Last 4 weeks, cancelled excluded",
+      "peak": "Busiest day",
+      "total": "{{count}} in total",
+      "empty": "No lessons in the last 4 weeks",
+      "lessons": "Lessons"
+    },
+    "period": "Period",
+    "total": "Total",
+    "title": "Overview",
     "apply": "Apply",
     "resetToCurrentMonth": "Current month",
     "billing": {

@@ -1,0 +1,65 @@
+/* Frosted surfaces for floating UI only (header, popovers, dialogs, toasts).
+   Content surfaces stay opaque so body text never sits on a busy backdrop. */
+@utility glass {
+  background-color: var(--glass-bg);
+  border: 1px solid var(--glass-edge);
+  box-shadow:
+    inset 0 1px 0 0 var(--glass-highlight),
+    inset 0 0 0 1px var(--glass-border),
+    var(--glass-shadow);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(180%);
+
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    background-color: var(--glass-bg-solid);
+  }
+  @media (prefers-reduced-transparency: reduce) {
+    background-color: var(--glass-bg-solid);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+/* Same material without the floating shadow, for bars pinned to an edge. */
+@utility glass-bar {
+  background-color: var(--glass-bg);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  backdrop-filter: blur(16px) saturate(180%);
+
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    background-color: var(--glass-bg-solid);
+  }
+  @media (prefers-reduced-transparency: reduce) {
+    background-color: var(--glass-bg-solid);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+@utility scrim {
+  background-color: var(--scrim);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+
+  @media (prefers-reduced-transparency: reduce) {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+/* Soft brand-tinted wash behind standalone glass cards (auth screens), so the
+   frosted surface has something to refract instead of a flat fill. */
+@utility backdrop-wash {
+  background-color: var(--background);
+  background-image:
+    radial-gradient(
+      55% 45% at 15% 0%,
+      color-mix(in oklch, var(--primary) 16%, transparent),
+      transparent
+    ),
+    radial-gradient(
+      45% 40% at 90% 100%,
+      color-mix(in oklch, var(--chart-1) 12%, transparent),
+      transparent
+    );
+}

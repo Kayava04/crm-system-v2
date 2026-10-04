@@ -35,17 +35,17 @@ export function DataTable<T>({
   const { t } = useTranslation()
 
   return (
-    <div className="overflow-hidden rounded-lg border border-border">
+    <div className="overflow-hidden rounded-2xl border border-border bg-card">
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
-          <thead className="border-b border-border bg-muted/40">
+          <thead className="border-b border-border bg-muted/50">
             <tr>
               {columns.map((col) => (
                 <th
                   key={col.key}
                   style={col.width ? { width: col.width } : undefined}
                   className={cn(
-                    'px-4 py-2.5 text-left text-xs font-medium text-muted-foreground',
+                    'h-10 px-4 text-left align-middle text-xs font-medium whitespace-nowrap text-muted-foreground',
                     col.className,
                   )}
                 >
@@ -57,7 +57,7 @@ export function DataTable<T>({
           <tbody>
             {isLoading &&
               Array.from({ length: skeletonRows }).map((_, i) => (
-                <tr key={i} className="border-b border-border last:border-0">
+                <tr key={i} className="border-b border-foreground/6 last:border-0">
                   {columns.map((col) => (
                     <td key={col.key} className="px-4 py-3">
                       <Skeleton className="h-4 w-full max-w-40" />
@@ -69,8 +69,10 @@ export function DataTable<T>({
             {!isLoading && rows.length === 0 && (
               <tr>
                 <td colSpan={columns.length} className="px-4 py-16">
-                  <div className="flex flex-col items-center justify-center gap-2 text-center text-muted-foreground">
-                    <Inbox className="size-8" />
+                  <div className="flex animate-fade-in flex-col items-center justify-center gap-3 text-center text-muted-foreground">
+                    <span className="flex size-12 items-center justify-center rounded-2xl bg-muted">
+                      <Inbox className="size-5" strokeWidth={1.75} />
+                    </span>
                     <p className="text-sm">{emptyMessage ?? t('table.empty')}</p>
                   </div>
                 </td>
@@ -83,8 +85,8 @@ export function DataTable<T>({
                   key={rowKey(row)}
                   onClick={onRowClick ? () => onRowClick(row) : undefined}
                   className={cn(
-                    'border-b border-border last:border-0',
-                    onRowClick && 'cursor-pointer hover:bg-accent/50',
+                    'border-b border-foreground/6 transition-colors last:border-0',
+                    onRowClick && 'cursor-pointer hover:bg-muted/60',
                   )}
                 >
                   {columns.map((col) => (

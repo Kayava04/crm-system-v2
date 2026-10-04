@@ -39,16 +39,17 @@ export function SidebarNav({ onNavigate, collapsible = false }: SidebarNavProps)
                 title={collapsible ? t(item.labelKey) : undefined}
                 className={({ isActive }) =>
                   cn(
-                    'flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors',
+                    'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
                     collapsible &&
                       'justify-center gap-0 group-hover:justify-start group-hover:gap-3 group-focus-within:justify-start group-focus-within:gap-3',
                     isActive
-                      ? 'bg-sidebar-accent text-sidebar-accent-foreground'
-                      : 'text-sidebar-foreground hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground',
+                      ? 'bg-primary/10 text-primary'
+                      : 'text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
                   )
                 }
               >
-                <item.icon className="size-5 shrink-0" />
+                <item.icon className="size-5 shrink-0" strokeWidth={1.75} />
                 <span
                   className={cn(
                     'truncate',
@@ -77,16 +78,16 @@ export function Sidebar() {
       <div aria-hidden className="hidden w-16 shrink-0 lg:block" />
       <aside
         className={cn(
-          'group fixed inset-y-0 left-0 z-40 hidden w-16 flex-col overflow-hidden',
-          'border-r border-sidebar-border bg-sidebar transition-[width] duration-200 ease-out',
+          'group fixed inset-y-0 left-0 z-(--z-nav) hidden w-16 flex-col overflow-hidden',
+          'border-r border-sidebar-border bg-sidebar transition-[width,box-shadow] duration-200 ease-out-soft',
           'hover:w-64 hover:overflow-y-auto hover:shadow-xl',
           'focus-within:w-64 focus-within:overflow-y-auto focus-within:shadow-xl',
           'lg:flex',
         )}
       >
         <div className="flex h-14 shrink-0 items-center justify-center gap-0 overflow-hidden border-b border-sidebar-border px-3 group-hover:justify-start group-hover:gap-3 group-focus-within:justify-start group-focus-within:gap-3">
-          <span className="flex size-6 shrink-0 items-center justify-center">
-            <GraduationCap className="size-5 text-primary" />
+          <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+            <GraduationCap className="size-4.5" />
           </span>
           <span
             className="w-0 truncate text-sm font-semibold text-sidebar-foreground opacity-0 transition-opacity delay-100 duration-150 group-hover:w-auto group-hover:opacity-100 group-focus-within:w-auto group-focus-within:opacity-100"

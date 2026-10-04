@@ -113,7 +113,7 @@ export const CalendarEventsPanel = forwardRef<CalendarEventsPanelHandle, Calenda
             return (
               <div
                 key={event.id}
-                className="flex flex-col gap-1 rounded-md border p-3 sm:flex-row sm:items-center sm:justify-between"
+                className="flex flex-col gap-1 rounded-lg border p-3 sm:flex-row sm:items-center sm:justify-between"
               >
                 <div className="flex flex-col gap-1">
                   <div className="flex flex-wrap items-center gap-2">

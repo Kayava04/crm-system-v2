@@ -165,7 +165,7 @@ export function ImportWizardDialog({
           </div>
 
           {result && (
-            <div className="flex flex-col gap-2 rounded-md border border-border p-3">
+            <div className="flex flex-col gap-2 rounded-lg border border-border p-3">
               <div className="flex flex-wrap items-center gap-2 text-sm">
                 <Badge variant="success">
                   {t('import.rowsSucceeded', { count: toNum(result.succeeded) })}

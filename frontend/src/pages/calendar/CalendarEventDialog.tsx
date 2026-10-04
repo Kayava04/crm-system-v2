@@ -15,6 +15,7 @@ import { ApiError } from '@/api/errors'
 import { applyServerValidation } from '@/lib/applyServerValidation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { DateInput } from '@/components/ui/date-input'
 import { Textarea } from '@/components/ui/textarea'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
@@ -191,13 +192,13 @@ export function CalendarEventDialog({
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Field label={t('calendarEvents.startLabel')} error={errors.startsAt?.message ? ' ' : undefined}>
-              <Input type="datetime-local" aria-invalid={!!errors.startsAt} {...register('startsAt')} />
+              <DateInput type="datetime-local" aria-invalid={!!errors.startsAt} {...register('startsAt')} />
             </Field>
             <Field
               label={t('calendarEvents.endLabel')}
               error={errors.endsAt?.message ? t('calendarEvents.endBeforeStart') : undefined}
             >
-              <Input type="datetime-local" aria-invalid={!!errors.endsAt} {...register('endsAt')} />
+              <DateInput type="datetime-local" aria-invalid={!!errors.endsAt} {...register('endsAt')} />
             </Field>
           </div>
 

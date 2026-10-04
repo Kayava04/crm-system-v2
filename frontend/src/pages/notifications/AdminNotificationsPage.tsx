@@ -53,7 +53,7 @@ export function AdminNotificationsPage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-2xl font-semibold tracking-tight">{t('notifications.admin.title')}</h1>
+      <h1>{t('notifications.admin.title')}</h1>
 
       <Tabs value={tab} onValueChange={setTab}>
         <TabsList>
@@ -279,7 +279,7 @@ function SendToUsersCard() {
               }
             />
             {results && results.length > 0 && (
-              <div className="flex flex-col rounded-md border border-border">
+              <div className="flex flex-col rounded-lg border border-border">
                 {results.map((p) => (
                   <button
                     key={p.id}

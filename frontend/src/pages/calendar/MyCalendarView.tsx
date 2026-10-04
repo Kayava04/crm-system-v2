@@ -95,7 +95,7 @@ export function MyCalendarView() {
 
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-2xl font-semibold tracking-tight">{t('calendar.title')}</h1>
+      <h1>{t('calendar.title')}</h1>
 
       <CalendarEventsPanel from={from} to={to} />
 

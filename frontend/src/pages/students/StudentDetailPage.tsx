@@ -31,6 +31,7 @@ import { toNum, formatCurrency, formatDate, formatDateTime } from '@/lib/utils'
 import { useCan } from '@/features/auth/useCan'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { DateInput } from '@/components/ui/date-input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -206,7 +207,7 @@ export function StudentDetailPage() {
               <AvatarFallback className="text-lg">{initials || '?'}</AvatarFallback>
             </Avatar>
             <div className="flex min-w-0 flex-col gap-1">
-              <h1 className="text-2xl font-semibold tracking-tight">{fullName}</h1>
+              <h1>{fullName}</h1>
               <div className="flex flex-wrap items-center gap-2">
                 <Badge variant={statusVariant(student.status)}>
                   {enumLabel(t, 'studentStatus', student.status)}
@@ -492,7 +493,7 @@ function ProfileTab({
             <Input {...register('middleName')} />
           </Field>
           <Field label={t('profile.studentData.dateOfBirth')} error={errors.dateOfBirth?.message}>
-            <Input type="date" {...register('dateOfBirth')} aria-invalid={!!errors.dateOfBirth} />
+            <DateInput {...register('dateOfBirth')} aria-invalid={!!errors.dateOfBirth} />
           </Field>
           <Field label={t('profile.contact.phoneLabel')} error={errors.phoneNumber?.message}>
             <Input type="tel" {...register('phoneNumber')} aria-invalid={!!errors.phoneNumber} />

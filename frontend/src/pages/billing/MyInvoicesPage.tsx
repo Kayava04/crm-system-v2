@@ -48,7 +48,7 @@ export function MyInvoicesPage() {
 
   return (
     <div className="flex max-w-2xl flex-col gap-4">
-      <h1 className="text-2xl font-semibold tracking-tight">{t('nav.myInvoices')}</h1>
+      <h1>{t('nav.myInvoices')}</h1>
 
       {isLoading && (
         <div className="flex flex-col gap-3">

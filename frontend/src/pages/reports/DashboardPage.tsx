@@ -127,9 +127,13 @@ export function DashboardPage() {
           {billingLoading && <Skeleton className="h-24 w-full" />}
           {billing && (
             <>
-              <p className="w-fit rounded-full bg-muted px-2.5 py-1 text-xs text-muted-foreground tabular-nums">
-                {formatDate(billing.dateFrom, lang)} – {formatDate(billing.dateTo, lang)}
-              </p>
+              {/* The picker already shows a chosen period; the default (current
+                  month) is only visible here. */}
+              {!dateFrom && !dateTo && (
+                <p className="w-fit rounded-full bg-muted px-2.5 py-1 text-xs text-muted-foreground tabular-nums">
+                  {formatDate(billing.dateFrom, lang)} – {formatDate(billing.dateTo, lang)}
+                </p>
+              )}
 
               <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_auto]">
                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">

@@ -1,6 +1,7 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react'
 import { AlertTriangle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { StatusScreen } from '@/components/shared/StatusScreen'
 
 interface Props {
   children: ReactNode
@@ -23,16 +24,13 @@ export class ErrorBoundary extends Component<Props, State> {
   render() {
     if (!this.state.error) return this.props.children
     return (
-      <div className="flex min-h-svh flex-col items-center justify-center gap-3 px-4 text-center">
-        <AlertTriangle className="size-10 text-destructive" />
-        <h1 className="text-xl font-semibold">Щось пішло не так</h1>
-        <p className="max-w-sm text-sm text-muted-foreground">
-          Сталася непередбачена помилка інтерфейсу. Спробуйте перезавантажити сторінку.
-        </p>
-        <Button className="mt-2" onClick={() => window.location.reload()}>
-          Перезавантажити
-        </Button>
-      </div>
+      <StatusScreen
+        icon={AlertTriangle}
+        iconClassName="bg-destructive/10 text-destructive"
+        title="Щось пішло не так"
+        description="Сталася непередбачена помилка інтерфейсу. Спробуйте перезавантажити сторінку."
+        action={<Button onClick={() => window.location.reload()}>Перезавантажити</Button>}
+      />
     )
   }
 }

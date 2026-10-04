@@ -11,6 +11,7 @@ import { getAllGroupsForLookup } from '@/features/studyGroups/api'
 import { ApiError } from '@/api/errors'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { DateInput } from '@/components/ui/date-input'
 import {
   Select,
   SelectContent,
@@ -246,7 +247,7 @@ export function GenerateScheduleDialog({
             <Input type="number" min={1} {...register('durationMinutes')} />
           </Field>
           <Field label={t('calendar.generateDialog.startDateLabel')}>
-            <Input type="date" {...register('startDate')} />
+            <DateInput {...register('startDate')} />
           </Field>
           <Field label={t('calendar.generateDialog.lessonsCountLabel')}>
             <Input type="number" min={1} {...register('lessonsCount')} />

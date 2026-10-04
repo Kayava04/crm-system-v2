@@ -10,6 +10,7 @@ import { ApiError } from '@/api/errors'
 import { applyServerValidation } from '@/lib/applyServerValidation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { DateInput } from '@/components/ui/date-input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -102,7 +103,7 @@ export function StudentCreatePage() {
 
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-6">
-      <h1 className="text-2xl font-semibold tracking-tight">{t('students.create.title')}</h1>
+      <h1>{t('students.create.title')}</h1>
       <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-6">
         {formError && (
           <Alert variant="destructive">
@@ -130,7 +131,7 @@ export function StudentCreatePage() {
               <Input {...register('middleName')} />
             </Field>
             <Field label={t('profile.studentData.dateOfBirth')} error={errors.dateOfBirth?.message}>
-              <Input type="date" {...register('dateOfBirth')} aria-invalid={!!errors.dateOfBirth} />
+              <DateInput {...register('dateOfBirth')} aria-invalid={!!errors.dateOfBirth} />
             </Field>
             <Field label={t('profile.contact.phoneLabel')} error={errors.phoneNumber?.message}>
               <Input type="tel" {...register('phoneNumber')} aria-invalid={!!errors.phoneNumber} />

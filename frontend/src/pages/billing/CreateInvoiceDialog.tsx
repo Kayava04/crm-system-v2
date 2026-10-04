@@ -8,6 +8,7 @@ import { createInvoice } from '@/features/billing/api'
 import { ApiError } from '@/api/errors'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { DateInput } from '@/components/ui/date-input'
 import { Textarea } from '@/components/ui/textarea'
 import {
   Dialog,
@@ -108,7 +109,7 @@ export function CreateInvoiceDialog({ open, onOpenChange, onCreated }: CreateInv
             label={t('billing.invoices.createDialog.dueDateLabel')}
             error={errors.dueDate?.message}
           >
-            <Input type="date" {...register('dueDate')} aria-invalid={!!errors.dueDate} />
+            <DateInput {...register('dueDate')} aria-invalid={!!errors.dueDate} />
           </Field>
           <Field label={t('billing.invoices.createDialog.notesLabel')}>
             <Textarea {...register('notes')} rows={2} />

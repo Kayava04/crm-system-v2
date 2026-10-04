@@ -47,21 +47,25 @@ export function HomePage() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">
-          {t('home.welcome', { name: displayName })}
-        </h1>
+        <h1>{t('home.welcome', { name: displayName })}</h1>
         <p className="text-muted-foreground">{t(`roles.${user.roles[0]}`)}</p>
       </div>
 
       {links.length > 0 && (
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {links.map((link) => (
-            <Link key={link.to} to={link.to}>
-              <Card className="h-full transition-colors hover:border-primary/50 hover:bg-accent/40">
+            <Link
+              key={link.to}
+              to={link.to}
+              className="group rounded-2xl outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            >
+              <Card className="h-full transition-[border-color,box-shadow,transform] duration-200 group-hover:-translate-y-0.5 group-hover:border-primary/30 group-hover:shadow-md">
                 <CardContent className="flex items-center gap-3 py-5">
-                  <link.icon className="size-5 shrink-0 text-primary" />
+                  <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                    <link.icon className="size-4.5" />
+                  </span>
                   <span className="flex-1 text-sm font-medium">{t(link.labelKey)}</span>
-                  <ArrowRight className="size-4 shrink-0 text-muted-foreground" />
+                  <ArrowRight className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
                 </CardContent>
               </Card>
             </Link>

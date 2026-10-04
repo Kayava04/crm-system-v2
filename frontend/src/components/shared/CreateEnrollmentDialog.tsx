@@ -12,6 +12,7 @@ import { ApiError } from '@/api/errors'
 import { useDebouncedValue } from '@/lib/useDebouncedValue'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { DateInput } from '@/components/ui/date-input'
 import { Textarea } from '@/components/ui/textarea'
 import {
   Select,
@@ -144,7 +145,7 @@ export function CreateEnrollmentDialog({
             {fixedStudentId ? (
               <Input value={fixedStudentLabel} disabled />
             ) : pickedStudent ? (
-              <div className="flex items-center justify-between rounded-md border border-input px-3 py-2 text-sm">
+              <div className="flex items-center justify-between rounded-lg border border-input px-3 py-2 text-sm">
                 <span>{pickedStudent.fullName}</span>
                 <button
                   type="button"
@@ -162,7 +163,7 @@ export function CreateEnrollmentDialog({
                   placeholder={t('enrollments.createDialog.studentSearchPlaceholder')}
                 />
                 {studentResults && studentResults.items.length > 0 && (
-                  <div className="flex flex-col rounded-md border border-border">
+                  <div className="flex flex-col rounded-lg border border-border">
                     {studentResults.items.map((s) => (
                       <button
                         key={s.id}
@@ -212,7 +213,7 @@ export function CreateEnrollmentDialog({
             label={t('enrollments.createDialog.startDateLabel')}
             error={errors.startDate?.message}
           >
-            <Input type="date" {...register('startDate')} aria-invalid={!!errors.startDate} />
+            <DateInput {...register('startDate')} aria-invalid={!!errors.startDate} />
           </Field>
           <Field label={t('enrollments.createDialog.discountedPriceLabel')}>
             <Input type="number" min={0} step="0.01" {...register('discountedPrice')} />

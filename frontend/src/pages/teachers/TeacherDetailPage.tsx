@@ -28,6 +28,7 @@ import { toNum, formatCurrency, formatDate, formatDateTime } from '@/lib/utils'
 import { useCan } from '@/features/auth/useCan'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { DateInput } from '@/components/ui/date-input'
 import { Textarea } from '@/components/ui/textarea'
 import {
   Select,
@@ -182,7 +183,7 @@ export function TeacherDetailPage() {
               <AvatarFallback className="text-lg">{initials || '?'}</AvatarFallback>
             </Avatar>
             <div className="flex min-w-0 flex-col gap-1">
-              <h1 className="text-2xl font-semibold tracking-tight">{fullName}</h1>
+              <h1>{fullName}</h1>
               <div className="flex flex-wrap items-center gap-2">
                 <Badge variant={statusVariant(teacher.status)}>
                   {enumLabel(t, 'teacherStatus', teacher.status)}
@@ -230,7 +231,7 @@ export function TeacherDetailPage() {
       </div>
 
       {deleteConflict && (
-        <div className="rounded-md border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
+        <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
           <strong>{t('teachers.detail.deleteConflictTitle')}</strong> —{' '}
           {t('teachers.detail.deleteConflictDesc')}
         </div>
@@ -454,7 +455,7 @@ function ProfileTab({
             <Input {...register('middleName')} />
           </Field>
           <Field label={t('profile.teacherData.dateOfBirth')} error={errors.dateOfBirth?.message}>
-            <Input type="date" {...register('dateOfBirth')} aria-invalid={!!errors.dateOfBirth} />
+            <DateInput {...register('dateOfBirth')} aria-invalid={!!errors.dateOfBirth} />
           </Field>
           <Field label={t('profile.contact.phoneLabel')} error={errors.phoneNumber?.message}>
             <Input type="tel" {...register('phoneNumber')} aria-invalid={!!errors.phoneNumber} />
@@ -558,7 +559,7 @@ function SalaryTab({
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         {teacher.currentSalaryRate && (
-          <div className="rounded-md border border-border p-3">
+          <div className="rounded-lg border border-border p-3">
             <p className="mb-2 text-xs font-medium text-muted-foreground">
               {t('profile.teacherData.currentRate')}
             </p>
@@ -584,7 +585,7 @@ function SalaryTab({
             {teacher.salaryRates.map((rate) => (
               <div
                 key={rate.id}
-                className="flex flex-wrap items-center gap-4 rounded-md border border-border p-3 text-sm"
+                className="flex flex-wrap items-center gap-4 rounded-lg border border-border p-3 text-sm"
               >
                 <span>{formatCurrency(rate.baseSalary, lang)}</span>
                 <span className="text-muted-foreground">
@@ -630,11 +631,7 @@ function SalaryTab({
               label={t('profile.teacherData.effectiveFrom')}
               error={errors.effectiveFrom?.message}
             >
-              <Input
-                type="date"
-                {...register('effectiveFrom')}
-                aria-invalid={!!errors.effectiveFrom}
-              />
+              <DateInput {...register('effectiveFrom')} aria-invalid={!!errors.effectiveFrom} />
             </Field>
             <DialogFooter>
               <Button

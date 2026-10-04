@@ -180,7 +180,7 @@ export function EnrollmentDetailPage() {
         </button>
 
         <div className="flex flex-wrap items-center gap-3">
-          <h1 className="text-2xl font-semibold tracking-tight">
+          <h1>
             {t('enrollments.detail.title', { number: enrollment.enrollmentNumber })}
           </h1>
           <Badge variant={statusVariant(enrollment.status)}>

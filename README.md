@@ -25,9 +25,11 @@ automatically at start-up with `Database:MigrateOnStartup=true`.
 
 ### Docker (optional)
 
-`docker compose up -d` starts only Postgres and Seq. To run the whole application in containers too
-(API and frontend), add to `.env` `JWT_SECRET_KEY` (32+ characters), `SUPERADMIN_EMAIL`,
-`SUPERADMIN_PASSWORD` (and `FRONTEND_ORIGIN`, default `http://localhost:5173`), then:
+Compose reads its settings from a `.env` file in the repo root; copy the template first with
+`cp .env.example .env` and fill it in. `docker compose up -d` starts only Postgres and Seq. To run the
+whole application in containers too (API and frontend), `.env` also needs `JWT_SECRET_KEY` (32+
+characters), `SUPERADMIN_EMAIL` and `SUPERADMIN_PASSWORD` (and optionally `FRONTEND_ORIGIN`, default
+`http://localhost:5173`), then:
 
 ```bash
 docker compose --profile app up -d --build     # API on :8080, frontend on :5173
@@ -194,9 +196,9 @@ device on the same network, open `http://<this machine's LAN IP>:5173` — no co
 
 ### Notes
 
-- Access token lives only in memory; the refresh token is in `localStorage` (per the brief — acceptable
-  for this project, but means an XSS vulnerability could read it, hence the short-lived access token and
-  rotation on every refresh).
+- Access token lives only in memory; the refresh token is in `localStorage` (a deliberate trade-off —
+  acceptable for this project, but it means an XSS vulnerability could read it, hence the short-lived
+  access token and rotation on every refresh).
 - Every request goes through one `openapi-fetch` client (`src/api/client.ts`) whose middleware attaches
   the bearer token and, on a 401, serializes a single refresh call and retries the original request once.
 - The sidebar/route table (`src/routes/navConfig.ts`, `src/App.tsx`) is permission/role-gated client-side

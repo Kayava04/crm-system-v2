@@ -6,7 +6,7 @@ import type { ResolvedScheduleRow } from '@/features/scheduling/useResolvedSched
 import { ApiError } from '@/api/errors'
 import { enumLabel } from '@/lib/enumLabels'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { DateInput } from '@/components/ui/date-input'
 import { Badge } from '@/components/ui/badge'
 import {
   Dialog,
@@ -140,7 +140,7 @@ export function LessonDetailDialog({
             <DialogTitle>{t('calendar.item.reschedule')}</DialogTitle>
           </DialogHeader>
           <Field label={t('calendar.item.rescheduleLabel')}>
-            <Input
+            <DateInput
               type="datetime-local"
               value={reschedValue}
               onChange={(e) => setReschedValue(e.target.value)}

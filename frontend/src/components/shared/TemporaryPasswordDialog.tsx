@@ -47,7 +47,7 @@ export function TemporaryPasswordDialog({
         </DialogHeader>
         <div className="flex flex-col gap-2">
           {email && <span className="text-sm text-muted-foreground">{email}</span>}
-          <div className="flex items-center justify-between rounded-md border border-border bg-muted/40 px-3 py-2 font-mono text-sm">
+          <div className="flex items-center justify-between rounded-lg border border-border bg-muted/40 px-3 py-2 font-mono text-sm">
             <span>{password}</span>
             <Button type="button" variant="ghost" size="sm" onClick={handleCopy}>
               <Copy className="size-4" />

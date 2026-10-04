@@ -421,7 +421,7 @@ export function StaffCalendarView() {
       </div>
 
       {selectMode && selectedLessonIds.size > 0 && (
-        <div className="sticky bottom-4 z-10 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border bg-card p-3 shadow-lg">
+        <div className="glass sticky bottom-4 z-10 flex animate-rise-in flex-wrap items-center justify-between gap-3 rounded-2xl p-3">
           <span className="text-sm font-medium">
             {t('calendar.selectedCount', { count: selectedLessonIds.size })}
           </span>

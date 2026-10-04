@@ -19,11 +19,21 @@ import { cn } from '@/lib/utils'
 
 type View = 'days' | 'months' | 'years'
 
+export interface DateRange {
+  from: Date | null
+  to: Date | null
+}
+
 interface CalendarProps {
-  selected: Date | null
+  selected?: Date | null
+  /** Range mode: both ends are highlighted with a band between them, and while
+   * only `from` is set the band previews up to the hovered day. */
+  range?: DateRange
   onSelect: (date: Date) => void
   min?: Date | null
   max?: Date | null
+  /** Month shown first when nothing is selected yet. */
+  defaultMonth?: Date
 }
 
 const YEARS_PER_PAGE = 12
@@ -34,13 +44,31 @@ function capitalize(s: string) {
 
 /** Month grid with month/year drill-up and full keyboard support (arrows,
  * Home/End, PageUp/PageDown, Shift+Page for years). */
-export function Calendar({ selected, onSelect, min, max }: CalendarProps) {
+export function Calendar({
+  selected = null,
+  range,
+  onSelect,
+  min,
+  max,
+  defaultMonth,
+}: CalendarProps) {
   const { t, i18n } = useTranslation()
   const locale = i18n.language === 'en' ? 'en-US' : 'uk-UA'
   const today = startOfDay(new Date())
 
   const [view, setView] = useState<View>('days')
-  const [cursor, setCursor] = useState<Date>(() => startOfDay(selected ?? today))
+  const [cursor, setCursor] = useState<Date>(() =>
+    startOfDay(selected ?? range?.to ?? range?.from ?? defaultMonth ?? today),
+  )
+  const [hovered, setHovered] = useState<Date | null>(null)
+
+  const rangeEnd = range?.to ?? (range?.from ? hovered : null)
+  const [lo, hi] =
+    range?.from && rangeEnd
+      ? isBefore(rangeEnd, range.from)
+        ? [rangeEnd, range.from]
+        : [range.from, rangeEnd]
+      : [range?.from ?? null, range?.from ?? null]
   const gridRef = useRef<HTMLDivElement>(null)
   const refocus = useRef(false)
 
@@ -172,23 +200,39 @@ export function Calendar({ selected, onSelect, min, max }: CalendarProps) {
           </div>
           {Array.from({ length: 6 }, (_, row) => (
             <div key={row} role="row" className="grid grid-cols-7 gap-y-0.5">
-              {days.slice(row * 7, row * 7 + 7).map((d) => {
-                const isSelected = !!selected && isSameDay(d, selected)
+              {days.slice(row * 7, row * 7 + 7).map((d, col) => {
+                const inRange = !!lo && !!hi && !isBefore(d, lo) && !isAfter(d, hi)
+                const isRangeStart = !!lo && isSameDay(d, lo)
+                const isRangeEnd = !!hi && isSameDay(d, hi)
+                const isSelected = range
+                  ? isRangeStart || isRangeEnd
+                  : !!selected && isSameDay(d, selected)
                 const isToday = isSameDay(d, today)
                 const isCursor = isSameDay(d, cursor)
                 const disabled = isOutOfRange(d)
                 return (
-                  <div key={d.getTime()} role="gridcell" className="flex justify-center">
+                  <div
+                    key={d.getTime()}
+                    role="gridcell"
+                    className={cn(
+                      'flex justify-center',
+                      inRange && lo !== hi && 'bg-primary/10',
+                      (isRangeStart || col === 0) && 'rounded-l-lg',
+                      (isRangeEnd || col === 6) && 'rounded-r-lg',
+                    )}
+                  >
                     <button
                       type="button"
                       tabIndex={isCursor ? 0 : -1}
                       data-cursor={isCursor}
-                      aria-selected={isSelected}
+                      aria-selected={range ? inRange : isSelected}
                       aria-current={isToday ? 'date' : undefined}
                       aria-label={dayLabel.format(d)}
                       disabled={disabled}
                       onClick={() => onSelect(d)}
                       onFocus={() => !isCursor && setCursor(d)}
+                      onMouseEnter={range ? () => setHovered(d) : undefined}
+                      onMouseLeave={range ? () => setHovered(null) : undefined}
                       className={cn(
                         'relative flex size-9 items-center justify-center rounded-lg text-sm tabular-nums outline-none',
                         'transition-[color,background-color,box-shadow,transform] hover:bg-foreground/6 focus-visible:ring-2 focus-visible:ring-ring active:scale-95',

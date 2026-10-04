@@ -911,13 +911,22 @@
     "today": "Today",
     "clear": "Clear",
     "time": "Time",
-    "done": "Done"
+    "done": "Done",
+    "pickRange": "Pick a period",
+    "range": "Range",
+    "presets": {
+      "today": "Today",
+      "thisWeek": "This week",
+      "thisMonth": "This month",
+      "last7Days": "Last 7 days",
+      "last30Days": "Last 30 days",
+      "lastMonth": "Last month"
+    }
   },
   "reports": {
+    "period": "Period",
     "total": "Total",
     "title": "Reports",
-    "dateFrom": "From",
-    "dateTo": "To",
     "apply": "Apply",
     "resetToCurrentMonth": "Current month",
     "billing": {

@@ -911,13 +911,22 @@
     "today": "Сьогодні",
     "clear": "Очистити",
     "time": "Час",
-    "done": "Готово"
+    "done": "Готово",
+    "pickRange": "Оберіть період",
+    "range": "Діапазон",
+    "presets": {
+      "today": "Сьогодні",
+      "thisWeek": "Цей тиждень",
+      "thisMonth": "Цей місяць",
+      "last7Days": "Останні 7 днів",
+      "last30Days": "Останні 30 днів",
+      "lastMonth": "Минулий місяць"
+    }
   },
   "reports": {
+    "period": "Період",
     "total": "Усього",
     "title": "Звіти",
-    "dateFrom": "Від",
-    "dateTo": "До",
     "apply": "Застосувати",
     "resetToCurrentMonth": "Поточний місяць",
     "billing": {

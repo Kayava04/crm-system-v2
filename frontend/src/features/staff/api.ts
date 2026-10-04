@@ -31,8 +31,8 @@ export interface CreateStaffInput {
 
 /** Creates a new Admin-role staff account (never SuperAdmin — minting another
  * SuperAdmin from this permission-gated screen would be a privilege-escalation
- * risk the brief doesn't call for, so the role is fixed here rather than exposed
- * as a picker). Salary can also be changed later with setStaffSalary. */
+ * risk, so the role is fixed here rather than exposed as a picker). Salary can
+ * also be changed later with setStaffSalary. */
 export function registerStaff(input: CreateStaffInput) {
   return unwrap(
     api.POST('/api/auth/register', {

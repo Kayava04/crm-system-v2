@@ -3,7 +3,8 @@
   --animate-fade-out: fade-out var(--duration-fast) ease-in;
   --animate-pop-in: pop-in var(--duration-base) var(--ease-out-soft);
   --animate-pop-out: pop-out var(--duration-fast) ease-in;
-  --animate-rise-in: rise-in var(--duration-slow) var(--ease-out-soft);
+  --animate-rise-in: rise-in var(--duration-slow) var(--ease-out-soft) both;
+  --animate-grow-x: grow-x 700ms var(--ease-out-soft) both;
   --animate-slide-in-left: slide-in-left var(--duration-slow) var(--ease-out-soft);
   --animate-slide-out-left: slide-out-left var(--duration-base) ease-in;
   --animate-slide-in-right: slide-in-right var(--duration-slow) var(--ease-out-soft);
@@ -35,6 +36,12 @@
     from {
       opacity: 0;
       transform: translateY(6px);
+    }
+  }
+  /* No `to`: the bar animates up to whatever scale its inline style sets. */
+  @keyframes grow-x {
+    from {
+      transform: scaleX(0);
     }
   }
   @keyframes slide-in-left {

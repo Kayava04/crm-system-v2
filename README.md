@@ -194,9 +194,9 @@ device on the same network, open `http://<this machine's LAN IP>:5173` — no co
 
 ### Notes
 
-- Access token lives only in memory; the refresh token is in `localStorage` (per the brief — acceptable
-  for this project, but means an XSS vulnerability could read it, hence the short-lived access token and
-  rotation on every refresh).
+- Access token lives only in memory; the refresh token is in `localStorage` (a deliberate trade-off —
+  acceptable for this project, but it means an XSS vulnerability could read it, hence the short-lived
+  access token and rotation on every refresh).
 - Every request goes through one `openapi-fetch` client (`src/api/client.ts`) whose middleware attaches
   the bearer token and, on a 401, serializes a single refresh call and retries the original request once.
 - The sidebar/route table (`src/routes/navConfig.ts`, `src/App.tsx`) is permission/role-gated client-side

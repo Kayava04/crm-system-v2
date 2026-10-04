@@ -86,7 +86,7 @@ export function StatusDonut({
           </div>
         </div>
 
-        <ul className="flex w-full flex-1 flex-col gap-0.5">
+        <ul className="flex w-full max-w-md flex-1 flex-col gap-0.5">
           {slices.map((d, i) => (
             <li
               key={d.status}

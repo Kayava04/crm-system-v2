@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useQuery } from '@tanstack/react-query'
 import { Wallet, TrendingDown, Scale, FileClock, AlertTriangle, Landmark } from 'lucide-react'
@@ -8,16 +8,19 @@ import {
   getStudentsSummary,
   getTeachersSummary,
 } from '@/features/reports/api'
-import { toNum, formatDate } from '@/lib/utils'
+import { useCan } from '@/features/auth/useCan'
+import { toNum, formatDate, cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { DateRangePicker } from '@/components/ui/date-range-picker'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Field } from '@/components/shared/Field'
 import { StatTile, MoneyStatTile } from './charts/StatTile'
 import { StatusDonut } from './charts/StatusDonut'
 import { RankingBars } from './charts/RankingBars'
 import { BalanceRings } from './charts/BalanceRings'
+import { FinanceTrend } from './charts/FinanceTrend'
+import { LessonsByWeekday } from './charts/LessonsByWeekday'
 
 // Every status a category can have, in a FIXED order — a status keeps the
 // same color across renders and filters ("color follows the entity, never
@@ -27,9 +30,32 @@ const STUDENT_STATUS_ORDER = ['Active', 'Suspended', 'Graduated', 'Withdrawn'] a
 const TEACHER_STATUS_ORDER = ['Probation', 'Employed', 'OnLeave', 'Resigned', 'Dismissed'] as const
 const ENROLLMENT_STATUS_ORDER = ['Draft', 'Active', 'Suspended', 'Completed', 'Terminated'] as const
 
+function DashCard({
+  title,
+  description,
+  className,
+  children,
+}: {
+  title: string
+  description?: string
+  className?: string
+  children: ReactNode
+}) {
+  return (
+    <Card className={cn('flex flex-col', className)}>
+      <CardHeader>
+        <CardTitle>{title}</CardTitle>
+        {description && <CardDescription>{description}</CardDescription>}
+      </CardHeader>
+      <CardContent className="flex flex-1 flex-col gap-4">{children}</CardContent>
+    </Card>
+  )
+}
+
 export function DashboardPage() {
   const { t, i18n } = useTranslation()
   const lang = i18n.language === 'en' ? 'en' : 'uk'
+  const canViewSchedule = useCan('CanViewSchedule')
 
   const [dateFrom, setDateFrom] = useState('')
   const [dateTo, setDateTo] = useState('')
@@ -166,110 +192,94 @@ export function DashboardPage() {
         </CardContent>
       </Card>
 
-      <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>{t('reports.students.title')}</CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-col gap-4">
-            {studentsLoading && <Skeleton className="h-32 w-full" />}
-            {students && (
-              <>
-                <div>
-                  <p className="mb-3 text-sm font-medium text-muted-foreground">
-                    {t('reports.students.byStatus')}
-                  </p>
-                  <StatusDonut
-                    data={students.byStatus}
-                    category="studentStatus"
-                    order={STUDENT_STATUS_ORDER}
-                  />
-                </div>
-              </>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>{t('reports.teachers.title')}</CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-col gap-4">
-            {teachersLoading && <Skeleton className="h-32 w-full" />}
-            {teachers && (
-              <>
-                <div>
-                  <p className="mb-3 text-sm font-medium text-muted-foreground">
-                    {t('reports.teachers.byStatus')}
-                  </p>
-                  <StatusDonut
-                    data={teachers.byStatus}
-                    category="teacherStatus"
-                    order={TEACHER_STATUS_ORDER}
-                  />
-                </div>
-                <div className="flex flex-col gap-2">
-                  <p className="text-sm text-muted-foreground">
-                    {t('reports.teachers.salaryOverview.title')}
-                  </p>
-                  <div className="grid grid-cols-2 gap-3">
-                    <StatTile
-                      label={t('reports.teachers.salaryOverview.teachersWithRate')}
-                      value={toNum(teachers.salaryOverview.teachersWithRate)}
-                    />
-                    <MoneyStatTile
-                      label={t('reports.teachers.salaryOverview.totalBaseSalary')}
-                      amount={teachers.salaryOverview.totalBaseSalary}
-                      lang={lang}
-                    />
-                    <MoneyStatTile
-                      label={t('reports.teachers.salaryOverview.averageBaseSalary')}
-                      amount={teachers.salaryOverview.averageBaseSalary}
-                      lang={lang}
-                    />
-                    <MoneyStatTile
-                      label={t('reports.teachers.salaryOverview.averageLessonsRate')}
-                      amount={teachers.salaryOverview.averageLessonsRate}
-                      lang={lang}
-                    />
-                  </div>
-                </div>
-              </>
-            )}
-          </CardContent>
-        </Card>
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <DashCard
+          title={t('reports.trend.title')}
+          description={t('reports.trend.subtitle')}
+          className={canViewSchedule ? 'lg:col-span-2' : 'lg:col-span-3'}
+        >
+          <FinanceTrend lang={lang} />
+        </DashCard>
+        {canViewSchedule && (
+          <DashCard title={t('reports.lessons.title')} description={t('reports.lessons.subtitle')}>
+            <LessonsByWeekday lang={lang} />
+          </DashCard>
+        )}
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>{t('reports.enrollments.title')}</CardTitle>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-4">
-          {enrollmentsLoading && <Skeleton className="h-32 w-full" />}
-          {enrollments && (
-            <>
-              <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                <div>
-                  <p className="mb-3 text-sm font-medium text-muted-foreground">
-                    {t('reports.enrollments.byStatus')}
-                  </p>
-                  <StatusDonut
-                    data={enrollments.byStatus}
-                    category="enrollmentStatus"
-                    order={ENROLLMENT_STATUS_ORDER}
-                  />
-                </div>
-                <div>
-                  <p className="mb-3 text-sm font-medium text-muted-foreground">
-                    {t('reports.enrollments.byCourse')}
-                  </p>
-                  <RankingBars data={byCourseData} />
-                </div>
-              </div>
-            </>
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+        <DashCard title={t('reports.students.title')} description={t('reports.students.byStatus')}>
+          {studentsLoading && <Skeleton className="h-44 w-full" />}
+          {students && (
+            <StatusDonut
+              data={students.byStatus}
+              category="studentStatus"
+              order={STUDENT_STATUS_ORDER}
+            />
           )}
-        </CardContent>
-      </Card>
+        </DashCard>
+        <DashCard title={t('reports.teachers.title')} description={t('reports.teachers.byStatus')}>
+          {teachersLoading && <Skeleton className="h-44 w-full" />}
+          {teachers && (
+            <StatusDonut
+              data={teachers.byStatus}
+              category="teacherStatus"
+              order={TEACHER_STATUS_ORDER}
+            />
+          )}
+        </DashCard>
+        <DashCard
+          title={t('reports.enrollments.title')}
+          description={t('reports.enrollments.byStatus')}
+          className="md:col-span-2 xl:col-span-1"
+        >
+          {enrollmentsLoading && <Skeleton className="h-44 w-full" />}
+          {enrollments && (
+            <StatusDonut
+              data={enrollments.byStatus}
+              category="enrollmentStatus"
+              order={ENROLLMENT_STATUS_ORDER}
+            />
+          )}
+        </DashCard>
+      </div>
+
+      <DashCard title={t('reports.teachers.salaryOverview.title')}>
+        {teachersLoading && <Skeleton className="h-24 w-full" />}
+        {teachers && (
+          <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+            <StatTile
+              label={t('reports.teachers.salaryOverview.teachersWithRate')}
+              value={toNum(teachers.salaryOverview.teachersWithRate)}
+            />
+            <MoneyStatTile
+              label={t('reports.teachers.salaryOverview.totalBaseSalary')}
+              amount={teachers.salaryOverview.totalBaseSalary}
+              lang={lang}
+            />
+            <MoneyStatTile
+              label={t('reports.teachers.salaryOverview.averageBaseSalary')}
+              amount={teachers.salaryOverview.averageBaseSalary}
+              lang={lang}
+            />
+            <MoneyStatTile
+              label={t('reports.teachers.salaryOverview.averageLessonsRate')}
+              amount={teachers.salaryOverview.averageLessonsRate}
+              lang={lang}
+            />
+          </div>
+        )}
+      </DashCard>
+
+      <DashCard
+        title={t('reports.enrollments.byCourse')}
+        description={
+          enrollments ? t('reports.enrollments.total') + ': ' + toNum(enrollments.total) : undefined
+        }
+      >
+        {enrollmentsLoading && <Skeleton className="h-32 w-full" />}
+        {enrollments && <RankingBars data={byCourseData} />}
+      </DashCard>
     </div>
   )
 }

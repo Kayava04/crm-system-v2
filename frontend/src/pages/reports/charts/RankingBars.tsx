@@ -15,7 +15,7 @@ export function RankingBars({ data }: { data: { name: string; value: number }[] 
   const max = Math.max(1, ...data.map((d) => d.value))
 
   return (
-    <ol className="flex flex-col gap-1">
+    <ol className="grid grid-cols-1 gap-x-8 gap-y-1 md:grid-cols-2">
       {data.map((d, i) => (
         <li
           key={d.name}

@@ -3,4 +3,5 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @import './styles/tokens.css';
+@import './styles/motion.css';
 @import './styles/base.css';

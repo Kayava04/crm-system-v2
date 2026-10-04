@@ -904,6 +904,7 @@
     }
   },
   "reports": {
+    "total": "Усього",
     "title": "Звіти",
     "dateFrom": "Від",
     "dateTo": "До",

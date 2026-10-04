@@ -18,7 +18,11 @@
     "remove": "Remove",
     "optional": "optional",
     "middleName": "Middle name",
-    "required": "Required"
+    "required": "Required",
+    "loading": "Loading",
+    "openMenu": "Open menu",
+    "breadcrumbs": "Breadcrumb",
+    "home": "Home"
   },
   "auth": {
     "loginTitle": "Sign in",

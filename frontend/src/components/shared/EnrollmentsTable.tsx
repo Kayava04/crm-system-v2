@@ -30,47 +30,59 @@ export function EnrollmentsTable({ rows, hideColumn }: EnrollmentsTableProps) {
   if (rows.length === 0) return null
 
   return (
-    <div className="overflow-x-auto rounded-md border border-border">
+    <div className="overflow-x-auto rounded-2xl border border-border bg-card">
       <table className="w-full text-sm">
-        <thead className="bg-muted/50 text-left text-xs text-muted-foreground">
+        <thead className="border-b border-border bg-muted/50 text-left text-xs text-muted-foreground">
           <tr>
-            <th className="px-3 py-2 font-medium">{t('enrollments.columns.number')}</th>
+            <th className="h-10 px-4 font-medium whitespace-nowrap">
+              {t('enrollments.columns.number')}
+            </th>
             {hideColumn !== 'student' && (
-              <th className="px-3 py-2 font-medium">{t('enrollments.columns.student')}</th>
+              <th className="h-10 px-4 font-medium whitespace-nowrap">
+                {t('enrollments.columns.student')}
+              </th>
             )}
             {hideColumn !== 'course' && (
-              <th className="px-3 py-2 font-medium">{t('enrollments.columns.course')}</th>
+              <th className="h-10 px-4 font-medium whitespace-nowrap">
+                {t('enrollments.columns.course')}
+              </th>
             )}
-            <th className="px-3 py-2 font-medium">{t('enrollments.columns.dates')}</th>
-            <th className="px-3 py-2 font-medium">{t('enrollments.columns.price')}</th>
-            <th className="px-3 py-2 font-medium">{t('enrollments.columns.status')}</th>
+            <th className="h-10 px-4 font-medium whitespace-nowrap">
+              {t('enrollments.columns.dates')}
+            </th>
+            <th className="h-10 px-4 font-medium whitespace-nowrap">
+              {t('enrollments.columns.price')}
+            </th>
+            <th className="h-10 px-4 font-medium whitespace-nowrap">
+              {t('enrollments.columns.status')}
+            </th>
           </tr>
         </thead>
         <tbody>
           {resolved.map(({ row, studentName, courseName, isResolving }) => (
             <tr
               key={row.id}
-              className="cursor-pointer border-t border-border hover:bg-muted/40"
+              className="cursor-pointer border-t border-foreground/6 transition-colors first:border-t-0 hover:bg-muted/60"
               onClick={() => navigate(`/enrollments/${row.id}`)}
             >
-              <td className="px-3 py-2 font-medium">{row.enrollmentNumber}</td>
+              <td className="px-4 py-3 font-medium">{row.enrollmentNumber}</td>
               {hideColumn !== 'student' && (
-                <td className="px-3 py-2">
+                <td className="px-4 py-3">
                   {isResolving ? <Skeleton className="h-4 w-24" /> : (studentName ?? '—')}
                 </td>
               )}
               {hideColumn !== 'course' && (
-                <td className="px-3 py-2">
+                <td className="px-4 py-3">
                   {isResolving ? <Skeleton className="h-4 w-24" /> : (courseName ?? '—')}
                 </td>
               )}
-              <td className="px-3 py-2 whitespace-nowrap text-muted-foreground">
+              <td className="px-4 py-3 whitespace-nowrap text-muted-foreground">
                 {formatDate(row.startDate, lang)} – {formatDate(row.endDate, lang)}
               </td>
-              <td className="px-3 py-2 whitespace-nowrap">
+              <td className="px-4 py-3 whitespace-nowrap">
                 {formatCurrency(row.effectivePrice, lang)}
               </td>
-              <td className="px-3 py-2">
+              <td className="px-4 py-3">
                 <Badge variant={statusVariant(row.status)}>
                   {enumLabel(t, 'enrollmentStatus', row.status)}
                 </Badge>

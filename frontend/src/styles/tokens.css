@@ -50,18 +50,20 @@
 
   /* Glass surfaces */
   --glass-bg: oklch(1 0 0 / 0.72);
+  --glass-bg-strong: oklch(1 0 0 / 0.88);
   --glass-bg-solid: oklch(1 0 0 / 0.96);
   --glass-border: oklch(1 0 0 / 0.6);
   --glass-edge: oklch(0.2 0.02 255 / 0.08);
   --glass-highlight: oklch(1 0 0 / 0.7);
-  --glass-shadow: 0 1px 2px oklch(0.2 0.02 255 / 0.05), 0 8px 24px -4px oklch(0.2 0.02 255 / 0.12),
+  --glass-shadow:
+    0 1px 2px oklch(0.2 0.02 255 / 0.05), 0 8px 24px -4px oklch(0.2 0.02 255 / 0.12),
     0 24px 48px -12px oklch(0.2 0.02 255 / 0.12);
   --scrim: oklch(0.2 0.02 255 / 0.32);
 
-  /* Categorical chart series (dataviz skill's validated default palette,
-     slots 1-5 — status charts here never need more than 5 categories).
-     Slot 6 (green) is deliberately skipped: it would read as the brand
-     --primary color, and a series must never impersonate the brand. */
+  /* Categorical chart series, slots 1-5 of a contrast-checked palette —
+     status charts here never need more than 5 categories. Slot 6 (green) is
+     deliberately skipped: it would read as the brand --primary color, and a
+     series must never impersonate the brand. */
   --chart-1: #2a78d6;
   --chart-2: #eb6834;
   --chart-3: #1baf7a;
@@ -122,11 +124,13 @@
   --sidebar-border: oklch(0.28 0.012 258);
 
   --glass-bg: oklch(0.24 0.014 258 / 0.62);
+  --glass-bg-strong: oklch(0.23 0.014 258 / 0.86);
   --glass-bg-solid: oklch(0.24 0.014 258 / 0.97);
   --glass-border: oklch(1 0 0 / 0.1);
   --glass-edge: oklch(0 0 0 / 0.4);
   --glass-highlight: oklch(1 0 0 / 0.08);
-  --glass-shadow: 0 1px 2px oklch(0 0 0 / 0.3), 0 8px 24px -4px oklch(0 0 0 / 0.4),
+  --glass-shadow:
+    0 1px 2px oklch(0 0 0 / 0.3), 0 8px 24px -4px oklch(0 0 0 / 0.4),
     0 24px 48px -12px oklch(0 0 0 / 0.45);
   --scrim: oklch(0 0 0 / 0.55);
 
@@ -183,8 +187,9 @@
 }
 
 @theme {
-  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto,
-    'Helvetica Neue', Arial, sans-serif;
+  --font-sans:
+    'Inter Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue',
+    Arial, sans-serif;
 
   /* Type scale: size / line-height / tracking, tuned for Inter at UI sizes. */
   --text-xs: 0.75rem;

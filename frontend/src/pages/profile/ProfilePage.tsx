@@ -63,7 +63,7 @@ export function ProfilePage() {
           <AvatarFallback className="text-base">{initials}</AvatarFallback>
         </Avatar>
         <div className="flex flex-col">
-          <h1 className="text-2xl font-semibold tracking-tight">
+          <h1>
             {displayName || t('profile.title')}
           </h1>
           {user?.email && <p className="text-sm text-muted-foreground">{user.email}</p>}

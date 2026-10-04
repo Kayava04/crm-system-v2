@@ -198,7 +198,7 @@ export function CourseDetailPage() {
 
         <div className="flex flex-col gap-3">
           <div className="flex flex-col gap-1">
-            <h1 className="text-2xl font-semibold tracking-tight">{course.name}</h1>
+            <h1>{course.name}</h1>
             <div className="flex flex-wrap items-center gap-2">
               <Badge variant={statusVariant(course.status)}>
                 {enumLabel(t, 'courseStatus', course.status)}

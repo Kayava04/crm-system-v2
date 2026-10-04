@@ -182,7 +182,7 @@ export function TeacherDetailPage() {
               <AvatarFallback className="text-lg">{initials || '?'}</AvatarFallback>
             </Avatar>
             <div className="flex min-w-0 flex-col gap-1">
-              <h1 className="text-2xl font-semibold tracking-tight">{fullName}</h1>
+              <h1>{fullName}</h1>
               <div className="flex flex-wrap items-center gap-2">
                 <Badge variant={statusVariant(teacher.status)}>
                   {enumLabel(t, 'teacherStatus', teacher.status)}

@@ -138,7 +138,7 @@ export function InvoicesListPage() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-2xl font-semibold tracking-tight">{t('billing.invoices.title')}</h1>
+        <h1>{t('billing.invoices.title')}</h1>
         {canManage && (
           <div className="flex flex-wrap gap-2">
             <Button onClick={() => setCreateOpen(true)}>

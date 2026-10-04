@@ -158,7 +158,7 @@ export function MyStudentsPage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-2xl font-semibold tracking-tight">{t('nav.myStudents')}</h1>
+      <h1>{t('nav.myStudents')}</h1>
 
       <div className="flex flex-wrap items-end gap-3">
         <div className="min-w-56 flex-1">

@@ -206,7 +206,7 @@ export function StaffCalendarView() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-3">
-        <h1 className="text-2xl font-semibold tracking-tight">{t('calendar.title')}</h1>
+        <h1>{t('calendar.title')}</h1>
         <div className="flex flex-wrap justify-end gap-2">
           {/* Creating a personal reminder needs no special permission; only "everyone" does,
            * which the dialog itself offers to a CanManageSchedule holder - so this one button

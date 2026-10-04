@@ -13,22 +13,24 @@ export function Header() {
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-border bg-background/95 px-4 backdrop-blur supports-backdrop-filter:bg-background/60">
+    <header className="glass-bar sticky top-0 z-(--z-sticky) flex h-14 items-center gap-3 border-b border-foreground/6 px-4 sm:px-6 lg:px-8">
       <Sheet open={mobileNavOpen} onOpenChange={setMobileNavOpen}>
         <Button
           variant="ghost"
           size="icon"
           className="lg:hidden"
           onClick={() => setMobileNavOpen(true)}
-          aria-label={t('common.appName')}
+          aria-label={t('common.openMenu')}
         >
           <Menu className="size-5" />
         </Button>
-        <SheetContent side="left" className="flex flex-col p-0">
+        <SheetContent side="left" className="flex flex-col bg-sidebar p-0">
           <SheetTitle className="sr-only">{t('common.appName')}</SheetTitle>
           <div className="flex h-16 items-center border-b border-sidebar-border px-3">
             <div className="flex items-center gap-3 px-3 py-2.5">
-              <GraduationCap className="size-6 text-primary" />
+              <span className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+                <GraduationCap className="size-4.5" />
+              </span>
               <span className="truncate text-sm font-semibold">{t('common.appName')}</span>
             </div>
           </div>
@@ -40,7 +42,7 @@ export function Header() {
         <Breadcrumbs />
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2">
         <NotificationBell />
         <UserMenu />
       </div>

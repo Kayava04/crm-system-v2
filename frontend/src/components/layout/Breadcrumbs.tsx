@@ -31,13 +31,19 @@ export function Breadcrumbs() {
   return (
     <nav
       className="flex min-w-0 items-center gap-1.5 text-sm text-muted-foreground"
-      aria-label="Breadcrumb"
+      aria-label={t('common.breadcrumbs')}
     >
-      <Link to="/" className="flex items-center gap-1 hover:text-foreground">
+      <Link
+        to="/"
+        className="flex items-center gap-1 rounded-md transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        aria-label={t('common.home')}
+      >
         <Home className="size-4" />
       </Link>
-      <ChevronRight className="size-3.5" />
-      <span className="truncate text-[15px] font-medium text-foreground">{label}</span>
+      <ChevronRight className="size-3.5 text-foreground/25" aria-hidden />
+      <span className="truncate font-medium text-foreground" aria-current="page">
+        {label}
+      </span>
     </nav>
   )
 }

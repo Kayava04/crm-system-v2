@@ -49,7 +49,6 @@ services.AddModuleDbContext<IdentityDbContext>();
                 options.Password.RequiredLength = 8;
                 options.User.RequireUniqueEmail = true;
 
-                // Five wrong passwords lock the account for 15 minutes by default
                 options.Lockout.AllowedForNewUsers = true;
                 options.Lockout.MaxFailedAccessAttempts = Math.Max(1, configuration.GetValue("Identity:Lockout:MaxAttempts", 5));
                 options.Lockout.DefaultLockoutTimeSpan =

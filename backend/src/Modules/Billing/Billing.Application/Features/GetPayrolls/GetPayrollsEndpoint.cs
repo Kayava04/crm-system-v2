@@ -25,7 +25,6 @@ public static class GetPayrollsEndpoint
         group.MapGet("/", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanViewPayments))
              .WithName("GetPayrolls")
-             .WithSummary("Get all teacher payrolls")
              .Produces<PagedResponse<PayrollListResponse>>(StatusCodes.Status200OK);
     }
 

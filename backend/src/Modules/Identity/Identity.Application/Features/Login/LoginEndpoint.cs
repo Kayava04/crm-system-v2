@@ -39,7 +39,6 @@ public static class LoginEndpoint
     {
         group.MapPost("/login", Handle)
              .WithName("Login")
-             .WithSummary("Authenticate a user and issue an access token")
              .Produces<LoginResponse>(StatusCodes.Status200OK)
              .ProducesValidationProblem()
              .ProducesProblem(StatusCodes.Status401Unauthorized)
@@ -74,7 +73,6 @@ public static class LoginEndpoint
                 statusCode: StatusCodes.Status401Unauthorized);
         }
 
-        // A locked account is refused before the password is even looked at, so it cannot be guessed while locked
         var lockedFor = await identityService.GetLockoutRemainingAsync(user, ct);
         if (lockedFor is { } remaining)
         {

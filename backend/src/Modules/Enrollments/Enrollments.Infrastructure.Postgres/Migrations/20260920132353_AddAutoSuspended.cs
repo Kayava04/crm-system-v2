@@ -4,10 +4,8 @@
 
 namespace Enrollments.Infrastructure.Postgres.Migrations
 {
-    /// <inheritdoc />
     public partial class AddAutoSuspended : Migration
     {
-        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<bool>(
@@ -19,7 +17,6 @@ namespace Enrollments.Infrastructure.Postgres.Migrations
                 defaultValue: false);
         }
 
-        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(

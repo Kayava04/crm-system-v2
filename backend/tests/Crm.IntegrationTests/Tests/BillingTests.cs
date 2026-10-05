@@ -25,10 +25,10 @@ public class BillingTests(CrmApiFactory factory) : ApiTest(factory)
         object Body(Guid e, string p) => new { enrollmentId = e, period = p, dueDate = InDays(10), notes = (string?)null };
 
         (await Api.PostAsync("/api/billing/invoices", Body(enrollment, Period), Admin)).Expect(201);
-        (await Api.PostAsync("/api/billing/invoices", Body(enrollment, Period), Admin)).Expect(409);          // one per enrollment and period
+        (await Api.PostAsync("/api/billing/invoices", Body(enrollment, Period), Admin)).Expect(409);
         (await Api.PostAsync("/api/billing/invoices", Body(enrollment, "2030-13"), Admin)).Expect(400);
         (await Api.PostAsync("/api/billing/invoices", Body(Guid.NewGuid(), Period), Admin)).Expect(404);
-        (await Api.PostAsync("/api/billing/invoices", Body(enrollment, "2030-01"), Admin)).Expect(201);       // another period is fine
+        (await Api.PostAsync("/api/billing/invoices", Body(enrollment, "2030-01"), Admin)).Expect(201);
     }
 
     [Fact]
@@ -109,7 +109,7 @@ public class BillingTests(CrmApiFactory factory) : ApiTest(factory)
         object Body(Guid t, string p) => new { teacherId = t, period = p };
 
         var payroll = (await Api.PostAsync("/api/billing/payrolls", Body(teacher, "2031-05"), Admin)).Expect(201);
-        Assert.Equal(1000m, payroll["totalAmount"].GetValue<decimal>());   // no lessons: base salary only
+        Assert.Equal(1000m, payroll["totalAmount"].GetValue<decimal>());
 
         (await Api.PostAsync("/api/billing/payrolls", Body(teacher, "2031-05"), Admin)).Expect(409);
         (await Api.PostAsync("/api/billing/payrolls", Body(Guid.NewGuid(), "2031-05"), Admin)).Expect(404);
@@ -129,7 +129,7 @@ public class BillingTests(CrmApiFactory factory) : ApiTest(factory)
 
         (await Api.PostAsync($"/api/teachers/{teacher}/salary-rates", new { baseSalary = 5000, lessonsRate = 500, effectiveFrom = DateTime.UtcNow.AddDays(1) }, Admin)).Expect(204);
         await Factory.Database.ExecuteAsync($@"update teachers.teacher_salary_rates set ""EffectiveFrom"" = ""EffectiveFrom"" - interval '2 days' where ""TeacherId"" = '{teacher}'");
-        Assert.Equal(5000m, (await Api.GetAsync($"/api/teachers/{teacher}", Admin))["currentSalaryRate"]!["baseSalary"]!.GetValue<decimal>());   // the new rate is in force now
+        Assert.Equal(5000m, (await Api.GetAsync($"/api/teachers/{teacher}", Admin))["currentSalaryRate"]!["baseSalary"]!.GetValue<decimal>());
 
         var detail = (await Api.GetAsync($"/api/billing/payrolls/{payroll.Id}", Admin)).Expect(200);
         Assert.Equal(1000m, detail["baseSalary"].GetValue<decimal>());

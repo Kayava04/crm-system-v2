@@ -26,7 +26,6 @@ public static class GetAllNotificationsEndpoint
         group.MapGet("/all", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanManageNotifications))
              .WithName("GetAllNotifications")
-             .WithSummary("Get notifications of all users (for administrators)")
              .Produces<PagedResponse<AdminNotificationResponse>>(StatusCodes.Status200OK);
     }
 

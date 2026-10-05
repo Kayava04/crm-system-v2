@@ -31,7 +31,6 @@ public static class GetByIdEndpoint
         group.MapGet("/{id:guid}", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanViewEnrollments))
              .WithName("GetEnrollmentById")
-             .WithSummary("Get enrollment by id")
              .Produces<EnrollmentDetailResponse>(StatusCodes.Status200OK)
              .ProducesProblem(StatusCodes.Status404NotFound);
     }

@@ -4,10 +4,8 @@
 
 namespace Scheduling.Infrastructure.Postgres.Migrations
 {
-    /// <inheritdoc />
     public partial class AddLessonCancellationReason : Migration
     {
-        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
@@ -19,7 +17,6 @@ namespace Scheduling.Infrastructure.Postgres.Migrations
                 defaultValue: "None");
         }
 
-        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(

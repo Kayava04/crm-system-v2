@@ -18,7 +18,6 @@ public static class StudentsSummaryEndpoint
         group.MapGet("/students/summary", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanViewReports))
              .WithName("GetStudentsSummary")
-             .WithSummary("Get students summary (total and by status)")
              .Produces<StudentsSummaryResponse>(StatusCodes.Status200OK);
     }
 

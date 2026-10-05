@@ -3,7 +3,6 @@ using Students.Domain.Entities;
 
 namespace Students.Application.Services;
 
-// The single place that turns a create request into a Student, used by both single and bulk creation
 internal static class StudentFactory
 {
     public static Student Build(CreateRequest request)

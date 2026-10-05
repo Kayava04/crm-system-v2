@@ -5,7 +5,6 @@ using Scheduling.Application.Abstractions;
 
 namespace Scheduling.Application.Services;
 
-// What the lessons are scheduled for: one enrollment (individual course) or one study group (group course)
 internal sealed record LessonTarget(
     Guid? EnrollmentId,
     Guid? GroupId,

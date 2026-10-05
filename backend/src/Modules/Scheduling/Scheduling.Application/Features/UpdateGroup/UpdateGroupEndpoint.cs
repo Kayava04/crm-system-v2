@@ -34,7 +34,6 @@ public static class UpdateGroupEndpoint
         group.MapPut("/{id:guid}", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanManageSchedule))
              .WithName("UpdateStudyGroup")
-             .WithSummary("Update study group name and teacher")
              .Produces(StatusCodes.Status204NoContent)
              .ProducesValidationProblem()
              .ProducesProblem(StatusCodes.Status404NotFound);

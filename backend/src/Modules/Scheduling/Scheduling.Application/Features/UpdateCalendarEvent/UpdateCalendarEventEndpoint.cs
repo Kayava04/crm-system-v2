@@ -30,7 +30,6 @@ public static class UpdateCalendarEventEndpoint
         group.MapPut("/events/{id:guid}", Handle)
              .RequireAuthorization()
              .WithName("UpdateCalendarEvent")
-             .WithSummary("Update a calendar event: its owner for a personal one, a schedule manager for one visible to everyone")
              .Produces<CalendarEventResponse>(StatusCodes.Status200OK)
              .ProducesValidationProblem()
              .ProducesProblem(StatusCodes.Status401Unauthorized)
@@ -49,7 +48,6 @@ public static class UpdateCalendarEventEndpoint
         CancellationToken ct
     )
     {
-        // The request shape is identical to creation, so the same rules (title length, end >= start, ...) apply
         var validationResult = await validator.ValidateAsync(
             new CreateCalendarEventRequest(request.Visibility, request.Title, request.Description, request.StartsAt, request.EndsAt, request.IsAllDay), ct);
         if (!validationResult.IsValid)
@@ -67,7 +65,6 @@ public static class UpdateCalendarEventEndpoint
         if (forbidden is not null)
             return forbidden;
 
-        // Turning a personal reminder into something everyone sees still needs the same permission as creating one that way
         if (request.Visibility == CalendarEventVisibility.Everyone
             && !principal.HasClaim("permission", nameof(SystemPermission.CanManageSchedule)))
             return Results.Problem(

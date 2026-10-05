@@ -3,9 +3,6 @@ using Shared.Kernel.Primitives;
 
 namespace Scheduling.Domain.Entities;
 
-// A free-form calendar entry that is not a lesson: a personal reminder or a school-wide notice.
-// Lessons (Schedule) stay a separate, structured entity — this one carries no enrollment, group or
-// teacher of its own, just a time range anyone (Personal) or everyone (Everyone) can see.
 public sealed class CalendarEvent : AuditableEntity
 {
     public Guid CreatedByUserId { get; private set; }
@@ -43,7 +40,6 @@ public sealed class CalendarEvent : AuditableEntity
         };
     }
 
-    // The owner never changes: an event created for oneself cannot be handed to someone else
     public void Update(
         CalendarEventVisibility visibility,
         string title,
@@ -74,7 +70,6 @@ public sealed class CalendarEvent : AuditableEntity
         return (start, end);
     }
 
-    // Npgsql only accepts UTC values for timestamptz columns
     private static DateTime NormalizeToUtc(DateTime value) =>
         value.Kind switch
         {

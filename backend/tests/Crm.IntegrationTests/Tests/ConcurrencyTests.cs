@@ -1,6 +1,5 @@
 namespace Crm.IntegrationTests.Tests;
 
-// Many requests at the same moment: the rules must hold and nothing may answer with a server error
 public class ConcurrencyTests(CrmApiFactory factory) : ApiTest(factory)
 {
     [Fact]
@@ -54,7 +53,7 @@ public class ConcurrencyTests(CrmApiFactory factory) : ApiTest(factory)
         }, Admin)));
 
         Assert.DoesNotContain(responses, r => r.Code >= 500);
-        Assert.Single(responses, r => r.Code == 201);   // the others get 409, the teacher has one lesson at that time
+        Assert.Single(responses, r => r.Code == 201);
         Assert.Single(await Data.LessonsAsync(teacherId: teacher));
     }
 
@@ -70,7 +69,7 @@ public class ConcurrencyTests(CrmApiFactory factory) : ApiTest(factory)
         var responses = await Task.WhenAll(enrollments.Select(e => Data.GenerateAsync(enrollmentId: e, teacherId: teacher)));
 
         Assert.DoesNotContain(responses, r => r.Code >= 500);
-        Assert.Equal(1, responses.Count(r => r.Code == 201));   // one wins, the rest are told the teacher is busy
+        Assert.Equal(1, responses.Count(r => r.Code == 201));
 
         var lessons = (await Data.LessonsAsync(teacherId: teacher))
             .Select(l => l!["scheduledDate"]!.GetValue<DateTime>()).ToList();
@@ -134,7 +133,6 @@ public class ConcurrencyTests(CrmApiFactory factory) : ApiTest(factory)
 
         Assert.DoesNotContain(responses, r => r.Code >= 500);
 
-        // whatever order won, the data is consistent: an inactive student has no active enrollment
         var studentStatus = (await Api.GetAsync($"/api/students/{student}", Admin))["status"].GetValue<string>();
         var enrollmentStatus = (await Api.GetAsync($"/api/enrollments/{enrollment}", Admin))["status"].GetValue<string>();
         Assert.NotEqual("Active", studentStatus);

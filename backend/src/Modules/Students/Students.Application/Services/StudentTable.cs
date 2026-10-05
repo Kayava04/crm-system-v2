@@ -2,7 +2,6 @@ using Shared.Files;
 
 namespace Students.Application.Services;
 
-// The student table as a person sees it in Excel: readable names in English and Ukrainian, readable values
 internal static class StudentTable
 {
     public static readonly Choice[] LearningGoals =
@@ -82,7 +81,6 @@ internal static class StudentTable
         new ColumnDef("comment", "Comment", "Коментар", ColumnType.Text,
             ExampleEn: "Prefers evening lessons", ExampleUk: "Віддає перевагу вечірнім заняттям", NoteEn: "Optional, up to 500 characters.", NoteUk: "Необов'язково, до 500 символів."),
 
-        // present in exports only
         new ColumnDef("status", "Status", "Статус", ColumnType.Choice, ForImport: false, Choices: Statuses),
         new ColumnDef("hasAccount", "Has an account", "Має акаунт", ColumnType.Boolean, ForImport: false),
         new ColumnDef("createdAt", "Created", "Дата створення", ColumnType.DateTime, ForImport: false),

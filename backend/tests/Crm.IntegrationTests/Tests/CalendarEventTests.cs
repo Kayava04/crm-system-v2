@@ -1,7 +1,5 @@
 namespace Crm.IntegrationTests.Tests;
 
-// Arbitrary calendar entries that are not lessons: a personal reminder only its owner sees,
-// or (for a CanManageSchedule holder) a school-wide notice everyone sees.
 public class CalendarEventTests(CrmApiFactory factory) : ApiTest(factory)
 {
     private static readonly DateTime Start = DateTime.UtcNow.AddDays(5).Date.AddHours(9);
@@ -25,7 +23,6 @@ public class CalendarEventTests(CrmApiFactory factory) : ApiTest(factory)
     private async Task<string> ManagerTokenAsync() =>
         (await Data.UserAsync("Admin", permissionIds: await Data.PermissionIdsAsync("CanManageSchedule"))).Token;
 
-    // ------------------------------------------------------------------ anyone can keep a personal reminder
     [Fact]
     public async Task Any_authenticated_user_can_create_and_read_back_their_own_personal_event()
     {
@@ -51,7 +48,6 @@ public class CalendarEventTests(CrmApiFactory factory) : ApiTest(factory)
         (await CreateAsync(Personal("Reminder"), Admin)).Expect(201);
     }
 
-    // ------------------------------------------------------------------ only a schedule manager posts to everyone
     [Fact]
     public async Task Creating_an_event_for_everyone_needs_CanManageSchedule()
     {
@@ -66,7 +62,6 @@ public class CalendarEventTests(CrmApiFactory factory) : ApiTest(factory)
         Assert.Equal("Everyone", created["visibility"].GetValue<string>());
     }
 
-    // ------------------------------------------------------------------ visibility
     [Fact]
     public async Task The_list_shows_my_own_events_and_everyones_but_not_someone_elses_personal_ones()
     {
@@ -96,7 +91,7 @@ public class CalendarEventTests(CrmApiFactory factory) : ApiTest(factory)
     {
         var owner = await Data.UserAsync("Admin");
         var other = await Data.UserAsync("Admin");
-        var manager = await ManagerTokenAsync();   // even a schedule manager cannot see someone's personal reminder
+        var manager = await ManagerTokenAsync();
         var id = (await CreateAsync(Personal(), owner.Token)).Expect(201).Id;
 
         (await Api.GetAsync($"/api/calendar/events/{id}", other.Token)).Expect(404);
@@ -116,7 +111,6 @@ public class CalendarEventTests(CrmApiFactory factory) : ApiTest(factory)
         Assert.Single(list, i => i!["title"]!.GetValue<string>() == "In range");
     }
 
-    // ------------------------------------------------------------------ updating and deleting
     [Fact]
     public async Task The_owner_updates_their_own_personal_event_and_anyone_else_gets_404()
     {
@@ -166,7 +160,6 @@ public class CalendarEventTests(CrmApiFactory factory) : ApiTest(factory)
         (await Api.DeleteAsync($"/api/calendar/events/{id}", null, owner.Token)).Expect(404);
     }
 
-    // ------------------------------------------------------------------ validation and authentication
     [Fact]
     public async Task An_event_cannot_end_before_it_starts_and_needs_a_title()
     {

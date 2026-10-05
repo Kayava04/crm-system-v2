@@ -34,7 +34,6 @@ public static class GetGroupByIdEndpoint
         group.MapGet("/{id:guid}", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanViewSchedule))
              .WithName("GetStudyGroupById")
-             .WithSummary("Get study group with its members")
              .Produces<GroupDetailResponse>(StatusCodes.Status200OK)
              .ProducesProblem(StatusCodes.Status404NotFound);
     }

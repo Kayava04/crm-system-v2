@@ -51,7 +51,6 @@ public static class WebApplicationExtensions
         return app;
     }
 
-    // /health: the process is alive (no dependencies checked). /health/ready: the database is usable.
     private static WebApplication MapHealthEndpoints(this WebApplication app)
     {
         app.MapHealthChecks("/health", new HealthCheckOptions

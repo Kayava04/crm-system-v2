@@ -49,7 +49,6 @@ public static class GetByIdEndpoint
         group.MapGet("/{id:guid}", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanViewMaterials))
              .WithName("GetMaterialById")
-             .WithSummary("Get material by id")
              .Produces<MaterialDetailResponse>(StatusCodes.Status200OK)
              .ProducesProblem(StatusCodes.Status404NotFound);
     }

@@ -4,10 +4,8 @@ namespace Shared.Files;
 
 public enum SheetMode
 {
-    // Every column, the data as it is in the system
     Export,
 
-    // Only the columns an import reads, one example row, drop-down lists and a help sheet
     Template
 }
 
@@ -51,8 +49,6 @@ public static class SpreadsheetWriter
             }
         }
 
-        // The data sheet stays empty on purpose: an example row left by mistake would be imported as a real person.
-        // Examples live on the help sheet.
         if (mode == SheetMode.Template)
         {
             for (var i = 0; i < columns.Count; i++)
@@ -76,7 +72,6 @@ public static class SpreadsheetWriter
         return stream.ToArray();
     }
 
-    // Returns the length of the text written, used to size the column
     private static int WriteCell(IXLCell cell, ColumnDef column, object? value, FileLanguage language)
     {
         if (value is null)
@@ -147,14 +142,13 @@ public static class SpreadsheetWriter
 
         var list = string.Join(",", options);
 
-        // Excel refuses a drop-down list longer than 255 characters
         if (list.Length > 255)
             return;
 
         var validation = sheet.Range(2, columnNumber, 1000, columnNumber).CreateDataValidation();
         validation.List($"\"{list}\"");
         validation.IgnoreBlanks = true;
-        validation.ShowErrorMessage = false;   // typing another spelling is fine: the import understands more than the list shows
+        validation.ShowErrorMessage = false;
     }
 
     private static void AddHelpSheet(XLWorkbook workbook, TableSchema schema, List<ColumnDef> columns, FileLanguage language)

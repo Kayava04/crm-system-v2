@@ -13,7 +13,6 @@ using Shared.Kernel.Abstractions;
 
 namespace Scheduling.Application.Features.CreateSchedule;
 
-// Exactly one of EnrollmentId (individual course) and GroupId (group course) must be set
 public sealed record CreateScheduleRequest(
     Guid? EnrollmentId,
     Guid? GroupId,
@@ -42,8 +41,6 @@ public sealed class CreateScheduleValidator : AbstractValidator<CreateScheduleRe
             .WithName("EnrollmentId")
             .WithMessage("Specify either an enrollment or a study group.");
 
-        // NotEmpty() on a nullable Guid only rejects null, not Guid.Empty - an explicit
-        // comparison is needed here to actually catch an empty-but-present id.
         RuleFor(x => x.EnrollmentId)
             .Must(id => id != Guid.Empty).WithMessage("Enrollment must not be empty.")
             .When(x => x.EnrollmentId is not null);
@@ -76,7 +73,6 @@ public static class CreateEndpoint
         group.MapPost("/", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanManageSchedule))
              .WithName("CreateSchedule")
-             .WithSummary("Create a single lesson for an enrollment or a study group")
              .Produces<CreateScheduleResponse>(StatusCodes.Status201Created)
              .ProducesValidationProblem()
              .ProducesProblem(StatusCodes.Status404NotFound)
@@ -120,7 +116,6 @@ public static class CreateEndpoint
 
         return await transaction.ExecuteAsync<IResult>(async token =>
         {
-            // Two requests for the same teacher and time must not both pass the conflict check below
             await transaction.AcquireTeacherCalendarLocksAsync([request.TeacherId], token);
 
             var hasConflict = await repository.HasTeacherConflictAsync(

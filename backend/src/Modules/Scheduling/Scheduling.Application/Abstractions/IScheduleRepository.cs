@@ -23,7 +23,6 @@ public interface IScheduleRepository : IRepository<Schedule>
         CancellationToken ct = default
     );
 
-    // Lessons that are held or still to be held (everything except Cancelled)
     Task<int> CountActiveByTargetAsync(
         Guid? enrollmentId,
         Guid? groupId,
@@ -43,7 +42,6 @@ public interface IScheduleRepository : IRepository<Schedule>
         CancellationToken ct = default
     );
 
-    // Upcoming lessons cancelled by the system for the given reason; filter by enrollment or by teacher
     Task<IReadOnlyList<Schedule>> GetFutureCancelledAsync(
         Guid? enrollmentId,
         Guid? teacherId,

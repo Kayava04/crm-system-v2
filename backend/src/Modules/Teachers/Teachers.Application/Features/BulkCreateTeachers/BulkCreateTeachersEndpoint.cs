@@ -9,7 +9,6 @@ using Teachers.Application.Services;
 
 namespace Teachers.Application.Features.BulkCreateTeachers;
 
-// AllOrNothing = true: if any teacher is invalid nothing is saved. Otherwise the valid ones are saved and the rest reported.
 public sealed record BulkCreateTeachersRequest(
     List<CreateTeacherRequest> Teachers,
     bool AllOrNothing = false
@@ -35,7 +34,6 @@ public static class BulkCreateTeachersEndpoint
         group.MapPost("/bulk", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanCreateTeachers))
              .WithName("BulkCreateTeachers")
-             .WithSummary("Create many teachers at once; every item gets its own result")
              .Produces<BulkOperationResponse>(StatusCodes.Status200OK)
              .Produces<BulkOperationResponse>(StatusCodes.Status400BadRequest)
              .ProducesValidationProblem();

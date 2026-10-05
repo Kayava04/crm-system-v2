@@ -16,7 +16,6 @@ public static class DeleteCalendarEventEndpoint
         group.MapDelete("/events/{id:guid}", Handle)
              .RequireAuthorization()
              .WithName("DeleteCalendarEvent")
-             .WithSummary("Delete a calendar event: its owner for a personal one, a schedule manager for one visible to everyone")
              .Produces(StatusCodes.Status204NoContent)
              .ProducesProblem(StatusCodes.Status401Unauthorized)
              .ProducesProblem(StatusCodes.Status403Forbidden)

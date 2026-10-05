@@ -36,7 +36,6 @@ public static class SendInvoiceRemindersEndpoint
         group.MapPost("/invoice-reminders", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanManageNotifications))
              .WithName("SendInvoiceReminders")
-             .WithSummary("Remind students about unpaid invoices that are due soon or overdue (each reminder is sent once)")
              .Produces<SendInvoiceRemindersResponse>(StatusCodes.Status200OK)
              .ProducesValidationProblem();
     }

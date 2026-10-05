@@ -9,8 +9,6 @@ using Students.Domain.Enums;
 
 namespace Students.Application.Services;
 
-// What an exported student looks like in a JSON file: the fields of a new student plus id, status and dates.
-// The same file can be imported again (the extra fields are ignored).
 internal sealed record StudentExportItem(
     Guid Id,
     string FirstName,
@@ -45,7 +43,6 @@ internal static class StudentTransfer
         Converters = { new JsonStringEnumConverter() }
     };
 
-    // ------------------------------------------------------------------ export
     public static IReadOnlyDictionary<string, object?> ToRow(Student s) => new Dictionary<string, object?>
     {
         ["firstName"] = s.FirstName,
@@ -90,7 +87,6 @@ internal static class StudentTransfer
         }
     }, JsonOptions);
 
-    // ------------------------------------------------------------------ import from Excel
     public static BulkCreateItem FromRow(SheetRow row, FileLanguage language)
     {
         var errors = row.Errors.ToList();
@@ -142,7 +138,6 @@ internal static class StudentTransfer
         return new BulkCreateItem(request, errors, handled);
     }
 
-    // ------------------------------------------------------------------ import from JSON
     public static (IReadOnlyList<BulkCreateItem> Items, IReadOnlyList<int> Rows) ParseJson(Stream stream)
     {
         JsonNode? root;

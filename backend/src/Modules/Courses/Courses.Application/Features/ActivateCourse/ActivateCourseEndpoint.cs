@@ -17,7 +17,6 @@ public static class ActivateCourseEndpoint
         group.MapPut("/{id:guid}/activate", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanManageCourses))
              .WithName("ActivateCourse")
-             .WithSummary("Activate a course")
              .Produces(StatusCodes.Status204NoContent)
              .ProducesProblem(StatusCodes.Status404NotFound)
              .ProducesProblem(StatusCodes.Status409Conflict);

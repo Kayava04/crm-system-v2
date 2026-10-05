@@ -9,7 +9,6 @@ using Students.Application.Services;
 
 namespace Students.Application.Features.BulkCreateStudents;
 
-// AllOrNothing = true: if any student is invalid nothing is saved. Otherwise the valid ones are saved and the rest reported.
 public sealed record BulkCreateStudentsRequest(
     List<CreateRequest> Students,
     bool AllOrNothing = false
@@ -35,7 +34,6 @@ public static class BulkCreateStudentsEndpoint
         group.MapPost("/bulk", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanCreateStudents))
              .WithName("BulkCreateStudents")
-             .WithSummary("Create many students at once; every item gets its own result")
              .Produces<BulkOperationResponse>(StatusCodes.Status200OK)
              .Produces<BulkOperationResponse>(StatusCodes.Status400BadRequest)
              .ProducesValidationProblem();

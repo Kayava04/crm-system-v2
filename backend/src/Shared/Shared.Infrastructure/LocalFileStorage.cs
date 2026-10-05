@@ -3,7 +3,6 @@ using Shared.Kernel.Abstractions;
 
 namespace Shared.Infrastructure;
 
-// Files in a folder of the server (Storage:Path). Every key is checked so it cannot leave that folder.
 public sealed partial class LocalFileStorage : IFileStorage
 {
     private readonly string _root;
@@ -60,7 +59,6 @@ public sealed partial class LocalFileStorage : IFileStorage
         return Task.CompletedTask;
     }
 
-    // A key comes from our own database, but it is checked anyway: nothing may resolve outside the storage folder
     internal string Resolve(string key)
     {
         if (string.IsNullOrWhiteSpace(key) || Path.IsPathRooted(key) || key.Contains(".."))

@@ -16,7 +16,6 @@ public static class ExportTeachersEndpoint
         group.MapGet("/export", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanViewTeachers))
              .WithName("ExportTeachers")
-             .WithSummary("Download teachers as an Excel (.xlsx) or JSON file; accepts the same filters as the list")
              .Produces(StatusCodes.Status200OK, contentType: FileFormats.XlsxContentType)
              .ProducesValidationProblem();
     }

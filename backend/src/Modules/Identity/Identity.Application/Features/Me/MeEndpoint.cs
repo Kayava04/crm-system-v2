@@ -7,10 +7,8 @@ using Microsoft.AspNetCore.Routing;
 
 namespace Identity.Application.Features.Me;
 
-// The profile is the student or teacher record of this account, null for administrators
 public sealed record MeProfile(string Type, Guid Id, string FullName);
 
-// Personal details kept on the account itself; students and teachers keep theirs in their own records
 public sealed record MeContact(
     string? FirstName,
     string? LastName,
@@ -42,7 +40,6 @@ public static class MeEndpoint
         group.MapGet("/me", Handle)
              .RequireAuthorization()
              .WithName("GetMe")
-             .WithSummary("Who am I: account, roles, permissions and the student or teacher profile")
              .Produces<MeResponse>(StatusCodes.Status200OK)
              .ProducesProblem(StatusCodes.Status401Unauthorized);
     }
@@ -55,7 +52,6 @@ public static class MeEndpoint
         CancellationToken ct
     )
     {
-        // JwtBearer maps the "sub" claim to NameIdentifier by default
         var claim = principal.FindFirstValue(ClaimTypes.NameIdentifier) ?? principal.FindFirstValue("sub");
         if (!Guid.TryParse(claim, out var userId))
             return Results.Problem(detail: "Invalid user identity.", statusCode: StatusCodes.Status401Unauthorized);

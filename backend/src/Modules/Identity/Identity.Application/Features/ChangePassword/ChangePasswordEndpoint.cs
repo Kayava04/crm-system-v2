@@ -42,7 +42,6 @@ public static class ChangePasswordEndpoint
         group.MapPost("/change-password", Handle)
              .RequireAuthorization()
              .WithName("ChangePassword")
-             .WithSummary("Change the current user's password")
              .Produces(StatusCodes.Status204NoContent)
              .ProducesValidationProblem()
              .ProducesProblem(StatusCodes.Status401Unauthorized)
@@ -95,7 +94,6 @@ public static class ChangePasswordEndpoint
                 statusCode: StatusCodes.Status400BadRequest);
         }
 
-        // The new password and the cleared "must change" flag are saved together or not at all
         await transaction.ExecuteAsync(async token =>
         {
             await identityService.ChangePasswordAsync(

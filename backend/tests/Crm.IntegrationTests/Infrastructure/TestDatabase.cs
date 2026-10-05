@@ -3,8 +3,6 @@ using Npgsql;
 
 namespace Crm.IntegrationTests.Infrastructure;
 
-// Every test run gets its own empty database on the Postgres server that is already used for development.
-// The server is taken from CRM_TEST_CONNECTION, or from the Host project's user secrets (ConnectionStrings:Default).
 public sealed class TestDatabase : IAsyncDisposable
 {
     private const string HostUserSecretsId = "8467240a-6aba-4429-9e9d-262ff16e9380";
@@ -26,7 +24,6 @@ public sealed class TestDatabase : IAsyncDisposable
 
         var database = new TestDatabase(new NpgsqlConnectionStringBuilder(baseConnection) { Pooling = false });
 
-        // Connect to the maintenance database, the target one does not exist yet
         await using var connection = new NpgsqlConnection(
             new NpgsqlConnectionStringBuilder(database._server.ConnectionString) { Database = "postgres" }.ConnectionString);
         await connection.OpenAsync();

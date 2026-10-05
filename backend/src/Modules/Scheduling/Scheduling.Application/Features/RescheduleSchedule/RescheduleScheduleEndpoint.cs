@@ -30,7 +30,6 @@ public static class RescheduleScheduleEndpoint
         group.MapPut("/{id:guid}/reschedule", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanManageSchedule))
              .WithName("RescheduleSchedule")
-             .WithSummary("Reschedule a schedule to a new date")
              .Produces(StatusCodes.Status204NoContent)
              .ProducesValidationProblem()
              .ProducesProblem(StatusCodes.Status404NotFound)

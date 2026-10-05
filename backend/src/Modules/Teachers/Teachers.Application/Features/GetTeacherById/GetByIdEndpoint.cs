@@ -75,7 +75,6 @@ public static class GetByIdEndpoint
         group.MapGet("/{id:guid}", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanViewTeachers))
              .WithName("GetTeacherById")
-             .WithSummary("Get teacher by id")
              .Produces<TeacherDetailResponse>(StatusCodes.Status200OK)
              .ProducesProblem(StatusCodes.Status404NotFound);
     }

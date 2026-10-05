@@ -29,10 +29,10 @@ public class GroupTests(CrmApiFactory factory) : ApiTest(factory)
         var foreign = await Data.EnrollmentAsync(await Data.StudentAsync(), await Data.CourseAsync("Group"));
 
         (await Api.PostAsync($"/api/study-groups/{group}/members", new { enrollmentId = member }, Admin)).Expect(204);
-        (await Api.PostAsync($"/api/study-groups/{group}/members", new { enrollmentId = member }, Admin)).Expect(409);   // already there
-        (await Api.PostAsync($"/api/study-groups/{other}/members", new { enrollmentId = member }, Admin)).Expect(409);   // already in a group of this course
-        (await Api.PostAsync($"/api/study-groups/{group}/members", new { enrollmentId = draft }, Admin)).Expect(409);     // not active
-        (await Api.PostAsync($"/api/study-groups/{group}/members", new { enrollmentId = foreign }, Admin)).Expect(409);   // other course
+        (await Api.PostAsync($"/api/study-groups/{group}/members", new { enrollmentId = member }, Admin)).Expect(409);
+        (await Api.PostAsync($"/api/study-groups/{other}/members", new { enrollmentId = member }, Admin)).Expect(409);
+        (await Api.PostAsync($"/api/study-groups/{group}/members", new { enrollmentId = draft }, Admin)).Expect(409);
+        (await Api.PostAsync($"/api/study-groups/{group}/members", new { enrollmentId = foreign }, Admin)).Expect(409);
         (await Api.PostAsync($"/api/study-groups/{group}/members", new { enrollmentId = Guid.NewGuid() }, Admin)).Expect(404);
         (await Api.PostAsync($"/api/study-groups/{Guid.NewGuid()}/members", new { enrollmentId = member }, Admin)).Expect(404);
     }
@@ -67,7 +67,7 @@ public class GroupTests(CrmApiFactory factory) : ApiTest(factory)
         var members = new[] { await Data.EnrollmentAsync(await Data.StudentAsync(), course), await Data.EnrollmentAsync(await Data.StudentAsync(), course), await Data.EnrollmentAsync(await Data.StudentAsync(), course) };
         var group = await Data.GroupAsync(course, teacher, members);
 
-        var generated = (await Data.GenerateAsync(groupId: group, slots: TestData.Friday)).Expect(201);   // teacher defaults to the group's
+        var generated = (await Data.GenerateAsync(groupId: group, slots: TestData.Friday)).Expect(201);
 
         Assert.Equal(4, generated["createdCount"].GetValue<int>());
         var lessons = await Data.LessonsAsync(groupId: group);

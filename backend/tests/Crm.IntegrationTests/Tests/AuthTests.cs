@@ -69,7 +69,6 @@ public class AuthTests(CrmApiFactory factory) : ApiTest(factory)
 
         (await Api.PostAsync("/api/auth/register", new { email, role = "Student", profileType = "Student", profileId = Guid.NewGuid() }, Admin)).Expect(404);
 
-        // nothing was left behind: the same email can be registered afterwards
         (await Api.PostAsync("/api/auth/register", new { email, role = "Student" }, Admin)).Expect(201);
     }
 
@@ -92,7 +91,6 @@ public class AuthTests(CrmApiFactory factory) : ApiTest(factory)
         var second = TestData.Email();
         (await Api.PostAsync("/api/auth/register", new { email = second, role = "Student", profileType = "Student", profileId = studentId }, Admin)).Expect(409);
 
-        // the failed attempt did not leave an orphan account behind
         (await Api.PostAsync("/api/auth/register", new { email = second, role = "Student" }, Admin)).Expect(201);
     }
 

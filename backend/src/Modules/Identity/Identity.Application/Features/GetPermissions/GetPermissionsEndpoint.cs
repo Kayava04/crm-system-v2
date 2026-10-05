@@ -14,7 +14,6 @@ public static class GetPermissionsEndpoint
         group.MapGet("/permissions", Handle)
              .RequireAuthorization()
              .WithName("GetPermissions")
-             .WithSummary("Get all permissions")
              .Produces<IReadOnlyList<PermissionResponse>>(StatusCodes.Status200OK);
     }
 

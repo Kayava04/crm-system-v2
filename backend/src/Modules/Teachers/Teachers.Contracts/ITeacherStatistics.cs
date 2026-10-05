@@ -11,7 +11,6 @@ public sealed record TeacherSummaryResult(
     TeacherSalaryOverview SalaryOverview
 );
 
-// Calculated over teachers that currently work (not Resigned / Dismissed) and have a salary rate in effect
 public sealed record TeacherSalaryOverview(
     int TeachersWithRate,
     decimal TotalBaseSalary,

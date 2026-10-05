@@ -18,7 +18,6 @@ internal sealed class UserPhotoConfiguration : IEntityTypeConfiguration<UserPhot
         builder.Property(p => p.UserId)
             .IsRequired();
 
-        // one photo per account
         builder.HasIndex(p => p.UserId)
             .IsUnique();
 

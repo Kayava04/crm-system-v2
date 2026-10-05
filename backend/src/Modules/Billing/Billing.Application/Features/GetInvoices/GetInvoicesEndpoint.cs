@@ -25,7 +25,6 @@ public static class GetInvoicesEndpoint
         group.MapGet("/", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanViewPayments))
              .WithName("GetInvoices")
-             .WithSummary("Get all student invoices")
              .Produces<PagedResponse<InvoiceListResponse>>(StatusCodes.Status200OK);
     }
 

@@ -15,7 +15,6 @@ public static class ApplicationExtensions
 {
     public static IServiceCollection AddMaterialsApplication(this IServiceCollection services)
     {
-        // Register FluentValidation
         services.AddValidatorsFromAssembly(typeof(ApplicationExtensions).Assembly);
 
         return services;

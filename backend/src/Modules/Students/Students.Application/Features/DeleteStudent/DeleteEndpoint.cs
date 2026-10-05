@@ -17,7 +17,6 @@ public static class DeleteEndpoint
         group.MapDelete("/{id:guid}", Handle)
              .WithName("DeleteStudent")
              .RequireAuthorization(nameof(SystemPermission.CanDeleteStudents))
-             .WithSummary("Delete student")
              .Produces(StatusCodes.Status204NoContent)
              .ProducesProblem(StatusCodes.Status404NotFound)
              .ProducesProblem(StatusCodes.Status409Conflict);
@@ -39,7 +38,6 @@ public static class DeleteEndpoint
                 statusCode: StatusCodes.Status404NotFound
             );
 
-        // A student with history is never erased: set the status to Withdrawn instead, it can be undone
         var hasHistory = student.UserId is not null
             || (await enrollmentLookup.GetIdsByStudentAsync(id, ct)).Count > 0;
 

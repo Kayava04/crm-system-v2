@@ -51,7 +51,6 @@ public static class AddParentInfoEndpoint
         group.MapPost("/{id:guid}/parent-info", Handle)
              .WithName("AddParentInfo")
              .RequireAuthorization(nameof(SystemPermission.CanManageStudents))
-             .WithSummary("Add parent info for student")
              .Produces(StatusCodes.Status201Created)
              .ProducesValidationProblem()
              .ProducesProblem(StatusCodes.Status404NotFound)

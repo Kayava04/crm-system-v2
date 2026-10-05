@@ -26,7 +26,6 @@ public static class UpdateEnrollmentPriceEndpoint
         group.MapPut("/{id:guid}/price", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanManageEnrollments))
              .WithName("UpdateEnrollmentPrice")
-             .WithSummary("Update enrollment price")
              .Produces(StatusCodes.Status204NoContent)
              .ProducesValidationProblem()
              .ProducesProblem(StatusCodes.Status404NotFound)

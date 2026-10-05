@@ -39,7 +39,6 @@ internal sealed class TeacherConfiguration : IEntityTypeConfiguration<Teacher>
             .IsRequired()
             .HasMaxLength(100);
 
-        // "which teacher is this account?" is asked on every calendar request
         builder.HasIndex(t => t.UserId);
 
         builder.HasIndex(t => t.Email)

@@ -5,10 +5,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Scheduling.Infrastructure.Postgres.Migrations
 {
-    /// <inheritdoc />
     public partial class AddCalendarEvents : Migration
     {
-        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
@@ -45,7 +43,6 @@ namespace Scheduling.Infrastructure.Postgres.Migrations
                 columns: new[] { "Visibility", "StartsAt" });
         }
 
-        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(

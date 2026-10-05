@@ -16,7 +16,6 @@ public static class CancelScheduleEndpoint
         group.MapPut("/{id:guid}/cancel", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanManageSchedule))
              .WithName("CancelSchedule")
-             .WithSummary("Cancel a schedule")
              .Produces(StatusCodes.Status204NoContent)
              .ProducesProblem(StatusCodes.Status404NotFound)
              .ProducesProblem(StatusCodes.Status409Conflict);

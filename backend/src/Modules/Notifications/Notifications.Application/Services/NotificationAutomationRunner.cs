@@ -16,7 +16,6 @@ internal sealed class NotificationAutomationRunner(
 {
     public async Task<AutomationRunResult> RunOnceAsync(CancellationToken ct = default)
     {
-        // With several instances of the application only one runs the job at a time
         await using var handle = await advisoryLock.TryAcquireAsync(NotificationAutomationLock.Name, ct);
 
         if (handle is null)
@@ -49,7 +48,6 @@ internal sealed class NotificationAutomationRunner(
         return new AutomationRunResult(false, overdue, invoiceReminders, lessonReminders, errors);
     }
 
-    // Each step gets its own scope (and so its own DbContexts): a failure in one cannot spoil the next
     private async Task<int> StepAsync(
         string name,
         List<string> errors,

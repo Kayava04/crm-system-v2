@@ -32,7 +32,6 @@ public class StudentImportExportTests(CrmApiFactory factory) : ApiTest(factory)
     private async Task<int> CountAsync(string lastName) =>
         (await Api.GetAsync($"/api/students?search={lastName}", Admin))["totalCount"].GetValue<int>();
 
-    // ================================================================== export
     [Fact]
     public async Task Excel_export_has_readable_english_column_names_and_real_values()
     {
@@ -52,8 +51,8 @@ public class StudentImportExportTests(CrmApiFactory factory) : ApiTest(factory)
 
         var rows = Enumerable.Range(2, 2).Select(r => sheet.Row(r)).ToList();
         var suspended = rows.Single(r => r.Cell(18).GetString() == "Suspended");
-        Assert.Equal("Yes", suspended.Cell(19).GetString());            // has an account
-        Assert.Equal(XLDataType.DateTime, suspended.Cell(4).DataType);   // the date of birth is a real Excel date
+        Assert.Equal("Yes", suspended.Cell(19).GetString());
+        Assert.Equal(XLDataType.DateTime, suspended.Cell(4).DataType);
         Assert.Equal(new DateTime(2000, 1, 1), suspended.Cell(4).GetDateTime());
         Assert.Equal("Work", suspended.Cell(10).GetString());
         Assert.Equal("Online", suspended.Cell(11).GetString());
@@ -143,7 +142,6 @@ public class StudentImportExportTests(CrmApiFactory factory) : ApiTest(factory)
         (await Api.DownloadAsync("/api/students/export")).Expect(401);
     }
 
-    // ================================================================== template
     [Theory]
     [InlineData("en", "Students", "First name", "Help")]
     [InlineData("uk", "Студенти", "Ім'я", "Довідка")]
@@ -156,8 +154,8 @@ public class StudentImportExportTests(CrmApiFactory factory) : ApiTest(factory)
         Assert.Equal(sheetName, sheet.Name);
         Assert.Equal(firstHeader, sheet.Cell(1, 1).GetString());
         Assert.Equal((lang == "en" ? HeadersEn : HeadersUk).Length, sheet.Row(1).CellsUsed().Count());
-        Assert.True(sheet.Cell(2, 1).IsEmpty());                                     // nothing that could be imported by mistake
-        Assert.True(sheet.DataValidations.Any());                                    // drop-down lists for the fixed values
+        Assert.True(sheet.Cell(2, 1).IsEmpty());
+        Assert.True(sheet.DataValidations.Any());
         Assert.Contains(workbook.Worksheet(helpName).Column(1).CellsUsed(), c => c.GetString() == firstHeader);
         Assert.Matches(@"^students-import-template\.xlsx$", file.FileName);
     }
@@ -205,7 +203,6 @@ public class StudentImportExportTests(CrmApiFactory factory) : ApiTest(factory)
         (await Api.DownloadAsync("/api/students/import-template?fileFormat=doc", Admin)).Expect(400);
     }
 
-    // ================================================================== import from Excel
     [Fact]
     public async Task An_english_file_is_imported_and_every_field_reaches_the_student()
     {
@@ -218,7 +215,7 @@ public class StudentImportExportTests(CrmApiFactory factory) : ApiTest(factory)
         Assert.Equal("en", response["language"].GetValue<string>());
         Assert.Equal(1, response["succeeded"].GetValue<int>());
         var row = Row(response, 0);
-        Assert.Equal(2, row["row"]!.GetValue<int>());            // the row number in the sheet
+        Assert.Equal(2, row["row"]!.GetValue<int>());
         Assert.Equal(email, row["key"]!.GetValue<string>());
 
         var student = (await Api.GetAsync($"/api/students/{row["id"]!.GetValue<Guid>()}", Admin)).Expect(200);
@@ -288,17 +285,17 @@ public class StudentImportExportTests(CrmApiFactory factory) : ApiTest(factory)
         }
 
         var file = Xlsx.Build(HeadersEn,
-            RowEn(TestData.Email(), tag),                    // row 2: fine
-            Bad(3, "31.02.2001", TestData.Email()),          // row 3: impossible date
-            Bad(13, "Z9", TestData.Email()),                 // row 4: unknown level
-            Bad(1, null, TestData.Email()),                  // row 5: last name missing
-            Bad(4, "abc", TestData.Email()),                 // row 6: not a phone number
-            Bad(12, "twelve", TestData.Email()),             // row 7: intensity is not a number
-            RowEn(existing, tag),                            // row 8: email already in the system
-            RowEn(repeated, tag),                            // row 9: fine
-            RowEn(repeated, tag),                            // row 10: same email again
-            Bad(12, 9, TestData.Email()),                    // row 11: intensity out of range
-            Bad(15, "English, Klingon", TestData.Email()));  // row 12: unknown language
+            RowEn(TestData.Email(), tag),
+            Bad(3, "31.02.2001", TestData.Email()),
+            Bad(13, "Z9", TestData.Email()),
+            Bad(1, null, TestData.Email()),
+            Bad(4, "abc", TestData.Email()),
+            Bad(12, "twelve", TestData.Email()),
+            RowEn(existing, tag),
+            RowEn(repeated, tag),
+            RowEn(repeated, tag),
+            Bad(12, 9, TestData.Email()),
+            Bad(15, "English, Klingon", TestData.Email()));
 
         var response = (await ImportAsync(file)).Expect(200);
 
@@ -317,7 +314,7 @@ public class StudentImportExportTests(CrmApiFactory factory) : ApiTest(factory)
         Assert.Contains("repeated in this request", Errors(Row(response, 8)));
         Assert.StartsWith("Intensity (1-7):", Errors(Row(response, 9)));
         Assert.Contains("Languages: 'Klingon' is not allowed", Errors(Row(response, 10)));
-        Assert.Equal(2, await CountAsync(tag));   // rows 2 and 9 were saved, nothing else
+        Assert.Equal(2, await CountAsync(tag));
     }
 
     [Fact]
@@ -369,12 +366,12 @@ public class StudentImportExportTests(CrmApiFactory factory) : ApiTest(factory)
     [Fact]
     public async Task Files_that_cannot_be_used_are_refused_with_a_clear_message()
     {
-        (await ImportAsync(Xlsx.Build(HeadersEn), "students.xlsx")).Expect(400);                                            // header only
-        (await ImportAsync(System.Text.Encoding.UTF8.GetBytes("a,b,c"), "students.csv")).Expect(400);                        // unsupported type
+        (await ImportAsync(Xlsx.Build(HeadersEn), "students.xlsx")).Expect(400);
+        (await ImportAsync(System.Text.Encoding.UTF8.GetBytes("a,b,c"), "students.csv")).Expect(400);
         Assert.Contains("not a valid Excel", (await ImportAsync(System.Text.Encoding.UTF8.GetBytes("not excel"), "students.xlsx")).Expect(400).Raw);
-        (await ImportAsync([], "students.xlsx")).Expect(400);                                                                // empty upload
-        (await Api.PostAsync("/api/students/import", new { }, Admin)).Expect(415);                                            // not a form at all
-        (await ImportAsync(new byte[6 * 1024 * 1024], "students.xlsx")).Expect(400);                                          // too large
+        (await ImportAsync([], "students.xlsx")).Expect(400);
+        (await Api.PostAsync("/api/students/import", new { }, Admin)).Expect(415);
+        (await ImportAsync(new byte[6 * 1024 * 1024], "students.xlsx")).Expect(400);
     }
 
     [Fact]
@@ -398,7 +395,7 @@ public class StudentImportExportTests(CrmApiFactory factory) : ApiTest(factory)
         Assert.True(preview["dryRun"].GetValue<bool>());
         Assert.Equal(1, preview["succeeded"].GetValue<int>());
         Assert.True(Row(preview, 0)["success"]!.GetValue<bool>());
-        Assert.Null(Row(preview, 0)["id"]);                       // nothing exists yet
+        Assert.Null(Row(preview, 0)["id"]);
         Assert.False(Row(preview, 1)["success"]!.GetValue<bool>());
         Assert.Equal(0, await CountAsync(tag));
 
@@ -417,7 +414,7 @@ public class StudentImportExportTests(CrmApiFactory factory) : ApiTest(factory)
 
         Assert.True(response["allOrNothing"].GetValue<bool>());
         Assert.Equal(0, response["succeeded"].GetValue<int>());
-        Assert.Contains("all-or-nothing", Errors(Row(response, 0)));   // the good row is told why it was not saved
+        Assert.Contains("all-or-nothing", Errors(Row(response, 0)));
         Assert.StartsWith("Email:", Errors(Row(response, 1)));
         Assert.Equal(0, await CountAsync(tag));
     }
@@ -460,17 +457,17 @@ public class StudentImportExportTests(CrmApiFactory factory) : ApiTest(factory)
         using var workbook = exported.Workbook;
         var sheet = workbook.Worksheet(1);
         for (var r = 2; r <= 4; r++)
-            sheet.Cell(r, 6).Value = "copy-" + sheet.Cell(r, 6).GetString();   // emails must stay unique
+            sheet.Cell(r, 6).Value = "copy-" + sheet.Cell(r, 6).GetString();
 
         var response = (await ImportAsync(Xlsx.Save(workbook))).Expect(200);
 
         Assert.Equal(3, response["succeeded"].GetValue<int>());
-        Assert.Empty(response["ignoredColumns"].AsArray());   // the export-only columns (status, created...) are known and silently ignored
+        Assert.Empty(response["ignoredColumns"].AsArray());
         Assert.Equal(6, await CountAsync(tag));
         var copy = (await Api.GetAsync($"/api/students/{Row(response, 0)["id"]!.GetValue<Guid>()}", Admin)).Expect(200);
         Assert.Equal("Work", copy["preferences"]!["learningGoal"]!.GetValue<string>());
         Assert.Equal("A2", copy["preferences"]!["currentLevel"]!.GetValue<string>());
-        Assert.Equal("Active", copy["status"].GetValue<string>());   // status is not copied: a new student starts active
+        Assert.Equal("Active", copy["status"].GetValue<string>());
     }
 
     [Fact]
@@ -485,7 +482,6 @@ public class StudentImportExportTests(CrmApiFactory factory) : ApiTest(factory)
         Assert.Equal(401, (await Api.UploadAsync("/api/students/import", "students.xlsx", file)).Code);
     }
 
-    // ================================================================== import from JSON
     private Task<ApiResponse> ImportJsonAsync(string json, string query = "") =>
         ImportAsync(System.Text.Encoding.UTF8.GetBytes(json), "students.json", query);
 
@@ -505,7 +501,7 @@ public class StudentImportExportTests(CrmApiFactory factory) : ApiTest(factory)
 
         Assert.Equal("json", response["fileType"].GetValue<string>());
         Assert.Equal(2, response["succeeded"].GetValue<int>());
-        Assert.Equal([1, 2], response["rows"].AsArray().Select(r => r!["row"]!.GetValue<int>()));   // 1-based position in the file
+        Assert.Equal([1, 2], response["rows"].AsArray().Select(r => r!["row"]!.GetValue<int>()));
         Assert.Equal(2, await CountAsync(tag));
     }
 
@@ -560,7 +556,7 @@ public class StudentImportExportTests(CrmApiFactory factory) : ApiTest(factory)
 
         var response = (await ImportJsonAsync(exported.ToJsonString())).Expect(200);
 
-        Assert.Equal(1, response["succeeded"].GetValue<int>());   // the extra fields (id, status...) are simply ignored
+        Assert.Equal(1, response["succeeded"].GetValue<int>());
         Assert.Equal(2, await CountAsync(tag));
     }
 

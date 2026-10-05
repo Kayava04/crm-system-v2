@@ -13,8 +13,6 @@ using Scheduling.Application.Services;
 
 namespace Scheduling.Application.Features.ReassignTeacher;
 
-// Hands over the upcoming lessons (and, by default, the groups) of one teacher to another one.
-// Lessons cancelled because the first teacher became unavailable are brought back.
 public sealed record ReassignTeacherRequest(
     Guid FromTeacherId,
     Guid ToTeacherId,
@@ -47,7 +45,6 @@ public static class ReassignTeacherEndpoint
         group.MapPut("/reassign-teacher", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanManageSchedule))
              .WithName("ReassignTeacher")
-             .WithSummary("Hand over the upcoming lessons and groups of a teacher to another teacher")
              .Produces<ReassignTeacherResponse>(StatusCodes.Status200OK)
              .ProducesValidationProblem()
              .ProducesProblem(StatusCodes.Status404NotFound)
@@ -91,7 +88,6 @@ public static class ReassignTeacherEndpoint
 
         return await transaction.ExecuteAsync<IResult>(async token =>
         {
-            // Lessons leave one calendar and enter another: both are held until the change is saved
             await transaction.AcquireTeacherCalendarLocksAsync([request.FromTeacherId, request.ToTeacherId], token);
 
             var now = DateTime.UtcNow;
@@ -100,7 +96,6 @@ public static class ReassignTeacherEndpoint
             var cancelled = await repository.GetFutureCancelledAsync(
                 null, request.FromTeacherId, CancellationReason.TeacherUnavailable, now, ct);
 
-            // A lesson of a student who is away stays cancelled, only its teacher changes
             var enrollments = (await enrollmentLookup.GetByIdsAsync(
                     cancelled.Where(l => l.EnrollmentId.HasValue).Select(l => l.EnrollmentId!.Value).Distinct().ToList(), ct))
                 .ToDictionary(e => e.Id);
@@ -110,7 +105,6 @@ public static class ReassignTeacherEndpoint
                     || (l.EnrollmentId is { } id && enrollments.TryGetValue(id, out var e) && e.IsActive))
                 .ToList();
 
-            // Everything that will be held by the new teacher must fit into their calendar
             var willBeHeld = open.Concat(toRestore).OrderBy(l => l.ScheduledDate).ToList();
 
             if (willBeHeld.Count > 0)
@@ -147,7 +141,6 @@ public static class ReassignTeacherEndpoint
             foreach (var lesson in toRestore)
                 lesson.RestoreIfSystemCancelled();
 
-            // Lessons of an inactive student now belong to the new teacher but wait for the student
             foreach (var lesson in cancelled.Except(toRestore))
                 lesson.Cancel(CancellationReason.EnrollmentInactive);
 

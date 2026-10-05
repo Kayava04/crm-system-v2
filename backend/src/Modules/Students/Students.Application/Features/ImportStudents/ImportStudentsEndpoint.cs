@@ -21,7 +21,6 @@ public static class ImportStudentsEndpoint
              .RequireAuthorization(nameof(SystemPermission.CanCreateStudents))
              .DisableAntiforgery()
              .WithName("ImportStudents")
-             .WithSummary("Import students from an Excel (.xlsx) or JSON file (multipart form field 'file'). Use dryRun=true to check the file without saving.")
              .Accepts<IFormFile>("multipart/form-data")
              .Produces<ImportResponse>(StatusCodes.Status200OK)
              .Produces<ImportResponse>(StatusCodes.Status400BadRequest)

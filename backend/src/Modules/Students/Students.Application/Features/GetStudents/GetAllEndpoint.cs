@@ -24,7 +24,6 @@ public static class GetAllEndpoint
         group.MapGet("/", Handle)
              .WithName("GetStudents")
              .RequireAuthorization(nameof(SystemPermission.CanViewStudents))
-             .WithSummary("Get all students")
              .Produces<PagedResponse<StudentListResponse>>(StatusCodes.Status200OK);
     }
 

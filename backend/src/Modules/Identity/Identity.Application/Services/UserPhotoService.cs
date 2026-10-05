@@ -32,14 +32,11 @@ internal sealed class UserPhotoService(
             return null;
         }
 
-        // The stored name is generated anew for every upload, so it tells a replaced photo from the old one (the row keeps its Id)
         var version = Guid.TryParseExact(Path.GetFileNameWithoutExtension(photo.StorageKey), "N", out var stored) ? stored : photo.Id;
 
         return new UserPhotoFile(stream, photo.ContentType, version, photo.UploadedAt);
     }
 
-    // The new file is written first and the row second; if the row cannot be saved the new file is removed again.
-    // The old file is deleted last, so there is always a working photo.
     public async Task<PhotoInfo> SaveAsync(
         Guid userId,
         string originalFileName,
@@ -55,7 +52,6 @@ internal sealed class UserPhotoService(
 
         try
         {
-            // Two uploads of the same user at once are handled one after the other, so no file is left without a row
             await transaction.ExecuteAsync(async token =>
             {
                 await transaction.AcquireLockAsync($"user-photo:{userId}", token);
@@ -105,7 +101,6 @@ internal sealed class UserPhotoService(
         return true;
     }
 
-    // A file that cannot be removed is only wasted space; it must not fail the request that already succeeded
     private async Task TryDeleteAsync(string key)
     {
         try

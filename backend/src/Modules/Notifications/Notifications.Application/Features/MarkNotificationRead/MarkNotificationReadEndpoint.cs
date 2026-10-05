@@ -16,7 +16,6 @@ public static class MarkNotificationReadEndpoint
         group.MapPut("/{id:guid}/read", Handle)
              .RequireAuthorization()
              .WithName("MarkNotificationRead")
-             .WithSummary("Mark a notification as read")
              .Produces(StatusCodes.Status204NoContent)
              .ProducesProblem(StatusCodes.Status401Unauthorized)
              .ProducesProblem(StatusCodes.Status404NotFound);
@@ -40,7 +39,6 @@ public static class MarkNotificationReadEndpoint
 
         var notification = await repository.GetByIdAsync(id, ct);
 
-        // Someone else's notification is reported as not found so its existence is not leaked
         if (notification is null || notification.RecipientUserId != userId)
             return Results.Problem(
                 detail: $"Notification with id '{id}' not found.",

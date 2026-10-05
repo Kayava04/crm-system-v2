@@ -32,7 +32,6 @@ public static class SendLessonRemindersEndpoint
         group.MapPost("/lesson-reminders", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanManageNotifications))
              .WithName("SendLessonReminders")
-             .WithSummary("Remind students and teachers about lessons that start soon (each reminder is sent once)")
              .Produces<SendLessonRemindersResponse>(StatusCodes.Status200OK)
              .ProducesValidationProblem();
     }

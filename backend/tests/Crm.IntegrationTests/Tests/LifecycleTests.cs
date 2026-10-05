@@ -1,6 +1,5 @@
 namespace Crm.IntegrationTests.Tests;
 
-// Deactivating instead of deleting: what happens to enrollments, lessons and accounts, and how it is undone
 public class LifecycleTests(CrmApiFactory factory) : ApiTest(factory)
 {
     private Task<ApiResponse> SetStudent(Guid id, string status) => Api.PutAsync($"/api/students/{id}/status", new { status }, Admin);
@@ -19,7 +18,6 @@ public class LifecycleTests(CrmApiFactory factory) : ApiTest(factory)
         return (student, teacher, enrollment);
     }
 
-    // ------------------------------------------------------------------ students
     [Fact]
     public async Task A_paused_student_loses_the_lessons_but_keeps_the_account()
     {
@@ -161,7 +159,6 @@ public class LifecycleTests(CrmApiFactory factory) : ApiTest(factory)
 
         await SetStudent(pausedStudent, "Suspended");
 
-        // the group lessons themselves stay, for everyone still attending
         Assert.Equal(4, TestData.Count(await Data.LessonsAsync(groupId: group), "Scheduled"));
         Assert.Empty((await Api.GetAsync($"/api/calendar/my?{range}", paused.Token)).Expect(200)["items"].AsArray());
         var teacherItems = (await Api.GetAsync($"/api/calendar/my?{range}", teacher.Token)).Expect(200)["items"].AsArray();
@@ -171,7 +168,6 @@ public class LifecycleTests(CrmApiFactory factory) : ApiTest(factory)
         Assert.Single(members, m => !m!["isActive"]!.GetValue<bool>());
     }
 
-    // ------------------------------------------------------------------ teachers
     [Fact]
     public async Task A_teacher_on_leave_loses_the_lessons_and_gets_them_back()
     {
@@ -222,7 +218,6 @@ public class LifecycleTests(CrmApiFactory factory) : ApiTest(factory)
         var lessons = await Data.LessonsAsync(enrollmentId: enrollment);
         Assert.All(lessons, l => Assert.Equal(replacement, l!["teacherId"]!.GetValue<Guid>()));
 
-        // the teacher can come back later, but the lessons stay with the replacement
         var back = (await SetTeacher(teacher, "Employed")).Expect(200);
         Assert.Equal(0, back["restoredLessons"].GetValue<int>());
         (await Api.PostAsync("/api/auth/login", new { email = user.Email, password = user.Password })).Expect(200);
@@ -238,7 +233,6 @@ public class LifecycleTests(CrmApiFactory factory) : ApiTest(factory)
         var replacement = await Data.TeacherAsync();
         await SetTeacher(teacher, "Dismissed");
 
-        // the replacement is already busy at the first lesson's time
         var first = (await Data.LessonsAsync(enrollmentId: enrollment)).OrderBy(l => l!["scheduledDate"]!.GetValue<DateTime>()).First()!;
         var blocker = (await Api.PostAsync("/api/schedules", new
         {
@@ -247,12 +241,12 @@ public class LifecycleTests(CrmApiFactory factory) : ApiTest(factory)
         }, Admin)).Expect(201);
 
         (await Api.PutAsync("/api/schedules/reassign-teacher", new { fromTeacherId = teacher, toTeacherId = replacement }, Admin)).Expect(409);
-        Assert.Equal("Cancelled/TeacherUnavailable", await Reasons(enrollment));   // nothing changed
+        Assert.Equal("Cancelled/TeacherUnavailable", await Reasons(enrollment));
 
         (await Api.PutAsync($"/api/schedules/{blocker.Id}/cancel", null, Admin)).Expect(204);
         var handed = (await Api.PutAsync("/api/schedules/reassign-teacher", new { fromTeacherId = teacher, toTeacherId = replacement }, Admin)).Expect(200);
 
-        Assert.Equal(10, handed["reassignedCount"].GetValue<int>());   // 6 individual + 4 group lessons
+        Assert.Equal(10, handed["reassignedCount"].GetValue<int>());
         Assert.Equal(1, handed["updatedGroupsCount"].GetValue<int>());
         Assert.Equal(replacement, (await Api.GetAsync($"/api/study-groups/{group}", Admin))["teacherId"].GetValue<Guid>());
     }
@@ -279,14 +273,12 @@ public class LifecycleTests(CrmApiFactory factory) : ApiTest(factory)
         await SetStudent(student, "Suspended");
         await SetTeacher(teacher, "Employed");
 
-        // the teacher is back but the student is still away: the lessons stay cancelled
         Assert.Equal("Cancelled/EnrollmentInactive", await Reasons(enrollment));
 
         await SetStudent(student, "Active");
         Assert.Equal("Scheduled/None", await Reasons(enrollment));
     }
 
-    // ------------------------------------------------------------------ enrollments
     [Theory]
     [InlineData("suspend")]
     [InlineData("complete")]
@@ -301,7 +293,6 @@ public class LifecycleTests(CrmApiFactory factory) : ApiTest(factory)
         Assert.Equal("Cancelled/EnrollmentInactive", await Reasons(enrollment));
     }
 
-    // ------------------------------------------------------------------ nothing is erased
     [Fact]
     public async Task People_with_history_cannot_be_deleted_but_empty_records_can()
     {

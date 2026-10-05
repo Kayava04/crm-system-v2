@@ -27,7 +27,6 @@ public static class UpdateEnrollmentCommentEndpoint
         group.MapPatch("/{id:guid}/comment", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanManageEnrollments))
              .WithName("UpdateEnrollmentComment")
-             .WithSummary("Update enrollment comment")
              .Produces(StatusCodes.Status204NoContent)
              .ProducesValidationProblem()
              .ProducesProblem(StatusCodes.Status404NotFound);

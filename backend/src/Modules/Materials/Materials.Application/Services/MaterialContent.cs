@@ -2,7 +2,6 @@ using Materials.Domain.Enums;
 
 namespace Materials.Application.Services;
 
-// Keeps only the fields relevant for the material type so nothing stale is stored
 internal static class MaterialContent
 {
     public static (string? Body, string? Url, string? YouTubeVideoId) Resolve(

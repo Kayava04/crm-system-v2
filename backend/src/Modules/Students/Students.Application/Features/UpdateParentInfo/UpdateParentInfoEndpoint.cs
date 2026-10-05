@@ -50,7 +50,6 @@ public static class UpdateParentInfoEndpoint
         group.MapPut("/{id:guid}/parent-info", Handle)
              .WithName("UpdateParentInfo")
              .RequireAuthorization(nameof(SystemPermission.CanManageStudents))
-             .WithSummary("Update parent info for student")
              .Produces(StatusCodes.Status204NoContent)
              .ProducesValidationProblem()
              .ProducesProblem(StatusCodes.Status404NotFound);

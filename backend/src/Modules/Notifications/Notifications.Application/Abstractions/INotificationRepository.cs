@@ -15,7 +15,6 @@ public interface INotificationRepository : IRepository<Notification>
 
     Task AddRangeAsync(IReadOnlyCollection<Notification> notifications, CancellationToken ct = default);
 
-    // Which of the given (user, key) pairs have already been sent for this type
     Task<HashSet<(Guid UserId, string Key)>> GetSentKeysAsync(
         Contracts.NotificationType type,
         IReadOnlyCollection<string> keys,

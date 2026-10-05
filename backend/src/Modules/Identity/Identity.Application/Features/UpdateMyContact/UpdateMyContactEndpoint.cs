@@ -53,7 +53,6 @@ public static class UpdateMyContactEndpoint
         group.MapPut("/me/contact", Handle)
              .RequireAuthorization()
              .WithName("UpdateMyContact")
-             .WithSummary("Set the name, birth date, city, country and phone of an administrator or manager (not for the SuperAdmin, students and teachers)")
              .Produces<MeContact>(StatusCodes.Status200OK)
              .ProducesValidationProblem()
              .ProducesProblem(StatusCodes.Status401Unauthorized)
@@ -83,14 +82,12 @@ public static class UpdateMyContactEndpoint
         if (user is null || !user.IsActive)
             return Results.Problem(detail: "User not found or deactivated.", statusCode: StatusCodes.Status401Unauthorized);
 
-        // The SuperAdmin is the single bootstrap account, not a person of the staff: it has no personal details
         var roles = await userRepository.GetUserRolesAsync(userId, ct);
         if (roles.Any(r => r.Name == nameof(SystemRole.SuperAdmin)))
             return Results.Problem(
                 detail: "The SuperAdmin account is a system account and has no personal details.",
                 statusCode: StatusCodes.Status403Forbidden);
 
-        // A student or a teacher keeps the personal details in their own record; two copies would drift apart
         foreach (var linker in profileLinkers)
         {
             if (await linker.FindByUserAsync(userId, ct) is not null)

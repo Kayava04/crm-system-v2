@@ -1,6 +1,5 @@
 namespace Crm.IntegrationTests.Tests;
 
-// The first administrator, created by the SuperAdmin, manages the other administrator and manager accounts
 public class StaffManagementTests(CrmApiFactory factory) : ApiTest(factory)
 {
     private async Task<TestUser> ManagerAsync(params string[] permissions) =>
@@ -10,7 +9,6 @@ public class StaffManagementTests(CrmApiFactory factory) : ApiTest(factory)
 
     private async Task<Guid> SuperAdminIdAsync() => (await Api.GetAsync("/api/auth/me", Admin)).Expect(200)["userId"].GetValue<Guid>();
 
-    // ------------------------------------------------------------------ who may
     [Fact]
     public async Task Only_a_holder_of_CanManageAdmins_can_manage_accounts()
     {
@@ -30,7 +28,6 @@ public class StaffManagementTests(CrmApiFactory factory) : ApiTest(factory)
         (await Api.PutAsync($"/api/auth/users/{target.UserId}/status", body)).Expect(401);
     }
 
-    // ------------------------------------------------------------------ list
     [Fact]
     public async Task The_list_shows_administrators_with_details_and_leaves_out_the_super_admin_students_and_teachers()
     {
@@ -79,7 +76,6 @@ public class StaffManagementTests(CrmApiFactory factory) : ApiTest(factory)
         Assert.Contains(gone.UserId, all);
     }
 
-    // ------------------------------------------------------------------ deactivate and reactivate
     [Fact]
     public async Task A_deactivated_administrator_cannot_log_in_or_refresh_and_keeps_everything_when_reactivated()
     {
@@ -102,10 +98,9 @@ public class StaffManagementTests(CrmApiFactory factory) : ApiTest(factory)
         var me = (await Api.GetAsync("/api/auth/me", token)).Expect(200);
         Assert.Equal("Ivan Petrenko", me["contact"]!["fullName"]!.GetValue<string>());
         Assert.Equal(["CanViewReports"], me["permissions"].AsArray().Select(p => p!.GetValue<string>()));
-        Assert.Equal("1", await Sql($"select count(*) from identity.users where \"Id\" = '{target.UserId}'"));   // nothing was ever deleted
+        Assert.Equal("1", await Sql($"select count(*) from identity.users where \"Id\" = '{target.UserId}'"));
     }
 
-    // ------------------------------------------------------------------ permissions
     [Fact]
     public async Task Permissions_are_replaced_and_apply_to_the_next_login()
     {
@@ -137,7 +132,6 @@ public class StaffManagementTests(CrmApiFactory factory) : ApiTest(factory)
         Assert.Equal(["CanViewReports"], me["permissions"].AsArray().Select(p => p!.GetValue<string>()));
     }
 
-    // ------------------------------------------------------------------ salary
     [Fact]
     public async Task Salary_is_set_by_staff_management_only_never_by_the_account_itself()
     {
@@ -155,9 +149,8 @@ public class StaffManagementTests(CrmApiFactory factory) : ApiTest(factory)
         var me = (await Api.GetAsync("/api/auth/me", target.Token)).Expect(200);
         Assert.Equal(42000.50m, me["contact"]!["salary"]!.GetValue<decimal>());
 
-        // the target cannot set it on themselves, only read it
         (await Api.PutAsync("/api/auth/me/contact", new { firstName = "X", lastName = "Y", salary = 999999 }, target.Token)).Expect(200);
-        Assert.Equal(42000.50m, (await Api.GetAsync("/api/auth/me", target.Token)).Expect(200)["contact"]!["salary"]!.GetValue<decimal>());   // ignored, unchanged
+        Assert.Equal(42000.50m, (await Api.GetAsync("/api/auth/me", target.Token)).Expect(200)["contact"]!["salary"]!.GetValue<decimal>());
 
         var cleared = (await Api.PutAsync($"/api/auth/users/{target.UserId}/salary", new { salary = (decimal?)null }, manager.Token)).Expect(200);
         Assert.Null(cleared.Json!["salary"]);
@@ -175,8 +168,6 @@ public class StaffManagementTests(CrmApiFactory factory) : ApiTest(factory)
 
         Assert.Equal(30000m, (await Api.GetAsync("/api/auth/me", token)).Expect(200)["contact"]!["salary"]!.GetValue<decimal>());
 
-        // meaningless for a role with its own pay record (teacher payroll, or no pay record at all
-        // for a student), so a Salary sent for a non-Admin role is silently not applied
         var studentId = await Data.StudentAsync();
         var studentEmail = TestData.Email("student");
         var studentRegistered = (await Api.PostAsync("/api/auth/register",
@@ -199,7 +190,6 @@ public class StaffManagementTests(CrmApiFactory factory) : ApiTest(factory)
         (await Api.PutAsync($"/api/auth/users/{target.UserId}/salary", new { salary = -1 }, Admin)).Expect(400);
     }
 
-    // ------------------------------------------------------------------ what can never be done
     [Fact]
     public async Task The_super_admin_students_teachers_and_oneself_cannot_be_changed_here()
     {
@@ -216,7 +206,6 @@ public class StaffManagementTests(CrmApiFactory factory) : ApiTest(factory)
             (await Api.PutAsync($"/api/auth/users/{id}/salary", new { salary = 1000 }, manager.Token)).Expect(code);
         }
 
-        // the SuperAdmin still works, the manager keeps the right to manage
         (await Api.GetAsync("/api/auth/me", Admin)).Expect(200);
         (await Api.GetAsync("/api/auth/users", manager.Token)).Expect(200);
     }
@@ -231,6 +220,6 @@ public class StaffManagementTests(CrmApiFactory factory) : ApiTest(factory)
             new { permissionIds = await Data.PermissionIdsAsync(Enum.GetNames<Identity.Contracts.Enums.SystemPermission>()) }, Admin)).Expect(200);
 
         var me = (await Api.GetAsync("/api/auth/me", await Data.LoginAsync(target.Email, target.Password))).Expect(200);
-        Assert.Equal(["Admin"], me["roles"].AsArray().Select(r => r!.GetValue<string>()));   // all rights, but still not the SuperAdmin
+        Assert.Equal(["Admin"], me["roles"].AsArray().Select(r => r!.GetValue<string>()));
     }
 }

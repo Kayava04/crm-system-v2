@@ -17,7 +17,6 @@ public static class MarkInvoicesOverdueEndpoint
         group.MapPut("/mark-overdue", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanManagePayments))
              .WithName("MarkInvoicesOverdue")
-             .WithSummary("Mark all pending invoices past their due date as overdue")
              .Produces<MarkInvoicesOverdueResponse>(StatusCodes.Status200OK);
     }
 

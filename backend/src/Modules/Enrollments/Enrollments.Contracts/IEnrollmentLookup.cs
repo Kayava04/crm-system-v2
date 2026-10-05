@@ -17,7 +17,6 @@ public interface IEnrollmentLookup
         CancellationToken ct = default
     );
 
-    // Of the given students, those that have at least one enrollment
     Task<IReadOnlySet<Guid>> GetStudentIdsWithEnrollmentsAsync(
         IReadOnlyCollection<Guid> studentIds,
         CancellationToken ct = default

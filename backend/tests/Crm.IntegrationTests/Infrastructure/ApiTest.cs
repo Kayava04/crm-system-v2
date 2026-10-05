@@ -1,6 +1,5 @@
 namespace Crm.IntegrationTests.Infrastructure;
 
-// Base class of every API test: one shared application and database, a client, an admin token and a data builder
 [Collection("Api")]
 public abstract class ApiTest(CrmApiFactory factory) : IAsyncLifetime
 {

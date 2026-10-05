@@ -8,12 +8,8 @@ public sealed class User : IdentityUser<Guid>
     public DateTime? UpdatedAt { get; private set; }
     public bool MustChangePassword { get; private set; }
 
-    // A deactivated account keeps all its data but cannot log in
     public bool IsActive { get; private set; } = true;
 
-    // Contact and personal details of accounts that have no student or teacher record (administrators,
-    // managers); the phone number is the one built into ASP.NET Identity. A student or teacher account
-    // keeps the same information in its own record instead (see UpdateMyContactEndpoint).
     public string? FirstName { get; private set; }
     public string? LastName { get; private set; }
     public string? MiddleName { get; private set; }
@@ -21,8 +17,6 @@ public sealed class User : IdentityUser<Guid>
     public string? City { get; private set; }
     public string? Country { get; private set; }
 
-    // The account's own salary, set by an administrator with CanManageAdmins (see StaffEndpoints); this
-    // is separate from a teacher's payroll, which is generated from TeacherSalaryRate in the Billing module.
     public decimal? Salary { get; private set; }
 
     private User() { }
@@ -58,7 +52,6 @@ public sealed class User : IdentityUser<Guid>
         UpdatedAt = DateTime.UtcNow;
     }
 
-    // Kept separate from SetContact: unlike the fields above, this is never self-reported
     public void SetSalary(decimal? salary)
     {
         Salary = salary;

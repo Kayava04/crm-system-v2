@@ -10,7 +10,6 @@ internal static class Localization
 
     public static string No(FileLanguage language) => T(language, "No", "Ні");
 
-    // "First name", "first_name" and "firstName" are the same header; text in brackets is a hint and is ignored
     public static string NormalizeHeader(string? header)
     {
         if (string.IsNullOrWhiteSpace(header))
@@ -24,7 +23,6 @@ internal static class Localization
         var builder = new StringBuilder(text.Length);
         foreach (var c in text)
         {
-            // apostrophes are dropped so "Ім'я" and "Імя" match
             if (char.IsLetterOrDigit(c))
                 builder.Append(char.ToLowerInvariant(c));
         }

@@ -15,7 +15,6 @@ public static class GetUnreadCountEndpoint
         group.MapGet("/unread-count", Handle)
              .RequireAuthorization()
              .WithName("GetUnreadNotificationsCount")
-             .WithSummary("Get the number of unread notifications of the current user")
              .Produces<UnreadCountResponse>(StatusCodes.Status200OK)
              .ProducesProblem(StatusCodes.Status401Unauthorized);
     }

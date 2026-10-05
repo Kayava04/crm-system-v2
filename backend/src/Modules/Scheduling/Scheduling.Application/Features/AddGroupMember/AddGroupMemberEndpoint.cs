@@ -27,7 +27,6 @@ public static class AddGroupMemberEndpoint
         group.MapPost("/{id:guid}/members", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanManageSchedule))
              .WithName("AddStudyGroupMember")
-             .WithSummary("Add an enrollment to a study group")
              .Produces(StatusCodes.Status204NoContent)
              .ProducesValidationProblem()
              .ProducesProblem(StatusCodes.Status404NotFound)
@@ -90,7 +89,6 @@ public static class AddGroupMemberEndpoint
 
         var member = studyGroup.AddMember(request.EnrollmentId);
 
-        // Added explicitly so EF never treats the new member as an existing row
         await repository.AddMemberAsync(member, ct);
         await unitOfWork.SaveChangesAsync(ct);
 

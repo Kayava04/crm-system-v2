@@ -67,7 +67,6 @@ public static class CreateEndpoint
         group.MapPost("/", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanManageEnrollments))
              .WithName("CreateEnrollment")
-             .WithSummary("Create an enrollment")
              .Produces<CreateEnrollmentResponse>(StatusCodes.Status201Created)
              .ProducesValidationProblem()
              .ProducesProblem(StatusCodes.Status404NotFound)
@@ -113,7 +112,6 @@ public static class CreateEndpoint
 
         return await transaction.ExecuteAsync<IResult>(async token =>
         {
-            // The same student cannot be enrolled in the same course by two requests at once
             await transaction.AcquireLockAsync($"enrollment-student:{request.StudentId}", token);
 
             var alreadyEnrolled = await repository.ExistsByStudentAndCourseAsync(request.StudentId, request.CourseId, ct);
@@ -124,7 +122,6 @@ public static class CreateEndpoint
                     statusCode: StatusCodes.Status409Conflict
                 );
 
-            // Numbers count up per day: only one request at a time may take the next one
             await transaction.AcquireLockAsync($"enrollment-number:{request.StartDate:yyyyMMdd}", token);
 
             var enrollmentNumber = await numberGenerator.GenerateAsync(request.StartDate, token);

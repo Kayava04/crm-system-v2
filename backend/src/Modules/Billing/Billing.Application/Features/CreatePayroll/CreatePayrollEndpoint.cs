@@ -14,7 +14,6 @@ using Teachers.Contracts;
 
 namespace Billing.Application.Features.CreatePayroll;
 
-// Exactly one of TeacherId (lesson-based pay) and UserId (an administrator or manager's flat Salary) is set
 public sealed record CreatePayrollRequest(
     Guid? TeacherId,
     Guid? UserId,
@@ -42,8 +41,6 @@ public sealed class CreatePayrollValidator : AbstractValidator<CreatePayrollRequ
             .WithName("TeacherId")
             .WithMessage("Specify either a teacher or a staff member.");
 
-        // NotEmpty() on a nullable Guid compares against null, not Guid.Empty, so an explicit
-        // comparison is needed here to actually catch an empty-but-present id.
         RuleFor(x => x.TeacherId)
             .Must(id => id != Guid.Empty).WithMessage("Teacher must not be empty.")
             .When(x => x.TeacherId is not null);
@@ -65,7 +62,6 @@ public static class CreatePayrollEndpoint
         group.MapPost("/", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanManagePayments))
              .WithName("CreatePayroll")
-             .WithSummary("Calculate and create a payroll for a period: a teacher's from lessons taught, a staff member's from their Salary")
              .Produces<CreatePayrollResponse>(StatusCodes.Status201Created)
              .ProducesValidationProblem()
              .ProducesProblem(StatusCodes.Status404NotFound)

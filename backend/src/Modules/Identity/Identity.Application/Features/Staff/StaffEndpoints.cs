@@ -54,8 +54,6 @@ public sealed class SetStaffSalaryValidator : AbstractValidator<SetStaffSalaryRe
     }
 }
 
-// Administrators and managers are the accounts with the Admin role. The SuperAdmin is the single bootstrap account and is
-// never listed or changed here; students and teachers are managed through their own modules.
 public static class StaffEndpoints
 {
     public static void Map(RouteGroupBuilder group)
@@ -63,7 +61,6 @@ public static class StaffEndpoints
         group.MapGet("/users", ListStaff)
              .RequireAuthorization(nameof(SystemPermission.CanManageAdmins))
              .WithName("ListStaff")
-             .WithSummary("List administrator and manager accounts (optionally only active or only deactivated ones)")
              .Produces<List<StaffMember>>(StatusCodes.Status200OK)
              .ProducesProblem(StatusCodes.Status401Unauthorized)
              .ProducesProblem(StatusCodes.Status403Forbidden);
@@ -71,7 +68,6 @@ public static class StaffEndpoints
         group.MapPut("/users/{id:guid}/status", SetStatus)
              .RequireAuthorization(nameof(SystemPermission.CanManageAdmins))
              .WithName("SetStaffStatus")
-             .WithSummary("Deactivate or reactivate an administrator account; nothing is deleted")
              .Produces<StaffMember>(StatusCodes.Status200OK)
              .ProducesProblem(StatusCodes.Status403Forbidden)
              .ProducesProblem(StatusCodes.Status404NotFound)
@@ -80,7 +76,6 @@ public static class StaffEndpoints
         group.MapPut("/users/{id:guid}/permissions", SetPermissions)
              .RequireAuthorization(nameof(SystemPermission.CanManageAdmins))
              .WithName("SetStaffPermissions")
-             .WithSummary("Replace the permissions of an administrator account")
              .Produces<StaffMember>(StatusCodes.Status200OK)
              .ProducesValidationProblem()
              .ProducesProblem(StatusCodes.Status403Forbidden)
@@ -90,7 +85,6 @@ public static class StaffEndpoints
         group.MapPut("/users/{id:guid}/salary", SetSalary)
              .RequireAuthorization(nameof(SystemPermission.CanManageAdmins))
              .WithName("SetStaffSalary")
-             .WithSummary("Set or clear the salary of an administrator account; never self-service")
              .Produces<StaffMember>(StatusCodes.Status200OK)
              .ProducesValidationProblem()
              .ProducesProblem(StatusCodes.Status403Forbidden)
@@ -120,7 +114,6 @@ public static class StaffEndpoints
         return Results.Ok(result);
     }
 
-    // Returns the account to change, or the problem to answer with
     private static async Task<(User? User, IResult? Problem)> FindManageableAsync(
         Guid id, ClaimsPrincipal principal, IUserRepository users, CancellationToken ct)
     {
@@ -165,7 +158,6 @@ public static class StaffEndpoints
             user!.SetActive(request.IsActive);
             await users.UpdateAsync(user, token);
 
-            // A deactivated account must not keep working through a refresh token
             if (!request.IsActive)
                 await refreshTokens.RevokeAllForUserAsync(id, token);
 

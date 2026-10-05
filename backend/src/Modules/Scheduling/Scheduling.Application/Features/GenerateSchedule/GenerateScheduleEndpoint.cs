@@ -12,11 +12,8 @@ using Shared.Kernel.Abstractions;
 
 namespace Scheduling.Application.Features.GenerateSchedule;
 
-// One weekly slot; StartTime is local school time in "HH:mm" format
 public sealed record LessonSlot(DayOfWeek DayOfWeek, string StartTime);
 
-// Exactly one of EnrollmentId and GroupId must be set. TeacherId is required for an enrollment
-// and defaults to the group's teacher for a group.
 public sealed record GenerateScheduleRequest(
     Guid? EnrollmentId,
     Guid? GroupId,
@@ -43,9 +40,6 @@ public sealed class GenerateScheduleValidator : AbstractValidator<GenerateSchedu
             .WithName("EnrollmentId")
             .WithMessage("Specify either an enrollment or a study group.");
 
-        // Unlike EnrollmentId/GroupId above, this rule's When() gates on a different
-        // field, so TeacherId can still be null when it runs - both null and
-        // Guid.Empty need rejecting here, not just Guid.Empty.
         RuleFor(x => x.TeacherId)
             .Must(id => id.HasValue && id != Guid.Empty)
             .WithMessage("Teacher is required for an enrollment.")
@@ -79,7 +73,6 @@ public sealed class GenerateScheduleValidator : AbstractValidator<GenerateSchedu
 
 public static class GenerateScheduleEndpoint
 {
-    // Safety net so an unreachable lessons count cannot loop forever
     private const int MaxDaysAhead = 3 * 365;
 
     public static void Map(RouteGroupBuilder group)
@@ -87,7 +80,6 @@ public static class GenerateScheduleEndpoint
         group.MapPost("/generate", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanManageSchedule))
              .WithName("GenerateSchedule")
-             .WithSummary("Generate the recurring lessons of an enrollment or a study group from weekly slots")
              .Produces<GenerateScheduleResponse>(StatusCodes.Status201Created)
              .ProducesValidationProblem()
              .ProducesProblem(StatusCodes.Status404NotFound)

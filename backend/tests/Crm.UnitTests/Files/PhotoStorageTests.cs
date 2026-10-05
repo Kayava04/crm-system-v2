@@ -14,7 +14,6 @@ public class PhotoStorageTests : IDisposable
             Directory.Delete(_root, recursive: true);
     }
 
-    // ------------------------------------------------------------------ what is a picture
     private static readonly byte[] Jpeg = [0xFF, 0xD8, 0xFF, 0xE0, 0x00, 0x10, 0x4A, 0x46];
     private static readonly byte[] Png = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x00];
     private static readonly byte[] Webp = [.. "RIFF"u8, 0, 0, 0, 0, .. "WEBP"u8, .. "VP8 "u8];
@@ -51,10 +50,9 @@ public class PhotoStorageTests : IDisposable
     {
         Assert.Null(ImageFormat.Detect([0xFF, 0xD8]));
         Assert.Null(ImageFormat.Detect([0x89, 0x50, 0x4E, 0x47]));
-        Assert.Null(ImageFormat.Detect(Wav));   // a WAV sound also starts with RIFF
+        Assert.Null(ImageFormat.Detect(Wav));
     }
 
-    // ------------------------------------------------------------------ the storage folder
     [Fact]
     public async Task A_saved_file_gets_a_generated_name_inside_its_folder_and_can_be_read_and_deleted()
     {
@@ -74,7 +72,7 @@ public class PhotoStorageTests : IDisposable
 
         await storage.DeleteAsync(key);
         Assert.Null(await storage.OpenReadAsync(key));
-        await storage.DeleteAsync(key);   // deleting twice is fine
+        await storage.DeleteAsync(key);
     }
 
     [Fact]

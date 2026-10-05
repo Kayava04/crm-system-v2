@@ -25,7 +25,6 @@ public class SchoolClockTests
     [Fact]
     public void The_same_local_time_changes_utc_hour_across_the_autumn_switch()
     {
-        // Kyiv leaves summer time on the last Sunday of October
         var before = _clock.ToUtc(new DateOnly(2030, 10, 22), new TimeOnly(18, 0));
         var after = _clock.ToUtc(new DateOnly(2030, 10, 29), new TimeOnly(18, 0));
 
@@ -36,7 +35,6 @@ public class SchoolClockTests
     [Fact]
     public void A_time_skipped_by_the_spring_switch_moves_to_the_first_valid_moment()
     {
-        // 31 March 2030, 03:30 does not exist in Kyiv (clocks jump from 03:00 to 04:00)
         var utc = _clock.ToUtc(new DateOnly(2030, 3, 31), new TimeOnly(3, 30));
 
         Assert.Equal(new DateTime(2030, 3, 31, 1, 30, 0, DateTimeKind.Utc), utc);

@@ -26,7 +26,7 @@ public class TeacherAndUserTests
         var teacher = NewTeacher();
         teacher.AddSalaryRate(TeacherSalaryRate.Create(teacher.Id, 1000, 100, DateTime.UtcNow.AddDays(-60)));
         teacher.AddSalaryRate(TeacherSalaryRate.Create(teacher.Id, 1200, 120, DateTime.UtcNow.AddDays(-10)));
-        teacher.AddSalaryRate(TeacherSalaryRate.Create(teacher.Id, 9999, 999, DateTime.UtcNow.AddDays(30)));   // future
+        teacher.AddSalaryRate(TeacherSalaryRate.Create(teacher.Id, 9999, 999, DateTime.UtcNow.AddDays(30)));
 
         Assert.Equal(1200, teacher.CurrentSalaryRate!.BaseSalary);
     }

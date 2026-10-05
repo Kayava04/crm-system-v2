@@ -4,8 +4,6 @@ using Npgsql;
 
 namespace Host.Extensions;
 
-// Two requests at the same moment can both pass an "does it exist?" check and then meet at the database's unique index.
-// The loser gets a normal 409 Conflict instead of a server error.
 internal sealed class UniqueViolationExceptionHandler(ILogger<UniqueViolationExceptionHandler> logger) : IExceptionHandler
 {
     private const string UniqueViolation = "23505";

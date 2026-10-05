@@ -23,7 +23,6 @@ public static class GetGroupsEndpoint
         group.MapGet("/", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanViewSchedule))
              .WithName("GetStudyGroups")
-             .WithSummary("Get all study groups")
              .Produces<PagedResponse<GroupListResponse>>(StatusCodes.Status200OK);
     }
 

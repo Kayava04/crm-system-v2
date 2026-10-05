@@ -1,4 +1,3 @@
-# VS Code | Rider | Visual Studio
 .vscode/*
 !.vscode/launch.json
 !.vscode/tasks.json
@@ -8,63 +7,51 @@ _ReSharper*/
 *.suo
 *.sln.docstates
 
-# .NET
 bin/
 obj/
 *.user
 
-# ASP.NET
 artifacts/
 
-# Uploaded files (profile photos)
 uploads/
 
-# EF Core
 *.db
 *.db-shm
 *.db-wal
 
-# NuGet
 *.nupkg
 *.snupkg
 **/packages/*
 !**/packages/build/
 .nuget/
 
-# Test Results
 [Tt]est[Rr]esult*/
 [Bb]uild[Ll]og.*
 *.trx
 *.coverage
 *.coveragexml
 
-# Logs
 Logs/
 logs/
 *.log
 
-# Docker
 docker-compose.override.yml
 
-# Secrets
 *.pfx
 *.p12
 *.key
 
-# Environment
 .env
 .env.*
 !.env.example
 *.local
 
-# Frontend (Node / Vite)
 node_modules/
 dist/
 dist-ssr/
 coverage/
 *.tsbuildinfo
 
-# OS-specific
 .DS_Store
 Thumbs.db
 desktop.ini

@@ -40,7 +40,6 @@ public static class UpdateEndpoint
         group.MapPut("/{id:guid}", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanManageSchedule))
              .WithName("UpdateSchedule")
-             .WithSummary("Update a schedule (teacher, duration, notes)")
              .Produces(StatusCodes.Status204NoContent)
              .ProducesValidationProblem()
              .ProducesProblem(StatusCodes.Status404NotFound)

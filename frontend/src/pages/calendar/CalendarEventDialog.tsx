@@ -78,9 +78,6 @@ interface CalendarEventDialogProps {
   onSaved: () => void
 }
 
-/** Creates a new event (event=null) or edits an existing one. Everyone-visibility
- * is only offered to a CanManageSchedule holder; the server enforces the same
- * rule regardless, this just avoids offering an option that would just 403. */
 export function CalendarEventDialog({
   open,
   onOpenChange,
@@ -157,9 +154,7 @@ export function CalendarEventDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>
-            {event ? t('calendarEvents.edit') : t('calendarEvents.add')}
-          </DialogTitle>
+          <DialogTitle>{event ? t('calendarEvents.edit') : t('calendarEvents.add')}</DialogTitle>
         </DialogHeader>
         <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)} noValidate>
           {canManageSchedule && (
@@ -173,8 +168,12 @@ export function CalendarEventDialog({
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Personal">{t('calendarEvents.visibilityPersonal')}</SelectItem>
-                      <SelectItem value="Everyone">{t('calendarEvents.visibilityEveryone')}</SelectItem>
+                      <SelectItem value="Personal">
+                        {t('calendarEvents.visibilityPersonal')}
+                      </SelectItem>
+                      <SelectItem value="Everyone">
+                        {t('calendarEvents.visibilityEveryone')}
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 )}
@@ -182,23 +181,40 @@ export function CalendarEventDialog({
             </Field>
           )}
 
-          <Field label={t('calendarEvents.titleLabel')} error={errors.title?.message && t('calendarEvents.titleRequired')}>
+          <Field
+            label={t('calendarEvents.titleLabel')}
+            error={errors.title?.message && t('calendarEvents.titleRequired')}
+          >
             <Input aria-invalid={!!errors.title} {...register('title')} />
           </Field>
 
-          <Field label={t('calendarEvents.descriptionLabel')} hint={t('calendarEvents.descriptionOptional')}>
+          <Field
+            label={t('calendarEvents.descriptionLabel')}
+            hint={t('calendarEvents.descriptionOptional')}
+          >
             <Textarea rows={3} {...register('description')} />
           </Field>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <Field label={t('calendarEvents.startLabel')} error={errors.startsAt?.message ? ' ' : undefined}>
-              <DateInput type="datetime-local" aria-invalid={!!errors.startsAt} {...register('startsAt')} />
+            <Field
+              label={t('calendarEvents.startLabel')}
+              error={errors.startsAt?.message ? ' ' : undefined}
+            >
+              <DateInput
+                type="datetime-local"
+                aria-invalid={!!errors.startsAt}
+                {...register('startsAt')}
+              />
             </Field>
             <Field
               label={t('calendarEvents.endLabel')}
               error={errors.endsAt?.message ? t('calendarEvents.endBeforeStart') : undefined}
             >
-              <DateInput type="datetime-local" aria-invalid={!!errors.endsAt} {...register('endsAt')} />
+              <DateInput
+                type="datetime-local"
+                aria-invalid={!!errors.endsAt}
+                {...register('endsAt')}
+              />
             </Field>
           </div>
 
@@ -220,7 +236,12 @@ export function CalendarEventDialog({
           </div>
 
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+              disabled={isSubmitting}
+            >
               {t('common.cancel')}
             </Button>
             <Button type="submit" loading={isSubmitting}>

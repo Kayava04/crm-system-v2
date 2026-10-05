@@ -19,8 +19,6 @@ interface EnrollmentsTableProps {
   hideColumn?: 'student' | 'course'
 }
 
-/** Renders enrollment rows with the student/course name resolved client-side
- * (see useResolvedEnrollments for why that resolution is needed at all). */
 export function EnrollmentsTable({ rows, hideColumn }: EnrollmentsTableProps) {
   const { t, i18n } = useTranslation()
   const lang = i18n.language === 'en' ? 'en' : 'uk'

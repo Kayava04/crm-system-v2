@@ -5,9 +5,6 @@ import { enumLabel, type EnumCategory } from '@/lib/enumLabels'
 import { cn, toNum } from '@/lib/utils'
 import { colorForStatus } from './palette'
 
-/** A donut of a status breakdown. The center reads out the hovered slice (or
- * the total), and the legend carries every value and share — identity never
- * rides on color alone, and nothing is labeled only on hover. */
 export function StatusDonut({
   data,
   category,
@@ -60,7 +57,6 @@ export function StatusDonut({
                 onMouseEnter={(_, index) => setActive(index)}
                 onMouseLeave={() => setActive(null)}
                 shape={(props, index) => (
-                  // Sector drops `style`, so the hover transform lives on a wrapper.
                   <g
                     style={{
                       transformOrigin: `${props.cx}px ${props.cy}px`,

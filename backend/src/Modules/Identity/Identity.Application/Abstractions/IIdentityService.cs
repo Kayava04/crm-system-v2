@@ -11,7 +11,6 @@ public interface IIdentityService
         CancellationToken ct = default
     );
 
-    // Too many wrong passwords lock an account for a while (Identity:Lockout:MaxAttempts / DurationMinutes)
     Task<TimeSpan?> GetLockoutRemainingAsync(User user, CancellationToken ct = default);
     Task RecordFailedLoginAsync(User user, CancellationToken ct = default);
     Task RecordSuccessfulLoginAsync(User user, CancellationToken ct = default);

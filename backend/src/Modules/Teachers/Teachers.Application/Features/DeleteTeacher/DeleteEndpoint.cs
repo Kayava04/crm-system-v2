@@ -17,7 +17,6 @@ public static class DeleteEndpoint
         group.MapDelete("/{id:guid}", Handle)
              .WithName("DeleteTeacher")
              .RequireAuthorization(nameof(SystemPermission.CanDeleteTeachers))
-             .WithSummary("Delete teacher")
              .Produces(StatusCodes.Status204NoContent)
              .ProducesProblem(StatusCodes.Status404NotFound)
              .ProducesProblem(StatusCodes.Status409Conflict);
@@ -39,7 +38,6 @@ public static class DeleteEndpoint
                 statusCode: StatusCodes.Status404NotFound
             );
 
-        // A teacher with history is never erased: set the status to Resigned or Dismissed instead, it can be undone
         var hasHistory = teacher.UserId is not null
             || await scheduleLookup.HasTeacherHistoryAsync(id, ct);
 

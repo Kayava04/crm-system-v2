@@ -50,7 +50,6 @@ public static class BroadcastNotificationEndpoint
         group.MapPost("/broadcast", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanManageNotifications))
              .WithName("BroadcastNotification")
-             .WithSummary("Send a message to every active user of a group (students, teachers, admins or everyone)")
              .Produces<BroadcastNotificationResponse>(StatusCodes.Status200OK)
              .ProducesValidationProblem();
     }

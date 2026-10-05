@@ -80,7 +80,6 @@ public sealed class IdentitySeeder(
 
         await unitOfWork.SaveChangesAsync(ct);
 
-        // SuperAdmin get all permissions
         var superAdminRole = await roleRepository.GetByNameAsync(nameof(SystemRole.SuperAdmin), ct);
         if (superAdminRole is not null)
         {
@@ -101,10 +100,8 @@ public sealed class IdentitySeeder(
         await SeedDefaultRolePermissionsAsync(roleRepository, permissionRepository, unitOfWork, ct);
     }
 
-    // Permissions every user of a role gets by default (additive, safe to run on each start)
     private static readonly Dictionary<SystemRole, SystemPermission[]> DefaultRolePermissions = new()
     {
-        // CanViewCourses: teachers pick the course when creating a material (see CreateMaterialDialog)
         [SystemRole.Teacher] = [SystemPermission.CanViewMaterials, SystemPermission.CanManageMaterials, SystemPermission.CanViewCourses],
         [SystemRole.Student] = [SystemPermission.CanViewMaterials]
     };

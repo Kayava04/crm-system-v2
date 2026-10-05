@@ -55,7 +55,6 @@ public static class CreateInvoiceEndpoint
         group.MapPost("/", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanManagePayments))
              .WithName("CreateInvoice")
-             .WithSummary("Create a student invoice")
              .Produces<CreateInvoiceResponse>(StatusCodes.Status201Created)
              .ProducesValidationProblem()
              .ProducesProblem(StatusCodes.Status404NotFound)

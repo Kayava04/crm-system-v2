@@ -4,10 +4,8 @@
 
 namespace Notifications.Infrastructure.Postgres.Migrations
 {
-    /// <inheritdoc />
     public partial class AddNotificationReferenceKey : Migration
     {
-        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
@@ -27,7 +25,6 @@ namespace Notifications.Infrastructure.Postgres.Migrations
                 filter: "\"ReferenceKey\" IS NOT NULL");
         }
 
-        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropIndex(

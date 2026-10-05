@@ -25,7 +25,6 @@ public class TeacherImportExportTests(CrmApiFactory factory) : ApiTest(factory)
     private async Task<int> CountAsync(string lastName) =>
         (await Api.GetAsync($"/api/teachers?search={lastName}", Admin))["totalCount"].GetValue<int>();
 
-    // ================================================================== export
     [Fact]
     public async Task Excel_export_has_readable_names_and_the_salary_in_force()
     {
@@ -86,7 +85,6 @@ public class TeacherImportExportTests(CrmApiFactory factory) : ApiTest(factory)
         (await Api.DownloadAsync("/api/teachers/export?fileFormat=pdf", Admin)).Expect(400);
     }
 
-    // ================================================================== template
     [Fact]
     public async Task The_template_is_empty_with_headers_and_a_help_sheet_in_both_languages()
     {
@@ -99,10 +97,9 @@ public class TeacherImportExportTests(CrmApiFactory factory) : ApiTest(factory)
         Assert.Equal(HeadersUk, uk.Workbook.Worksheet(1).Row(1).CellsUsed().Select(c => c.GetString()));
         Assert.Contains(uk.Workbook.Worksheet("Довідка").CellsUsed(), c => c.GetString().Contains("Оплата за кожне проведене заняття"));
 
-        (await ImportAsync(en.Content)).Expect(400);   // an untouched template holds no teachers
+        (await ImportAsync(en.Content)).Expect(400);
     }
 
-    // ================================================================== import
     [Fact]
     public async Task An_english_file_is_imported_with_the_first_salary_rate()
     {
@@ -152,12 +149,12 @@ public class TeacherImportExportTests(CrmApiFactory factory) : ApiTest(factory)
         }
 
         var response = (await ImportAsync(Xlsx.Build(HeadersEn,
-            RowEn(TestData.Email(), tag),     // row 2: fine
-            Bad(8, "lots"),                   // row 3: salary is not a number
-            Bad(8, 0),                        // row 4: salary must be greater than 0
-            Bad(9, null),                     // row 5: rate missing
-            Bad(3, "2999-01-01"),             // row 6: born in the future
-            RowEn(existing, tag)))).Expect(200);   // row 7: email exists
+            RowEn(TestData.Email(), tag),
+            Bad(8, "lots"),
+            Bad(8, 0),
+            Bad(9, null),
+            Bad(3, "2999-01-01"),
+            RowEn(existing, tag)))).Expect(200);
 
         Assert.Equal(6, response["total"].GetValue<int>());
         Assert.Equal(1, response["succeeded"].GetValue<int>());
@@ -212,7 +209,7 @@ public class TeacherImportExportTests(CrmApiFactory factory) : ApiTest(factory)
         }).ToArray());
         var imported = (await ImportAsync(System.Text.Encoding.UTF8.GetBytes(copies.ToJsonString()), "teachers.json")).Expect(200);
 
-        Assert.Equal(4, json.Count);   // 2 originals + 2 imported from Excel
+        Assert.Equal(4, json.Count);
         Assert.Equal(4, imported["succeeded"].GetValue<int>());
         Assert.Equal(8, await CountAsync(tag));
     }

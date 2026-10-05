@@ -31,10 +31,8 @@ public static class ApplicationExtensions
 {
     public static IServiceCollection AddStudentsApplication(this IServiceCollection services)
     {
-        // Register FluentValidation
         services.AddValidatorsFromAssembly(typeof(ApplicationExtensions).Assembly);
 
-        // Link user account to student
         services.AddScoped<IProfileLinker, StudentAccountLinker>();
 
         services.AddScoped<IStudentVerifier, StudentVerifierService>();

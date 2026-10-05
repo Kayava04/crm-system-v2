@@ -4,7 +4,6 @@ public class BulkTests(CrmApiFactory factory) : ApiTest(factory)
 {
     private static JsonNode Result(ApiResponse response, int index) => response["results"].AsArray()[index]!;
 
-    // ------------------------------------------------------------------ students: create
     [Fact]
     public async Task Bulk_creation_saves_the_valid_students_and_reports_each_item()
     {
@@ -16,12 +15,12 @@ public class BulkTests(CrmApiFactory factory) : ApiTest(factory)
         {
             students = new[]
             {
-                Data.StudentBody(),                                  // 0 valid
-                Data.StudentBody(email: "not-an-email"),             // 1 invalid email
-                Data.StudentBody(email: repeated),                   // 2 valid
-                Data.StudentBody(email: repeated.ToUpperInvariant()),// 3 repeated inside the request
-                Data.StudentBody(email: existing),                   // 4 already in the system
-                Data.StudentBody(),                                  // 5 valid
+                Data.StudentBody(),
+                Data.StudentBody(email: "not-an-email"),
+                Data.StudentBody(email: repeated),
+                Data.StudentBody(email: repeated.ToUpperInvariant()),
+                Data.StudentBody(email: existing),
+                Data.StudentBody(),
             }
         }, Admin)).Expect(200);
 
@@ -36,7 +35,6 @@ public class BulkTests(CrmApiFactory factory) : ApiTest(factory)
         Assert.Contains("already exists", Result(response, 4)["errors"]![0]!.GetValue<string>());
         Assert.Equal(new[] { 0, 1, 2, 3, 4, 5 }, response["results"].AsArray().Select(r => r!["index"]!.GetValue<int>()));
 
-        // the saved students are complete: preferences and languages come with them
         var id = Result(response, 0)["id"]!.GetValue<Guid>();
         var detail = (await Api.GetAsync($"/api/students/{id}", Admin)).Expect(200);
         Assert.Equal("Work", detail["preferences"]!["learningGoal"]!.GetValue<string>());
@@ -57,9 +55,9 @@ public class BulkTests(CrmApiFactory factory) : ApiTest(factory)
 
         Assert.Equal(0, response["succeeded"].GetValue<int>());
         Assert.Equal(3, response["failed"].GetValue<int>());
-        Assert.Contains("all-or-nothing", Result(response, 0)["errors"]![0]!.GetValue<string>());   // valid item: explained
+        Assert.Contains("all-or-nothing", Result(response, 0)["errors"]![0]!.GetValue<string>());
         Assert.Contains("Email", string.Join(' ', Result(response, 1)["errors"]!.AsArray().Select(e => e!.GetValue<string>())));
-        Assert.Equal(0, (await Api.GetAsync($"/api/students?search={lastName}", Admin))["totalCount"].GetValue<int>());   // nobody was saved
+        Assert.Equal(0, (await Api.GetAsync($"/api/students?search={lastName}", Admin))["totalCount"].GetValue<int>());
     }
 
     [Fact]
@@ -109,7 +107,6 @@ public class BulkTests(CrmApiFactory factory) : ApiTest(factory)
         (await Api.PostAsync("/api/students/bulk", new { students = new[] { Data.StudentBody() } })).Expect(401);
     }
 
-    // ------------------------------------------------------------------ students: delete
     [Fact]
     public async Task Bulk_delete_removes_empty_students_and_refuses_the_ones_with_history()
     {
@@ -134,11 +131,10 @@ public class BulkTests(CrmApiFactory factory) : ApiTest(factory)
 
         (await Api.GetAsync($"/api/students/{plainA}", Admin)).Expect(404);
         (await Api.GetAsync($"/api/students/{plainB}", Admin)).Expect(404);
-        (await Api.GetAsync($"/api/students/{enrolled}", Admin)).Expect(200);      // kept
-        (await Api.GetAsync($"/api/students/{withAccount}", Admin)).Expect(200);   // kept
+        (await Api.GetAsync($"/api/students/{enrolled}", Admin)).Expect(200);
+        (await Api.GetAsync($"/api/students/{withAccount}", Admin)).Expect(200);
     }
 
-    // ------------------------------------------------------------------ teachers
     [Fact]
     public async Task Bulk_teacher_creation_reports_each_item_and_keeps_the_first_salary_rate()
     {

@@ -31,7 +31,6 @@ public static class FileFormats
         }
     }
 
-    // By the extension of the uploaded file name
     public static bool TryDetect(string? fileName, out FileFormat format) =>
         TryParseFormat(Path.GetExtension(fileName), out format);
 

@@ -9,7 +9,6 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { ChartTooltip } from './ChartTooltip'
 
 const WINDOW_DAYS = 28
-// The list endpoint caps pageSize at 100; this bounds the walk for very busy schools.
 const MAX_PAGES = 20
 
 async function fetchLessons(dateFrom: string, dateTo: string) {
@@ -22,8 +21,6 @@ async function fetchLessons(dateFrom: string, dateTo: string) {
   return items
 }
 
-/** Lessons per weekday over the last four weeks, built client-side from the
- * schedule list. Cancelled lessons are left out — they never took a slot. */
 export function LessonsByWeekday({ lang }: { lang: string }) {
   const { t } = useTranslation()
   const locale = lang === 'en' ? 'en-US' : 'uk-UA'
@@ -40,7 +37,6 @@ export function LessonsByWeekday({ lang }: { lang: string }) {
     staleTime: 5 * 60_000,
   })
 
-  // ISO weekday: 1 = Monday … 7 = Sunday; 2024-01-01 was a Monday.
   const shortDay = new Intl.DateTimeFormat(locale, { weekday: 'short' })
   const longDay = new Intl.DateTimeFormat(locale, { weekday: 'long' })
   const data = Array.from({ length: 7 }, (_, i) => {
@@ -60,8 +56,6 @@ export function LessonsByWeekday({ lang }: { lang: string }) {
 
   const total = data.reduce((sum, d) => sum + d.count, 0)
   const peak = data.reduce((best, d) => (d.count > best.count ? d : best), data[0])
-  // Full-height tracks are their own series: Recharts skips zero-height bars,
-  // and their `background` with them, so empty weekdays would lose the track.
   for (const d of data) d.track = Math.max(1, peak.count)
 
   return (
@@ -100,10 +94,6 @@ export function LessonsByWeekday({ lang }: { lang: string }) {
                   <stop offset="100%" stopColor="var(--chart-gradient-from)" />
                 </linearGradient>
               </defs>
-              {/* Recharts splits a category band between the bars that share its X axis, so
-                  a track on the same axis as the count would sit half a bar to the side.
-                  Giving the track its own hidden axis over the same categories centres
-                  it in the band like the count, which lines the two up exactly. */}
               <XAxis xAxisId="track" dataKey="short" hide />
               <XAxis
                 dataKey="short"

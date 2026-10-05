@@ -22,7 +22,6 @@ public static class ApplicationExtensions
 {
     public static IServiceCollection AddBillingApplication(this IServiceCollection services)
     {
-        // Register FluentValidation
         services.AddValidatorsFromAssembly(typeof(ApplicationExtensions).Assembly);
 
         services.AddScoped<IBillingStatistics, BillingStatisticsService>();

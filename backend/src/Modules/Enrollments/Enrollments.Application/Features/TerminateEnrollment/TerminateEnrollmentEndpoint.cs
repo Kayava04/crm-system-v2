@@ -19,7 +19,6 @@ public static class TerminateEnrollmentEndpoint
         group.MapPut("/{id:guid}/terminate", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanManageEnrollments))
              .WithName("TerminateEnrollment")
-             .WithSummary("Terminate an enrollment and cancel its upcoming lessons")
              .Produces<EnrollmentStatusChangeResponse>(StatusCodes.Status200OK)
              .ProducesProblem(StatusCodes.Status404NotFound)
              .ProducesProblem(StatusCodes.Status409Conflict);
@@ -48,7 +47,6 @@ public static class TerminateEnrollmentEndpoint
                 statusCode: StatusCodes.Status409Conflict
             );
 
-        // The new status and its effect on the calendar are saved together or not at all
         var response = await transaction.ExecuteAsync(async token =>
         {
             enrollment.Terminate();

@@ -24,7 +24,6 @@ public static class ApplicationExtensions
 {
     public static IServiceCollection AddEnrollmentsApplication(this IServiceCollection services)
     {
-        // Register FluentValidation
         services.AddValidatorsFromAssembly(typeof(ApplicationExtensions).Assembly);
 
         services.AddScoped<IEnrollmentLookup, EnrollmentLookupService>();

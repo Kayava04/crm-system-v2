@@ -44,7 +44,6 @@ public static class GetMyCalendarEndpoint
         group.MapGet("/my", Handle)
              .RequireAuthorization()
              .WithName("GetMyCalendar")
-             .WithSummary("Get the calendar of the current teacher or student (defaults to the next 30 days)")
              .Produces<CalendarResponse>(StatusCodes.Status200OK)
              .ProducesValidationProblem()
              .ProducesProblem(StatusCodes.Status401Unauthorized)
@@ -75,7 +74,6 @@ public static class GetMyCalendarEndpoint
                 ["to"] = [$"Date range must be positive and not exceed {MaxRangeDays} days."]
             });
 
-        // JwtBearer maps the "sub" claim to NameIdentifier by default
         var userIdClaim = user.FindFirstValue(ClaimTypes.NameIdentifier) ?? user.FindFirstValue("sub");
         if (!Guid.TryParse(userIdClaim, out var userId))
             return Results.Problem(
@@ -83,7 +81,6 @@ public static class GetMyCalendarEndpoint
                 statusCode: StatusCodes.Status401Unauthorized
             );
 
-        // Both bounds are inclusive days in school time
         var fromUtc = clock.ToUtc(fromDate, TimeOnly.MinValue);
         var toUtc = clock.ToUtc(toDate.AddDays(1), TimeOnly.MinValue);
 
@@ -112,7 +109,6 @@ public static class GetMyCalendarEndpoint
                     statusCode: StatusCodes.Status404NotFound
                 );
 
-            // Own lessons stay visible as history; group lessons only while the enrollment is active
             var studentEnrollments = await enrollmentLookup.GetByStudentAsync(student.Id, ct);
             var enrollmentIds = studentEnrollments.Select(e => e.Id).ToList();
             var activeEnrollmentIds = studentEnrollments.Where(e => e.IsActive).Select(e => e.Id).ToList();
@@ -151,7 +147,6 @@ public static class GetMyCalendarEndpoint
                 lessons.Where(l => l.GroupId.HasValue).Select(l => l.GroupId!.Value).Distinct().ToList(), ct))
             .ToDictionary(g => g.Id);
 
-        // Enrollments are needed for individual lessons and, for the teacher, to list the members of group lessons
         var enrollmentIds = lessons
             .Where(l => l.EnrollmentId.HasValue)
             .Select(l => l.EnrollmentId!.Value)

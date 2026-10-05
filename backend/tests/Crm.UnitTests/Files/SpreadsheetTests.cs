@@ -41,7 +41,6 @@ public class SpreadsheetTests
             sheet.Cell(1, i + 1).Value = headers[i];
     }
 
-    // ------------------------------------------------------------------ writing
     [Fact]
     public void Exported_headers_are_the_readable_names_in_the_chosen_language()
     {
@@ -69,7 +68,7 @@ public class SpreadsheetTests
 
         var sheet = Read(bytes).Worksheet(1);
 
-        Assert.Equal(XLDataType.DateTime, sheet.Cell(2, 2).DataType);   // a date Excel understands, not text
+        Assert.Equal(XLDataType.DateTime, sheet.Cell(2, 2).DataType);
         Assert.Equal(new DateTime(2001, 3, 25), sheet.Cell(2, 2).GetDateTime());
         Assert.Equal(XLDataType.Number, sheet.Cell(2, 3).DataType);
         Assert.Equal(1500.5, sheet.Cell(2, 4).GetDouble());
@@ -109,17 +108,16 @@ public class SpreadsheetTests
         var workbook = Read(SpreadsheetWriter.Write(Schema, FileLanguage.En, [], SheetMode.Template));
         var sheet = workbook.Worksheet(1);
 
-        Assert.DoesNotContain("Status", sheet.Row(1).CellsUsed().Select(c => c.GetString()));   // export-only columns are not in the template
-        Assert.True(sheet.Cell(2, 1).IsEmpty());                                                 // no example row that could be imported by mistake
-        Assert.Contains(sheet.DataValidations, v => v.AllowedValues == XLAllowedValues.List);    // drop-down lists
+        Assert.DoesNotContain("Status", sheet.Row(1).CellsUsed().Select(c => c.GetString()));
+        Assert.True(sheet.Cell(2, 1).IsEmpty());
+        Assert.Contains(sheet.DataValidations, v => v.AllowedValues == XLAllowedValues.List);
 
         var help = workbook.Worksheet("Help");
         Assert.Contains(help.Column(1).CellsUsed(), c => c.GetString() == "Full name");
-        Assert.Contains(help.Column(4).CellsUsed(), c => c.GetString() == "Red, Dark blue");     // allowed values are listed
-        Assert.Contains(help.Column(5).CellsUsed(), c => c.GetString() == "Ann");                // examples are on the help sheet
+        Assert.Contains(help.Column(4).CellsUsed(), c => c.GetString() == "Red, Dark blue");
+        Assert.Contains(help.Column(5).CellsUsed(), c => c.GetString() == "Ann");
     }
 
-    // ------------------------------------------------------------------ reading
     [Fact]
     public void A_written_export_can_be_read_back_unchanged()
     {
@@ -192,7 +190,7 @@ public class SpreadsheetTests
         var data = SpreadsheetReader.Read(stream, Schema, 100);
 
         Assert.Equal(["Date of birth"], data.MissingRequiredColumns);
-        Assert.Equal(["Nickname"], data.IgnoredColumns);   // "Status" is a known export column and is not reported
+        Assert.Equal(["Nickname"], data.IgnoredColumns);
         Assert.Empty(data.Rows);
     }
 

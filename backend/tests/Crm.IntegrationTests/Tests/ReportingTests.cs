@@ -15,7 +15,7 @@ public class ReportingTests(CrmApiFactory factory) : ApiTest(factory)
         Assert.Equal(before["total"].GetValue<int>() + 2, after["total"].GetValue<int>());
         Assert.Equal(before["byStatus"]!["Graduated"]!.GetValue<int>() + 1, after["byStatus"]!["Graduated"]!.GetValue<int>());
         Assert.Equal(before["byStatus"]!["Active"]!.GetValue<int>() + 1, after["byStatus"]!["Active"]!.GetValue<int>());
-        Assert.True(after["byStatus"]!.AsObject().ContainsKey("Withdrawn"));   // every status is present, even with zero
+        Assert.True(after["byStatus"]!.AsObject().ContainsKey("Withdrawn"));
     }
 
     [Fact]
@@ -87,7 +87,7 @@ public class ReportingTests(CrmApiFactory factory) : ApiTest(factory)
     public async Task Billing_summary_validates_the_range_and_reports_are_admin_only()
     {
         (await Api.GetAsync("/api/reports/billing/summary?dateFrom=2030-02-01&dateTo=2030-01-01", Admin)).Expect(400);
-        (await Api.GetAsync("/api/reports/billing/summary", Admin)).Expect(200);   // defaults to the current month
+        (await Api.GetAsync("/api/reports/billing/summary", Admin)).Expect(200);
 
         var teacher = await Data.TeacherUserAsync(await Data.TeacherAsync());
         (await Api.GetAsync("/api/reports/students/summary", teacher.Token)).Expect(403);

@@ -27,7 +27,6 @@ public static class GetAllEndpoint
         group.MapGet("/", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanViewCourses))
              .WithName("GetCourses")
-             .WithSummary("Get all courses")
              .Produces<PagedResponse<CourseListResponse>>(StatusCodes.Status200OK);
     }
 

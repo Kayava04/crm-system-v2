@@ -1,6 +1,5 @@
 namespace Shared.Kernel.Common;
 
-// One entry per item of a bulk request, in the same order; Key is a human-friendly identifier (e.g. the email)
 public sealed record BulkItemResult(
     int Index,
     bool Success,

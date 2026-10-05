@@ -8,7 +8,6 @@ namespace Shared.Infrastructure.Extensions;
 
 public static class SharedInfrastructureExtensions
 {
-    // Must be registered before the modules: it owns the connection and the migrations that run before the seeders
     public static IServiceCollection AddSharedInfrastructure(
         this IServiceCollection services,
         IConfiguration configuration)
@@ -22,7 +21,6 @@ public static class SharedInfrastructureExtensions
         services.AddSingleton<TransactionEnlistmentInterceptor>();
         services.AddSingleton<IAdvisoryLock>(_ => new PostgresAdvisoryLock(connectionString));
 
-        // Uploaded files: a folder on this server. A relative Storage:Path is relative to the application's content root.
         services.AddSingleton<IFileStorage>(sp =>
         {
             var configured = sp.GetRequiredService<IConfiguration>()["Storage:Path"];
@@ -38,7 +36,6 @@ public static class SharedInfrastructureExtensions
         return services;
     }
 
-    // A module database: same physical connection for every module, so a shared transaction is possible
     public static IServiceCollection AddModuleDbContext<TContext>(this IServiceCollection services)
         where TContext : DbContext
     {

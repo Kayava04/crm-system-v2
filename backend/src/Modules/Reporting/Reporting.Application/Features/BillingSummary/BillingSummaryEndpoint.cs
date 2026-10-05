@@ -24,7 +24,6 @@ public static class BillingSummaryEndpoint
         group.MapGet("/billing/summary", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanViewReports))
              .WithName("GetBillingSummary")
-             .WithSummary("Get billing summary for a period (defaults to the current month)")
              .Produces<BillingSummaryResponse>(StatusCodes.Status200OK)
              .ProducesValidationProblem();
     }
@@ -46,7 +45,6 @@ public static class BillingSummaryEndpoint
                 ["dateFrom"] = ["Date from must not be later than date to."]
             });
 
-        // Both bounds are inclusive days, so the upper bound is the start of the next day
         var fromUtc = DateTime.SpecifyKind(from.ToDateTime(TimeOnly.MinValue), DateTimeKind.Utc);
         var toUtc = DateTime.SpecifyKind(to.AddDays(1).ToDateTime(TimeOnly.MinValue), DateTimeKind.Utc);
 

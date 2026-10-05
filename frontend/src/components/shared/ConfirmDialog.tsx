@@ -21,8 +21,6 @@ interface ConfirmDialogProps {
   onConfirm: () => void | Promise<void>
 }
 
-/** A reusable confirmation dialog for destructive/irreversible actions
- * (deactivate, delete, cancel a lesson, remove a photo, ...). */
 export function ConfirmDialog({
   open,
   onOpenChange,

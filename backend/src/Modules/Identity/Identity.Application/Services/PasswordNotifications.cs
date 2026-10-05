@@ -3,7 +3,6 @@ using Notifications.Contracts;
 
 namespace Identity.Application.Services;
 
-// The account is already created / changed at this point, so a notification failure must not fail the request
 internal static class PasswordNotifications
 {
     public static async Task SendChangeRequiredAsync(

@@ -13,18 +13,6 @@ export interface ResolvedEnrollmentRow {
   isResolving: boolean
 }
 
-/**
- * The backend's enrollment list endpoint (`GET /api/enrollments`) returns only
- * `{ id, enrollmentNumber, startDate, endDate, effectivePrice, status }` — no
- * studentId/courseId/studentName/courseName, even though the endpoint accepts
- * studentId/courseId filters. (The sibling "my enrollments" endpoint does resolve
- * a courseName, so this looks like an oversight in the admin list rather than an
- * intentional design — reported to the user rather than silently patched here.)
- *
- * To render a usable table we resolve each row's detail (which does carry both
- * ids) and then look up display names: the full course list once (small, cached),
- * and each distinct student by id (bounded by the current page size).
- */
 export function useResolvedEnrollments(rows: EnrollmentListItem[]): ResolvedEnrollmentRow[] {
   const detailQueries = useQueries({
     queries: rows.map((row) => ({

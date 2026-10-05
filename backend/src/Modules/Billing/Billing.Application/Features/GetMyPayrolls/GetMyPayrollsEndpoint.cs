@@ -17,7 +17,6 @@ public static class GetMyPayrollsEndpoint
         group.MapGet("/my", Handle)
              .RequireAuthorization()
              .WithName("GetMyPayrolls")
-             .WithSummary("The payrolls of the current account: a teacher's from lessons taught, a staff member's from their Salary")
              .Produces<PagedResponse<PayrollListResponse>>(StatusCodes.Status200OK)
              .ProducesProblem(StatusCodes.Status401Unauthorized);
     }
@@ -33,13 +32,10 @@ public static class GetMyPayrollsEndpoint
         int pageSize = 20
     )
     {
-        // JwtBearer maps the "sub" claim to NameIdentifier by default
         var claim = user.FindFirstValue(ClaimTypes.NameIdentifier) ?? user.FindFirstValue("sub");
         if (!Guid.TryParse(claim, out var userId))
             return Results.Problem(detail: "Invalid user identity.", statusCode: StatusCodes.Status401Unauthorized);
 
-        // A teacher's payrolls are tied to their teacher profile; everyone else's (if any exist at
-        // all - a student's list is simply always empty) are tied to the account itself
         var teacher = await teacherLookup.GetByUserIdAsync(userId, ct);
 
         if (page < 1) page = 1;

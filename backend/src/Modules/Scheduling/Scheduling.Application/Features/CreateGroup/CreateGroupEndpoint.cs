@@ -47,7 +47,6 @@ public static class CreateGroupEndpoint
         group.MapPost("/", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanManageSchedule))
              .WithName("CreateStudyGroup")
-             .WithSummary("Create a study group for a group course")
              .Produces<CreateGroupResponse>(StatusCodes.Status201Created)
              .ProducesValidationProblem()
              .ProducesProblem(StatusCodes.Status404NotFound)

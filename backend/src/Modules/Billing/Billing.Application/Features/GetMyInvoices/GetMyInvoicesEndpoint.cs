@@ -18,7 +18,6 @@ public static class GetMyInvoicesEndpoint
         group.MapGet("/my", Handle)
              .RequireAuthorization(policy => policy.RequireRole(nameof(SystemRole.Student)))
              .WithName("GetMyInvoices")
-             .WithSummary("The invoices of the current student")
              .Produces<PagedResponse<InvoiceListResponse>>(StatusCodes.Status200OK)
              .ProducesProblem(StatusCodes.Status404NotFound);
     }
@@ -33,7 +32,6 @@ public static class GetMyInvoicesEndpoint
         int pageSize = 20
     )
     {
-        // JwtBearer maps the "sub" claim to NameIdentifier by default
         var claim = user.FindFirstValue(ClaimTypes.NameIdentifier) ?? user.FindFirstValue("sub");
         if (!Guid.TryParse(claim, out var userId))
             return Results.Problem(detail: "Invalid user identity.", statusCode: StatusCodes.Status401Unauthorized);

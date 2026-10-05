@@ -7,11 +7,6 @@ import { navSections, isNavItemVisible } from '@/routes/navConfig'
 
 interface SidebarNavProps {
   onNavigate?: () => void
-  /** Desktop rail mode: labels are visually hidden (icon-only) until the
-   * `group`-marked ancestor (the <aside> in Sidebar below) is hovered or
-   * has focus within it, at which point they fade back in. The mobile
-   * drawer (Header's <Sheet>) renders this with collapsible=false, always
-   * showing full labels — there's no rail to collapse there. */
   collapsible?: boolean
 }
 
@@ -72,9 +67,6 @@ export function Sidebar() {
   const { t } = useTranslation()
   return (
     <>
-      {/* Reserves the collapsed rail's width in normal document flow — the
-          <aside> itself is fixed/overlaid so expanding it on hover doesn't
-          push or resize the main content. */}
       <div aria-hidden className="hidden w-16 shrink-0 lg:block" />
       <aside
         className={cn(

@@ -17,7 +17,6 @@ public static class MarkInvoicePaidEndpoint
         group.MapPut("/{id:guid}/paid", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanManagePayments))
              .WithName("MarkInvoicePaid")
-             .WithSummary("Mark an invoice as paid")
              .Produces(StatusCodes.Status204NoContent)
              .ProducesProblem(StatusCodes.Status404NotFound)
              .ProducesProblem(StatusCodes.Status409Conflict);

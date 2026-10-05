@@ -28,7 +28,6 @@ public static class GetInvoiceByIdEndpoint
         group.MapGet("/{id:guid}", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanViewPayments))
              .WithName("GetInvoiceById")
-             .WithSummary("Get invoice by id")
              .Produces<InvoiceDetailResponse>(StatusCodes.Status200OK)
              .ProducesProblem(StatusCodes.Status404NotFound);
     }

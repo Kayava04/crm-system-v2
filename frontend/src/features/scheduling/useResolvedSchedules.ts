@@ -15,11 +15,6 @@ export interface ResolvedScheduleRow {
   isResolving: boolean
 }
 
-/**
- * `GET /api/schedules` rows carry raw ids (teacherId, and either enrollmentId or
- * groupId) but no display names, so — same as enrollments — we resolve each row
- * individually (bounded to the current page) to build a readable calendar table.
- */
 export function useResolvedSchedules(rows: ScheduleListItem[]): ResolvedScheduleRow[] {
   const teacherIds = Array.from(new Set(rows.map((r) => r.teacherId).filter(Boolean)))
   const teacherQueries = useQueries({

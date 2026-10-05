@@ -22,11 +22,8 @@ public interface IStudentRepository : IRepository<Student>
     Task<IReadOnlyDictionary<StudentStatus, int>> GetCountsByStatusAsync(CancellationToken ct = default);
     Task<Student?> GetByUserIdAsync(Guid userId, CancellationToken ct = default);
     Task<bool> IsActiveByIdAsync(Guid id, CancellationToken ct = default);
-    // Lower-cased emails from the given list that already belong to a student
     Task<HashSet<string>> GetExistingEmailsAsync(IReadOnlyCollection<string> emails, CancellationToken ct = default);
-    // Tracked, so they can be deleted
     Task<IReadOnlyList<Student>> GetByIdsForUpdateAsync(IReadOnlyCollection<Guid> ids, CancellationToken ct = default);
-    // With everything an export needs (preferences, languages); at most limit rows, ordered by name
     Task<IReadOnlyList<Student>> GetForExportAsync(
         string? search,
         string? city,

@@ -8,18 +8,16 @@ describe('useWeekRange', () => {
   })
 
   it('anchors the initial window to the Monday-Sunday week containing today', () => {
-    // Wednesday, 2026-03-18
     vi.useFakeTimers()
     vi.setSystemTime(new Date('2026-03-18T12:00:00Z'))
 
     const { result } = renderHook(() => useWeekRange())
 
-    expect(result.current.from).toBe('2026-03-16') // Monday
-    expect(result.current.to).toBe('2026-03-22') // Sunday
+    expect(result.current.from).toBe('2026-03-16')
+    expect(result.current.to).toBe('2026-03-22')
   })
 
   it('treats Sunday as the last day of its own week, not the start of the next', () => {
-    // Sunday, 2026-03-22
     vi.useFakeTimers()
     vi.setSystemTime(new Date('2026-03-22T12:00:00Z'))
 

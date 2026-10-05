@@ -6,9 +6,6 @@ using Scheduling.Domain.Enums;
 
 namespace Scheduling.Application.Services;
 
-// Shared by UpdateCalendarEvent and DeleteCalendarEvent: a personal event is the owner's alone to change
-// (anyone else gets 404, the same as if it did not exist to them); an event visible to everyone is a
-// schedule manager's to change, regardless of who originally created it.
 public static class CalendarEventAccess
 {
     public static IResult? CheckCanManage(CalendarEvent calendarEvent, ClaimsPrincipal principal, Guid userId)

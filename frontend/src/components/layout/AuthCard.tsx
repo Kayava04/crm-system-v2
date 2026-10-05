@@ -4,14 +4,12 @@ import { cn } from '@/lib/utils'
 
 interface AuthCardProps {
   icon: LucideIcon
-  /** Background + foreground classes for the icon badge. */
   iconClassName: string
   title: ReactNode
   description: ReactNode
   children: ReactNode
 }
 
-/** Centered frosted card used by the standalone auth screens. */
 export function AuthCard({
   icon: Icon,
   iconClassName,

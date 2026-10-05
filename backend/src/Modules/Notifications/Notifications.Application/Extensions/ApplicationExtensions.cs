@@ -22,7 +22,6 @@ public static class ApplicationExtensions
 {
     public static IServiceCollection AddNotificationsApplication(this IServiceCollection services)
     {
-        // Register FluentValidation
         services.AddValidatorsFromAssembly(typeof(ApplicationExtensions).Assembly);
 
         services.AddScoped<INotificationSender, NotificationSenderService>();
@@ -30,7 +29,6 @@ public static class ApplicationExtensions
         services.AddScoped<InvoiceReminderService>();
         services.AddScoped<LessonReminderService>();
 
-        // The periodic job: the timer is a hosted service, the work itself is INotificationAutomation
         services.AddOptions<NotificationAutomationOptions>()
             .Configure<IConfiguration>((options, configuration) =>
                 configuration.GetSection(NotificationAutomationOptions.SectionName).Bind(options));
@@ -50,7 +48,6 @@ public static class ApplicationExtensions
         MarkNotificationReadEndpoint.Map(group);
         MarkAllNotificationsReadEndpoint.Map(group);
 
-        // Administration: only for users with CanManageNotifications
         GetAllNotificationsEndpoint.Map(group);
         SendNotificationEndpoint.Map(group);
         BroadcastNotificationEndpoint.Map(group);

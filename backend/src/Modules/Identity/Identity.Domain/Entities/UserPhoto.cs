@@ -2,7 +2,6 @@ using Shared.Kernel.Primitives;
 
 namespace Identity.Domain.Entities;
 
-// The profile photo of an account: the image itself is a file in the storage, this row says which file and what it is
 public sealed class UserPhoto : Entity
 {
     public Guid UserId { get; private set; }

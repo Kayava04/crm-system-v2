@@ -77,10 +77,10 @@ public class MaterialsTests(CrmApiFactory factory) : ApiTest(factory)
         (await Api.PutAsync($"/api/materials/{material.Id}", update, author.Token)).Expect(204);
         var changed = (await Api.GetAsync($"/api/materials/{material.Id}", Admin)).Expect(200);
         Assert.Equal("Article", changed["type"].GetValue<string>());
-        Assert.Null(changed.Json!["youTubeVideoId"]);   // the old video is gone
+        Assert.Null(changed.Json!["youTubeVideoId"]);
         Assert.Null(changed.Json!["embedUrl"]);
 
-        (await Api.DeleteAsync($"/api/materials/{material.Id}", null, Admin)).Expect(204);     // an admin may delete a foreign material
+        (await Api.DeleteAsync($"/api/materials/{material.Id}", null, Admin)).Expect(204);
         (await Api.GetAsync($"/api/materials/{material.Id}", Admin)).Expect(404);
         (await Api.DeleteAsync($"/api/materials/{material.Id}", null, Admin)).Expect(404);
     }
@@ -97,7 +97,7 @@ public class MaterialsTests(CrmApiFactory factory) : ApiTest(factory)
         Assert.Equal(2, (await Api.GetAsync($"/api/materials?courseId={course}", Admin))["totalCount"].GetValue<int>());
         Assert.Equal(1, (await Api.GetAsync($"/api/materials?courseId={course}&type=Video", Admin))["totalCount"].GetValue<int>());
         Assert.Equal(3, (await Api.GetAsync($"/api/materials?search={tag}", Admin))["totalCount"].GetValue<int>());
-        Assert.Equal(1, (await Api.GetAsync($"/api/materials?search={tag}%20ARTICLE", Admin))["totalCount"].GetValue<int>());   // case-insensitive
+        Assert.Equal(1, (await Api.GetAsync($"/api/materials?search={tag}%20ARTICLE", Admin))["totalCount"].GetValue<int>());
         Assert.Equal(2, (await Api.GetAsync($"/api/materials?search={tag}&pageSize=2", Admin)).Items.Count);
 
         var video = (await Api.GetAsync($"/api/materials?courseId={course}&type=Video", Admin)).Items.Single()!;

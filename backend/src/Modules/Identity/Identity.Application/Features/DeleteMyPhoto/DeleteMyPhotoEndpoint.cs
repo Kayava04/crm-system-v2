@@ -13,7 +13,6 @@ public static class DeleteMyPhotoEndpoint
         group.MapDelete("/me/photo", Handle)
              .RequireAuthorization()
              .WithName("DeleteMyPhoto")
-             .WithSummary("Remove my profile photo")
              .Produces(StatusCodes.Status204NoContent)
              .ProducesProblem(StatusCodes.Status404NotFound);
     }
@@ -24,7 +23,6 @@ public static class DeleteMyPhotoEndpoint
         CancellationToken ct
     )
     {
-        // JwtBearer maps the "sub" claim to NameIdentifier by default
         var claim = user.FindFirstValue(ClaimTypes.NameIdentifier) ?? user.FindFirstValue("sub");
         if (!Guid.TryParse(claim, out var userId))
             return Results.Problem(detail: "Invalid user identity.", statusCode: StatusCodes.Status401Unauthorized);

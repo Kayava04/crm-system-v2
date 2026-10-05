@@ -12,7 +12,6 @@ namespace Crm.UnitTests.Validators;
 
 public class BulkAndNotificationValidatorTests
 {
-    // ---- bulk requests
     [Fact]
     public void Bulk_requests_need_between_1_and_500_items()
     {
@@ -30,7 +29,6 @@ public class BulkAndNotificationValidatorTests
         Assert.False(new BulkDeleteTeachersValidator().Validate(new BulkDeleteTeachersRequest(ids)).IsValid);
     }
 
-    // ---- single student rules that bulk creation reuses for every item
     private static CreateRequest Student(string phone = "+380501112244", DateOnly? birth = null, List<Education.Contracts.Enums.Language>? languages = null, int intensity = 3) =>
         new("Ivan", "Petrenko", null, birth ?? new DateOnly(2000, 1, 1), phone, "ivan@example.test", "Kyiv", "Ukraine", false, null,
             Students.Domain.Enums.LearningGoal.Work, Education.Contracts.Enums.Format.Online, Education.Contracts.Enums.LessonType.Individual,
@@ -75,7 +73,6 @@ public class BulkAndNotificationValidatorTests
         Assert.Equal(valid, new CreateValidator().Validate(Student(intensity: intensity)).IsValid);
     }
 
-    // ---- notifications
     [Fact]
     public void Send_needs_recipients_subject_and_body()
     {
@@ -123,7 +120,6 @@ public class BulkAndNotificationValidatorTests
     }
 }
 
-// A missing list in a request body is a validation error (400), never an unhandled exception (500)
 public class MissingCollectionValidatorTests
 {
     [Fact]

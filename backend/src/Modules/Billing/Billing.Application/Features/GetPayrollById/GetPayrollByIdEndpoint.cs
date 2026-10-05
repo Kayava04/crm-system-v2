@@ -29,7 +29,6 @@ public static class GetPayrollByIdEndpoint
         group.MapGet("/{id:guid}", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanViewPayments))
              .WithName("GetPayrollById")
-             .WithSummary("Get payroll by id")
              .Produces<PayrollDetailResponse>(StatusCodes.Status200OK)
              .ProducesProblem(StatusCodes.Status404NotFound);
     }

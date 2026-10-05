@@ -7,10 +7,8 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Crm.IntegrationTests.Tests;
 
-// The profile photo of an account: the picture is a file in the storage folder, the database describes it
 public class PhotoTests(CrmApiFactory factory) : ApiTest(factory)
 {
-    // What matters to the server is the start of the file; the rest is arbitrary payload
     private static byte[] Png(int size = 300, byte fill = 7) => [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, .. Enumerable.Repeat(fill, size)];
     private static byte[] Jpeg(int size = 300, byte fill = 9) => [0xFF, 0xD8, 0xFF, 0xE0, .. Enumerable.Repeat(fill, size)];
     private static byte[] Webp(int size = 300) => [.. "RIFF"u8, 0, 0, 0, 0, .. "WEBP"u8, .. Enumerable.Repeat((byte)5, size)];
@@ -22,14 +20,13 @@ public class PhotoTests(CrmApiFactory factory) : ApiTest(factory)
 
     private int FilesOf(Guid userId) => Directory.Exists(PhotosOf(userId)) ? Directory.GetFiles(PhotosOf(userId)).Length : 0;
 
-    // ------------------------------------------------------------------ every kind of user can have a photo
     [Fact]
     public async Task A_student_a_teacher_and_an_administrator_can_each_upload_and_see_their_own_photo()
     {
         var student = await Data.StudentUserAsync(await Data.StudentAsync());
         var teacher = await Data.TeacherUserAsync(await Data.TeacherAsync());
-        var admin = await Data.UserAsync("Admin");          // no student or teacher profile at all
-        var bare = await Data.UserAsync("Student");         // an account without a linked profile
+        var admin = await Data.UserAsync("Admin");
+        var bare = await Data.UserAsync("Student");
 
         foreach (var (user, bytes) in new[] { (student, Png()), (teacher, Jpeg()), (admin, Webp()), (bare, Png(50)) })
         {
@@ -50,7 +47,6 @@ public class PhotoTests(CrmApiFactory factory) : ApiTest(factory)
         (await Api.DeleteAsync("/api/auth/me/photo", null, Admin)).Expect(204);
     }
 
-    // ------------------------------------------------------------------ what is stored where
     [Fact]
     public async Task The_file_goes_to_the_storage_folder_and_the_database_describes_it()
     {
@@ -77,7 +73,6 @@ public class PhotoTests(CrmApiFactory factory) : ApiTest(factory)
     {
         var user = await Data.UserAsync("Student");
 
-        // a PNG called ".exe" is a PNG; the name is only remembered
         (await UploadAsync(user.Token, Png(), "picture.exe")).Expect(200);
 
         var served = (await Api.DownloadAsync("/api/auth/me/photo", user.Token)).Expect(200);
@@ -92,12 +87,11 @@ public class PhotoTests(CrmApiFactory factory) : ApiTest(factory)
 
         (await UploadAsync(user.Token, Png(), "../../../../etc/evil.png")).Expect(200);
 
-        Assert.Equal("evil.png", await Sql($"select \"OriginalFileName\" from identity.user_photos where \"UserId\" = '{user.UserId}'"));   // directories stripped
+        Assert.Equal("evil.png", await Sql($"select \"OriginalFileName\" from identity.user_photos where \"UserId\" = '{user.UserId}'"));
         Assert.Equal(1, FilesOf(user.UserId));
         Assert.Matches(@"^[0-9a-f]{32}\.png$", Path.GetFileName(Directory.GetFiles(PhotosOf(user.UserId)).Single()));
     }
 
-    // ------------------------------------------------------------------ serving
     [Fact]
     public async Task The_photo_is_served_with_safe_headers_and_can_be_cached_by_the_browser()
     {
@@ -115,14 +109,12 @@ public class PhotoTests(CrmApiFactory factory) : ApiTest(factory)
         var etag = first.Headers.ETag;
         Assert.NotNull(etag);
 
-        // the browser asks again with the tag it has: nothing is sent when the photo is unchanged
         using var again = new HttpRequestMessage(HttpMethod.Get, "/api/auth/me/photo");
         again.Headers.Authorization = new AuthenticationHeaderValue("Bearer", user.Token);
         again.Headers.IfNoneMatch.Add(etag!);
         using var cached = await Api.Http.SendAsync(again);
         Assert.Equal(HttpStatusCode.NotModified, cached.StatusCode);
 
-        // after a change the old tag no longer matches
         await UploadAsync(user.Token, Jpeg(fill: 1));
         using var changed = new HttpRequestMessage(HttpMethod.Get, "/api/auth/me/photo");
         changed.Headers.Authorization = new AuthenticationHeaderValue("Bearer", user.Token);
@@ -148,7 +140,6 @@ public class PhotoTests(CrmApiFactory factory) : ApiTest(factory)
         Assert.Equal("/api/auth/me/photo", after["photoUrl"].GetValue<string>());
     }
 
-    // ------------------------------------------------------------------ replace and delete
     [Fact]
     public async Task A_new_photo_replaces_the_old_one_and_the_old_file_is_removed()
     {
@@ -159,7 +150,7 @@ public class PhotoTests(CrmApiFactory factory) : ApiTest(factory)
         var newBytes = Jpeg(500, fill: 2);
         (await UploadAsync(user.Token, newBytes, "new.jpg")).Expect(200);
 
-        Assert.Equal("1", await Sql($"select count(*) from identity.user_photos where \"UserId\" = '{user.UserId}'"));   // still one photo
+        Assert.Equal("1", await Sql($"select count(*) from identity.user_photos where \"UserId\" = '{user.UserId}'"));
         Assert.False(File.Exists(oldFile));
         Assert.Equal(1, FilesOf(user.UserId));
         var served = (await Api.DownloadAsync("/api/auth/me/photo", user.Token)).Expect(200);
@@ -198,13 +189,11 @@ public class PhotoTests(CrmApiFactory factory) : ApiTest(factory)
         var other = await Data.UserAsync("Student");
         await UploadAsync(owner.Token, Png(fill: 3));
 
-        // the "me" endpoints always mean the caller: the other user sees and deletes nothing of the owner's
         (await Api.GetAsync("/api/auth/me/photo", other.Token)).Expect(404);
         (await Api.DeleteAsync("/api/auth/me/photo", null, other.Token)).Expect(404);
         Assert.Equal(1, FilesOf(owner.UserId));
     }
 
-    // ------------------------------------------------------------------ what is refused
     [Fact]
     public async Task Pictures_that_are_not_jpeg_png_or_webp_are_refused_and_nothing_is_stored()
     {
@@ -212,8 +201,8 @@ public class PhotoTests(CrmApiFactory factory) : ApiTest(factory)
 
         (await UploadAsync(user.Token, "GIF89a......"u8.ToArray(), "a.gif")).Expect(400);
         (await UploadAsync(user.Token, "<svg xmlns='http://www.w3.org/2000/svg'><script>alert(1)</script></svg>"u8.ToArray(), "a.svg")).Expect(400);
-        (await UploadAsync(user.Token, "<html><script>alert(1)</script></html>"u8.ToArray(), "a.png")).Expect(400);   // a page pretending to be a picture
-        (await UploadAsync(user.Token, "MZ......"u8.ToArray(), "photo.jpg")).Expect(400);                              // an executable pretending too
+        (await UploadAsync(user.Token, "<html><script>alert(1)</script></html>"u8.ToArray(), "a.png")).Expect(400);
+        (await UploadAsync(user.Token, "MZ......"u8.ToArray(), "photo.jpg")).Expect(400);
         (await UploadAsync(user.Token, "plain text"u8.ToArray(), "photo.png")).Expect(400);
         (await UploadAsync(user.Token, [], "empty.png")).Expect(400);
 
@@ -228,7 +217,7 @@ public class PhotoTests(CrmApiFactory factory) : ApiTest(factory)
 
         var refused = (await UploadAsync(user.Token, Png(6 * 1024 * 1024))).Expect(400);
         Assert.Contains("5 MB", refused.Raw);
-        (await UploadAsync(user.Token, Png(4 * 1024 * 1024))).Expect(200);   // just under the limit is fine
+        (await UploadAsync(user.Token, Png(4 * 1024 * 1024))).Expect(200);
     }
 
     [Fact]
@@ -253,10 +242,9 @@ public class PhotoTests(CrmApiFactory factory) : ApiTest(factory)
         (await Api.PutAsync($"/api/students/{studentId}/status", new { status = "Withdrawn" }, Admin)).Expect(200);
 
         Assert.Equal(403, (await Api.PostAsync("/api/auth/login", new { email = user.Email, password = user.Password })).Code);
-        Assert.Equal("1", await Sql($"select count(*) from identity.user_photos where \"UserId\" = '{user.UserId}'"));   // the photo is kept
+        Assert.Equal("1", await Sql($"select count(*) from identity.user_photos where \"UserId\" = '{user.UserId}'"));
     }
 
-    // ------------------------------------------------------------------ staff see the photos of students and teachers
     [Fact]
     public async Task Staff_with_the_permission_see_a_students_photo_and_others_do_not()
     {
@@ -273,7 +261,7 @@ public class PhotoTests(CrmApiFactory factory) : ApiTest(factory)
         Assert.Equal("image/png", (await Api.DownloadAsync($"/api/students/{studentId}/photo", Admin)).ContentType);
         (await Api.DownloadAsync($"/api/students/{studentId}/photo", plainAdmin.Token)).Expect(403);
         (await Api.DownloadAsync($"/api/students/{studentId}/photo", teacher.Token)).Expect(403);
-        (await Api.DownloadAsync($"/api/students/{studentId}/photo", student.Token)).Expect(403);   // a student uses /me/photo for their own
+        (await Api.DownloadAsync($"/api/students/{studentId}/photo", student.Token)).Expect(403);
         (await Api.DownloadAsync($"/api/students/{studentId}/photo")).Expect(401);
     }
 
@@ -288,7 +276,7 @@ public class PhotoTests(CrmApiFactory factory) : ApiTest(factory)
         var studentViewer = await Data.UserAsync("Admin", permissionIds: await Data.PermissionIdsAsync("CanViewStudents"));
 
         Assert.Equal(bytes, (await Api.DownloadAsync($"/api/teachers/{teacherId}/photo", viewer.Token)).Expect(200).Content);
-        (await Api.DownloadAsync($"/api/teachers/{teacherId}/photo", studentViewer.Token)).Expect(403);   // the students permission is not enough
+        (await Api.DownloadAsync($"/api/teachers/{teacherId}/photo", studentViewer.Token)).Expect(403);
     }
 
     [Fact]
@@ -305,8 +293,6 @@ public class PhotoTests(CrmApiFactory factory) : ApiTest(factory)
         (await Api.DownloadAsync($"/api/teachers/{noAccountTeacher}/photo", Admin)).Expect(404);
     }
 
-    // ------------------------------------------------------------------ nothing is left half done
-    // Saves work until the test arms it, so that the host can start and seed normally
     private sealed class FailingUnitOfWork(IIdentityUnitOfWork inner) : IIdentityUnitOfWork
     {
         public static volatile bool Armed;
@@ -319,7 +305,7 @@ public class PhotoTests(CrmApiFactory factory) : ApiTest(factory)
     {
         var host = Factory.WithWebHostBuilder(b => b.ConfigureTestServices(s =>
         {
-            var real = s.Last(d => d.ServiceType == typeof(IIdentityUnitOfWork)).ImplementationFactory!;   // the module's own registration
+            var real = s.Last(d => d.ServiceType == typeof(IIdentityUnitOfWork)).ImplementationFactory!;
             s.RemoveAll<IIdentityUnitOfWork>();
             s.AddScoped<IIdentityUnitOfWork>(sp => new FailingUnitOfWork((IIdentityUnitOfWork)real(sp)));
         }));
@@ -354,7 +340,7 @@ public class PhotoTests(CrmApiFactory factory) : ApiTest(factory)
         Assert.Equal(500, (await failing.UploadAsync("/api/auth/me/photo", "new.jpg", Jpeg(), user.Token, method: HttpMethod.Put)).Code);
 
         FailingUnitOfWork.Armed = false;
-        Assert.Equal(1, FilesOf(user.UserId));   // the failed new file was cleaned up, the old one kept
+        Assert.Equal(1, FilesOf(user.UserId));
         Assert.Equal(original, (await Api.DownloadAsync("/api/auth/me/photo", user.Token)).Expect(200).Content);
     }
 
@@ -372,7 +358,7 @@ public class PhotoTests(CrmApiFactory factory) : ApiTest(factory)
         foreach (var user in new[] { fresh, replacing })
         {
             Assert.Equal("1", await Sql($"select count(*) from identity.user_photos where \"UserId\" = '{user.UserId}'"));
-            Assert.Equal(1, FilesOf(user.UserId));   // no file was left behind by the losers
+            Assert.Equal(1, FilesOf(user.UserId));
         }
     }
 
@@ -382,13 +368,11 @@ public class PhotoTests(CrmApiFactory factory) : ApiTest(factory)
         var user = await Data.UserAsync("Student");
         await UploadAsync(user.Token, Png());
 
-        // one photo per user is enforced by the database itself, not only by the code
         var duplicate = await Assert.ThrowsAnyAsync<Exception>(() => Factory.Database.ExecuteAsync(
             $"insert into identity.user_photos (\"Id\", \"UserId\", \"StorageKey\", \"OriginalFileName\", \"ContentType\", \"SizeBytes\", \"UploadedAt\") " +
             $"values (gen_random_uuid(), '{user.UserId}', 'photos/x/y.png', 'y.png', 'image/png', 1, now())"));
         Assert.Contains("duplicate key", duplicate.Message);
 
-        // and a photo cannot exist for an account that does not
         var orphan = await Assert.ThrowsAnyAsync<Exception>(() => Factory.Database.ExecuteAsync(
             "insert into identity.user_photos (\"Id\", \"UserId\", \"StorageKey\", \"OriginalFileName\", \"ContentType\", \"SizeBytes\", \"UploadedAt\") " +
             "values (gen_random_uuid(), gen_random_uuid(), 'photos/x/y.png', 'y.png', 'image/png', 1, now())"));

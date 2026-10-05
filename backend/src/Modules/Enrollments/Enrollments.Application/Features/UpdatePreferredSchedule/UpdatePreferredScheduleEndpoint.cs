@@ -27,7 +27,6 @@ public static class UpdatePreferredScheduleEndpoint
         group.MapPatch("/{id:guid}/preferred-schedule", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanManageEnrollments))
              .WithName("UpdateEnrollmentPreferredSchedule")
-             .WithSummary("Update the time the student prefers to attend")
              .Produces(StatusCodes.Status204NoContent)
              .ProducesValidationProblem()
              .ProducesProblem(StatusCodes.Status404NotFound);

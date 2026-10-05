@@ -82,7 +82,6 @@ public static class RegisterEndpoint
         group.MapPost("/register", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanManageAdmins))
              .WithName("Register")
-             .WithSummary("Create a new user account")
              .Produces<RegisterResponse>(StatusCodes.Status201Created)
              .ProducesValidationProblem()
              .ProducesProblem(StatusCodes.Status401Unauthorized)
@@ -125,7 +124,6 @@ public static class RegisterEndpoint
                 detail: $"Role '{request.Role}' not found.",
                 statusCode: StatusCodes.Status409Conflict);
 
-        // Resolve the profile linker first so an unknown profile type never leaves a half-created account
         IProfileLinker? linker = null;
 
         if (request.ProfileType is not null && request.ProfileId is not null)
@@ -148,7 +146,6 @@ public static class RegisterEndpoint
 
         try
         {
-            // The account, its role, permissions and the link to the profile are saved together or not at all
             user = await transaction.ExecuteAsync(async token =>
             {
                 var created = await identityService.CreateUserAsync(
@@ -171,8 +168,6 @@ public static class RegisterEndpoint
                         await userRepository.AssignPermissionAsync(created.Id, permissionId, token);
                 }
 
-                // A teacher's pay is TeacherSalaryRate/payroll instead; User.Salary is only meaningful
-                // for accounts without their own record (see StaffEndpoints.SetSalary).
                 if (request.Role == SystemRole.Admin && request.Salary is not null)
                 {
                     created.SetSalary(request.Salary);
@@ -189,7 +184,6 @@ public static class RegisterEndpoint
         }
         catch (UserAlreadyExistsException)
         {
-            // another request registered the same email at the same moment
             logger.LogWarning("Registration failed: user with email {Email} already exists", request.Email);
 
             return Results.Problem(
@@ -209,7 +203,6 @@ public static class RegisterEndpoint
 
         logger.LogInformation("User {Email} registered with role {Role}", request.Email, request.Role);
 
-        // The account is committed; a failing in-app notification must not take it back
         await PasswordNotifications.SendChangeRequiredAsync(notificationSender, user.Id, logger, ct);
 
         var response = new RegisterResponse(

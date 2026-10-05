@@ -2,7 +2,6 @@ namespace Crm.IntegrationTests.Tests;
 
 public class MasterDataTests(CrmApiFactory factory) : ApiTest(factory)
 {
-    // ------------------------------------------------------------------ students
     [Fact]
     public async Task A_student_can_be_created_read_updated_and_commented()
     {
@@ -95,7 +94,6 @@ public class MasterDataTests(CrmApiFactory factory) : ApiTest(factory)
         Assert.Null((await Api.GetAsync($"/api/students/{student}", Admin)).Expect(200).Json!["parentInfo"]);
     }
 
-    // ------------------------------------------------------------------ teachers
     [Fact]
     public async Task Parent_info_is_only_for_children()
     {
@@ -107,7 +105,6 @@ public class MasterDataTests(CrmApiFactory factory) : ApiTest(factory)
         }, Admin)).Expect(409);
     }
 
-    // ------------------------------------------------------------------ teachers
     [Fact]
     public async Task A_teacher_is_created_with_a_first_salary_rate_and_a_later_one_takes_over_when_its_date_comes()
     {
@@ -117,11 +114,9 @@ public class MasterDataTests(CrmApiFactory factory) : ApiTest(factory)
         Assert.Equal("Probation", detail["status"].GetValue<string>());
         Assert.Equal(1500m, detail["currentSalaryRate"]!["baseSalary"]!.GetValue<decimal>());
 
-        // a new rate can start tomorrow at the earliest; until then the first one applies
         (await Api.PostAsync($"/api/teachers/{teacher}/salary-rates", new { baseSalary = 2000, lessonsRate = 200, effectiveFrom = DateTime.UtcNow.AddDays(1) }, Admin)).Expect(204);
         Assert.Equal(1500m, (await Api.GetAsync($"/api/teachers/{teacher}", Admin))["currentSalaryRate"]!["baseSalary"]!.GetValue<decimal>());
 
-        // tomorrow arrives
         await Factory.Database.ExecuteAsync($@"update teachers.teacher_salary_rates set ""EffectiveFrom"" = ""EffectiveFrom"" - interval '2 days' where ""TeacherId"" = '{teacher}'");
         Assert.Equal(2000m, (await Api.GetAsync($"/api/teachers/{teacher}", Admin))["currentSalaryRate"]!["baseSalary"]!.GetValue<decimal>());
     }
@@ -132,7 +127,7 @@ public class MasterDataTests(CrmApiFactory factory) : ApiTest(factory)
         var teacher = await Data.TeacherAsync();
 
         (await Api.PostAsync($"/api/teachers/{teacher}/salary-rates", new { baseSalary = 2000, lessonsRate = 200, effectiveFrom = DateTime.UtcNow.AddDays(-1) }, Admin)).Expect(400);
-        (await Api.PostAsync($"/api/teachers/{teacher}/salary-rates", new { baseSalary = 2000, lessonsRate = 200, effectiveFrom = DateTime.UtcNow }, Admin)).Expect(409);   // the first rate already starts today
+        (await Api.PostAsync($"/api/teachers/{teacher}/salary-rates", new { baseSalary = 2000, lessonsRate = 200, effectiveFrom = DateTime.UtcNow }, Admin)).Expect(409);
         (await Api.PostAsync($"/api/teachers/{teacher}/salary-rates", new { baseSalary = 2000, lessonsRate = 200, effectiveFrom = DateTime.UtcNow.AddDays(5) }, Admin)).Expect(204);
         (await Api.PostAsync($"/api/teachers/{teacher}/salary-rates", new { baseSalary = 3000, lessonsRate = 300, effectiveFrom = DateTime.UtcNow.AddDays(5) }, Admin)).Expect(409);
         (await Api.PostAsync($"/api/teachers/{Guid.NewGuid()}/salary-rates", new { baseSalary = 1, lessonsRate = 1, effectiveFrom = DateTime.UtcNow.AddDays(5) }, Admin)).Expect(404);
@@ -164,7 +159,6 @@ public class MasterDataTests(CrmApiFactory factory) : ApiTest(factory)
         (await Api.PutAsync($"/api/teachers/{teacher}/status", new { status = "Employed" }, Admin)).Expect(409);
     }
 
-    // ------------------------------------------------------------------ courses
     [Fact]
     public async Task Courses_can_be_updated_archived_activated_and_deleted()
     {

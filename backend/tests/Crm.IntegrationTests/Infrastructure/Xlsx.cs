@@ -2,7 +2,6 @@ using ClosedXML.Excel;
 
 namespace Crm.IntegrationTests.Infrastructure;
 
-// Builds an Excel file the way a person would fill one in
 public static class Xlsx
 {
     public static byte[] Build(string[] headers, params object?[][] rows) => Build("Data", headers, rows);

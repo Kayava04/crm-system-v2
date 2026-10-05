@@ -22,7 +22,6 @@ public static class GetMyStudentsEndpoint
         group.MapGet("/me/students", Handle)
              .RequireAuthorization(policy => policy.RequireRole(nameof(SystemRole.Teacher)))
              .WithName("GetMyStudents")
-             .WithSummary("Get students of the current teacher")
              .Produces<IReadOnlyList<MyStudentResponse>>(StatusCodes.Status200OK)
              .ProducesProblem(StatusCodes.Status404NotFound);
     }
@@ -34,7 +33,6 @@ public static class GetMyStudentsEndpoint
         CancellationToken ct
     )
     {
-        // JwtBearer maps the "sub" claim to NameIdentifier by default
         var userIdClaim = user.FindFirstValue(ClaimTypes.NameIdentifier)
             ?? user.FindFirstValue("sub");
 

@@ -19,7 +19,6 @@ public static class TeachersSummaryEndpoint
         group.MapGet("/teachers/summary", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanViewReports))
              .WithName("GetTeachersSummary")
-             .WithSummary("Get teachers summary (total, by status, salary overview)")
              .Produces<TeachersSummaryResponse>(StatusCodes.Status200OK);
     }
 

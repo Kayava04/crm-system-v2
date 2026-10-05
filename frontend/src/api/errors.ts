@@ -10,7 +10,6 @@ export interface ValidationProblemDetails extends ProblemDetails {
   errors?: Record<string, string[]>
 }
 
-/** A normalized API error, built from RFC 9457 problem+json (or a network failure). */
 export class ApiError extends Error {
   readonly status: number
   readonly title?: string | null

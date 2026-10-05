@@ -44,7 +44,6 @@ public static class SendNotificationEndpoint
         group.MapPost("/send", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanManageNotifications))
              .WithName("SendNotification")
-             .WithSummary("Send a message to specific users")
              .Produces<SendNotificationResponse>(StatusCodes.Status200OK)
              .ProducesValidationProblem();
     }

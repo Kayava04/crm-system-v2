@@ -16,7 +16,7 @@ public class EnrollmentTests(CrmApiFactory factory) : ApiTest(factory)
 
         Assert.Equal(3000m, created["coursePrice"].GetValue<decimal>());
         Assert.Equal(3000m, created["effectivePrice"].GetValue<decimal>());
-        Assert.Equal("2030-04-30", created["endDate"].GetValue<string>());   // start + the course's 3 months
+        Assert.Equal("2030-04-30", created["endDate"].GetValue<string>());
         Assert.StartsWith("CTR-20300131-", created["enrollmentNumber"].GetValue<string>());
 
         var detail = (await Api.GetAsync($"/api/enrollments/{created.Id}", Admin)).Expect(200);
@@ -48,7 +48,7 @@ public class EnrollmentTests(CrmApiFactory factory) : ApiTest(factory)
     {
         var enrollment = await Data.EnrollmentAsync(await Data.StudentAsync(), await Data.CourseAsync(price: 3000), activate: false);
 
-        (await Api.PutAsync($"/api/enrollments/{enrollment}/discount", new { discountedPrice = 3000 }, Admin)).Expect(409);   // must be lower
+        (await Api.PutAsync($"/api/enrollments/{enrollment}/discount", new { discountedPrice = 3000 }, Admin)).Expect(409);
         (await Api.PutAsync($"/api/enrollments/{enrollment}/discount", new { discountedPrice = 2000 }, Admin)).Expect(204);
         Assert.Equal(2000m, (await Api.GetAsync($"/api/enrollments/{enrollment}", Admin))["effectivePrice"].GetValue<decimal>());
 
@@ -57,7 +57,7 @@ public class EnrollmentTests(CrmApiFactory factory) : ApiTest(factory)
         Assert.Equal(3500m, detail["effectivePrice"].GetValue<decimal>());
         Assert.Null(detail.Json!["discountedPrice"]);
 
-        (await Api.DeleteAsync($"/api/enrollments/{enrollment}/discount", null, Admin)).Expect(409);   // nothing to remove
+        (await Api.DeleteAsync($"/api/enrollments/{enrollment}/discount", null, Admin)).Expect(409);
     }
 
     [Fact]
@@ -114,7 +114,7 @@ public class EnrollmentTests(CrmApiFactory factory) : ApiTest(factory)
 
         Assert.Equal(1, (await Api.GetAsync($"/api/enrollments?courseId={course}&status=Active", Admin))["totalCount"].GetValue<int>());
         Assert.Equal(0, (await Api.GetAsync($"/api/enrollments?courseId={course}&status=Draft", Admin))["totalCount"].GetValue<int>());
-        Assert.Equal(100, (await Api.GetAsync($"/api/enrollments?studentId={student}&pageSize=1000", Admin))["pageSize"].GetValue<int>());   // page size is capped
+        Assert.Equal(100, (await Api.GetAsync($"/api/enrollments?studentId={student}&pageSize=1000", Admin))["pageSize"].GetValue<int>());
     }
 
     [Fact]

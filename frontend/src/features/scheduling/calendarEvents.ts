@@ -13,8 +13,6 @@ export interface CalendarEventInput {
   isAllDay: boolean
 }
 
-// Arbitrary calendar entries that are not lessons: a personal reminder only its
-// owner ever sees, or (for a CanManageSchedule holder) a notice everyone sees.
 export function getCalendarEvents(from?: string, to?: string) {
   return unwrap(
     api.GET('/api/calendar/events', {

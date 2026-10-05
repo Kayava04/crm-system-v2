@@ -79,7 +79,7 @@ public class CalendarTests(CrmApiFactory factory) : ApiTest(factory)
 
         Assert.Equal(4, items.Count);
         Assert.All(items, i => Assert.True(i!["isGroup"]!.GetValue<bool>()));
-        Assert.All(items, i => Assert.Empty(i!["students"]!.AsArray()));   // classmates stay private
+        Assert.All(items, i => Assert.Empty(i!["students"]!.AsArray()));
     }
 
     [Fact]
@@ -87,9 +87,9 @@ public class CalendarTests(CrmApiFactory factory) : ApiTest(factory)
     {
         var student = await Data.StudentUserAsync(await Data.StudentAsync());
 
-        (await Api.GetAsync("/api/calendar/my", student.Token)).Expect(200);                                   // default: the next 30 days
-        (await Api.GetAsync("/api/calendar/my?from=2030-01-01&to=2031-06-01", student.Token)).Expect(400);      // longer than 366 days
-        (await Api.GetAsync("/api/calendar/my?from=2030-02-01&to=2030-01-01", student.Token)).Expect(400);      // to before from
+        (await Api.GetAsync("/api/calendar/my", student.Token)).Expect(200);
+        (await Api.GetAsync("/api/calendar/my?from=2030-01-01&to=2031-06-01", student.Token)).Expect(400);
+        (await Api.GetAsync("/api/calendar/my?from=2030-02-01&to=2030-01-01", student.Token)).Expect(400);
     }
 
     [Fact]
@@ -114,7 +114,7 @@ public class CalendarTests(CrmApiFactory factory) : ApiTest(factory)
         (await CalendarAsync(Admin)).Expect(403);
         (await Api.GetAsync("/api/calendar/my")).Expect(401);
 
-        var unlinked = await Data.UserAsync("Student");   // registered without a profile
+        var unlinked = await Data.UserAsync("Student");
         (await CalendarAsync(unlinked.Token)).Expect(404);
     }
 

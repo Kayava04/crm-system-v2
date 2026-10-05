@@ -22,10 +22,8 @@ public static class UploadMyPhotoEndpoint
         group.MapPut("/me/photo", Handle)
              .RequireAuthorization()
              .DisableAntiforgery()
-             // refused by the server before the body is read when it is far too big
              .WithMetadata(new RequestSizeLimitAttribute(UserPhotoService.MaxBytes + 1024 * 1024))
              .WithName("UploadMyPhoto")
-             .WithSummary("Upload or replace my profile photo (multipart field 'file'; JPEG, PNG or WebP, up to 5 MB)")
              .Accepts<IFormFile>("multipart/form-data")
              .Produces<PhotoResponse>(StatusCodes.Status200OK)
              .ProducesValidationProblem()
@@ -39,7 +37,6 @@ public static class UploadMyPhotoEndpoint
         CancellationToken ct
     )
     {
-        // JwtBearer maps the "sub" claim to NameIdentifier by default
         var claim = user.FindFirstValue(ClaimTypes.NameIdentifier) ?? user.FindFirstValue("sub");
         if (!Guid.TryParse(claim, out var userId))
             return Results.Problem(detail: "Invalid user identity.", statusCode: StatusCodes.Status401Unauthorized);
@@ -58,7 +55,6 @@ public static class UploadMyPhotoEndpoint
         if (format is null)
             return Problem("Only JPEG, PNG or WebP pictures are accepted.");
 
-        // the client's file name is kept for information only; the stored name is generated
         var info = await photos.SaveAsync(userId, Path.GetFileName(file.FileName ?? "photo"), format, bytes, ct);
 
         return Results.Ok(new PhotoResponse(true, "/api/auth/me/photo", info.ContentType, info.SizeBytes, info.UploadedAt));

@@ -58,7 +58,6 @@ public static class UpdatePreferencesEndpoint
         group.MapPut("/{id:guid}/preferences", Handle)
              .WithName("UpdateStudentPreferences")
              .RequireAuthorization(nameof(SystemPermission.CanManageStudents))
-             .WithSummary("Update student preferences")
              .Produces(StatusCodes.Status204NoContent)
              .ProducesValidationProblem()
              .ProducesProblem(StatusCodes.Status404NotFound);

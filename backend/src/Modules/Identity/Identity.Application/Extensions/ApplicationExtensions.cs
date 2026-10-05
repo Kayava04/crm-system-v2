@@ -25,7 +25,6 @@ public static class ApplicationExtensions
 {
     public static IServiceCollection AddIdentityApplication(this IServiceCollection services)
     {
-        // Register FluentValidation
         services.AddValidatorsFromAssembly(typeof(ApplicationExtensions).Assembly);
 
         services.AddScoped<IUserAccountManager, UserAccountManager>();

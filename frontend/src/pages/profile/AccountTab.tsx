@@ -4,9 +4,6 @@ import { useHasRole } from '@/features/auth/useCan'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
-/** Teacher and Student accounts hold zero permissions by design (their own-data
- * screens are gated by role, not by permission) - showing an always-empty
- * "Permissions" card on their profile is just noise, so it's hidden for them. */
 export function AccountTab() {
   const { t } = useTranslation()
   const { user } = useAuth()

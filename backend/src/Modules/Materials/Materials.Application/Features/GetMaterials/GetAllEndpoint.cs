@@ -26,7 +26,6 @@ public static class GetAllEndpoint
         group.MapGet("/", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanViewMaterials))
              .WithName("GetMaterials")
-             .WithSummary("Get all materials")
              .Produces<PagedResponse<MaterialListResponse>>(StatusCodes.Status200OK);
     }
 

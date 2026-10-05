@@ -34,12 +34,6 @@ export function MyInvoicesPage() {
     queryFn: () => getMyInvoices(),
   })
 
-  // GET /api/billing/invoices/{id} requires CanViewPayments, which students
-  // don't hold — only GET /api/billing/invoices/my (role-gated) is reachable
-  // for them. That list doesn't carry a course name, but GET
-  // /api/enrollments/my (also role-gated, already safe for a student) does,
-  // so the course is resolved client-side via the invoice's enrollmentId
-  // instead of a second, forbidden request.
   const { data: enrollments } = useQuery({
     queryKey: ['enrollments', 'my'],
     queryFn: getMyEnrollments,

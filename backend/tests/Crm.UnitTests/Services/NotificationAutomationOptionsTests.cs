@@ -62,9 +62,8 @@ public class AdvisoryLockKeyTests
     [Fact]
     public void The_key_of_a_name_never_changes()
     {
-        // every instance must compute the same key, otherwise the lock would not be shared
         Assert.Equal(AdvisoryLockKey.For("crm:notifications-automation"), AdvisoryLockKey.For("crm:notifications-automation"));
-        Assert.Equal(unchecked((long)0xAF63DC4C8601EC8C), AdvisoryLockKey.For("a"));   // the published FNV-1a 64-bit value of "a"
+        Assert.Equal(unchecked((long)0xAF63DC4C8601EC8C), AdvisoryLockKey.For("a"));
     }
 
     [Fact]

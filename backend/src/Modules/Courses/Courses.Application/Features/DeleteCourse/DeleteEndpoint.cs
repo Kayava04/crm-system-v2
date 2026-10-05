@@ -16,7 +16,6 @@ public static class DeleteEndpoint
         group.MapDelete("/{id:guid}", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanManageCourses))
              .WithName("DeleteCourse")
-             .WithSummary("Delete a course")
              .Produces(StatusCodes.Status204NoContent)
              .ProducesProblem(StatusCodes.Status404NotFound);
     }

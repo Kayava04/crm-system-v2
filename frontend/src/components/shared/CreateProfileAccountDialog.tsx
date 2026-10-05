@@ -30,12 +30,6 @@ interface CreateProfileAccountDialogProps {
   onCreated: (result: { email: string; temporaryPassword: string }) => void
 }
 
-/** Creates a login account for a Student/Teacher via `POST /api/auth/register`
- * (`createProfileAccount`), which already existed on the backend but had no
- * frontend entry point - confirmed feasible during the backend-architecture
- * review (item 8 of the feedback list), unlike several other requested items
- * that turned out to need backend changes. Shared between StudentDetailPage
- * and TeacherDetailPage since the flow is identical for both profile types. */
 export function CreateProfileAccountDialog({
   open,
   onOpenChange,

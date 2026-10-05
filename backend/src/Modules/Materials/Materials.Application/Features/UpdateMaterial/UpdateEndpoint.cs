@@ -58,7 +58,6 @@ public static class UpdateEndpoint
         group.MapPut("/{id:guid}", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanManageMaterials))
              .WithName("UpdateMaterial")
-             .WithSummary("Update a material (author or admin only)")
              .Produces(StatusCodes.Status204NoContent)
              .ProducesValidationProblem()
              .ProducesProblem(StatusCodes.Status403Forbidden)

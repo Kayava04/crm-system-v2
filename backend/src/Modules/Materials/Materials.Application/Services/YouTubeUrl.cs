@@ -13,7 +13,6 @@ internal static partial class YouTubeUrl
     [GeneratedRegex("^[A-Za-z0-9_-]{11}$")]
     private static partial Regex VideoIdPattern();
 
-    // Supports watch?v=, youtu.be/, /embed/, /shorts/ and /live/ links
     public static string? TryGetVideoId(string? url)
     {
         if (string.IsNullOrWhiteSpace(url)

@@ -7,10 +7,8 @@ using Teachers.Domain.Entities;
 
 namespace Teachers.Application.Services;
 
-// Refused = the request was all-or-nothing and something was invalid, so nothing was saved
 internal sealed record BulkCreateOutcome(IReadOnlyList<BulkItemResult> Results, bool Refused);
 
-// The one place that validates and saves many teachers, used by the bulk endpoint and by file import
 internal sealed class TeacherBulkCreator(
     IValidator<CreateTeacherRequest> validator,
     ITeacherRepository repository,
@@ -99,7 +97,6 @@ internal sealed class TeacherBulkCreator(
     private static BulkItemResult Result(int index, BulkCreateItem item, Guid? id, IReadOnlyList<string> errors, bool dryRun) =>
         new(index, errors.Count == 0 && (id is not null || dryRun), id, item.Request?.Email, errors);
 
-    // "Comment" and "comment" are the same field
     internal static string KeyOf(string propertyName)
     {
         var bracket = propertyName.IndexOf('[');

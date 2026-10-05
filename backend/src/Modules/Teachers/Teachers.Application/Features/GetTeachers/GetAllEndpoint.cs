@@ -23,7 +23,6 @@ public static class GetAllEndpoint
         group.MapGet("/", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanViewTeachers))
              .WithName("GetTeachers")
-             .WithSummary("Get all teachers")
              .Produces<PagedResponse<TeacherListResponse>>(StatusCodes.Status200OK);
     }
 

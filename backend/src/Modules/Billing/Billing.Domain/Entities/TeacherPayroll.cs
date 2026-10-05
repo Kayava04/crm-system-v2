@@ -3,11 +3,6 @@ using Shared.Kernel.Primitives;
 
 namespace Billing.Domain.Entities;
 
-// A payroll entry belongs either to a teacher (BaseSalary/LessonsRate computed from lessons taught
-// that period) or to any other staff account (an administrator or manager, whose pay is simply their
-// User.Salary for the period - no lessons involved, so LessonsRate and CompletedLessonsCount stay 0).
-// Kept as one entity/table so staff gets the exact same accrual-with-history mechanism teachers
-// already had, rather than a parallel feature.
 public sealed class TeacherPayroll : AuditableEntity
 {
     public Guid? TeacherId { get; private set; }

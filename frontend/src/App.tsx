@@ -10,10 +10,9 @@ import { ForbiddenPage } from '@/pages/errors/ForbiddenPage'
 import { NotFoundPage } from '@/pages/errors/NotFoundPage'
 import { HomePage } from '@/pages/HomePage'
 
-// Every page behind the app shell is loaded on demand: nobody pays for the staff, billing or
-// reporting screens' code just to see their own calendar. Login, the shell and the error pages
-// stay eager since they are on the critical path for everyone.
-const ProfilePage = lazy(() => import('@/pages/profile/ProfilePage').then((m) => ({ default: m.ProfilePage })))
+const ProfilePage = lazy(() =>
+  import('@/pages/profile/ProfilePage').then((m) => ({ default: m.ProfilePage })),
+)
 const StudentsListPage = lazy(() =>
   import('@/pages/students/StudentsListPage').then((m) => ({ default: m.StudentsListPage })),
 )
@@ -45,20 +44,30 @@ const CourseDetailPage = lazy(() =>
   import('@/pages/courses/CourseDetailPage').then((m) => ({ default: m.CourseDetailPage })),
 )
 const EnrollmentDetailPage = lazy(() =>
-  import('@/pages/enrollments/EnrollmentDetailPage').then((m) => ({ default: m.EnrollmentDetailPage })),
+  import('@/pages/enrollments/EnrollmentDetailPage').then((m) => ({
+    default: m.EnrollmentDetailPage,
+  })),
 )
 const EnrollmentsPage = lazy(() =>
   import('@/pages/enrollments/EnrollmentsPage').then((m) => ({ default: m.EnrollmentsPage })),
 )
-const CalendarPage = lazy(() => import('@/pages/calendar/CalendarPage').then((m) => ({ default: m.CalendarPage })))
+const CalendarPage = lazy(() =>
+  import('@/pages/calendar/CalendarPage').then((m) => ({ default: m.CalendarPage })),
+)
 const StudyGroupsListPage = lazy(() =>
-  import('@/pages/studyGroups/StudyGroupsListPage').then((m) => ({ default: m.StudyGroupsListPage })),
+  import('@/pages/studyGroups/StudyGroupsListPage').then((m) => ({
+    default: m.StudyGroupsListPage,
+  })),
 )
 const StudyGroupCreatePage = lazy(() =>
-  import('@/pages/studyGroups/StudyGroupCreatePage').then((m) => ({ default: m.StudyGroupCreatePage })),
+  import('@/pages/studyGroups/StudyGroupCreatePage').then((m) => ({
+    default: m.StudyGroupCreatePage,
+  })),
 )
 const StudyGroupDetailPage = lazy(() =>
-  import('@/pages/studyGroups/StudyGroupDetailPage').then((m) => ({ default: m.StudyGroupDetailPage })),
+  import('@/pages/studyGroups/StudyGroupDetailPage').then((m) => ({
+    default: m.StudyGroupDetailPage,
+  })),
 )
 const InvoicesListPage = lazy(() =>
   import('@/pages/billing/InvoicesListPage').then((m) => ({ default: m.InvoicesListPage })),
@@ -76,18 +85,20 @@ const NotificationsPage = lazy(() =>
   import('@/pages/notifications/NotificationsPage').then((m) => ({ default: m.NotificationsPage })),
 )
 const AdminNotificationsPage = lazy(() =>
-  import('@/pages/notifications/AdminNotificationsPage').then((m) => ({ default: m.AdminNotificationsPage })),
+  import('@/pages/notifications/AdminNotificationsPage').then((m) => ({
+    default: m.AdminNotificationsPage,
+  })),
 )
 const MaterialsListPage = lazy(() =>
   import('@/pages/materials/MaterialsListPage').then((m) => ({ default: m.MaterialsListPage })),
 )
-const StaffListPage = lazy(() => import('@/pages/staff/StaffListPage').then((m) => ({ default: m.StaffListPage })))
+const StaffListPage = lazy(() =>
+  import('@/pages/staff/StaffListPage').then((m) => ({ default: m.StaffListPage })),
+)
 const DashboardPage = lazy(() =>
   import('@/pages/reports/DashboardPage').then((m) => ({ default: m.DashboardPage })),
 )
 
-// Wraps a lazily-loaded page's element with the shared Suspense fallback, so every route below reads
-// the same way whether or not it happens to be code-split.
 function Lazy({ children }: { children: React.ReactNode }) {
   return <Suspense fallback={<PageSpinner />}>{children}</Suspense>
 }

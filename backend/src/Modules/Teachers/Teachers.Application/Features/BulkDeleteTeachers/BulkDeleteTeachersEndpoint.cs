@@ -33,7 +33,6 @@ public static class BulkDeleteTeachersEndpoint
         group.MapDelete("/bulk", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanDeleteTeachers))
              .WithName("BulkDeleteTeachers")
-             .WithSummary("Delete many teachers; teachers with an account, lessons or groups are refused (deactivate them instead)")
              .Produces<BulkOperationResponse>(StatusCodes.Status200OK)
              .ProducesValidationProblem();
     }
@@ -74,7 +73,6 @@ public static class BulkDeleteTeachersEndpoint
                 continue;
             }
 
-            // Same rule as the single delete: a teacher with history is deactivated, never erased
             if (teacher.UserId is not null || await scheduleLookup.HasTeacherHistoryAsync(id, ct))
             {
                 results.Add(new BulkItemResult(i, false, id, teacher.Email,

@@ -5,16 +5,12 @@ const STORAGE_KEY = 'crm.theme'
 const DEFAULT_THEME: Theme = 'light'
 
 function readStoredTheme(): Theme {
-  // Anything other than an explicit 'dark' (including a stale 'system' value from
-  // before the three-way toggle was removed, or nothing stored yet) falls back to
-  // the default: light-by-default on first visit, not the OS preference.
   return localStorage.getItem(STORAGE_KEY) === 'dark' ? 'dark' : DEFAULT_THEME
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<Theme>(readStoredTheme)
 
-  // Synchronize the external system (the DOM class Tailwind's dark variant reads).
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark')
   }, [theme])

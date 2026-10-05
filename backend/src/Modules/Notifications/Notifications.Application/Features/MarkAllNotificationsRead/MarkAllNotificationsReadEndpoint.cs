@@ -16,7 +16,6 @@ public static class MarkAllNotificationsReadEndpoint
         group.MapPut("/read-all", Handle)
              .RequireAuthorization()
              .WithName("MarkAllNotificationsRead")
-             .WithSummary("Mark all notifications of the current user as read")
              .Produces(StatusCodes.Status204NoContent)
              .ProducesProblem(StatusCodes.Status401Unauthorized);
     }

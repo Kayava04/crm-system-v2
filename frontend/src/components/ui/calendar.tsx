@@ -26,13 +26,10 @@ export interface DateRange {
 
 interface CalendarProps {
   selected?: Date | null
-  /** Range mode: both ends are highlighted with a band between them, and while
-   * only `from` is set the band previews up to the hovered day. */
   range?: DateRange
   onSelect: (date: Date) => void
   min?: Date | null
   max?: Date | null
-  /** Month shown first when nothing is selected yet. */
   defaultMonth?: Date
 }
 
@@ -42,8 +39,6 @@ function capitalize(s: string) {
   return s.charAt(0).toUpperCase() + s.slice(1)
 }
 
-/** Month grid with month/year drill-up and full keyboard support (arrows,
- * Home/End, PageUp/PageDown, Shift+Page for years). */
 export function Calendar({
   selected = null,
   range,
@@ -94,8 +89,6 @@ export function Calendar({
   const isOutOfRange = (d: Date) =>
     (!!min && isBefore(d, startOfDay(min))) || (!!max && isAfter(d, startOfDay(max)))
 
-  // Keyboard moves land on a day that may only exist after the next render
-  // (a new month), so focus follows the cursor once it has been painted.
   useEffect(() => {
     if (!refocus.current) return
     refocus.current = false

@@ -11,7 +11,6 @@ public interface INotificationSender
         CancellationToken ct = default
     );
 
-    // Marks all unread notifications of the given type as read (e.g. once the requested action is done)
     Task ResolveAsync(
         Guid recipientUserId,
         NotificationType type,
@@ -27,7 +26,6 @@ public enum NotificationType
     General
 }
 
-// Tells the client which action to offer next to the notification
 public enum NotificationAction
 {
     None,

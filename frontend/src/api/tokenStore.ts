@@ -1,9 +1,3 @@
-/**
- * Access token lives only in memory (lost on reload, refetched via the refresh token).
- * Refresh token is persisted in localStorage — acceptable for this project; see README
- * for the trade-off (XSS could read it, but it can't survive as easily as a plain
- * always-valid session cookie since every access token is short-lived and rotated).
- */
 const REFRESH_TOKEN_KEY = 'crm.refreshToken'
 
 let accessToken: string | null = null

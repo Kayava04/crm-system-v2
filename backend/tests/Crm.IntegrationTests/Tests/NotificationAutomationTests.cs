@@ -10,14 +10,12 @@ using Shared.Infrastructure;
 
 namespace Crm.IntegrationTests.Tests;
 
-// The periodic job: overdue invoices and reminders, all delivered as in-app notifications
 public class NotificationAutomationTests(CrmApiFactory factory) : ApiTest(factory)
 {
     private static string InDays(int days) => DateTime.UtcNow.AddDays(days).ToString("yyyy-MM-dd");
 
     private INotificationAutomation Automation => Factory.Services.GetRequiredService<INotificationAutomation>();
 
-    // ------------------------------------------------------------------ helpers
     private async Task<(TestUser Student, Guid Enrollment)> StudentWithAccountAsync()
     {
         var studentId = await Data.StudentAsync();
@@ -57,7 +55,6 @@ public class NotificationAutomationTests(CrmApiFactory factory) : ApiTest(factor
         public Task<int> MarkOverdueAsync(CancellationToken ct = default) => throw new InvalidOperationException("Simulated failure.");
     }
 
-    // ------------------------------------------------------------------ one run
     [Fact]
     public async Task One_run_marks_overdue_invoices_and_sends_invoice_and_lesson_reminders()
     {
@@ -76,7 +73,7 @@ public class NotificationAutomationTests(CrmApiFactory factory) : ApiTest(factor
         Assert.Empty(result.Errors);
         Assert.True(result.InvoicesMarkedOverdue >= 1);
         Assert.True(result.InvoiceRemindersCreated >= 2);
-        Assert.True(result.LessonRemindersCreated >= 2);   // the student and the teacher
+        Assert.True(result.LessonRemindersCreated >= 2);
 
         Assert.Equal("Overdue", await InvoiceStatus(overdueInvoice));
         Assert.Equal(1, await RemindersAsync(late.Token, "InvoiceReminder"));
@@ -110,12 +107,12 @@ public class NotificationAutomationTests(CrmApiFactory factory) : ApiTest(factor
         var (student, enrollment) = await StudentWithAccountAsync();
         var paid = await InvoiceAsync(enrollment, "2034-03", InDays(1));
         (await Api.PutAsync($"/api/billing/invoices/{paid}/paid", null, Admin)).Expect(204);
-        await InvoiceAsync(enrollment, "2034-04", InDays(45));           // due far in the future
-        await LessonInAsync(enrollment, teacherId, 100);                 // outside the 24 hour window
+        await InvoiceAsync(enrollment, "2034-04", InDays(45));
+        await LessonInAsync(enrollment, teacherId, 100);
 
         var (paused, pausedEnrollment) = await StudentWithAccountAsync();
         await LessonInAsync(pausedEnrollment, teacherId, 8);
-        (await Api.PutAsync($"/api/enrollments/{pausedEnrollment}/suspend", null, Admin)).Expect(200);   // its lesson is cancelled
+        (await Api.PutAsync($"/api/enrollments/{pausedEnrollment}/suspend", null, Admin)).Expect(200);
 
         await Automation.RunOnceAsync();
 
@@ -124,7 +121,6 @@ public class NotificationAutomationTests(CrmApiFactory factory) : ApiTest(factor
         Assert.Equal(0, await RemindersAsync(paused.Token, "LessonReminder"));
     }
 
-    // ------------------------------------------------------------------ settings
     [Fact]
     public async Task The_settings_decide_what_the_run_does()
     {
@@ -134,7 +130,6 @@ public class NotificationAutomationTests(CrmApiFactory factory) : ApiTest(factor
         await InvoiceAsync(enrollment, "2034-05", InDays(2));
         await LessonInAsync(enrollment, teacherId, 5);
 
-        // no overdue marking, no overdue reminders, invoices only on their due day, lessons only within 2 hours
         using var host = Host(new()
         {
             ["MarkOverdueInvoices"] = "false", ["IncludeOverdue"] = "false",
@@ -153,17 +148,16 @@ public class NotificationAutomationTests(CrmApiFactory factory) : ApiTest(factor
     {
         var teacherId = await Data.TeacherAsync();
         var (student, enrollment) = await StudentWithAccountAsync();
-        await LessonInAsync(enrollment, teacherId, 100);   // inside the largest allowed window (168 h)
-        await LessonInAsync(enrollment, teacherId, 300);   // beyond it
+        await LessonInAsync(enrollment, teacherId, 100);
+        await LessonInAsync(enrollment, teacherId, 300);
 
         using var host = Host(new() { ["LessonReminderHoursAhead"] = "99999", ["InvoiceReminderDaysBefore"] = "-9", ["IntervalSeconds"] = "-5" });
         var result = await host.Services.GetRequiredService<INotificationAutomation>().RunOnceAsync();
 
         Assert.Empty(result.Errors);
-        Assert.Equal(1, await RemindersAsync(student.Token, "LessonReminder"));   // only the 100 h one
+        Assert.Equal(1, await RemindersAsync(student.Token, "LessonReminder"));
     }
 
-    // ------------------------------------------------------------------ failures
     [Fact]
     public async Task A_failing_step_is_reported_and_the_other_steps_still_run()
     {
@@ -184,7 +178,6 @@ public class NotificationAutomationTests(CrmApiFactory factory) : ApiTest(factor
         Assert.Equal(1, await RemindersAsync(student.Token, "LessonReminder"));
     }
 
-    // ------------------------------------------------------------------ several instances
     private async Task<NpgsqlConnection> HoldTheLockAsync()
     {
         var connection = new NpgsqlConnection(Factory.Database.ConnectionString);
@@ -210,7 +203,7 @@ public class NotificationAutomationTests(CrmApiFactory factory) : ApiTest(factor
             Assert.True(skipped.Skipped);
             Assert.Equal(0, skipped.LessonRemindersCreated);
             Assert.Equal(0, await RemindersAsync(student.Token, "LessonReminder"));
-        }   // the other instance is gone: the lock is free again
+        }
 
         var ran = await Automation.RunOnceAsync();
 
@@ -242,7 +235,6 @@ public class NotificationAutomationTests(CrmApiFactory factory) : ApiTest(factor
         Assert.Equal("0", await Sql($"select count(*) from pg_locks where locktype = 'advisory' and objid = {AdvisoryLockKey.For(NotificationAutomationLock.Name) & 0xFFFFFFFF}"));
     }
 
-    // ------------------------------------------------------------------ the timer itself
     private async Task<bool> WaitUntilAsync(Func<Task<bool>> condition, int seconds = 25)
     {
         var until = DateTime.UtcNow.AddSeconds(seconds);
@@ -267,13 +259,13 @@ public class NotificationAutomationTests(CrmApiFactory factory) : ApiTest(factor
         await LessonInAsync(enrollment, teacherId, 5);
 
         using var host = Host(new() { ["Enabled"] = "true", ["IntervalSeconds"] = "1", ["StartupDelaySeconds"] = "0" });
-        _ = host.Services;   // starting the host starts the timer
+        _ = host.Services;
 
         Assert.True(await WaitUntilAsync(async () => await RemindersAsync(student.Token, "LessonReminder") == 1), "no lesson reminder arrived");
         Assert.True(await WaitUntilAsync(async () => await InvoiceStatus(overdue) == "Overdue"), "the invoice was not marked overdue");
         Assert.True(await WaitUntilAsync(async () => await RemindersAsync(student.Token, "InvoiceReminder") == 1), "no invoice reminder arrived");
 
-        await Task.Delay(2500);   // a few more ticks: still exactly one of each
+        await Task.Delay(2500);
         Assert.Equal(1, await RemindersAsync(student.Token, "LessonReminder"));
         Assert.Equal(1, await RemindersAsync(student.Token, "InvoiceReminder"));
     }
@@ -316,7 +308,6 @@ public class NotificationAutomationTests(CrmApiFactory factory) : ApiTest(factor
 
         public Task<AutomationRunResult> RunOnceAsync(CancellationToken ct = default)
         {
-            // the first run fails (e.g. the database blinked), the following ones work
             if (Interlocked.Increment(ref _calls) == 1)
                 throw new InvalidOperationException("Simulated failure of a whole run.");
 

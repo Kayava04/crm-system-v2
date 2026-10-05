@@ -16,7 +16,6 @@
         "tags": [
           "Identity"
         ],
-        "summary": "Authenticate a user and issue an access token",
         "operationId": "Login",
         "requestBody": {
           "content": {
@@ -92,7 +91,6 @@
         "tags": [
           "Identity"
         ],
-        "summary": "Create a new user account",
         "operationId": "Register",
         "requestBody": {
           "content": {
@@ -178,7 +176,6 @@
         "tags": [
           "Identity"
         ],
-        "summary": "Change the current user's password",
         "operationId": "ChangePassword",
         "requestBody": {
           "content": {
@@ -227,7 +224,6 @@
         "tags": [
           "Identity"
         ],
-        "summary": "Who am I: account, roles, permissions and the student or teacher profile",
         "operationId": "GetMe",
         "responses": {
           "200": {
@@ -263,7 +259,6 @@
         "tags": [
           "Identity"
         ],
-        "summary": "List administrator and manager accounts (optionally only active or only deactivated ones)",
         "operationId": "ListStaff",
         "parameters": [
           {
@@ -321,7 +316,6 @@
         "tags": [
           "Identity"
         ],
-        "summary": "Deactivate or reactivate an administrator account; nothing is deleted",
         "operationId": "SetStaffStatus",
         "parameters": [
           {
@@ -398,7 +392,6 @@
         "tags": [
           "Identity"
         ],
-        "summary": "Replace the permissions of an administrator account",
         "operationId": "SetStaffPermissions",
         "parameters": [
           {
@@ -485,7 +478,6 @@
         "tags": [
           "Identity"
         ],
-        "summary": "Set or clear the salary of an administrator account; never self-service",
         "operationId": "SetStaffSalary",
         "parameters": [
           {
@@ -572,7 +564,6 @@
         "tags": [
           "Identity"
         ],
-        "summary": "Set the name, birth date, city, country and phone of an administrator or manager (not for the SuperAdmin, students and teachers)",
         "operationId": "UpdateMyContact",
         "requestBody": {
           "content": {
@@ -648,7 +639,6 @@
         "tags": [
           "Identity"
         ],
-        "summary": "Upload or replace my profile photo (multipart field 'file'; JPEG, PNG or WebP, up to 5 MB)",
         "operationId": "UploadMyPhoto",
         "requestBody": {
           "content": {
@@ -707,7 +697,6 @@
         "tags": [
           "Identity"
         ],
-        "summary": "My profile photo as an image (supports If-None-Match, so the browser can cache it)",
         "operationId": "GetMyPhoto",
         "responses": {
           "200": {
@@ -734,7 +723,6 @@
         "tags": [
           "Identity"
         ],
-        "summary": "Remove my profile photo",
         "operationId": "DeleteMyPhoto",
         "responses": {
           "204": {
@@ -763,7 +751,6 @@
         "tags": [
           "Identity"
         ],
-        "summary": "Reset a user's password to a new temporary one",
         "operationId": "ResetPassword",
         "parameters": [
           {
@@ -830,7 +817,6 @@
         "tags": [
           "Identity"
         ],
-        "summary": "Exchange a refresh token for a new access token",
         "operationId": "Refresh",
         "requestBody": {
           "content": {
@@ -886,7 +872,6 @@
         "tags": [
           "Identity"
         ],
-        "summary": "Get all roles",
         "operationId": "GetRoles",
         "responses": {
           "200": {
@@ -915,7 +900,6 @@
         "tags": [
           "Identity"
         ],
-        "summary": "Get all permissions",
         "operationId": "GetPermissions",
         "responses": {
           "200": {
@@ -944,7 +928,6 @@
         "tags": [
           "Students"
         ],
-        "summary": "Get all students",
         "operationId": "GetStudents",
         "parameters": [
           {
@@ -1038,7 +1021,6 @@
         "tags": [
           "Students"
         ],
-        "summary": "Create a student",
         "operationId": "CreateStudent",
         "requestBody": {
           "content": {
@@ -1094,7 +1076,6 @@
         "tags": [
           "Students"
         ],
-        "summary": "The profile of the current student",
         "operationId": "GetMyStudentProfile",
         "responses": {
           "200": {
@@ -1130,7 +1111,6 @@
         "tags": [
           "Students"
         ],
-        "summary": "The profile photo of a student (the one the student uploaded to their account)",
         "operationId": "GetStudentPhoto",
         "parameters": [
           {
@@ -1170,7 +1150,6 @@
         "tags": [
           "Students"
         ],
-        "summary": "Get student by id",
         "operationId": "GetStudentById",
         "parameters": [
           {
@@ -1225,7 +1204,6 @@
         "tags": [
           "Students"
         ],
-        "summary": "Update student",
         "operationId": "UpdateStudent",
         "parameters": [
           {
@@ -1283,7 +1261,6 @@
         "tags": [
           "Students"
         ],
-        "summary": "Delete student",
         "operationId": "DeleteStudent",
         "parameters": [
           {
@@ -1333,7 +1310,6 @@
         "tags": [
           "Students"
         ],
-        "summary": "Create many students at once; every item gets its own result",
         "operationId": "BulkCreateStudents",
         "requestBody": {
           "content": {
@@ -1377,7 +1353,6 @@
         "tags": [
           "Students"
         ],
-        "summary": "Delete many students; students with an account or enrollments are refused (deactivate them instead)",
         "operationId": "BulkDeleteStudents",
         "requestBody": {
           "content": {
@@ -1423,7 +1398,6 @@
         "tags": [
           "Students"
         ],
-        "summary": "Download students as an Excel (.xlsx) or JSON file; accepts the same filters as the list",
         "operationId": "ExportStudents",
         "parameters": [
           {
@@ -1512,7 +1486,6 @@
         "tags": [
           "Students"
         ],
-        "summary": "Download an empty Excel template (with a help sheet) or a JSON sample for importing students",
         "operationId": "StudentImportTemplate",
         "parameters": [
           {
@@ -1559,7 +1532,6 @@
         "tags": [
           "Students"
         ],
-        "summary": "Import students from an Excel (.xlsx) or JSON file (multipart form field 'file'). Use dryRun=true to check the file without saving.",
         "operationId": "ImportStudents",
         "parameters": [
           {
@@ -1628,7 +1600,6 @@
         "tags": [
           "Students"
         ],
-        "summary": "Update student preferences",
         "operationId": "UpdateStudentPreferences",
         "parameters": [
           {
@@ -1688,7 +1659,6 @@
         "tags": [
           "Students"
         ],
-        "summary": "Add parent info for student",
         "operationId": "AddParentInfo",
         "parameters": [
           {
@@ -1756,7 +1726,6 @@
         "tags": [
           "Students"
         ],
-        "summary": "Update parent info for student",
         "operationId": "UpdateParentInfo",
         "parameters": [
           {
@@ -1814,7 +1783,6 @@
         "tags": [
           "Students"
         ],
-        "summary": "Delete parent info for student",
         "operationId": "DeleteParentInfo",
         "parameters": [
           {
@@ -1854,7 +1822,6 @@
         "tags": [
           "Students"
         ],
-        "summary": "Change student status",
         "operationId": "ChangeStudentStatus",
         "parameters": [
           {
@@ -1931,7 +1898,6 @@
         "tags": [
           "Students"
         ],
-        "summary": "Update student comment",
         "operationId": "UpdateStudentComment",
         "parameters": [
           {
@@ -1991,7 +1957,6 @@
         "tags": [
           "Teachers"
         ],
-        "summary": "Get all teachers",
         "operationId": "GetTeachers",
         "parameters": [
           {
@@ -2064,7 +2029,6 @@
         "tags": [
           "Teachers"
         ],
-        "summary": "Create a teacher",
         "operationId": "CreateTeacher",
         "requestBody": {
           "content": {
@@ -2120,7 +2084,6 @@
         "tags": [
           "Teachers"
         ],
-        "summary": "Get students of the current teacher",
         "operationId": "GetMyStudents",
         "responses": {
           "200": {
@@ -2159,7 +2122,6 @@
         "tags": [
           "Teachers"
         ],
-        "summary": "The profile of the current teacher (including their salary rates)",
         "operationId": "GetMyTeacherProfile",
         "responses": {
           "200": {
@@ -2195,7 +2157,6 @@
         "tags": [
           "Teachers"
         ],
-        "summary": "The profile photo of a teacher (the one the teacher uploaded to their account)",
         "operationId": "GetTeacherPhoto",
         "parameters": [
           {
@@ -2235,7 +2196,6 @@
         "tags": [
           "Teachers"
         ],
-        "summary": "Get teacher by id",
         "operationId": "GetTeacherById",
         "parameters": [
           {
@@ -2280,7 +2240,6 @@
         "tags": [
           "Teachers"
         ],
-        "summary": "Update a teacher",
         "operationId": "UpdateTeacher",
         "parameters": [
           {
@@ -2338,7 +2297,6 @@
         "tags": [
           "Teachers"
         ],
-        "summary": "Delete teacher",
         "operationId": "DeleteTeacher",
         "parameters": [
           {
@@ -2388,7 +2346,6 @@
         "tags": [
           "Teachers"
         ],
-        "summary": "Create many teachers at once; every item gets its own result",
         "operationId": "BulkCreateTeachers",
         "requestBody": {
           "content": {
@@ -2432,7 +2389,6 @@
         "tags": [
           "Teachers"
         ],
-        "summary": "Delete many teachers; teachers with an account, lessons or groups are refused (deactivate them instead)",
         "operationId": "BulkDeleteTeachers",
         "requestBody": {
           "content": {
@@ -2478,7 +2434,6 @@
         "tags": [
           "Teachers"
         ],
-        "summary": "Download teachers as an Excel (.xlsx) or JSON file; accepts the same filters as the list",
         "operationId": "ExportTeachers",
         "parameters": [
           {
@@ -2546,7 +2501,6 @@
         "tags": [
           "Teachers"
         ],
-        "summary": "Download an empty Excel template (with a help sheet) or a JSON sample for importing teachers",
         "operationId": "TeacherImportTemplate",
         "parameters": [
           {
@@ -2593,7 +2547,6 @@
         "tags": [
           "Teachers"
         ],
-        "summary": "Import teachers from an Excel (.xlsx) or JSON file (multipart form field 'file'). Use dryRun=true to check the file without saving.",
         "operationId": "ImportTeachers",
         "parameters": [
           {
@@ -2662,7 +2615,6 @@
         "tags": [
           "Teachers"
         ],
-        "summary": "Change teacher status",
         "operationId": "ChangeTeacherStatus",
         "parameters": [
           {
@@ -2739,7 +2691,6 @@
         "tags": [
           "Teachers"
         ],
-        "summary": "Add a new salary rate for a teacher",
         "operationId": "AddSalaryRate",
         "parameters": [
           {
@@ -2809,7 +2760,6 @@
         "tags": [
           "Teachers"
         ],
-        "summary": "Update teacher comment",
         "operationId": "UpdateTeacherComment",
         "parameters": [
           {
@@ -2869,7 +2819,6 @@
         "tags": [
           "Courses"
         ],
-        "summary": "Get all courses",
         "operationId": "GetCourses",
         "parameters": [
           {
@@ -2963,7 +2912,6 @@
         "tags": [
           "Courses"
         ],
-        "summary": "Create a course",
         "operationId": "CreateCourse",
         "requestBody": {
           "content": {
@@ -3019,7 +2967,6 @@
         "tags": [
           "Courses"
         ],
-        "summary": "Get course by id",
         "operationId": "GetCourseById",
         "parameters": [
           {
@@ -3064,7 +3011,6 @@
         "tags": [
           "Courses"
         ],
-        "summary": "Update a course",
         "operationId": "UpdateCourse",
         "parameters": [
           {
@@ -3132,7 +3078,6 @@
         "tags": [
           "Courses"
         ],
-        "summary": "Delete a course",
         "operationId": "DeleteCourse",
         "parameters": [
           {
@@ -3172,7 +3117,6 @@
         "tags": [
           "Courses"
         ],
-        "summary": "Archive a course",
         "operationId": "ArchiveCourse",
         "parameters": [
           {
@@ -3222,7 +3166,6 @@
         "tags": [
           "Courses"
         ],
-        "summary": "Activate a course",
         "operationId": "ActivateCourse",
         "parameters": [
           {
@@ -3272,7 +3215,6 @@
         "tags": [
           "Enrollments"
         ],
-        "summary": "Get all enrollments",
         "operationId": "GetEnrollments",
         "parameters": [
           {
@@ -3347,7 +3289,6 @@
         "tags": [
           "Enrollments"
         ],
-        "summary": "Create an enrollment",
         "operationId": "CreateEnrollment",
         "requestBody": {
           "content": {
@@ -3413,7 +3354,6 @@
         "tags": [
           "Enrollments"
         ],
-        "summary": "The enrollments (courses) of the current student, newest first",
         "operationId": "GetMyEnrollments",
         "responses": {
           "200": {
@@ -3452,7 +3392,6 @@
         "tags": [
           "Enrollments"
         ],
-        "summary": "Get enrollment by id",
         "operationId": "GetEnrollmentById",
         "parameters": [
           {
@@ -3499,7 +3438,6 @@
         "tags": [
           "Enrollments"
         ],
-        "summary": "Activate an enrollment and bring back its upcoming lessons",
         "operationId": "ActivateEnrollment",
         "parameters": [
           {
@@ -3556,7 +3494,6 @@
         "tags": [
           "Enrollments"
         ],
-        "summary": "Suspend an enrollment and cancel its upcoming lessons",
         "operationId": "SuspendEnrollment",
         "parameters": [
           {
@@ -3613,7 +3550,6 @@
         "tags": [
           "Enrollments"
         ],
-        "summary": "Complete an enrollment and cancel its remaining upcoming lessons",
         "operationId": "CompleteEnrollment",
         "parameters": [
           {
@@ -3670,7 +3606,6 @@
         "tags": [
           "Enrollments"
         ],
-        "summary": "Terminate an enrollment and cancel its upcoming lessons",
         "operationId": "TerminateEnrollment",
         "parameters": [
           {
@@ -3727,7 +3662,6 @@
         "tags": [
           "Enrollments"
         ],
-        "summary": "Apply discount to enrollment",
         "operationId": "ApplyDiscount",
         "parameters": [
           {
@@ -3795,7 +3729,6 @@
         "tags": [
           "Enrollments"
         ],
-        "summary": "Remove discount from enrollment",
         "operationId": "RemoveDiscount",
         "parameters": [
           {
@@ -3845,7 +3778,6 @@
         "tags": [
           "Enrollments"
         ],
-        "summary": "Update enrollment price",
         "operationId": "UpdateEnrollmentPrice",
         "parameters": [
           {
@@ -3915,7 +3847,6 @@
         "tags": [
           "Enrollments"
         ],
-        "summary": "Update enrollment comment",
         "operationId": "UpdateEnrollmentComment",
         "parameters": [
           {
@@ -3975,7 +3906,6 @@
         "tags": [
           "Enrollments"
         ],
-        "summary": "Update the time the student prefers to attend",
         "operationId": "UpdateEnrollmentPreferredSchedule",
         "parameters": [
           {
@@ -4035,7 +3965,6 @@
         "tags": [
           "Schedules"
         ],
-        "summary": "Get all schedules",
         "operationId": "GetSchedules",
         "parameters": [
           {
@@ -4134,7 +4063,6 @@
         "tags": [
           "Schedules"
         ],
-        "summary": "Create a single lesson for an enrollment or a study group",
         "operationId": "CreateSchedule",
         "requestBody": {
           "content": {
@@ -4200,7 +4128,6 @@
         "tags": [
           "Schedules"
         ],
-        "summary": "Get schedule by id",
         "operationId": "GetScheduleById",
         "parameters": [
           {
@@ -4245,7 +4172,6 @@
         "tags": [
           "Schedules"
         ],
-        "summary": "Update a schedule (teacher, duration, notes)",
         "operationId": "UpdateSchedule",
         "parameters": [
           {
@@ -4315,7 +4241,6 @@
         "tags": [
           "Schedules"
         ],
-        "summary": "Generate the recurring lessons of an enrollment or a study group from weekly slots",
         "operationId": "GenerateSchedule",
         "requestBody": {
           "content": {
@@ -4381,7 +4306,6 @@
         "tags": [
           "Schedules"
         ],
-        "summary": "Cancel all upcoming lessons of an enrollment or a group (before regenerating the schedule)",
         "operationId": "CancelFutureSchedule",
         "requestBody": {
           "content": {
@@ -4427,7 +4351,6 @@
         "tags": [
           "Schedules"
         ],
-        "summary": "Hand over the upcoming lessons and groups of a teacher to another teacher",
         "operationId": "ReassignTeacher",
         "requestBody": {
           "content": {
@@ -4493,7 +4416,6 @@
         "tags": [
           "Schedules"
         ],
-        "summary": "Complete a schedule",
         "operationId": "CompleteSchedule",
         "parameters": [
           {
@@ -4543,7 +4465,6 @@
         "tags": [
           "Schedules"
         ],
-        "summary": "Cancel a schedule",
         "operationId": "CancelSchedule",
         "parameters": [
           {
@@ -4593,7 +4514,6 @@
         "tags": [
           "Schedules"
         ],
-        "summary": "Reschedule a schedule to a new date",
         "operationId": "RescheduleSchedule",
         "parameters": [
           {
@@ -4663,7 +4583,6 @@
         "tags": [
           "Study groups"
         ],
-        "summary": "Get all study groups",
         "operationId": "GetStudyGroups",
         "parameters": [
           {
@@ -4731,7 +4650,6 @@
         "tags": [
           "Study groups"
         ],
-        "summary": "Create a study group for a group course",
         "operationId": "CreateStudyGroup",
         "requestBody": {
           "content": {
@@ -4797,7 +4715,6 @@
         "tags": [
           "Study groups"
         ],
-        "summary": "Get study group with its members",
         "operationId": "GetStudyGroupById",
         "parameters": [
           {
@@ -4842,7 +4759,6 @@
         "tags": [
           "Study groups"
         ],
-        "summary": "Update study group name and teacher",
         "operationId": "UpdateStudyGroup",
         "parameters": [
           {
@@ -4902,7 +4818,6 @@
         "tags": [
           "Study groups"
         ],
-        "summary": "Add an enrollment to a study group",
         "operationId": "AddStudyGroupMember",
         "parameters": [
           {
@@ -4972,7 +4887,6 @@
         "tags": [
           "Study groups"
         ],
-        "summary": "Remove an enrollment from a study group",
         "operationId": "RemoveStudyGroupMember",
         "parameters": [
           {
@@ -5021,7 +4935,6 @@
         "tags": [
           "Calendar"
         ],
-        "summary": "Get the calendar of the current teacher or student (defaults to the next 30 days)",
         "operationId": "GetMyCalendar",
         "parameters": [
           {
@@ -5105,7 +5018,6 @@
         "tags": [
           "Calendar"
         ],
-        "summary": "List the arbitrary calendar events visible to the current user (own ones plus everyone's), defaults to the next 30 days",
         "operationId": "GetCalendarEvents",
         "parameters": [
           {
@@ -5170,7 +5082,6 @@
         "tags": [
           "Calendar"
         ],
-        "summary": "Create a personal reminder, or (with CanManageSchedule) a school-wide notice",
         "operationId": "CreateCalendarEvent",
         "requestBody": {
           "content": {
@@ -5236,7 +5147,6 @@
         "tags": [
           "Calendar"
         ],
-        "summary": "Get one calendar event, if it is visible to the current user",
         "operationId": "GetCalendarEventById",
         "parameters": [
           {
@@ -5291,7 +5201,6 @@
         "tags": [
           "Calendar"
         ],
-        "summary": "Update a calendar event: its owner for a personal one, a schedule manager for one visible to everyone",
         "operationId": "UpdateCalendarEvent",
         "parameters": [
           {
@@ -5376,7 +5285,6 @@
         "tags": [
           "Calendar"
         ],
-        "summary": "Delete a calendar event: its owner for a personal one, a schedule manager for one visible to everyone",
         "operationId": "DeleteCalendarEvent",
         "parameters": [
           {
@@ -5436,7 +5344,6 @@
         "tags": [
           "Billing - Invoices"
         ],
-        "summary": "Get all student invoices",
         "operationId": "GetInvoices",
         "parameters": [
           {
@@ -5518,7 +5425,6 @@
         "tags": [
           "Billing - Invoices"
         ],
-        "summary": "Create a student invoice",
         "operationId": "CreateInvoice",
         "requestBody": {
           "content": {
@@ -5584,7 +5490,6 @@
         "tags": [
           "Billing - Invoices"
         ],
-        "summary": "The invoices of the current student",
         "operationId": "GetMyInvoices",
         "parameters": [
           {
@@ -5655,7 +5560,6 @@
         "tags": [
           "Billing - Invoices"
         ],
-        "summary": "Get invoice by id",
         "operationId": "GetInvoiceById",
         "parameters": [
           {
@@ -5702,7 +5606,6 @@
         "tags": [
           "Billing - Invoices"
         ],
-        "summary": "Mark an invoice as paid",
         "operationId": "MarkInvoicePaid",
         "parameters": [
           {
@@ -5752,7 +5655,6 @@
         "tags": [
           "Billing - Invoices"
         ],
-        "summary": "Mark all pending invoices past their due date as overdue",
         "operationId": "MarkInvoicesOverdue",
         "responses": {
           "200": {
@@ -5778,7 +5680,6 @@
         "tags": [
           "Billing - Payrolls"
         ],
-        "summary": "Get all teacher payrolls",
         "operationId": "GetPayrolls",
         "parameters": [
           {
@@ -5860,7 +5761,6 @@
         "tags": [
           "Billing - Payrolls"
         ],
-        "summary": "Calculate and create a payroll for a period: a teacher's from lessons taught, a staff member's from their Salary",
         "operationId": "CreatePayroll",
         "requestBody": {
           "content": {
@@ -5926,7 +5826,6 @@
         "tags": [
           "Billing - Payrolls"
         ],
-        "summary": "The payrolls of the current account: a teacher's from lessons taught, a staff member's from their Salary",
         "operationId": "GetMyPayrolls",
         "parameters": [
           {
@@ -6004,7 +5903,6 @@
         "tags": [
           "Billing - Payrolls"
         ],
-        "summary": "Get payroll by id",
         "operationId": "GetPayrollById",
         "parameters": [
           {
@@ -6051,7 +5949,6 @@
         "tags": [
           "Billing - Payrolls"
         ],
-        "summary": "Mark a payroll as paid",
         "operationId": "MarkPayrollPaid",
         "parameters": [
           {
@@ -6101,7 +5998,6 @@
         "tags": [
           "Reporting"
         ],
-        "summary": "Get students summary (total and by status)",
         "operationId": "GetStudentsSummary",
         "responses": {
           "200": {
@@ -6127,7 +6023,6 @@
         "tags": [
           "Reporting"
         ],
-        "summary": "Get teachers summary (total, by status, salary overview)",
         "operationId": "GetTeachersSummary",
         "responses": {
           "200": {
@@ -6153,7 +6048,6 @@
         "tags": [
           "Reporting"
         ],
-        "summary": "Get enrollments summary (total, by status, by course)",
         "operationId": "GetEnrollmentsSummary",
         "responses": {
           "200": {
@@ -6179,7 +6073,6 @@
         "tags": [
           "Reporting"
         ],
-        "summary": "Get billing summary for a period (defaults to the current month)",
         "operationId": "GetBillingSummary",
         "parameters": [
           {
@@ -6233,7 +6126,6 @@
         "tags": [
           "Notifications"
         ],
-        "summary": "Get notifications of the current user",
         "operationId": "GetMyNotifications",
         "parameters": [
           {
@@ -6305,7 +6197,6 @@
         "tags": [
           "Notifications"
         ],
-        "summary": "Get the number of unread notifications of the current user",
         "operationId": "GetUnreadNotificationsCount",
         "responses": {
           "200": {
@@ -6341,7 +6232,6 @@
         "tags": [
           "Notifications"
         ],
-        "summary": "Mark a notification as read",
         "operationId": "MarkNotificationRead",
         "parameters": [
           {
@@ -6391,7 +6281,6 @@
         "tags": [
           "Notifications"
         ],
-        "summary": "Mark all notifications of the current user as read",
         "operationId": "MarkAllNotificationsRead",
         "responses": {
           "204": {
@@ -6420,7 +6309,6 @@
         "tags": [
           "Notifications"
         ],
-        "summary": "Get notifications of all users (for administrators)",
         "operationId": "GetAllNotifications",
         "parameters": [
           {
@@ -6497,7 +6385,6 @@
         "tags": [
           "Notifications"
         ],
-        "summary": "Send a message to specific users",
         "operationId": "SendNotification",
         "requestBody": {
           "content": {
@@ -6543,7 +6430,6 @@
         "tags": [
           "Notifications"
         ],
-        "summary": "Send a message to every active user of a group (students, teachers, admins or everyone)",
         "operationId": "BroadcastNotification",
         "requestBody": {
           "content": {
@@ -6589,7 +6475,6 @@
         "tags": [
           "Notifications"
         ],
-        "summary": "Remind students about unpaid invoices that are due soon or overdue (each reminder is sent once)",
         "operationId": "SendInvoiceReminders",
         "requestBody": {
           "content": {
@@ -6635,7 +6520,6 @@
         "tags": [
           "Notifications"
         ],
-        "summary": "Remind students and teachers about lessons that start soon (each reminder is sent once)",
         "operationId": "SendLessonReminders",
         "requestBody": {
           "content": {
@@ -6681,7 +6565,6 @@
         "tags": [
           "Materials"
         ],
-        "summary": "Get all materials",
         "operationId": "GetMaterials",
         "parameters": [
           {
@@ -6755,7 +6638,6 @@
         "tags": [
           "Materials"
         ],
-        "summary": "Create a material (YouTube video, article or link)",
         "operationId": "CreateMaterial",
         "requestBody": {
           "content": {
@@ -6821,7 +6703,6 @@
         "tags": [
           "Materials"
         ],
-        "summary": "Get material by id",
         "operationId": "GetMaterialById",
         "parameters": [
           {
@@ -6866,7 +6747,6 @@
         "tags": [
           "Materials"
         ],
-        "summary": "Update a material (author or admin only)",
         "operationId": "UpdateMaterial",
         "parameters": [
           {
@@ -6934,7 +6814,6 @@
         "tags": [
           "Materials"
         ],
-        "summary": "Delete a material (author or admin only)",
         "operationId": "DeleteMaterial",
         "parameters": [
           {

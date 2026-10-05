@@ -15,7 +15,6 @@ public static class GetCalendarEventByIdEndpoint
         group.MapGet("/events/{id:guid}", Handle)
              .RequireAuthorization()
              .WithName("GetCalendarEventById")
-             .WithSummary("Get one calendar event, if it is visible to the current user")
              .Produces<CalendarEventResponse>(StatusCodes.Status200OK)
              .ProducesProblem(StatusCodes.Status401Unauthorized)
              .ProducesProblem(StatusCodes.Status404NotFound);
@@ -34,7 +33,6 @@ public static class GetCalendarEventByIdEndpoint
 
         var calendarEvent = await repository.GetByIdAsync(id, ct);
 
-        // A personal event of someone else does not exist as far as the caller is concerned
         if (calendarEvent is null || (calendarEvent.Visibility == CalendarEventVisibility.Personal && calendarEvent.CreatedByUserId != userId))
             return Results.Problem(detail: $"Calendar event with id '{id}' not found.", statusCode: StatusCodes.Status404NotFound);
 

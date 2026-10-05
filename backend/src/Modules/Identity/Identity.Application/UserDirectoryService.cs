@@ -19,7 +19,6 @@ internal sealed class UserDirectoryService(IUserRepository repository) : IUserDi
         if (roles.Any(r => r.Name == nameof(SystemRole.SuperAdmin)) || roles.All(r => r.Name != nameof(SystemRole.Admin)))
             return null;
 
-        // Same "Last First Middle" name a Register call would compose from these same fields
         var fullName = string.Join(' ', new[] { user.FirstName, user.LastName, user.MiddleName }
             .Where(n => !string.IsNullOrWhiteSpace(n)));
 

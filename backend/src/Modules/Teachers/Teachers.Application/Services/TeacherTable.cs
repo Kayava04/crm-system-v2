@@ -2,7 +2,6 @@ using Shared.Files;
 
 namespace Teachers.Application.Services;
 
-// The teacher table as a person sees it in Excel: readable names in English and Ukrainian, readable values
 internal static class TeacherTable
 {
     public static readonly Choice[] Statuses =
@@ -37,7 +36,6 @@ internal static class TeacherTable
         new ColumnDef("comment", "Comment", "Коментар", ColumnType.Text,
             ExampleEn: "Speaks German too", ExampleUk: "Знає також німецьку", NoteEn: "Optional, up to 500 characters.", NoteUk: "Необов'язково, до 500 символів."),
 
-        // present in exports only
         new ColumnDef("status", "Status", "Статус", ColumnType.Choice, ForImport: false, Choices: Statuses),
         new ColumnDef("hasAccount", "Has an account", "Має акаунт", ColumnType.Boolean, ForImport: false),
         new ColumnDef("createdAt", "Created", "Дата створення", ColumnType.DateTime, ForImport: false),

@@ -4,7 +4,6 @@ using Shared.Kernel.Abstractions;
 
 namespace Shared.Infrastructure;
 
-// Session-level advisory lock on its own connection: it is held for exactly as long as the handle lives
 public sealed class PostgresAdvisoryLock(string connectionString) : IAdvisoryLock
 {
     public async Task<IAsyncDisposable?> TryAcquireAsync(string name, CancellationToken ct = default)
@@ -44,7 +43,6 @@ public sealed class PostgresAdvisoryLock(string connectionString) : IAdvisoryLoc
             }
             finally
             {
-                // Closing the session releases the lock anyway, even if the unlock above failed
                 await connection.DisposeAsync();
             }
         }
@@ -53,7 +51,6 @@ public sealed class PostgresAdvisoryLock(string connectionString) : IAdvisoryLoc
 
 public static class AdvisoryLockKey
 {
-    // Stable 64-bit key of a lock name (FNV-1a), the same on every instance and every run
     public static long For(string name)
     {
         var hash = 14695981039346656037UL;

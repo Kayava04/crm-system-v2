@@ -87,7 +87,6 @@ public static class CreateEndpoint
         group.MapPost("/", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanCreateTeachers))
              .WithName("CreateTeacher")
-             .WithSummary("Create a teacher")
              .Produces<CreateTeacherResponse>(StatusCodes.Status201Created)
              .ProducesValidationProblem()
              .ProducesProblem(StatusCodes.Status409Conflict);

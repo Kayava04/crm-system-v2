@@ -28,7 +28,6 @@ public static class GetMyEnrollmentsEndpoint
         group.MapGet("/my", Handle)
              .RequireAuthorization(policy => policy.RequireRole(nameof(SystemRole.Student)))
              .WithName("GetMyEnrollments")
-             .WithSummary("The enrollments (courses) of the current student, newest first")
              .Produces<IReadOnlyList<MyEnrollmentResponse>>(StatusCodes.Status200OK)
              .ProducesProblem(StatusCodes.Status404NotFound);
     }
@@ -41,7 +40,6 @@ public static class GetMyEnrollmentsEndpoint
         CancellationToken ct
     )
     {
-        // JwtBearer maps the "sub" claim to NameIdentifier by default
         var claim = user.FindFirstValue(ClaimTypes.NameIdentifier) ?? user.FindFirstValue("sub");
         if (!Guid.TryParse(claim, out var userId))
             return Results.Problem(detail: "Invalid user identity.", statusCode: StatusCodes.Status401Unauthorized);

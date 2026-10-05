@@ -15,8 +15,6 @@ export function getMyTeacherProfile() {
 export async function uploadMyPhoto(file: File) {
   const formData = new FormData()
   formData.append('file', file)
-  // openapi-fetch passes a FormData body through untouched (lets the browser set
-  // the multipart boundary); the generated type expects a plain object, hence the cast.
   return unwrap(
     api.PUT('/api/auth/me/photo', {
       body: formData as unknown as { file?: string },

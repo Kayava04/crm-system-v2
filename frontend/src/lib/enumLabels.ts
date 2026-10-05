@@ -18,8 +18,6 @@ export type EnumCategory =
   | 'broadcastAudience'
   | 'materialType'
 
-/** Translates a backend enum value (e.g. "Active", "B1") via the `enums.*`
- * locale namespace, falling back to the raw value for anything unmapped. */
 export function enumLabel(
   t: TFunction,
   category: EnumCategory,

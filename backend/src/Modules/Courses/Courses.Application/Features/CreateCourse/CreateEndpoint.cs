@@ -70,7 +70,6 @@ public static class CreateEndpoint
         group.MapPost("/", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanManageCourses))
              .WithName("CreateCourse")
-             .WithSummary("Create a course")
              .Produces<CreateCourseResponse>(StatusCodes.Status201Created)
              .ProducesValidationProblem()
              .ProducesProblem(StatusCodes.Status409Conflict);

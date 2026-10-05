@@ -19,7 +19,6 @@ interface QuickLink {
   to: string
   labelKey: string
   icon: LucideIcon
-  /** Shown only to a user who holds it, like the matching sidebar item. */
   permission?: Permission
 }
 
@@ -38,11 +37,6 @@ const STUDENT_LINKS: QuickLink[] = [
   { to: '/materials', labelKey: 'nav.materials', icon: FolderOpen },
 ]
 
-/** Everyone lands here after login. An Admin/SuperAdmin who can see the
- * dashboard is sent straight there — this page exists for Teacher/Student,
- * who hold no permissions by design and can't reach /dashboard at all, so
- * they get a small set of role-relevant quick links instead of a blank/raw
- * landing screen. */
 export function HomePage() {
   const { t } = useTranslation()
   const { user } = useAuth()

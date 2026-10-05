@@ -82,8 +82,6 @@ public static class ServiceCollectionExtensions
 
     public const string CorsPolicyName = "Frontend";
 
-    // Origins of the frontend (e.g. the React dev server) come from Cors:AllowedOrigins; with none configured
-    // no cross-origin request is allowed. Tokens travel in the Authorization header, so no credentials are needed.
     private static IServiceCollection AddCorsPolicy(this IServiceCollection services, IConfiguration configuration)
     {
         var origins = configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
@@ -103,8 +101,6 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    // Login and token refresh are limited per client address, so a password cannot be guessed at machine speed.
-    // RateLimiting:Auth:PermitLimit requests per WindowSeconds (default 30 per minute).
     private static IServiceCollection AddAuthRateLimiting(this IServiceCollection services, IConfiguration configuration)
     {
         var permitLimit = Math.Max(1, configuration.GetValue("RateLimiting:Auth:PermitLimit", 30));
@@ -183,7 +179,6 @@ public static class ServiceCollectionExtensions
         var secretKey = jwtSection["SecretKey"]
             ?? throw new InvalidOperationException("Jwt:SecretKey not found in configuration.");
 
-        // Fail at start-up with a clear message instead of on the first login
         if (secretKey.Length < 32)
             throw new InvalidOperationException(
                 "Jwt:SecretKey must be at least 32 characters long. Set it with: dotnet user-secrets set \"Jwt:SecretKey\" \"<random text>\".");

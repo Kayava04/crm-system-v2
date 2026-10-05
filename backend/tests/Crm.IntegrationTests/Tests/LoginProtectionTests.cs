@@ -3,13 +3,11 @@ using Microsoft.AspNetCore.Mvc.Testing;
 
 namespace Crm.IntegrationTests.Tests;
 
-// Guessing passwords must be slow: an account locks after repeated failures and login is rate limited per address
 public class LoginProtectionTests(CrmApiFactory factory) : ApiTest(factory)
 {
     private Task<ApiResponse> Login(string email, string password, Api? api = null) =>
         (api ?? Api).PostAsync("/api/auth/login", new { email, password });
 
-    // ------------------------------------------------------------------ account lockout
     [Fact]
     public async Task Five_wrong_passwords_lock_the_account_even_for_the_right_password()
     {
@@ -18,7 +16,7 @@ public class LoginProtectionTests(CrmApiFactory factory) : ApiTest(factory)
         for (var i = 0; i < 5; i++)
             (await Login(user.Email, "wrong-password")).Expect(401);
 
-        var locked = (await Login(user.Email, user.Password)).Expect(429);   // the right password is refused too
+        var locked = (await Login(user.Email, user.Password)).Expect(429);
         Assert.Contains("locked", locked["detail"].GetValue<string>());
         Assert.Contains("minute", locked["detail"].GetValue<string>());
         (await Login(user.Email, "wrong-password")).Expect(429);
@@ -35,7 +33,7 @@ public class LoginProtectionTests(CrmApiFactory factory) : ApiTest(factory)
 
         (await Login(other.Email, other.Password)).Expect(200);
         for (var i = 0; i < 8; i++)
-            (await Login("nobody-" + TestData.Unique() + "@example.test", "wrong-password")).Expect(401);   // never locked, never revealed
+            (await Login("nobody-" + TestData.Unique() + "@example.test", "wrong-password")).Expect(401);
     }
 
     [Fact]
@@ -48,7 +46,7 @@ public class LoginProtectionTests(CrmApiFactory factory) : ApiTest(factory)
             for (var i = 0; i < 4; i++)
                 (await Login(user.Email, "wrong-password")).Expect(401);
 
-            (await Login(user.Email, user.Password)).Expect(200);   // four failures were not enough to lock
+            (await Login(user.Email, user.Password)).Expect(200);
         }
 
         Assert.Equal("0", await Sql($"select \"AccessFailedCount\" from identity.users where \"Email\" = '{user.Email}'"));
@@ -61,7 +59,7 @@ public class LoginProtectionTests(CrmApiFactory factory) : ApiTest(factory)
         using var host = Factory.WithWebHostBuilder(b =>
         {
             b.UseSetting("Identity:Lockout:MaxAttempts", "2");
-            b.UseSetting("Identity:Lockout:DurationMinutes", "0.03");   // about two seconds
+            b.UseSetting("Identity:Lockout:DurationMinutes", "0.03");
         });
         var api = new Api(host.CreateClient());
 
@@ -97,7 +95,6 @@ public class LoginProtectionTests(CrmApiFactory factory) : ApiTest(factory)
         Assert.Equal(403, (await Login(user.Email, user.Password)).Code);
     }
 
-    // ------------------------------------------------------------------ rate limit per address
     [Fact]
     public async Task Login_attempts_from_one_address_are_limited_and_the_answer_says_when_to_retry()
     {

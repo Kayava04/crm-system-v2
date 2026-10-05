@@ -15,7 +15,6 @@ public static class GetMyStudentProfileEndpoint
         group.MapGet("/me", Handle)
              .RequireAuthorization(policy => policy.RequireRole(nameof(SystemRole.Student)))
              .WithName("GetMyStudentProfile")
-             .WithSummary("The profile of the current student")
              .Produces<StudentDetailResponse>(StatusCodes.Status200OK)
              .ProducesProblem(StatusCodes.Status404NotFound);
     }
@@ -26,7 +25,6 @@ public static class GetMyStudentProfileEndpoint
         CancellationToken ct
     )
     {
-        // JwtBearer maps the "sub" claim to NameIdentifier by default
         var claim = user.FindFirstValue(ClaimTypes.NameIdentifier) ?? user.FindFirstValue("sub");
         if (!Guid.TryParse(claim, out var userId))
             return Results.Problem(detail: "Invalid user identity.", statusCode: StatusCodes.Status401Unauthorized);

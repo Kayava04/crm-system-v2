@@ -26,7 +26,6 @@ public static class GetMyNotificationsEndpoint
         group.MapGet("/", Handle)
              .RequireAuthorization()
              .WithName("GetMyNotifications")
-             .WithSummary("Get notifications of the current user")
              .Produces<PagedResponse<NotificationResponse>>(StatusCodes.Status200OK)
              .ProducesProblem(StatusCodes.Status401Unauthorized);
     }
@@ -76,7 +75,6 @@ public static class GetMyNotificationsEndpoint
         return Results.Ok(response);
     }
 
-    // JwtBearer maps the "sub" claim to NameIdentifier by default
     private static Guid? GetUserId(ClaimsPrincipal user) =>
         Guid.TryParse(user.FindFirstValue(ClaimTypes.NameIdentifier) ?? user.FindFirstValue("sub"), out var id)
             ? id

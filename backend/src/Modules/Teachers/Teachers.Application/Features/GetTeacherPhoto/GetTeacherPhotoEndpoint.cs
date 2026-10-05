@@ -15,7 +15,6 @@ public static class GetTeacherPhotoEndpoint
         group.MapGet("/{id:guid}/photo", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanViewTeachers))
              .WithName("GetTeacherPhoto")
-             .WithSummary("The profile photo of a teacher (the one the teacher uploaded to their account)")
              .Produces(StatusCodes.Status200OK, contentType: "image/jpeg")
              .ProducesProblem(StatusCodes.Status404NotFound);
     }
@@ -42,7 +41,6 @@ public static class GetTeacherPhotoEndpoint
         if (photo is null)
             return Results.Problem(detail: "The teacher has no photo.", statusCode: StatusCodes.Status404NotFound);
 
-        // The browser must not guess a different type from the content, and must ask again before reusing a cached copy
         http.Response.Headers.XContentTypeOptions = "nosniff";
         http.Response.Headers.CacheControl = "private, no-cache";
 

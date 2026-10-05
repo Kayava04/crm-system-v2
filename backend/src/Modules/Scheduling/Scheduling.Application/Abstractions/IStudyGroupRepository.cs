@@ -28,7 +28,6 @@ public interface IStudyGroupRepository : IRepository<StudyGroup>
         CancellationToken ct = default
     );
 
-    // An enrollment can be in only one group of its course
     Task<bool> IsInGroupOfCourseAsync(
         Guid enrollmentId,
         Guid courseId,

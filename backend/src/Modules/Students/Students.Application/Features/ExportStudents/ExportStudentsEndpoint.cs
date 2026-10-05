@@ -16,7 +16,6 @@ public static class ExportStudentsEndpoint
         group.MapGet("/export", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanViewStudents))
              .WithName("ExportStudents")
-             .WithSummary("Download students as an Excel (.xlsx) or JSON file; accepts the same filters as the list")
              .Produces(StatusCodes.Status200OK, contentType: FileFormats.XlsxContentType)
              .ProducesValidationProblem();
     }

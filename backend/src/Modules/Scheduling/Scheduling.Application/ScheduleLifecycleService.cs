@@ -36,7 +36,6 @@ internal sealed class ScheduleLifecycleService(
         Guid enrollmentId,
         CancellationToken ct = default)
     {
-        // Restoring checks the teachers' calendars, so they are held for the whole operation
         return await transaction.ExecuteAsync(async token =>
         {
             var cancelled = await repository.GetFutureCancelledAsync(
@@ -57,7 +56,6 @@ internal sealed class ScheduleLifecycleService(
 
                 if (!available)
                 {
-                    // The teacher is away as well: the lesson comes back together with the teacher
                     lesson.Cancel(CancellationReason.TeacherUnavailable);
                     skipped++;
                     continue;
@@ -112,7 +110,6 @@ internal sealed class ScheduleLifecycleService(
 
             foreach (var lesson in cancelled)
             {
-                // An individual lesson of a suspended student stays cancelled until the student returns
                 if (lesson.EnrollmentId is { } enrollmentId
                     && (!enrollments.TryGetValue(enrollmentId, out var enrollment) || !enrollment.IsActive))
                 {

@@ -8,7 +8,6 @@ using Scheduling.Application.Abstractions;
 
 namespace Scheduling.Application.Features.CancelFutureSchedule;
 
-// Exactly one of EnrollmentId and GroupId must be set
 public sealed record CancelFutureScheduleRequest(Guid? EnrollmentId, Guid? GroupId);
 
 public sealed record CancelFutureScheduleResponse(int CancelledCount);
@@ -31,7 +30,6 @@ public static class CancelFutureScheduleEndpoint
         group.MapPut("/cancel-future", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanManageSchedule))
              .WithName("CancelFutureSchedule")
-             .WithSummary("Cancel all upcoming lessons of an enrollment or a group (before regenerating the schedule)")
              .Produces<CancelFutureScheduleResponse>(StatusCodes.Status200OK)
              .ProducesValidationProblem();
     }

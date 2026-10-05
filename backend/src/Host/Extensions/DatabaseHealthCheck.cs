@@ -3,7 +3,6 @@ using Npgsql;
 
 namespace Host.Extensions;
 
-// Readiness: the database answers and every module schema exists (i.e. migrations were applied)
 internal sealed class DatabaseHealthCheck(IConfiguration configuration) : IHealthCheck
 {
     private static readonly string[] ExpectedSchemas =

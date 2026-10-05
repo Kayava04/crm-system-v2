@@ -18,14 +18,11 @@ public enum ColumnType
     MultiChoice
 }
 
-// One allowed value of a choice column: the value the system stores and how a person reads it in each language
 public sealed record Choice(string Value, string En, string Uk)
 {
     public string Display(FileLanguage language) => language == FileLanguage.Uk ? Uk : En;
 }
 
-// A column of a table a person can open in Excel. Key is the field name (same as in the JSON files).
-// ForImport = false marks columns that only appear in exports (status, creation date...); an import ignores them.
 public sealed record ColumnDef(
     string Key,
     string HeaderEn,

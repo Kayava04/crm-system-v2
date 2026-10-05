@@ -14,7 +14,6 @@ internal sealed class BillingStatisticsService(
         DateTime to,
         CancellationToken ct = default)
     {
-        // Repositories share one scoped DbContext, so the queries run one after another
         var income = await invoices.SumPaidAsync(from, to, ct);
         var expenses = await payrolls.SumPaidAsync(from, to, ct);
         var pendingInvoices = await invoices.SumByStatusAsync(InvoiceStatus.Pending, ct);

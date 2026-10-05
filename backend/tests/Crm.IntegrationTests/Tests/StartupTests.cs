@@ -4,13 +4,12 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Crm.IntegrationTests.Tests;
 
-// A wrongly configured application must refuse to start with a clear message, not fail later on the first login
 public class StartupTests(CrmApiFactory factory) : ApiTest(factory)
 {
     [Theory]
     [InlineData("")]
     [InlineData("too-short")]
-    [InlineData("0123456789012345678901234567890")]   // 31 characters
+    [InlineData("0123456789012345678901234567890")]
     public void A_jwt_key_shorter_than_32_characters_stops_the_application_at_start_up(string key)
     {
         using var broken = Factory.WithWebHostBuilder(builder => builder.UseSetting("Jwt:SecretKey", key));
@@ -25,14 +24,12 @@ public class StartupTests(CrmApiFactory factory) : ApiTest(factory)
     {
         using var broken = Factory.WithWebHostBuilder(builder => builder.UseSetting("ConnectionStrings:Default", ""));
 
-        // an empty connection string is rejected by the shared infrastructure before any request is served
         Assert.ThrowsAny<Exception>(() => broken.CreateClient());
     }
 
     [Fact]
     public async Task The_application_starts_and_seeds_an_empty_database_by_itself()
     {
-        // the factory built a brand new database: migrations, roles, permissions and the SuperAdmin all came from start-up
         Assert.Equal("4", await Sql("select count(*) from identity.roles"));
         Assert.Equal("1", await Sql($"select count(*) from identity.users where \"Email\" = '{CrmApiFactory.AdminEmail}'"));
         Assert.Equal("9", await Sql("select count(distinct table_schema) from information_schema.tables where table_schema in ('identity','students','teachers','courses','enrollments','scheduling','billing','notifications','materials')"));
@@ -65,9 +62,6 @@ public class StartupTests(CrmApiFactory factory) : ApiTest(factory)
             Assert.Contains(expected, indexes!);
     }
 
-    // Seq is only reachable at "localhost" when the API runs on the host; inside a Docker container it is
-    // reachable only by its compose service name. docker-compose.yml overrides the same config key with an
-    // env var shaped exactly like this. If this breaks, the override in docker-compose.yml lost its target.
     [Fact]
     public void The_seq_sink_is_configured_in_every_environment_and_its_address_can_be_overridden()
     {

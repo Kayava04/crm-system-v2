@@ -2,7 +2,6 @@ namespace Shared.Files;
 
 public static class ImportErrors
 {
-    // Validation reports "PhoneNumber: ..."; a person who filled in Excel knows that column as "Phone" or "Телефон"
     public static IReadOnlyList<string> UseColumnNames(IReadOnlyList<string> errors, TableSchema schema, FileLanguage language) =>
         errors.Select(e => UseColumnName(e, schema, language)).ToList();
 

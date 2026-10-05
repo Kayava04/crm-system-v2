@@ -42,7 +42,6 @@ internal sealed class CalendarEventConfiguration : IEntityTypeConfiguration<Cale
         builder.Property(e => e.CreatedAt)
             .IsRequired();
 
-        // The calendar's own list query always filters by owner-or-everyone and by the time range
         builder.HasIndex(e => new { e.CreatedByUserId, e.StartsAt });
 
         builder.HasIndex(e => new { e.Visibility, e.StartsAt });

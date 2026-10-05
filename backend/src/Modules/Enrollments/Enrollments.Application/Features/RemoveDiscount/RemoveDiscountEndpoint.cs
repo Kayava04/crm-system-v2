@@ -16,7 +16,6 @@ public static class RemoveDiscountEndpoint
         group.MapDelete("/{id:guid}/discount", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanManageEnrollments))
              .WithName("RemoveDiscount")
-             .WithSummary("Remove discount from enrollment")
              .Produces(StatusCodes.Status204NoContent)
              .ProducesProblem(StatusCodes.Status404NotFound)
              .ProducesProblem(StatusCodes.Status409Conflict);

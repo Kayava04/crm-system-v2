@@ -3,7 +3,6 @@ using Teachers.Domain.Entities;
 
 namespace Teachers.Application.Services;
 
-// The single place that turns a create request into a Teacher (with the first salary rate)
 internal static class TeacherFactory
 {
     public static Teacher Build(CreateTeacherRequest request)

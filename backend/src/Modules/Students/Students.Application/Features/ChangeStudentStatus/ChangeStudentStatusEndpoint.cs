@@ -14,7 +14,6 @@ namespace Students.Application.Features.ChangeStudentStatus;
 
 public sealed record ChangeStudentStatusRequest(StudentStatus Status);
 
-// What the status change did to the student's enrollments and calendar
 public sealed record ChangeStudentStatusResponse(
     int SuspendedEnrollments,
     int CancelledLessons,
@@ -40,7 +39,6 @@ public static class ChangeStudentStatusEndpoint
         group.MapPut("/{id:guid}/status", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanManageStudents))
              .WithName("ChangeStudentStatus")
-             .WithSummary("Change student status")
              .Produces<ChangeStudentStatusResponse>(StatusCodes.Status200OK)
              .ProducesValidationProblem()
              .ProducesProblem(StatusCodes.Status404NotFound)
@@ -83,10 +81,8 @@ public static class ChangeStudentStatusEndpoint
 
         var wasActive = student.Status == StudentStatus.Active;
 
-        // Only a student who left (Withdrawn) loses access; a pause or graduation keeps the account
         var accountActive = request.Status != StudentStatus.Withdrawn;
 
-        // Status, account, enrollments and calendar change together or not at all
         var response = await transaction.ExecuteAsync(async token =>
         {
             student.ChangeStatus(request.Status);

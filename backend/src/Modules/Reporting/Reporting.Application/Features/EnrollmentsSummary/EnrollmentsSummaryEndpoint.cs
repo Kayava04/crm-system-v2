@@ -26,7 +26,6 @@ public static class EnrollmentsSummaryEndpoint
         group.MapGet("/enrollments/summary", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanViewReports))
              .WithName("GetEnrollmentsSummary")
-             .WithSummary("Get enrollments summary (total, by status, by course)")
              .Produces<EnrollmentsSummaryResponse>(StatusCodes.Status200OK);
     }
 

@@ -8,8 +8,6 @@ using Teachers.Domain.Enums;
 
 namespace Teachers.Application.Services;
 
-// What an exported teacher looks like in a JSON file: the fields of a new teacher plus id, status and dates.
-// The same file can be imported again (the extra fields are ignored).
 internal sealed record TeacherExportItem(
     Guid Id,
     string FirstName,
@@ -38,7 +36,6 @@ internal static class TeacherTransfer
         Converters = { new JsonStringEnumConverter() }
     };
 
-    // ------------------------------------------------------------------ export (the salary shown is the one in force now)
     public static IReadOnlyDictionary<string, object?> ToRow(Teacher t) => new Dictionary<string, object?>
     {
         ["firstName"] = t.FirstName,
@@ -73,7 +70,6 @@ internal static class TeacherTransfer
         }
     }, JsonOptions);
 
-    // ------------------------------------------------------------------ import from Excel
     public static BulkCreateItem FromRow(SheetRow row, FileLanguage language)
     {
         var errors = row.Errors.ToList();
@@ -113,7 +109,6 @@ internal static class TeacherTransfer
         return new BulkCreateItem(request, errors, handled);
     }
 
-    // ------------------------------------------------------------------ import from JSON
     public static (IReadOnlyList<BulkCreateItem> Items, IReadOnlyList<int> Rows) ParseJson(Stream stream)
     {
         JsonNode? root;

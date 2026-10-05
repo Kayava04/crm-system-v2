@@ -19,7 +19,6 @@ internal sealed class EnrollmentConfiguration : IEntityTypeConfiguration<Enrollm
             .IsRequired()
             .HasMaxLength(20);
 
-        // The list, the lifecycle and the calendar look enrollments up by student and by course
         builder.HasIndex(e => e.StudentId);
 
         builder.HasIndex(e => e.CourseId);

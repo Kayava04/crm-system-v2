@@ -8,7 +8,6 @@ namespace Scheduling.Infrastructure.Postgres.Repositories;
 
 internal sealed class ScheduleRepository(SchedulingDbContext context) : IScheduleRepository
 {
-    // Upper bound for a lesson length (see validators); used to narrow the conflict search window
     private const int MaxDurationMinutes = 480;
 
     public async Task<IReadOnlyList<Schedule>> GetAllAsync(CancellationToken ct = default) =>

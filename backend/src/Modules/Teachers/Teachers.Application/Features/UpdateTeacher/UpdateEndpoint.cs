@@ -61,7 +61,6 @@ public static class UpdateEndpoint
         group.MapPut("/{id:guid}", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanManageTeachers))
              .WithName("UpdateTeacher")
-             .WithSummary("Update a teacher")
              .Produces(StatusCodes.Status204NoContent)
              .ProducesValidationProblem()
              .ProducesProblem(StatusCodes.Status404NotFound);

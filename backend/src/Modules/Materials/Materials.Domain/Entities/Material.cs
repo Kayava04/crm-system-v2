@@ -11,13 +11,10 @@ public sealed class Material : AuditableEntity
     public string Title { get; private set; } = string.Empty;
     public string? Description { get; private set; }
 
-    // Article text (markdown)
     public string? Body { get; private set; }
 
-    // External address, only for Link materials
     public string? Url { get; private set; }
 
-    // Only the id is stored for videos; the player address is built from it
     public string? YouTubeVideoId { get; private set; }
 
     private Material() { }

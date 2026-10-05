@@ -9,7 +9,6 @@ namespace Notifications.Application.Services;
 
 internal sealed record LessonReminderResult(int LessonsFound, int Created, int SkippedAlreadySent);
 
-// Used by the admin endpoint and by the periodic job, so both always behave the same
 internal sealed class LessonReminderService(
     IScheduleLookup scheduleLookup,
     IEnrollmentLookup enrollmentLookup,
@@ -26,7 +25,6 @@ internal sealed class LessonReminderService(
         if (upcoming.Lessons.Count == 0)
             return new LessonReminderResult(0, 0, 0);
 
-        // Only enrollments that are still active attend; a paused student gets no reminder
         var enrollments = (await enrollmentLookup.GetByIdsAsync(
                 upcoming.Lessons.SelectMany(l => l.EnrollmentIds).Distinct().ToList(), ct))
             .Where(e => e.IsActive)
@@ -49,7 +47,6 @@ internal sealed class LessonReminderService(
             var when = $"{local:yyyy-MM-dd HH:mm} ({upcoming.TimeZoneId})";
             var what = lesson.GroupName is null ? "Your lesson" : $"Your group lesson ({lesson.GroupName})";
 
-            // The key contains the start time, so a rescheduled lesson gets a fresh reminder
             var key = $"lesson:{lesson.LessonId}:{lesson.StartsAt:yyyyMMddHHmm}";
 
             var studentUserIds = lesson.EnrollmentIds

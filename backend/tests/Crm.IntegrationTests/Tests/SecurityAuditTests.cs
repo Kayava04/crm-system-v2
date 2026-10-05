@@ -5,7 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Crm.IntegrationTests.Tests;
 
-// Inspects every route of the running application instead of trusting that each endpoint was written correctly
 public class SecurityAuditTests(CrmApiFactory factory) : ApiTest(factory)
 {
     private static readonly string[] PublicApiEndpoints = ["POST /api/auth/login", "POST /api/auth/refresh"];
@@ -106,7 +105,7 @@ public class SecurityAuditTests(CrmApiFactory factory) : ApiTest(factory)
     {
         var failures = new List<string>();
 
-        foreach (var (route, _) in ApiEndpoints().Where(e => !PublicApiEndpoints.Contains(e.Route) && e.Route.StartsWith("P")))   // POST / PUT / PATCH
+        foreach (var (route, _) in ApiEndpoints().Where(e => !PublicApiEndpoints.Contains(e.Route) && e.Route.StartsWith("P")))
         {
             var method = route[..route.IndexOf(' ')];
             var path = System.Text.RegularExpressions.Regex.Replace(route[(route.IndexOf(' ') + 1)..], @"\{[^}]+\}", Guid.NewGuid().ToString());

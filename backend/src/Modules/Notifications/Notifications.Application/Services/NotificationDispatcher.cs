@@ -8,7 +8,6 @@ internal sealed record NotificationDraft(Guid RecipientUserId, string Subject, s
 
 internal sealed record DispatchResult(int Created, int Duplicates);
 
-// Saves a batch of notifications; drafts with a reference key are skipped when that user already got it
 internal sealed class NotificationDispatcher(
     INotificationRepository repository,
     INotificationsUnitOfWork unitOfWork)

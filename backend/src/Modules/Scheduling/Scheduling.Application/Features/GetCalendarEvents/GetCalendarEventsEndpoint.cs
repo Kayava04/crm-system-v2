@@ -28,7 +28,6 @@ public static class GetCalendarEventsEndpoint
         group.MapGet("/events", Handle)
              .RequireAuthorization()
              .WithName("GetCalendarEvents")
-             .WithSummary("List the arbitrary calendar events visible to the current user (own ones plus everyone's), defaults to the next 30 days")
              .Produces<List<CalendarEventResponse>>(StatusCodes.Status200OK)
              .ProducesValidationProblem()
              .ProducesProblem(StatusCodes.Status401Unauthorized);
@@ -56,7 +55,6 @@ public static class GetCalendarEventsEndpoint
         if (!Guid.TryParse(claim, out var userId))
             return Results.Problem(detail: "Invalid user identity.", statusCode: StatusCodes.Status401Unauthorized);
 
-        // Both bounds are inclusive days in school time, same convention as the lesson calendar
         var fromUtc = clock.ToUtc(fromDate, TimeOnly.MinValue);
         var toUtc = clock.ToUtc(toDate.AddDays(1), TimeOnly.MinValue);
 

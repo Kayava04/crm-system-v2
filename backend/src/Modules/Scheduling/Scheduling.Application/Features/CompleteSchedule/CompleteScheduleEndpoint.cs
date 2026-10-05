@@ -16,7 +16,6 @@ public static class CompleteScheduleEndpoint
         group.MapPut("/{id:guid}/complete", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanManageSchedule))
              .WithName("CompleteSchedule")
-             .WithSummary("Complete a schedule")
              .Produces(StatusCodes.Status204NoContent)
              .ProducesProblem(StatusCodes.Status404NotFound)
              .ProducesProblem(StatusCodes.Status409Conflict);

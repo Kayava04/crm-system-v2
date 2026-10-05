@@ -39,7 +39,6 @@ public static class AddSalaryRateEndpoint
         group.MapPost("/{id:guid}/salary-rates", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanManageTeachers))
              .WithName("AddSalaryRate")
-             .WithSummary("Add a new salary rate for a teacher")
              .Produces(StatusCodes.Status204NoContent)
              .ProducesValidationProblem()
              .ProducesProblem(StatusCodes.Status404NotFound)

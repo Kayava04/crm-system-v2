@@ -16,7 +16,6 @@ public static class DeleteParentInfoEndpoint
         group.MapDelete("/{id:guid}/parent-info", Handle)
              .WithName("DeleteParentInfo")
              .RequireAuthorization(nameof(SystemPermission.CanDeleteStudents))
-             .WithSummary("Delete parent info for student")
              .Produces(StatusCodes.Status204NoContent)
              .ProducesProblem(StatusCodes.Status404NotFound);
     }

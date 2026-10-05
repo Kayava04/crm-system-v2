@@ -14,7 +14,6 @@ public static class GetRolesEndpoint
         group.MapGet("/roles", Handle)
              .RequireAuthorization()
              .WithName("GetRoles")
-             .WithSummary("Get all roles")
              .Produces<IReadOnlyList<RoleResponse>>(StatusCodes.Status200OK);
     }
 

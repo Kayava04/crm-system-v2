@@ -4,10 +4,8 @@
 
 namespace Identity.Infrastructure.Postgres.Migrations
 {
-    /// <inheritdoc />
     public partial class AddUserContactDetails : Migration
     {
-        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
@@ -27,7 +25,6 @@ namespace Identity.Infrastructure.Postgres.Migrations
                 nullable: true);
         }
 
-        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(

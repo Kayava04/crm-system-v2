@@ -25,7 +25,6 @@ public static class ResetPasswordEndpoint
         group.MapPost("/users/{id:guid}/reset-password", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanManageAdmins))
              .WithName("ResetPassword")
-             .WithSummary("Reset a user's password to a new temporary one")
              .Produces<ResetPasswordResponse>(StatusCodes.Status200OK)
              .ProducesProblem(StatusCodes.Status401Unauthorized)
              .ProducesProblem(StatusCodes.Status403Forbidden)
@@ -51,7 +50,6 @@ public static class ResetPasswordEndpoint
                 statusCode: StatusCodes.Status404NotFound
             );
 
-        // A CanManageAdmins holder must not be able to take over the bootstrap account
         var roles = await userRepository.GetUserRolesAsync(id, ct);
         if (roles.Any(r => r.Name == nameof(SystemRole.SuperAdmin)))
         {
@@ -65,7 +63,6 @@ public static class ResetPasswordEndpoint
 
         var temporaryPassword = TemporaryPasswordGenerator.Generate();
 
-        // New password, forced change and revoked sessions are saved together or not at all
         await transaction.ExecuteAsync(async token =>
         {
             await identityService.ResetPasswordAsync(user, temporaryPassword, token);
@@ -74,7 +71,6 @@ public static class ResetPasswordEndpoint
             user.RequirePasswordChange();
 
             await userRepository.UpdateAsync(user, token);
-            // Existing sessions must not survive a reset
             await refreshTokenRepository.RevokeAllForUserAsync(id, token);
             await unitOfWork.SaveChangesAsync(token);
         }, ct);

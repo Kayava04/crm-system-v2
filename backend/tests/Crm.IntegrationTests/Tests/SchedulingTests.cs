@@ -27,7 +27,6 @@ public class SchedulingTests(CrmApiFactory factory) : ApiTest(factory)
         {
             var start = lesson!["scheduledDate"]!.GetValue<DateTime>();
 
-            // 18:00 in Kyiv is 15:00 UTC in summer and 16:00 UTC in winter
             var kyiv = TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(start, DateTimeKind.Utc), TimeZoneInfo.FindSystemTimeZoneById("Europe/Kyiv"));
             Assert.Equal(new TimeOnly(18, 0), TimeOnly.FromDateTime(kyiv));
             Assert.Contains(kyiv.DayOfWeek, new[] { DayOfWeek.Tuesday, DayOfWeek.Thursday });
@@ -40,7 +39,6 @@ public class SchedulingTests(CrmApiFactory factory) : ApiTest(factory)
     {
         var (teacher, enrollment) = await ActiveEnrollmentAsync();
 
-        // Kyiv leaves summer time on Sunday 29 Oct 2034: Tuesday 24 Oct is UTC+3, Tuesday 31 Oct is UTC+2
         (await Data.GenerateAsync(enrollmentId: enrollment, teacherId: teacher,
             slots: [new { dayOfWeek = "Tuesday", startTime = "18:00" }], startDate: "2034-10-24", lessonsCount: 2)).Expect(201);
 
@@ -96,11 +94,11 @@ public class SchedulingTests(CrmApiFactory factory) : ApiTest(factory)
 
         object Lesson(DateTime at, int minutes) => new { enrollmentId = second, groupId = (Guid?)null, teacherId = teacher, scheduledDate = at, durationMinutes = minutes, notes = (string?)null };
 
-        (await Api.PostAsync("/api/schedules", Lesson(start, 30), Admin)).Expect(409);                       // same start
-        (await Api.PostAsync("/api/schedules", Lesson(start.AddMinutes(30), 60), Admin)).Expect(409);       // starts inside
-        (await Api.PostAsync("/api/schedules", Lesson(start.AddMinutes(-30), 60), Admin)).Expect(409);      // ends inside
-        (await Api.PostAsync("/api/schedules", Lesson(start.AddMinutes(60), 30), Admin)).Expect(201);        // starts when the other ends
-        (await Api.PostAsync("/api/schedules", Lesson(start.AddMinutes(-30), 30), Admin)).Expect(201);       // ends when the other starts
+        (await Api.PostAsync("/api/schedules", Lesson(start, 30), Admin)).Expect(409);
+        (await Api.PostAsync("/api/schedules", Lesson(start.AddMinutes(30), 60), Admin)).Expect(409);
+        (await Api.PostAsync("/api/schedules", Lesson(start.AddMinutes(-30), 60), Admin)).Expect(409);
+        (await Api.PostAsync("/api/schedules", Lesson(start.AddMinutes(60), 30), Admin)).Expect(201);
+        (await Api.PostAsync("/api/schedules", Lesson(start.AddMinutes(-30), 30), Admin)).Expect(201);
     }
 
     [Fact]
@@ -159,7 +157,6 @@ public class SchedulingTests(CrmApiFactory factory) : ApiTest(factory)
         Assert.Equal("Rescheduled", lesson["status"].GetValue<string>());
         Assert.Equal(free, lesson["scheduledDate"].GetValue<DateTime>());
 
-        // a rescheduled lesson is still open: it can be completed
         (await Api.PutAsync($"/api/schedules/{moved}/complete", null, Admin)).Expect(204);
     }
 
@@ -174,7 +171,6 @@ public class SchedulingTests(CrmApiFactory factory) : ApiTest(factory)
         var cancelled = (await Api.PutAsync("/api/schedules/cancel-future", new { enrollmentId = enrollment, groupId = (Guid?)null }, Admin)).Expect(200);
         Assert.Equal(5, cancelled["cancelledCount"].GetValue<int>());
 
-        // new agreement: Mondays and Wednesdays; only the 5 missing lessons are created
         var regenerated = (await Data.GenerateAsync(enrollmentId: enrollment, teacherId: teacher, slots: TestData.MonWed)).Expect(201);
         Assert.Equal(5, regenerated["createdCount"].GetValue<int>());
 

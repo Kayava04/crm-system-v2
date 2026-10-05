@@ -7,8 +7,6 @@ using Scheduling.Contracts;
 
 namespace Crm.IntegrationTests.Tests;
 
-// A change that touches several modules is saved completely or not at all. A module is made to fail in the
-// middle of the operation and everything that was already saved by the other modules must be rolled back.
 public class TransactionTests(CrmApiFactory factory) : ApiTest(factory)
 {
     private sealed class FailingScheduleLifecycle : IScheduleLifecycle
@@ -57,8 +55,7 @@ public class TransactionTests(CrmApiFactory factory) : ApiTest(factory)
         var response = await failing.PutAsync($"/api/students/{student}/status", new { status = "Suspended" }, Admin);
 
         Assert.Equal(500, response.Code);
-        Assert.Equal(500, response["status"].GetValue<int>());   // a structured ProblemDetails, not a stack trace
-        // Students saved the new status and Enrollments suspended the enrollment before Scheduling failed: both are undone
+        Assert.Equal(500, response["status"].GetValue<int>());
         Assert.Equal("Active", (await Api.GetAsync($"/api/students/{student}", Admin))["status"].GetValue<string>());
         Assert.Equal("Active", await EnrollmentStatus(enrollment));
         Assert.Equal("False", await Sql($"select \"AutoSuspended\" from enrollments.enrollments where \"Id\" = '{enrollment}'"));
@@ -73,7 +70,6 @@ public class TransactionTests(CrmApiFactory factory) : ApiTest(factory)
 
         Assert.Equal(500, (await FailingScheduling().PutAsync($"/api/students/{student}/status", new { status = "Withdrawn" }, Admin)).Code);
 
-        // three modules were involved (Students, Identity, Enrollments): none of them kept its part
         Assert.Equal("Active", (await Api.GetAsync($"/api/students/{student}", Admin))["status"].GetValue<string>());
         Assert.Equal("Active", await EnrollmentStatus(enrollment));
         (await Api.PostAsync("/api/auth/login", new { email = user.Email, password = user.Password })).Expect(200);
@@ -144,14 +140,12 @@ public class TransactionTests(CrmApiFactory factory) : ApiTest(factory)
         Assert.Equal("0", await Sql($"select count(*) from identity.users where \"Email\" = '{email}'"));
         Assert.Equal("0", await Sql($"select count(*) from identity.user_roles ur join identity.users u on u.\"Id\" = ur.\"UserId\" where u.\"Email\" = '{email}'"));
 
-        // the profile is still free and the same email can be registered normally
         (await Api.PostAsync("/api/auth/register", new { email, role = "Student", profileType = "Student", profileId = studentId }, Admin)).Expect(201);
     }
 
     [Fact]
     public async Task Work_after_a_finished_transaction_in_the_same_request_still_saves()
     {
-        // Register commits its transaction and then writes the notification through another module afterwards
         var user = await Data.UserAsync("Student");
 
         Assert.Equal(1, (await Api.GetAsync("/api/notifications/unread-count", user.Token))["count"].GetValue<int>());

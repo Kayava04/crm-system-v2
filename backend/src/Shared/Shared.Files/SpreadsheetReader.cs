@@ -3,7 +3,6 @@ using ClosedXML.Excel;
 
 namespace Shared.Files;
 
-// A row of the sheet with its values already converted to the column types; Errors explain what could not be converted
 public sealed record SheetRow(
     int RowNumber,
     IReadOnlyDictionary<string, object?> Values,
@@ -16,7 +15,6 @@ public sealed record SheetData(
     IReadOnlyList<string> IgnoredColumns,
     IReadOnlyList<string> MissingRequiredColumns);
 
-// The file as a whole cannot be used (not an Excel file, empty, too many rows...); the message is meant for the person
 public sealed class SpreadsheetFormatException(string message) : ImportFileException(message);
 
 public static class SpreadsheetReader
@@ -52,7 +50,6 @@ public static class SpreadsheetReader
             var lastColumn = used.LastColumn().ColumnNumber();
             var lastRow = used.LastRow().RowNumber();
 
-            // ---- which sheet column is which field
             var map = new Dictionary<int, ColumnDef>();
             var ignored = new List<string>();
             int english = 0, ukrainian = 0;
@@ -93,7 +90,6 @@ public static class SpreadsheetReader
             if (missing.Count > 0)
                 return new SheetData(language, [], ignored, missing);
 
-            // ---- the rows
             var rows = new List<SheetRow>();
 
             for (var r = headerRow + 1; r <= lastRow; r++)
@@ -172,7 +168,6 @@ public static class SpreadsheetReader
                 if (cell.DataType == XLDataType.Number)
                     return ((decimal)cell.GetDouble(), null);
 
-                // "1500,50" is how many people write a decimal
                 var normalized = text.Replace(" ", string.Empty).Replace(',', '.');
 
                 return decimal.TryParse(normalized, NumberStyles.Number, CultureInfo.InvariantCulture, out var number)
@@ -229,7 +224,6 @@ public static class SpreadsheetReader
             $"«{text}» не підходить. Допустимі значення: {allowed}."));
     }
 
-    // Numbers typed into a text column (phone numbers!) must not turn into 3.8E+11
     private static string ReadText(IXLCell cell)
     {
         if (cell.DataType == XLDataType.Number)

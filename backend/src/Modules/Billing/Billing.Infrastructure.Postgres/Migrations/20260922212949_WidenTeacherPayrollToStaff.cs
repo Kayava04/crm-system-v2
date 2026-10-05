@@ -5,10 +5,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Billing.Infrastructure.Postgres.Migrations
 {
-    /// <inheritdoc />
     public partial class WidenTeacherPayrollToStaff : Migration
     {
-        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterColumn<Guid>(
@@ -41,7 +39,6 @@ namespace Billing.Infrastructure.Postgres.Migrations
                 sql: "(\"TeacherId\" IS NOT NULL) <> (\"UserId\" IS NOT NULL)");
         }
 
-        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropIndex(

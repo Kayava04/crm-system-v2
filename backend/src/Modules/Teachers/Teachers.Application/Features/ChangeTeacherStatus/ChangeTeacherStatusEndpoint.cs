@@ -14,7 +14,6 @@ namespace Teachers.Application.Features.ChangeTeacherStatus;
 
 public sealed record ChangeTeacherStatusRequest(TeacherStatus Status);
 
-// What the status change did to the teacher's calendar and account
 public sealed record ChangeTeacherStatusResponse(
     int CancelledLessons,
     int RestoredLessons,
@@ -39,7 +38,6 @@ public static class ChangeTeacherStatusEndpoint
         group.MapPut("/{id:guid}/status", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanManageTeachers))
              .WithName("ChangeTeacherStatus")
-             .WithSummary("Change teacher status")
              .Produces<ChangeTeacherStatusResponse>(StatusCodes.Status200OK)
              .ProducesValidationProblem()
              .ProducesProblem(StatusCodes.Status404NotFound)
@@ -83,10 +81,8 @@ public static class ChangeTeacherStatusEndpoint
         var wasAvailable = IsAvailable(teacher.Status);
         var isAvailable = IsAvailable(request.Status);
 
-        // Only a teacher who left (Resigned, Dismissed) loses access; being on leave keeps the account
         var accountActive = request.Status is not (TeacherStatus.Resigned or TeacherStatus.Dismissed);
 
-        // Status, account and calendar change together or not at all
         var response = await transaction.ExecuteAsync(async token =>
         {
             teacher.ChangeStatus(request.Status);

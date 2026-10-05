@@ -21,7 +21,6 @@ internal sealed class UserAccountManager(
         user.SetActive(isActive);
         await userRepository.UpdateAsync(user, ct);
 
-        // Sessions of a deactivated account must not survive
         if (!isActive)
             await refreshTokenRepository.RevokeAllForUserAsync(userId, ct);
 

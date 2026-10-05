@@ -37,14 +37,12 @@ public static class ApplicationExtensions
 
     public static IServiceCollection AddSchedulingApplication(this IServiceCollection services)
     {
-        // Register FluentValidation
         services.AddValidatorsFromAssembly(typeof(ApplicationExtensions).Assembly);
 
         services.AddScoped<IScheduleLookup, ScheduleLookupService>();
         services.AddScoped<IScheduleLifecycle, ScheduleLifecycleService>();
         services.AddScoped<LessonTargetResolver>();
 
-        // Lessons are agreed in one school time zone (Scheduling:TimeZone) and stored in UTC
         services.AddSingleton<ISchoolClock>(sp =>
             new SchoolClock(sp.GetRequiredService<IConfiguration>()["Scheduling:TimeZone"] ?? DefaultTimeZone));
 

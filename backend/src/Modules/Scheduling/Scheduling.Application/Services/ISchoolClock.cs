@@ -1,6 +1,5 @@
 namespace Scheduling.Application.Services;
 
-// Lessons are agreed in the school's local time but stored in UTC
 public interface ISchoolClock
 {
     string TimeZoneId { get; }
@@ -22,7 +21,6 @@ internal sealed class SchoolClock(string timeZoneId) : ISchoolClock
     {
         var local = date.ToDateTime(time, DateTimeKind.Unspecified);
 
-        // A time skipped by the spring DST switch does not exist; move it to the first valid moment
         if (_timeZone.IsInvalidTime(local))
             local = local.AddHours(1);
 

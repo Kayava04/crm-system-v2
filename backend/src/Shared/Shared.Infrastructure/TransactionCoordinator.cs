@@ -6,7 +6,6 @@ namespace Shared.Infrastructure;
 
 public sealed class TransactionCoordinator(SharedDbConnection shared) : ITransactionCoordinator
 {
-    // The interceptor that enlists DbContexts is a singleton, so it finds the running transaction through the async flow
     private static readonly AsyncLocal<TransactionCoordinator?> Ambient = new();
 
     private readonly List<DbContext> _enlisted = [];
@@ -16,7 +15,6 @@ public sealed class TransactionCoordinator(SharedDbConnection shared) : ITransac
 
     public async Task<T> ExecuteAsync<T>(Func<CancellationToken, Task<T>> action, CancellationToken ct = default)
     {
-        // Nested calls simply join the transaction that is already running
         if (_transaction is not null)
             return await action(ct);
 
@@ -39,7 +37,7 @@ public sealed class TransactionCoordinator(SharedDbConnection shared) : ITransac
         catch
         {
             try { await _transaction.RollbackAsync(CancellationToken.None); }
-            catch { /* the connection may already be broken; the original error matters more */ }
+            catch { }
 
             throw;
         }
@@ -47,7 +45,6 @@ public sealed class TransactionCoordinator(SharedDbConnection shared) : ITransac
         {
             Ambient.Value = null;
 
-            // Contexts must forget the finished transaction, otherwise a later save in the same request would reuse it
             foreach (var context in _enlisted)
                 await context.Database.UseTransactionAsync(null, CancellationToken.None);
 

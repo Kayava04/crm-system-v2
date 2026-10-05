@@ -12,7 +12,6 @@ public class NotificationsTests(CrmApiFactory factory) : ApiTest(factory)
 
     private static int OfType(JsonArray items, string type) => items.Count(i => i!["type"]!.GetValue<string>() == type);
 
-    // ------------------------------------------------------------------ the user's own inbox
     [Fact]
     public async Task Users_read_mark_and_clear_their_own_notifications()
     {
@@ -21,7 +20,7 @@ public class NotificationsTests(CrmApiFactory factory) : ApiTest(factory)
         (await Api.PostAsync("/api/notifications/send", new { recipientUserIds = new[] { user.UserId }, subject = "Second", body = "b" }, admin)).Expect(200);
 
         var unread = (await Api.GetAsync("/api/notifications?unreadOnly=true", user.Token)).Expect(200);
-        Assert.Equal(2, unread["totalCount"].GetValue<int>());   // the password one and the message
+        Assert.Equal(2, unread["totalCount"].GetValue<int>());
         var first = unread.Items[0]!["id"]!.GetValue<Guid>();
 
         (await Api.PutAsync($"/api/notifications/{first}/read", null, user.Token)).Expect(204);
@@ -45,13 +44,12 @@ public class NotificationsTests(CrmApiFactory factory) : ApiTest(factory)
         (await Api.GetAsync("/api/notifications")).Expect(401);
     }
 
-    // ------------------------------------------------------------------ who may manage notifications
     [Fact]
     public async Task Only_an_admin_with_the_notifications_permission_can_manage_notifications()
     {
         var student = await Data.UserAsync("Student");
         var teacher = await Data.TeacherUserAsync(await Data.TeacherAsync());
-        var plainAdmin = await Data.UserAsync("Admin");   // an admin without the permission
+        var plainAdmin = await Data.UserAsync("Admin");
         var body = new { recipientUserIds = new[] { student.UserId }, subject = "s", body = "b" };
 
         foreach (var (path, payload) in new (string, object?)[]
@@ -66,7 +64,7 @@ public class NotificationsTests(CrmApiFactory factory) : ApiTest(factory)
             (await Api.PostAsync(path, payload, student.Token)).Expect(403);
             (await Api.PostAsync(path, payload, teacher.Token)).Expect(403);
             (await Api.PostAsync(path, payload, plainAdmin.Token)).Expect(403);
-            (await Api.PostAsync(path, payload, Admin)).Expect(200);   // SuperAdmin has every permission
+            (await Api.PostAsync(path, payload, Admin)).Expect(200);
         }
 
         (await Api.GetAsync("/api/notifications/all", student.Token)).Expect(403);
@@ -74,7 +72,6 @@ public class NotificationsTests(CrmApiFactory factory) : ApiTest(factory)
         (await Api.GetAsync("/api/notifications/all", await NotificationsAdminAsync())).Expect(200);
     }
 
-    // ------------------------------------------------------------------ messages
     [Fact]
     public async Task An_admin_can_message_specific_users_and_review_what_was_sent()
     {
@@ -84,7 +81,7 @@ public class NotificationsTests(CrmApiFactory factory) : ApiTest(factory)
 
         var sent = (await Api.PostAsync("/api/notifications/send", new { recipientUserIds = new[] { one.UserId, two.UserId, one.UserId }, subject = "Holiday", body = "School is closed on Monday." }, admin)).Expect(200);
 
-        Assert.Equal(2, sent["created"].GetValue<int>());   // duplicates in the request are ignored
+        Assert.Equal(2, sent["created"].GetValue<int>());
         var received = (await InboxAsync(one.Token)).Single(i => i!["subject"]!.GetValue<string>() == "Holiday")!;
         Assert.Equal("General", received["type"]!.GetValue<string>());
         Assert.Equal("School is closed on Monday.", received["body"]!.GetValue<string>());
@@ -128,7 +125,6 @@ public class NotificationsTests(CrmApiFactory factory) : ApiTest(factory)
         Assert.Equal(0, (await Api.GetAsync($"/api/notifications/all?recipientUserId={withdrawn.UserId}&type=General", admin))["totalCount"].GetValue<int>());
     }
 
-    // ------------------------------------------------------------------ invoice reminders
     private async Task<(TestUser Student, Guid Enrollment)> StudentWithAccountAsync()
     {
         var studentId = await Data.StudentAsync();
@@ -151,7 +147,7 @@ public class NotificationsTests(CrmApiFactory factory) : ApiTest(factory)
         var second = (await Api.PostAsync("/api/notifications/invoice-reminders", new { daysBeforeDue = 3 }, admin)).Expect(200);
 
         Assert.True(first["created"].GetValue<int>() >= 1);
-        Assert.Equal(0, second["created"].GetValue<int>());   // the same reminder is never sent twice
+        Assert.Equal(0, second["created"].GetValue<int>());
         Assert.True(second["skippedAlreadySent"].GetValue<int>() >= 1);
 
         var inbox = await InboxAsync(student.Token);
@@ -168,9 +164,9 @@ public class NotificationsTests(CrmApiFactory factory) : ApiTest(factory)
         var (student, enrollment) = await StudentWithAccountAsync();
         var paid = (await Invoice(enrollment, "2033-01", InDays(1))).Expect(201);
         (await Api.PutAsync($"/api/billing/invoices/{paid.Id}/paid", null, Admin)).Expect(204);
-        (await Invoice(enrollment, "2033-02", InDays(40))).Expect(201);                                  // due far in the future
+        (await Invoice(enrollment, "2033-02", InDays(40))).Expect(201);
         var noAccount = await Data.EnrollmentAsync(await Data.StudentAsync(), await Data.CourseAsync());
-        (await Invoice(noAccount, "2033-01", InDays(1))).Expect(201);                                     // the student cannot be reached
+        (await Invoice(noAccount, "2033-01", InDays(1))).Expect(201);
 
         var result = (await Api.PostAsync("/api/notifications/invoice-reminders", new { daysBeforeDue = 3 }, admin)).Expect(200);
 
@@ -202,7 +198,6 @@ public class NotificationsTests(CrmApiFactory factory) : ApiTest(factory)
         (await Api.PostAsync("/api/notifications/invoice-reminders", new { daysBeforeDue = 61 }, admin)).Expect(400);
     }
 
-    // ------------------------------------------------------------------ lesson reminders
     private async Task<Guid> LessonInAsync(Guid enrollment, Guid teacher, int hours) =>
         (await Api.PostAsync("/api/schedules", new
         {
@@ -218,7 +213,7 @@ public class NotificationsTests(CrmApiFactory factory) : ApiTest(factory)
         var teacher = await Data.TeacherUserAsync(teacherId);
         var (student, enrollment) = await StudentWithAccountAsync();
         await LessonInAsync(enrollment, teacherId, 5);
-        await LessonInAsync(enrollment, teacherId, 100);   // outside the 24 hour window
+        await LessonInAsync(enrollment, teacherId, 100);
 
         var first = (await Api.PostAsync("/api/notifications/lesson-reminders", new { hoursAhead = 24 }, admin)).Expect(200);
         var second = (await Api.PostAsync("/api/notifications/lesson-reminders", new { hoursAhead = 24 }, admin)).Expect(200);
@@ -228,7 +223,7 @@ public class NotificationsTests(CrmApiFactory factory) : ApiTest(factory)
         Assert.Equal(1, OfType(await InboxAsync(student.Token), "LessonReminder"));
         Assert.Equal(1, OfType(await InboxAsync(teacher.Token), "LessonReminder"));
         var text = (await InboxAsync(student.Token)).Single(i => i!["type"]!.GetValue<string>() == "LessonReminder")!["body"]!.GetValue<string>();
-        Assert.Contains("Europe/Kyiv", text);   // shown in school time
+        Assert.Contains("Europe/Kyiv", text);
     }
 
     [Fact]
@@ -242,11 +237,11 @@ public class NotificationsTests(CrmApiFactory factory) : ApiTest(factory)
 
         (await Api.PutAsync($"/api/schedules/{lesson}/reschedule", new { scheduledDate = DateTime.UtcNow.AddHours(6) }, Admin)).Expect(204);
         await Api.PostAsync("/api/notifications/lesson-reminders", new { hoursAhead = 24 }, admin);
-        Assert.Equal(2, OfType(await InboxAsync(student.Token), "LessonReminder"));   // the new time is a new reminder
+        Assert.Equal(2, OfType(await InboxAsync(student.Token), "LessonReminder"));
 
         var (pausedStudent, pausedEnrollment) = await StudentWithAccountAsync();
         await LessonInAsync(pausedEnrollment, teacherId, 8);
-        (await Api.PutAsync($"/api/enrollments/{pausedEnrollment}/suspend", null, Admin)).Expect(200);   // cancels the lesson
+        (await Api.PutAsync($"/api/enrollments/{pausedEnrollment}/suspend", null, Admin)).Expect(200);
         await Api.PostAsync("/api/notifications/lesson-reminders", new { hoursAhead = 24 }, admin);
         Assert.Equal(0, OfType(await InboxAsync(pausedStudent.Token), "LessonReminder"));
     }

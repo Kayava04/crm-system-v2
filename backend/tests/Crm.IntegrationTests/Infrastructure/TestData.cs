@@ -2,7 +2,6 @@ namespace Crm.IntegrationTests.Infrastructure;
 
 public sealed record TestUser(Guid UserId, string Email, string Password, string Token);
 
-// Builds the entities a test needs through the public API, exactly as a client would
 public sealed class TestData(Api api, string adminToken)
 {
     public static readonly object[] TueThu =
@@ -26,7 +25,6 @@ public sealed class TestData(Api api, string adminToken)
 
     public static string Email(string prefix = "user") => $"{prefix}-{Unique()}@example.test";
 
-    // ---------------------------------------------------------------- people, courses
     public object TeacherBody(string? email = null, string? lastName = null, decimal baseSalary = 1000, decimal lessonsRate = 100) => new
     {
         firstName = "Teacher",
@@ -102,7 +100,6 @@ public sealed class TestData(Api api, string adminToken)
         return id;
     }
 
-    // ---------------------------------------------------------------- groups and lessons
     public async Task<Guid> GroupAsync(Guid courseId, Guid teacherId, params Guid[] enrollmentIds)
     {
         var id = (await Api.PostAsync("/api/study-groups", new { courseId, teacherId, name = "Group " + Unique() }, Admin)).Expect(201).Id;
@@ -140,7 +137,6 @@ public sealed class TestData(Api api, string adminToken)
     public static int Count(JsonArray lessons, string status) =>
         lessons.Count(l => l!["status"]!.GetValue<string>() == status);
 
-    // ---------------------------------------------------------------- accounts
     public async Task<TestUser> UserAsync(string role, string? profileType = null, Guid? profileId = null, List<Guid>? permissionIds = null)
     {
         var email = Email(role.ToLowerInvariant());

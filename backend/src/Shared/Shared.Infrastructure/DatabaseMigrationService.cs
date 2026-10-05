@@ -6,8 +6,6 @@ using Shared.Kernel.Abstractions;
 
 namespace Shared.Infrastructure;
 
-// Applies every module's migrations at start-up when Database:MigrateOnStartup is true.
-// Registered before the module seeders, so they always find their tables.
 public sealed class DatabaseMigrationService(
     IServiceScopeFactory scopeFactory,
     IConfiguration configuration,

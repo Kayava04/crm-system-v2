@@ -33,7 +33,6 @@ public static class BulkDeleteStudentsEndpoint
         group.MapDelete("/bulk", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanDeleteStudents))
              .WithName("BulkDeleteStudents")
-             .WithSummary("Delete many students; students with an account or enrollments are refused (deactivate them instead)")
              .Produces<BulkOperationResponse>(StatusCodes.Status200OK)
              .ProducesValidationProblem();
     }
@@ -75,7 +74,6 @@ public static class BulkDeleteStudentsEndpoint
                 continue;
             }
 
-            // Same rule as the single delete: a student with history is deactivated (Withdrawn), never erased
             if (student.UserId is not null || withEnrollments.Contains(id))
             {
                 results.Add(new BulkItemResult(i, false, id, student.Email,

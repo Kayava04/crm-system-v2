@@ -14,7 +14,6 @@ public static class StudentImportTemplateEndpoint
         group.MapGet("/import-template", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanCreateStudents))
              .WithName("StudentImportTemplate")
-             .WithSummary("Download an empty Excel template (with a help sheet) or a JSON sample for importing students")
              .Produces(StatusCodes.Status200OK, contentType: FileFormats.XlsxContentType)
              .ProducesValidationProblem();
     }

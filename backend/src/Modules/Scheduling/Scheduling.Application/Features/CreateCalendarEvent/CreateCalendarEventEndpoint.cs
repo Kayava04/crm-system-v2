@@ -53,7 +53,6 @@ public static class CreateCalendarEventEndpoint
         group.MapPost("/events", Handle)
              .RequireAuthorization()
              .WithName("CreateCalendarEvent")
-             .WithSummary("Create a personal reminder, or (with CanManageSchedule) a school-wide notice")
              .Produces<CalendarEventResponse>(StatusCodes.Status201Created)
              .ProducesValidationProblem()
              .ProducesProblem(StatusCodes.Status401Unauthorized)
@@ -78,7 +77,6 @@ public static class CreateCalendarEventEndpoint
         if (!Guid.TryParse(claim, out var userId))
             return Results.Problem(detail: "Invalid user identity.", statusCode: StatusCodes.Status401Unauthorized);
 
-        // Anyone may keep a personal reminder; only schedule managers may post something everyone sees
         if (request.Visibility == CalendarEventVisibility.Everyone
             && !principal.HasClaim("permission", nameof(SystemPermission.CanManageSchedule)))
             return Results.Problem(

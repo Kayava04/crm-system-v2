@@ -7,7 +7,6 @@ namespace Notifications.Application.Services;
 
 internal sealed record InvoiceReminderResult(int InvoicesFound, int Created, int SkippedAlreadySent, int SkippedNoAccount);
 
-// Used by the admin endpoint and by the periodic job, so both always behave the same
 internal sealed class InvoiceReminderService(
     IInvoiceReminderSource invoiceSource,
     IStudentLookup studentLookup,
@@ -35,7 +34,6 @@ internal sealed class InvoiceReminderService(
                 continue;
             }
 
-            // One reminder per invoice and kind: "due soon" and "overdue" are separate messages
             var kind = invoice.IsOverdue ? "overdue" : "due";
 
             drafts.Add(new NotificationDraft(

@@ -5,10 +5,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Scheduling.Infrastructure.Postgres.Migrations
 {
-    /// <inheritdoc />
     public partial class AddStudyGroups : Migration
     {
-        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterColumn<Guid>(
@@ -98,7 +96,6 @@ namespace Scheduling.Infrastructure.Postgres.Migrations
                 column: "CourseId");
         }
 
-        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(

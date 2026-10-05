@@ -11,7 +11,6 @@ public class SchedulingValidatorTests
     private static CreateScheduleRequest Lesson(Guid? enrollment = null, Guid? group = null, DateTime? date = null, int minutes = 60, string? notes = null) =>
         new(enrollment, group, Guid.NewGuid(), date ?? Future, minutes, notes);
 
-    // ---- create lesson
     [Fact]
     public void Lesson_for_an_enrollment_is_valid()
     {
@@ -69,7 +68,6 @@ public class SchedulingValidatorTests
         Assert.False(validator.Validate(Lesson(enrollment: Guid.NewGuid(), notes: new string('x', 501))).IsValid);
     }
 
-    // ---- generate schedule
     private static readonly LessonSlot Tuesday = new(DayOfWeek.Tuesday, "18:00");
 
     private static GenerateScheduleRequest Generate(
@@ -151,7 +149,6 @@ public class SchedulingValidatorTests
         Assert.Equal(valid, new GenerateScheduleValidator().Validate(Generate(group: Guid.NewGuid(), lessons: count)).IsValid);
     }
 
-    // ---- reassign teacher
     [Fact]
     public void Reassignment_needs_two_different_teachers()
     {

@@ -17,7 +17,6 @@ public static class MarkPayrollPaidEndpoint
         group.MapPut("/{id:guid}/paid", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanManagePayments))
              .WithName("MarkPayrollPaid")
-             .WithSummary("Mark a payroll as paid")
              .Produces(StatusCodes.Status204NoContent)
              .ProducesProblem(StatusCodes.Status404NotFound)
              .ProducesProblem(StatusCodes.Status409Conflict);

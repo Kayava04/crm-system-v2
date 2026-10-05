@@ -14,7 +14,6 @@ using Microsoft.Extensions.Logging;
 
 namespace Materials.Application.Features.CreateMaterial;
 
-// Video: Url is a YouTube link. Article: Body is the text. Link: Url is any http(s) address.
 public sealed record CreateMaterialRequest(
     Guid CourseId,
     MaterialType Type,
@@ -66,7 +65,6 @@ public static class CreateEndpoint
         group.MapPost("/", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanManageMaterials))
              .WithName("CreateMaterial")
-             .WithSummary("Create a material (YouTube video, article or link)")
              .Produces<MaterialDetailResponse>(StatusCodes.Status201Created)
              .ProducesValidationProblem()
              .ProducesProblem(StatusCodes.Status401Unauthorized)

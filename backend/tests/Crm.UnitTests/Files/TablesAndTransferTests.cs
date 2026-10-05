@@ -9,7 +9,6 @@ namespace Crm.UnitTests.Files;
 
 public class TablesAndTransferTests
 {
-    // ------------------------------------------------------------------ every value of an enum has a readable name
     private static void AssertCovers<TEnum>(IEnumerable<Choice> choices) where TEnum : struct, Enum
     {
         Assert.Equal(Enum.GetNames<TEnum>().Order(), choices.Select(c => c.Value).Order());
@@ -45,7 +44,6 @@ public class TablesAndTransferTests
 
             Assert.Equal(headers.Count, headers.Distinct(StringComparer.OrdinalIgnoreCase).Count());
             Assert.All(headers, h => Assert.DoesNotContain(h, new[] { "", " " }));
-            // no technical names like "firstName" or "phoneNumber" in what a person sees
             Assert.All(headers, h => Assert.DoesNotMatch("^[a-z]+[A-Z]", h));
         }
 
@@ -71,7 +69,6 @@ public class TablesAndTransferTests
         Assert.Equal(teacherKeys.Order(), TeacherTable.Schema.Columns.Where(c => c.ForImport).Select(c => c.Key).Order());
     }
 
-    // ------------------------------------------------------------------ an exported student can be read back
     [Fact]
     public void A_student_written_to_excel_and_read_back_becomes_the_same_create_request()
     {
@@ -106,7 +103,7 @@ public class TablesAndTransferTests
         var item = StudentTransfer.FromRow(data.Rows.Single(), data.Language);
 
         Assert.Contains("Last name: This field is required.", item.Errors!);
-        Assert.Contains("lastName", item.HandledKeys!);   // validation will skip it
+        Assert.Contains("lastName", item.HandledKeys!);
         Assert.DoesNotContain("firstName", item.HandledKeys!);
     }
 

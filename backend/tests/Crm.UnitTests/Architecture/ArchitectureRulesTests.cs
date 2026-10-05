@@ -3,7 +3,6 @@ using System.Xml.Linq;
 
 namespace Crm.UnitTests.Architecture;
 
-// The architecture rules of the project, checked against the real project files and sources
 public class ArchitectureRulesTests
 {
     private static readonly string Backend = FindBackend();
@@ -49,7 +48,6 @@ public class ArchitectureRulesTests
     [Fact]
     public void The_scan_finds_the_whole_solution()
     {
-        // Identity, Students, Teachers, Courses, Enrollments, Scheduling, Billing, Notifications, Materials and Reporting
         Assert.Equal(10, ModuleProjects.Select(p => p.Module).Distinct().Count());
     }
 
@@ -104,7 +102,6 @@ public class ArchitectureRulesTests
         Assert.Empty(kernel.Descendants("ProjectReference"));
         Assert.Empty(kernel.Descendants("PackageReference"));
 
-        // business words do not belong in it
         var text = string.Join("\n", Directory.GetFiles(Path.Combine(Backend, "src", "Shared", "Shared.Kernel"), "*.cs", SearchOption.AllDirectories)
             .Where(f => !f.Contains("/obj/")).Select(File.ReadAllText));
         Assert.DoesNotMatch(new Regex(@"\b(Student|Teacher|Course|Enrollment|Invoice|Payroll|Lesson)\b"), text);
@@ -140,7 +137,6 @@ public class ArchitectureRulesTests
     [Fact]
     public void Every_module_database_is_registered_through_the_shared_transaction_aware_helper()
     {
-        // the helper itself lives in Shared.Infrastructure; the modules must only use it
         var registrations = SourceFiles()
             .Where(f => f.Contains($"{Path.DirectorySeparatorChar}Modules{Path.DirectorySeparatorChar}") && f.EndsWith("InfrastructureExtensions.cs"))
             .Select(File.ReadAllText)

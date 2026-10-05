@@ -15,7 +15,6 @@ public static class GetMyTeacherProfileEndpoint
         group.MapGet("/me", Handle)
              .RequireAuthorization(policy => policy.RequireRole(nameof(SystemRole.Teacher)))
              .WithName("GetMyTeacherProfile")
-             .WithSummary("The profile of the current teacher (including their salary rates)")
              .Produces<TeacherDetailResponse>(StatusCodes.Status200OK)
              .ProducesProblem(StatusCodes.Status404NotFound);
     }
@@ -26,7 +25,6 @@ public static class GetMyTeacherProfileEndpoint
         CancellationToken ct
     )
     {
-        // JwtBearer maps the "sub" claim to NameIdentifier by default
         var claim = user.FindFirstValue(ClaimTypes.NameIdentifier) ?? user.FindFirstValue("sub");
         if (!Guid.TryParse(claim, out var userId))
             return Results.Problem(detail: "Invalid user identity.", statusCode: StatusCodes.Status401Unauthorized);

@@ -18,7 +18,6 @@ public static class DeleteEndpoint
         group.MapDelete("/{id:guid}", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanManageMaterials))
              .WithName("DeleteMaterial")
-             .WithSummary("Delete a material (author or admin only)")
              .Produces(StatusCodes.Status204NoContent)
              .ProducesProblem(StatusCodes.Status403Forbidden)
              .ProducesProblem(StatusCodes.Status404NotFound);

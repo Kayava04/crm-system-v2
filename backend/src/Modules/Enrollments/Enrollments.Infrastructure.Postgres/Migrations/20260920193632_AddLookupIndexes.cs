@@ -4,10 +4,8 @@
 
 namespace Enrollments.Infrastructure.Postgres.Migrations
 {
-    /// <inheritdoc />
     public partial class AddLookupIndexes : Migration
     {
-        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateIndex(
@@ -23,7 +21,6 @@ namespace Enrollments.Infrastructure.Postgres.Migrations
                 column: "StudentId");
         }
 
-        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropIndex(

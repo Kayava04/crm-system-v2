@@ -17,7 +17,6 @@ public static class ArchiveCourseEndpoint
         group.MapPut("/{id:guid}/archive", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanManageCourses))
              .WithName("ArchiveCourse")
-             .WithSummary("Archive a course")
              .Produces(StatusCodes.Status204NoContent)
              .ProducesProblem(StatusCodes.Status404NotFound)
              .ProducesProblem(StatusCodes.Status409Conflict);

@@ -14,7 +14,7 @@ public class EnrollmentTests
         var enrollment = NewEnrollment();
 
         Assert.Equal(EnrollmentStatus.Draft, enrollment.Status);
-        Assert.Equal(new DateOnly(2030, 4, 30), enrollment.EndDate);   // 31 Jan + 3 months
+        Assert.Equal(new DateOnly(2030, 4, 30), enrollment.EndDate);
         Assert.False(enrollment.AutoSuspended);
     }
 

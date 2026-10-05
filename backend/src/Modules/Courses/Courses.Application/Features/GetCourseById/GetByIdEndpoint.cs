@@ -33,7 +33,6 @@ public static class GetByIdEndpoint
         group.MapGet("/{id:guid}", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanViewCourses))
              .WithName("GetCourseById")
-             .WithSummary("Get course by id")
              .Produces<CourseDetailResponse>(StatusCodes.Status200OK)
              .ProducesProblem(StatusCodes.Status404NotFound);
     }

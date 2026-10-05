@@ -46,7 +46,6 @@ public sealed record StudentDetailResponse(
     ParentInfoResponse? ParentInfo
 )
 {
-    // null when the student has no preferences (a data integrity problem the caller reports)
     internal static StudentDetailResponse? From(Student student)
     {
         if (student.Preferences is null)
@@ -99,7 +98,6 @@ public static class GetByIdEndpoint
         group.MapGet("/{id:guid}", Handle)
              .WithName("GetStudentById")
              .RequireAuthorization(nameof(SystemPermission.CanViewStudents))
-             .WithSummary("Get student by id")
              .Produces<StudentDetailResponse>(StatusCodes.Status200OK)
              .ProducesProblem(StatusCodes.Status404NotFound)
              .ProducesProblem(StatusCodes.Status500InternalServerError);

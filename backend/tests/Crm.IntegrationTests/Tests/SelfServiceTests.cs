@@ -1,11 +1,9 @@
 namespace Crm.IntegrationTests.Tests;
 
-// What a student or a teacher can see about themselves without any administrator permission
 public class SelfServiceTests(CrmApiFactory factory) : ApiTest(factory)
 {
     private static string Period => DateTime.UtcNow.ToString("yyyy-MM");
 
-    // ------------------------------------------------------------------ who am I
     [Fact]
     public async Task Me_describes_a_student_with_the_linked_profile()
     {
@@ -55,7 +53,6 @@ public class SelfServiceTests(CrmApiFactory factory) : ApiTest(factory)
         var user = await Data.StudentUserAsync(studentId);
         (await Api.PutAsync($"/api/students/{studentId}/status", new { status = "Withdrawn" }, Admin)).Expect(200);
 
-        // the access token is still valid for a few minutes, but the account is not
         (await Api.GetAsync("/api/auth/me", user.Token)).Expect(401);
     }
 
@@ -69,7 +66,6 @@ public class SelfServiceTests(CrmApiFactory factory) : ApiTest(factory)
         Assert.Null(me.Json!["profile"]);
     }
 
-    // ------------------------------------------------------------------ contact details of administrators
     [Fact]
     public async Task An_administrator_registered_with_contact_details_sees_them_in_me()
     {
@@ -98,13 +94,12 @@ public class SelfServiceTests(CrmApiFactory factory) : ApiTest(factory)
         Assert.Null(empty["contact"]!["fullName"]);
 
         (await Api.PutAsync("/api/auth/me/contact", new { firstName = "Ivan", lastName = "Petrenko", phoneNumber = "+38 (050) 111-22-33" }, admin.Token)).Expect(200);
-        (await Api.PutAsync("/api/auth/me/contact", new { firstName = "Ivan", lastName = "Melnyk" }, admin.Token)).Expect(200);   // the phone is optional and is cleared
+        (await Api.PutAsync("/api/auth/me/contact", new { firstName = "Ivan", lastName = "Melnyk" }, admin.Token)).Expect(200);
 
         var me = (await Api.GetAsync("/api/auth/me", admin.Token)).Expect(200);
         Assert.Equal("Ivan Melnyk", me["contact"]!["fullName"]!.GetValue<string>());
         Assert.Null(me["contact"]!["phoneNumber"]);
 
-        // the SuperAdmin is the system account, not a member of the staff: it has no personal details
         (await Api.PutAsync("/api/auth/me/contact", new { firstName = "Root", lastName = "Admin" }, Admin)).Expect(403);
         Assert.Null((await Api.GetAsync("/api/auth/me", Admin)).Expect(200)["contact"]!["fullName"]);
     }
@@ -121,7 +116,6 @@ public class SelfServiceTests(CrmApiFactory factory) : ApiTest(factory)
         (await Api.PutAsync("/api/auth/me/contact", new { firstName = "X", lastName = "Y", phoneNumber = "call me" }, admin.Token)).Expect(400);
         (await Api.PostAsync("/api/auth/register", new { email = TestData.Email(), role = "Admin", phoneNumber = "abc" }, Admin)).Expect(400);
 
-        // students and teachers keep their details in their own record: no second copy
         (await Api.PutAsync("/api/auth/me/contact", new { firstName = "A", lastName = "B" }, student.Token)).Expect(409);
         (await Api.PutAsync("/api/auth/me/contact", new { firstName = "A", lastName = "B" }, teacher.Token)).Expect(409);
         (await Api.PutAsync("/api/auth/me/contact", new { firstName = "A", lastName = "B" })).Expect(401);
@@ -144,7 +138,7 @@ public class SelfServiceTests(CrmApiFactory factory) : ApiTest(factory)
         Assert.Equal("1990-05-06", me["contact"]!["dateOfBirth"]!.GetValue<string>());
         Assert.Equal("Lviv", me["contact"]!["city"]!.GetValue<string>());
         Assert.Equal("Ukraine", me["contact"]!["country"]!.GetValue<string>());
-        Assert.Null(me.Json!["contact"]!["salary"]);   // only staff management sets this, never the person themselves
+        Assert.Null(me.Json!["contact"]!["salary"]);
 
         var updated = (await Api.PutAsync("/api/auth/me/contact", new
         {
@@ -158,7 +152,6 @@ public class SelfServiceTests(CrmApiFactory factory) : ApiTest(factory)
         (await Api.PutAsync("/api/auth/me/contact", new { firstName = "X", lastName = "Y", dateOfBirth = DateTime.UtcNow.AddDays(1).ToString("yyyy-MM-dd") }, token)).Expect(400);
     }
 
-    // ------------------------------------------------------------------ own profile
     [Fact]
     public async Task A_student_reads_their_own_profile_and_only_a_student_can()
     {
@@ -176,7 +169,7 @@ public class SelfServiceTests(CrmApiFactory factory) : ApiTest(factory)
         (await Api.GetAsync("/api/students/me", teacher.Token)).Expect(403);
         (await Api.GetAsync("/api/students/me", Admin)).Expect(403);
         (await Api.GetAsync("/api/students/me")).Expect(401);
-        (await Api.GetAsync("/api/students/me", (await Data.UserAsync("Student")).Token)).Expect(404);   // no profile linked
+        (await Api.GetAsync("/api/students/me", (await Data.UserAsync("Student")).Token)).Expect(404);
     }
 
     [Fact]
@@ -193,10 +186,9 @@ public class SelfServiceTests(CrmApiFactory factory) : ApiTest(factory)
         Assert.Single(profile["salaryRates"].AsArray());
 
         (await Api.GetAsync("/api/teachers/me", student.Token)).Expect(403);
-        (await Api.GetAsync("/api/teachers/me/students", user.Token)).Expect(200);   // the older route next to it still works
+        (await Api.GetAsync("/api/teachers/me/students", user.Token)).Expect(200);
     }
 
-    // ------------------------------------------------------------------ own enrollments
     [Fact]
     public async Task A_student_sees_only_their_own_enrollments_with_course_names_newest_first()
     {
@@ -206,7 +198,7 @@ public class SelfServiceTests(CrmApiFactory factory) : ApiTest(factory)
         var course2 = await Data.CourseAsync(price: 4000);
         var older = (await Api.PostAsync("/api/enrollments", new { studentId, courseId = course1, startDate = "2031-01-10", discountedPrice = (decimal?)null, comment = (string?)null, preferredSchedule = (string?)null }, Admin)).Expect(201).Id;
         var newer = (await Api.PostAsync("/api/enrollments", new { studentId, courseId = course2, startDate = "2031-05-10", discountedPrice = 3500, comment = (string?)null, preferredSchedule = (string?)null }, Admin)).Expect(201).Id;
-        await Data.EnrollmentAsync(await Data.StudentAsync(), course1);   // somebody else's
+        await Data.EnrollmentAsync(await Data.StudentAsync(), course1);
 
         var mine = (await Api.GetAsync("/api/enrollments/my", user.Token)).Expect(200).Json!.AsArray();
 
@@ -229,7 +221,6 @@ public class SelfServiceTests(CrmApiFactory factory) : ApiTest(factory)
         Assert.Empty((await Api.GetAsync("/api/enrollments/my", (await Data.StudentUserAsync(await Data.StudentAsync())).Token)).Expect(200).Json!.AsArray());
     }
 
-    // ------------------------------------------------------------------ own invoices and payrolls
     [Fact]
     public async Task A_student_sees_only_their_own_invoices_and_can_filter_them()
     {
@@ -288,9 +279,8 @@ public class SelfServiceTests(CrmApiFactory factory) : ApiTest(factory)
     public async Task Own_payrolls_are_open_to_any_account_scoped_to_that_account_alone()
     {
         var student = await Data.StudentUserAsync(await Data.StudentAsync());
-        var bareTeacherAccount = await Data.UserAsync("Teacher");   // Teacher role, no linked teacher profile
+        var bareTeacherAccount = await Data.UserAsync("Teacher");
 
-        // nobody else's payroll exists for these accounts, so the list is simply empty - not a 403 or a 404
         Assert.Equal(0, (await Api.GetAsync("/api/billing/payrolls/my", student.Token)).Expect(200)["totalCount"].GetValue<int>());
         Assert.Equal(0, (await Api.GetAsync("/api/billing/payrolls/my", Admin)).Expect(200)["totalCount"].GetValue<int>());
         Assert.Equal(0, (await Api.GetAsync("/api/billing/payrolls/my", bareTeacherAccount.Token)).Expect(200)["totalCount"].GetValue<int>());

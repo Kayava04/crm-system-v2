@@ -26,7 +26,6 @@ public static class ApplyDiscountEndpoint
         group.MapPut("/{id:guid}/discount", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanManageEnrollments))
              .WithName("ApplyDiscount")
-             .WithSummary("Apply discount to enrollment")
              .Produces(StatusCodes.Status204NoContent)
              .ProducesValidationProblem()
              .ProducesProblem(StatusCodes.Status404NotFound)

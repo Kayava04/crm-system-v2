@@ -31,7 +31,6 @@ public static class RefreshEndpoint
     {
         group.MapPost("/refresh", Handle)
              .WithName("Refresh")
-             .WithSummary("Exchange a refresh token for a new access token")
              .Produces<RefreshResponse>(StatusCodes.Status200OK)
              .ProducesValidationProblem()
              .ProducesProblem(StatusCodes.Status401Unauthorized)

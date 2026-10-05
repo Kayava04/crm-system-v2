@@ -18,7 +18,6 @@ public static class ApplicationExtensions
 {
     public static IServiceCollection AddCoursesApplication(this IServiceCollection services)
     {
-        // Register FluentValidation
         services.AddValidatorsFromAssembly(typeof(ApplicationExtensions).Assembly);
 
         services.AddScoped<ICourseLookup, CourseLookupService>();

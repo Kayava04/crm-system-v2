@@ -4,10 +4,8 @@
 
 namespace Students.Infrastructure.Postgres.Migrations
 {
-    /// <inheritdoc />
     public partial class AddLookupIndexes : Migration
     {
-        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateIndex(
@@ -17,7 +15,6 @@ namespace Students.Infrastructure.Postgres.Migrations
                 column: "UserId");
         }
 
-        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropIndex(

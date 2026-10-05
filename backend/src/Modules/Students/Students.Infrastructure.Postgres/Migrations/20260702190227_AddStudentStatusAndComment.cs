@@ -4,10 +4,8 @@
 
 namespace Students.Infrastructure.Postgres.Migrations
 {
-    /// <inheritdoc />
     public partial class AddStudentStatusAndComment : Migration
     {
-        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
@@ -27,7 +25,6 @@ namespace Students.Infrastructure.Postgres.Migrations
                 defaultValue: "");
         }
 
-        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(

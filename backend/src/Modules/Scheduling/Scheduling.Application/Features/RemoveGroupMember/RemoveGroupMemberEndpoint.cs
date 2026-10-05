@@ -16,7 +16,6 @@ public static class RemoveGroupMemberEndpoint
         group.MapDelete("/{id:guid}/members/{enrollmentId:guid}", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanManageSchedule))
              .WithName("RemoveStudyGroupMember")
-             .WithSummary("Remove an enrollment from a study group")
              .Produces(StatusCodes.Status204NoContent)
              .ProducesProblem(StatusCodes.Status404NotFound);
     }

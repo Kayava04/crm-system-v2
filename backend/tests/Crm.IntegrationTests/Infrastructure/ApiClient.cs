@@ -19,7 +19,6 @@ public sealed class ApiResponse(HttpStatusCode status, string raw)
 
     public JsonArray Items => this["items"].AsArray();
 
-    // Fails with the response body, which makes a broken test explain itself
     public ApiResponse Expect(int code)
     {
         Assert.True(Code == code, $"Expected HTTP {code} but got {Code}: {Raw}");
@@ -72,7 +71,6 @@ public sealed class Api(HttpClient http)
         return new ApiResponse(response.StatusCode, await response.Content.ReadAsStringAsync());
     }
 
-    // A file upload as a browser form would send it
     public async Task<ApiResponse> UploadAsync(string path, string fileName, byte[] content, string? token = null, string field = "file", HttpMethod? method = null)
     {
         using var request = new HttpRequestMessage(method ?? HttpMethod.Post, path);

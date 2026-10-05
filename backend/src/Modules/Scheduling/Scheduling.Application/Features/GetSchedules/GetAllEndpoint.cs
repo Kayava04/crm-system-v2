@@ -25,7 +25,6 @@ public static class GetAllEndpoint
         group.MapGet("/", Handle)
              .RequireAuthorization(nameof(SystemPermission.CanViewSchedule))
              .WithName("GetSchedules")
-             .WithSummary("Get all schedules")
              .Produces<PagedResponse<ScheduleListResponse>>(StatusCodes.Status200OK);
     }
 

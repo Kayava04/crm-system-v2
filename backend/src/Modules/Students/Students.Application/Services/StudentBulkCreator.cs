@@ -6,10 +6,8 @@ using Students.Domain.Entities;
 
 namespace Students.Application.Services;
 
-// Refused = the request was all-or-nothing and something was invalid, so nothing was saved
 internal sealed record BulkCreateOutcome(IReadOnlyList<BulkItemResult> Results, bool Refused);
 
-// The one place that validates and saves many students, used by the bulk endpoint and by file import
 internal sealed class StudentBulkCreator(
     IValidator<Features.CreateStudent.CreateRequest> validator,
     IStudentRepository repository,
@@ -98,7 +96,6 @@ internal sealed class StudentBulkCreator(
     private static BulkItemResult Result(int index, BulkCreateItem item, Guid? id, IReadOnlyList<string> errors, bool dryRun) =>
         new(index, errors.Count == 0 && (id is not null || dryRun), id, item.Request?.Email, errors);
 
-    // "Languages[0]" and "Languages" are the field "languages"
     internal static string KeyOf(string propertyName)
     {
         var bracket = propertyName.IndexOf('[');

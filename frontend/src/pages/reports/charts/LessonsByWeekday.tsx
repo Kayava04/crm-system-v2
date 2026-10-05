@@ -87,7 +87,6 @@ export function LessonsByWeekday({ lang }: { lang: string }) {
               data={data}
               margin={{ top: 20, right: 0, left: 0, bottom: 0 }}
               barCategoryGap="22%"
-              barGap="-100%"
               onMouseMove={(state) =>
                 setActive(
                   state.activeTooltipIndex != null ? Number(state.activeTooltipIndex) : null,
@@ -101,6 +100,11 @@ export function LessonsByWeekday({ lang }: { lang: string }) {
                   <stop offset="100%" stopColor="var(--chart-gradient-from)" />
                 </linearGradient>
               </defs>
+              {/* Recharts splits a category band between the bars that share its X axis, so
+                  a track on the same axis as the count would sit half a bar to the side.
+                  Giving the track its own hidden axis over the same categories centres
+                  it in the band like the count, which lines the two up exactly. */}
+              <XAxis xAxisId="track" dataKey="short" hide />
               <XAxis
                 dataKey="short"
                 tick={{ fill: 'var(--muted-foreground)', fontSize: 12 }}
@@ -122,6 +126,7 @@ export function LessonsByWeekday({ lang }: { lang: string }) {
                 }}
               />
               <Bar
+                xAxisId="track"
                 dataKey="track"
                 fill="var(--foreground)"
                 fillOpacity={0.05}

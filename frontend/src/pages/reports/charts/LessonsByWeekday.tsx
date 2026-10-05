@@ -86,7 +86,7 @@ export function LessonsByWeekday({ lang }: { lang: string }) {
             <BarChart
               data={data}
               margin={{ top: 20, right: 0, left: 0, bottom: 0 }}
-              barCategoryGap="22%"
+              barCategoryGap="18%"
               onMouseMove={(state) =>
                 setActive(
                   state.activeTooltipIndex != null ? Number(state.activeTooltipIndex) : null,

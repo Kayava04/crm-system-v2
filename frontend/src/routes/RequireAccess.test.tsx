@@ -17,7 +17,17 @@ function mockUser(overrides: Partial<MeResponse> = {}): MeResponse {
     roles: [],
     permissions: [],
     profile: null,
-    contact: { firstName: null, lastName: null, middleName: null, fullName: null, phoneNumber: null, dateOfBirth: null, city: null, country: null, salary: null },
+    contact: {
+      firstName: null,
+      lastName: null,
+      middleName: null,
+      fullName: null,
+      phoneNumber: null,
+      dateOfBirth: null,
+      city: null,
+      country: null,
+      salary: null,
+    },
     hasPhoto: false,
     photoUrl: null,
     ...overrides,
@@ -67,9 +77,6 @@ describe('RequireAccess', () => {
     expect(screen.queryByText('PROTECTED CONTENT')).not.toBeInTheDocument()
   })
 
-  // Regression test: a Teacher/Student route gated on permission alone used to be
-  // unreachable for Teacher/Student, who hold zero permissions by design (self-caught
-  // bug in the Materials slice). permission + roles must use OR semantics.
   it('allows access via a listed role even without the permission (OR semantics)', () => {
     renderGuarded(mockUser({ roles: ['Teacher'], permissions: [] }), {
       permission: 'CanManageMaterials',

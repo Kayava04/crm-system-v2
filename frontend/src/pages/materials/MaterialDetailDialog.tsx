@@ -70,8 +70,6 @@ export function MaterialDetailDialog({
     enabled: open && !!row,
   })
 
-  // Best-effort: the author is usually the teacher who created the material, but
-  // could also be an admin (no unified user lookup exists to resolve that case).
   const { data: authorTeacher } = useQuery({
     queryKey: ['teachers', detail?.authorUserId, 'lookup-name'],
     queryFn: () => getTeacherById(detail!.authorUserId),

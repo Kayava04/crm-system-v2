@@ -51,7 +51,6 @@ export function removeGroupMember(id: string, enrollmentId: string) {
   )
 }
 
-/** Fetches every group (small, bounded list) for use in selects/lookups. */
 export async function getAllGroupsForLookup() {
   const result = await getGroups({ page: 1, pageSize: 200 })
   return result.items

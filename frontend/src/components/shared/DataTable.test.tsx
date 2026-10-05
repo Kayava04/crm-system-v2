@@ -58,7 +58,6 @@ describe('DataTable', () => {
     const rows: Row[] = [{ id: '1', name: 'Alpha' }]
     render(<DataTable columns={columns} rows={rows} rowKey={(r) => r.id} />)
 
-    // Should not throw, and the row should not carry the interactive cursor class.
     await user.click(screen.getByText('Alpha'))
     const row = screen.getByText('Alpha').closest('tr')
     expect(row).not.toHaveClass('cursor-pointer')

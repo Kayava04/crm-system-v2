@@ -8,9 +8,10 @@ export interface ResolvedPayrollRow {
   employeeName?: string
 }
 
-/** `GET /api/billing/payrolls` rows carry a raw teacherId or userId but no display name. */
 export function useResolvedPayrolls(rows: PayrollListItem[]): ResolvedPayrollRow[] {
-  const teacherIds = Array.from(new Set(rows.map((r) => r.teacherId).filter((id): id is string => !!id)))
+  const teacherIds = Array.from(
+    new Set(rows.map((r) => r.teacherId).filter((id): id is string => !!id)),
+  )
   const teacherQueries = useQueries({
     queries: teacherIds.map((id) => ({
       queryKey: ['teachers', id, 'lookup-name'],
@@ -36,6 +37,8 @@ export function useResolvedPayrolls(rows: PayrollListItem[]): ResolvedPayrollRow
 
   return rows.map((row) => ({
     row,
-    employeeName: row.teacherId ? teacherNameById.get(row.teacherId) : staffNameById.get(row.userId ?? ''),
+    employeeName: row.teacherId
+      ? teacherNameById.get(row.teacherId)
+      : staffNameById.get(row.userId ?? ''),
   }))
 }

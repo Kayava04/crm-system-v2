@@ -2,9 +2,6 @@ import { useTranslation } from 'react-i18next'
 import { PolarAngleAxis, RadialBar, RadialBarChart, ResponsiveContainer } from 'recharts'
 import { cn, formatCurrencyParts, toNum } from '@/lib/utils'
 
-/** Income vs. expenses as two concentric rings, each showing its share of the
- * period's turnover, with the net result in the middle. Green/red-family
- * series hues keep the sign readable without the heavier status tones. */
 export function BalanceRings({
   income,
   expenses,
@@ -39,7 +36,6 @@ export function BalanceRings({
     <div className="flex flex-col items-center gap-5">
       <div className="relative size-44">
         <ResponsiveContainer width="100%" height="100%">
-          {/* Recharts draws the first row innermost; reversed so income is the outer ring. */}
           <RadialBarChart
             data={[...rows].reverse()}
             innerRadius="62%"

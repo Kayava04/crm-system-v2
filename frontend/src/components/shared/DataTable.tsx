@@ -9,7 +9,6 @@ export interface DataTableColumn<T> {
   header: ReactNode
   cell: (row: T) => ReactNode
   className?: string
-  /** Render a fixed-width checkbox/actions column etc. */
   width?: string
 }
 

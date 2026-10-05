@@ -24,12 +24,6 @@ interface MyLessonDetailDialogProps {
   lang: string
 }
 
-/** Read-only lesson detail for a student's/teacher's own calendar — the
- * self-service counterpart to the staff LessonDetailDialog. It shows only
- * what GET /api/calendar/my already returns for this item (no reschedule/
- * cancel/complete actions: those endpoints require CanManageSchedule, which
- * students and teachers don't hold, so this dialog is intentionally
- * informational only). */
 export function MyLessonDetailDialog({
   open,
   onOpenChange,

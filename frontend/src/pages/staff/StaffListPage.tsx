@@ -42,8 +42,6 @@ export function StaffListPage() {
 
   const selected = data?.find((m) => m.id === selectedId) ?? null
 
-  // GET /api/auth/users only filters by isActive server-side, so name/email/
-  // phone search is done client-side over the already-fetched (short) staff list.
   const filteredStaff = (data ?? []).filter((m) => {
     if (!search) return true
     const term = search.toLowerCase()

@@ -1,5 +1,3 @@
-// Shared chrome for every text-like control, so inputs, textareas and select
-// triggers line up and react to hover/focus/error identically.
 export const fieldClasses = [
   'w-full rounded-lg border border-input bg-card px-3 text-sm shadow-xs',
   'transition-[border-color,box-shadow] duration-150',

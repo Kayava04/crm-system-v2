@@ -10,9 +10,6 @@ interface PermissionCheckboxGridProps {
   onChange: (next: Set<string>) => void
 }
 
-/** Renders the 21 backend permissions as checkboxes, ordered by the frontend's
- * own PERMISSIONS constant (stable, familiar order) rather than however the
- * backend happens to return them, matched to the backend's permission ids by name. */
 export function PermissionCheckboxGrid({
   options,
   selectedIds,

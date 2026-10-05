@@ -18,9 +18,6 @@ interface EmployeeSearchInputProps {
   placeholder?: string
 }
 
-/** Picks any paid employee - a teacher or an administrator/manager - for payroll. Teachers are
- * searched server-side (there can be many); staff is a short list already fetched in full
- * elsewhere (see StaffListPage) and is filtered here client-side the same way. */
 export function EmployeeSearchInput({ value, onChange, placeholder }: EmployeeSearchInputProps) {
   const { t } = useTranslation()
   const [query, setQuery] = useState('')
@@ -42,15 +39,20 @@ export function EmployeeSearchInput({ value, onChange, placeholder }: EmployeeSe
 
   const matches = useMemo((): EmployeePick[] => {
     const teacherMatches: EmployeePick[] =
-      teacherPage?.items.map((t) => ({ id: t.id, fullName: t.fullName, kind: 'teacher' as const })) ?? []
+      teacherPage?.items.map((t) => ({
+        id: t.id,
+        fullName: t.fullName,
+        kind: 'teacher' as const,
+      })) ?? []
 
     const term = debouncedQuery.trim().toLowerCase()
-    // An empty term would otherwise match everyone - String.includes('') is always true - and
-    // React Query keeps serving the staff list's cached data even once this box goes inactive,
-    // so without this guard every staff member reappears on its own after a first search.
     const staffMatches: EmployeePick[] = term
       ? (staff ?? [])
-          .filter((s) => (s.fullName ?? s.email).toLowerCase().includes(term) || s.email.toLowerCase().includes(term))
+          .filter(
+            (s) =>
+              (s.fullName ?? s.email).toLowerCase().includes(term) ||
+              s.email.toLowerCase().includes(term),
+          )
           .map((s) => ({ id: s.id, fullName: s.fullName ?? s.email, kind: 'staff' as const }))
       : []
 
@@ -63,7 +65,9 @@ export function EmployeeSearchInput({ value, onChange, placeholder }: EmployeeSe
         <span className="min-w-0 flex-1 truncate">
           {value.fullName}{' '}
           <span className="text-xs text-muted-foreground">
-            {value.kind === 'teacher' ? t('billing.payroll.kindTeacher') : t('billing.payroll.kindStaff')}
+            {value.kind === 'teacher'
+              ? t('billing.payroll.kindTeacher')
+              : t('billing.payroll.kindStaff')}
           </span>
         </span>
         <button
@@ -94,7 +98,9 @@ export function EmployeeSearchInput({ value, onChange, placeholder }: EmployeeSe
             >
               <span className="min-w-0 flex-1 truncate">{pick.fullName}</span>
               <span className="shrink-0 text-xs text-muted-foreground">
-                {pick.kind === 'teacher' ? t('billing.payroll.kindTeacher') : t('billing.payroll.kindStaff')}
+                {pick.kind === 'teacher'
+                  ? t('billing.payroll.kindTeacher')
+                  : t('billing.payroll.kindStaff')}
               </span>
             </button>
           ))}

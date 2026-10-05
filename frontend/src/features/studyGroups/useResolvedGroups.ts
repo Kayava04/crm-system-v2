@@ -9,11 +9,6 @@ export interface ResolvedGroupRow {
   teacherName?: string
 }
 
-/**
- * `GET /api/study-groups` rows carry raw courseId/teacherId but no names, so —
- * same as enrollments/schedules — we resolve each row's teacher individually
- * (bounded to the current page) and courses via the small bounded lookup list.
- */
 export function useResolvedGroups(rows: GroupListItem[]): ResolvedGroupRow[] {
   const teacherIds = Array.from(new Set(rows.map((r) => r.teacherId).filter(Boolean)))
   const teacherQueries = useQueries({

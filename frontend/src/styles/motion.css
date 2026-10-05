@@ -38,7 +38,7 @@
       transform: translateY(6px);
     }
   }
-  /* No `to`: the bar animates up to whatever scale its inline style sets. */
+
   @keyframes grow-x {
     from {
       transform: scaleX(0);
@@ -66,9 +66,6 @@
   }
 }
 
-/* Radix keeps a closing element mounted until its exit animation ends, so the
-   duration is clamped rather than removed — animationend still has to fire.
-   Spinners are exempt: a frozen spinner reads as a hung UI. */
 @media (prefers-reduced-motion: reduce) {
   *:not(.animate-spin),
   *::before,

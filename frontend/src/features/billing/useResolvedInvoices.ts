@@ -11,11 +11,6 @@ export interface ResolvedInvoiceRow {
   courseName?: string
 }
 
-/**
- * `GET /api/billing/invoices` rows carry raw studentId/enrollmentId but no
- * display names, so — same as enrollments/schedules — we resolve each row
- * individually (bounded to the current page).
- */
 export function useResolvedInvoices(rows: InvoiceListItem[]): ResolvedInvoiceRow[] {
   const studentIds = Array.from(new Set(rows.map((r) => r.studentId).filter(Boolean)))
   const studentQueries = useQueries({

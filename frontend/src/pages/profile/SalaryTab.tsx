@@ -12,9 +12,6 @@ function statusVariant(status: string): 'success' | 'warning' {
   return status === 'Paid' ? 'success' : 'warning'
 }
 
-/** An administrator's or manager's own pay: the current Salary figure (set by another
- * CanManageAdmins holder, see staff management - never here) and the history of payroll
- * accrued for them, the same "Нарахувати зарплату" mechanism a teacher's payroll already uses. */
 export function SalaryTab() {
   const { t, i18n } = useTranslation()
   const lang = i18n.language === 'en' ? 'en' : 'uk'
@@ -43,7 +40,9 @@ export function SalaryTab() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base font-medium">{t('profile.salary.historyTitle')}</CardTitle>
+          <CardTitle className="text-base font-medium">
+            {t('profile.salary.historyTitle')}
+          </CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col gap-2">
           {isLoading && (
@@ -62,7 +61,9 @@ export function SalaryTab() {
             >
               <span className="font-medium">{p.period}</span>
               <span>{formatCurrency(p.totalAmount, lang)}</span>
-              <Badge variant={statusVariant(p.status)}>{enumLabel(t, 'payrollStatus', p.status)}</Badge>
+              <Badge variant={statusVariant(p.status)}>
+                {enumLabel(t, 'payrollStatus', p.status)}
+              </Badge>
             </div>
           ))}
         </CardContent>

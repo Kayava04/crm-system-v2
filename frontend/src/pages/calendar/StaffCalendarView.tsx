@@ -90,10 +90,6 @@ export function StaffCalendarView() {
   const [selectMode, setSelectMode] = useState(false)
   const [selectedLessonIds, setSelectedLessonIds] = useState<Set<string>>(new Set())
   const [reassignSelectedOpen, setReassignSelectedOpen] = useState(false)
-  // View-only: hides rows in this browser, nothing is changed on the server.
-  // Lessons are never deleted from the system (see calendar.item.cancel for that),
-  // so this is purely a "declutter what I'm looking at" aid, persisted to
-  // localStorage so it survives a reload but never leaves this browser.
   const [hiddenLessonIds, setHiddenLessonIds] = useState<Set<string>>(readStoredHiddenLessons)
   const [showHidden, setShowHidden] = useState(false)
 
@@ -110,9 +106,6 @@ export function StaffCalendarView() {
   const filters = useMemo(
     () => ({
       dateFrom: from,
-      // GET /api/schedules filters with `ScheduledDate <= dateTo` (no day
-      // rollover), so a bare end-of-week date would cut off that whole last
-      // day's lessons. Ask for one day past `to` to include it fully.
       dateTo: addOneDay(to),
       groupId: groupFilter || undefined,
       status: (statusFilter || undefined) as ScheduleStatus | undefined,
@@ -208,9 +201,6 @@ export function StaffCalendarView() {
       <div className="flex flex-col gap-3">
         <h1>{t('calendar.title')}</h1>
         <div className="flex flex-wrap justify-end gap-2">
-          {/* Creating a personal reminder needs no special permission; only "everyone" does,
-           * which the dialog itself offers to a CanManageSchedule holder - so this one button
-           * replaces both the old two-button pair here and the lesson-creation button below. */}
           <Button size="sm" onClick={() => eventsPanelRef.current?.openCreate('Personal')}>
             <Plus />
             {t('calendar.newEvent')}

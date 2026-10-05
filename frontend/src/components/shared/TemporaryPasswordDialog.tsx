@@ -18,8 +18,6 @@ interface TemporaryPasswordDialogProps {
   password: string | null
 }
 
-/** Shown once, right after a staff account is created or its password is reset —
- * the backend never returns the temporary password again after this response. */
 export function TemporaryPasswordDialog({
   open,
   onOpenChange,

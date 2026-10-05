@@ -44,9 +44,6 @@ export function MyCalendarView() {
     queryFn: () => getMyCalendar(from, to),
   })
 
-  /** The self-service `/my` calendar endpoint has no server-side search or
-   * status filter params, so filtering here is client-side over the already
-   * fetched week's items - the same pattern as MyStudentsPage. */
   const filteredItems = useMemo(() => {
     const term = search.trim().toLowerCase()
     return (data?.items ?? []).filter((item) => {
@@ -55,11 +52,6 @@ export function MyCalendarView() {
       const haystack = [
         item.courseName,
         item.groupName ?? '',
-        // Searching by the viewer's own name would never narrow anything down:
-        // the teacher's calendar never carries a teacherName, and the
-        // student's calendar never carries a students list (see
-        // GetMyCalendarEndpoint), so only include the field that's actually
-        // meaningful for this role.
         isTeacher ? '' : (item.teacherName ?? ''),
         ...(isTeacher ? item.students : []),
         item.notes ?? '',

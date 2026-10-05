@@ -101,11 +101,6 @@ export function StudentDetailPage() {
     enabled: !!id,
   })
 
-  // Defaults to the guardian-info tab for a newly created child student who
-  // has none yet, otherwise the profile tab - derived from data rather than
-  // synced via an effect. CreateRequest has no parentInfo field at all
-  // (confirmed against the backend), so it can only ever be added here, as a
-  // second step, and without this default it's easy to miss.
   const effectiveTab = activeTab ?? (student?.isChild && !student.parentInfo ? 'parent' : 'profile')
 
   const photoUrl = useAuthenticatedBlobUrl(student ? `/api/students/${id}/photo` : null)
@@ -1093,10 +1088,6 @@ function LessonsTab({ studentId }: { studentId: string }) {
   const { rows, isLoading } = useStudentLessons(studentId)
   const [page, setPage] = useState(1)
 
-  // useStudentLessons assembles the full history client-side (see its own
-  // comment - there's no `GET /api/schedules?studentId=` filter to page
-  // through on the backend), so pagination here slices the already-sorted
-  // in-memory array instead of a page/pageSize query param.
   const totalPages = Math.max(1, Math.ceil(rows.length / LESSONS_PAGE_SIZE))
   const currentPage = Math.min(page, totalPages)
   const pageRows = rows.slice(

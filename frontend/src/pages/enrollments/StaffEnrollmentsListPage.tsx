@@ -46,12 +46,6 @@ interface EnrollmentRow {
   isResolving: boolean
 }
 
-/** Staff-facing enrollments list, backed by the admin `GET /api/enrollments`
- * endpoint - unlike `MyEnrollmentsPage` (student-only, `/api/enrollments/my`),
- * this is what an Admin/staff member with CanViewEnrollments actually needs
- * when they land on `/enrollments`. See `useResolvedEnrollments` for why each
- * row is resolved individually: the list endpoint doesn't return student/course
- * names or ids, only detail lookups do. */
 export function StaffEnrollmentsListPage() {
   const { t, i18n } = useTranslation()
   const lang = i18n.language === 'en' ? 'en' : 'uk'
@@ -84,10 +78,6 @@ export function StaffEnrollmentsListPage() {
     placeholderData: keepPreviousData,
   })
 
-  /** `GET /api/enrollments` accepts a real `courseId` filter (applied
-   * server-side above) but has no free-text search param, so - same as the
-   * invoices list - name search is applied client-side over the resolved
-   * current page. */
   const { data: courses } = useQuery({
     queryKey: ['courses', 'lookup-all'],
     queryFn: getAllCoursesForLookup,

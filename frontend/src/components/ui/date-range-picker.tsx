@@ -21,7 +21,6 @@ import { Calendar, type DateRange } from './calendar'
 import { fieldClasses } from './field-styles'
 import { Popover, PopoverContent, PopoverTrigger } from './popover'
 
-/** ISO `yyyy-MM-dd` strings — the same shape the form state and API use. */
 export interface DateRangeValue {
   from: string
   to: string
@@ -77,8 +76,6 @@ function sameRange(a: DateRange, b: DateRange) {
   )
 }
 
-/** One field for a from–to period: presets, a range calendar and an explicit
- * Apply, so the period only changes when the user confirms it. */
 export function DateRangePicker({
   value,
   onChange,
@@ -96,7 +93,6 @@ export function DateRangePicker({
   const locale = i18n.language === 'en' ? 'en-US' : 'uk-UA'
   const [open, setOpen] = React.useState(false)
   const [draft, setDraft] = React.useState<DateRange>({ from: null, to: null })
-  // Remounts the calendar so a preset also jumps it to the preset's month.
   const [calendarKey, setCalendarKey] = React.useState(0)
 
   const current: DateRange = { from: parse(value.from), to: parse(value.to) }
@@ -131,7 +127,6 @@ export function DateRangePicker({
   }
 
   function apply() {
-    // A single click means a one-day period rather than an unfinished one.
     const to = draft.to ?? draft.from
     onChange({ from: toIso(draft.from), to: toIso(to) })
     setOpen(false)

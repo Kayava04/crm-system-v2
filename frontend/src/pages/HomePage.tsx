@@ -1,20 +1,32 @@
 import type { LucideIcon } from 'lucide-react'
 import { Navigate, Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { CalendarDays, Users, FolderOpen, ClipboardList, Wallet, ArrowRight } from 'lucide-react'
+import {
+  ArrowRight,
+  BookOpen,
+  CalendarDays,
+  ClipboardList,
+  FolderOpen,
+  Users,
+  Wallet,
+} from 'lucide-react'
 import { useAuth } from '@/features/auth/useAuth'
 import { useCan, useHasRole } from '@/features/auth/useCan'
+import type { Permission } from '@/lib/permissions'
 import { Card, CardContent } from '@/components/ui/card'
 
 interface QuickLink {
   to: string
   labelKey: string
   icon: LucideIcon
+  /** Shown only to a user who holds it, like the matching sidebar item. */
+  permission?: Permission
 }
 
 const TEACHER_LINKS: QuickLink[] = [
   { to: '/calendar', labelKey: 'nav.myCalendar', icon: CalendarDays },
   { to: '/my-students', labelKey: 'nav.myStudents', icon: Users },
+  { to: '/courses', labelKey: 'nav.courses', icon: BookOpen, permission: 'CanViewCourses' },
   { to: '/payroll', labelKey: 'nav.myPayroll', icon: Wallet },
   { to: '/materials', labelKey: 'nav.materials', icon: FolderOpen },
 ]
@@ -42,7 +54,9 @@ export function HomePage() {
   if (canViewReports) return <Navigate to="/dashboard" replace />
 
   const displayName = user.profile?.fullName || user.contact?.fullName || user.email
-  const links = isTeacher ? TEACHER_LINKS : isStudent ? STUDENT_LINKS : []
+  const links = (isTeacher ? TEACHER_LINKS : isStudent ? STUDENT_LINKS : []).filter(
+    (link) => !link.permission || user.permissions?.includes(link.permission),
+  )
 
   return (
     <div className="flex flex-col gap-6">
@@ -52,7 +66,11 @@ export function HomePage() {
       </div>
 
       {links.length > 0 && (
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div
+          className={`grid grid-cols-1 gap-3 sm:grid-cols-2 ${
+            links.length === 5 ? 'lg:grid-cols-3 2xl:grid-cols-5' : 'lg:grid-cols-4'
+          }`}
+        >
           {links.map((link) => (
             <Link
               key={link.to}

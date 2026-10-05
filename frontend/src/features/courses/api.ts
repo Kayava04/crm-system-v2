@@ -50,8 +50,6 @@ export function deleteCourse(id: string) {
   return unwrap(api.DELETE('/api/courses/{id}', { params: { path: { id } } }))
 }
 
-/** Fetches every course (small, bounded list for a school) for use in
- * selects and for resolving a courseId to a display name client-side. */
 export async function getAllCoursesForLookup() {
   const result = await getCourses({ page: 1, pageSize: 200 })
   return result.items

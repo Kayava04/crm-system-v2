@@ -42,9 +42,6 @@ export function StudyGroupCreatePage() {
     queryFn: getAllCoursesForLookup,
     staleTime: 5 * 60_000,
   })
-  // A study group can only be built on a course whose lessonType is Group -
-  // picking an Individual-lesson course here is what was producing the opaque
-  // 409 on submit (root-caused after reading the backend's group-creation flow).
   const courses = (allCourses ?? []).filter(
     (c) => c.lessonType === 'Group' && c.status === 'Active',
   )

@@ -5,17 +5,11 @@ import { navSections } from '@/routes/navConfig'
 
 const allItems = navSections.flatMap((s) => s.items)
 
-// Routes reachable outside the sidebar (profile menu, notification bell) have
-// no navConfig entry, so they'd otherwise fall back to the raw, untranslated
-// path segment (e.g. "profile") instead of a real label.
 const EXTRA_LABELS: Record<string, string> = {
   '/profile': 'nav.profile',
   '/notifications': 'nav.notifications',
 }
 
-/** Route-based breadcrumb (top-level segment only, from navConfig). We use a
- * plain <Routes> tree (not a data router / RouterProvider), so this can't use
- * react-router's useMatches — it's data-router only. */
 export function Breadcrumbs() {
   const { t } = useTranslation()
   const location = useLocation()

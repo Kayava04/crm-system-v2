@@ -22,10 +22,6 @@ import { BalanceRings } from './charts/BalanceRings'
 import { FinanceTrend } from './charts/FinanceTrend'
 import { LessonsByWeekday } from './charts/LessonsByWeekday'
 
-// Every status a category can have, in a FIXED order — a status keeps the
-// same color across renders and filters ("color follows the entity, never
-// its rank"), instead of being colored by its position among only the
-// statuses that happen to have a nonzero count this time.
 const STUDENT_STATUS_ORDER = ['Active', 'Suspended', 'Graduated', 'Withdrawn'] as const
 const TEACHER_STATUS_ORDER = ['Probation', 'Employed', 'OnLeave', 'Resigned', 'Dismissed'] as const
 const ENROLLMENT_STATUS_ORDER = ['Draft', 'Active', 'Suspended', 'Completed', 'Terminated'] as const
@@ -127,8 +123,6 @@ export function DashboardPage() {
           {billingLoading && <Skeleton className="h-24 w-full" />}
           {billing && (
             <>
-              {/* The picker already shows a chosen period; the default (current
-                  month) is only visible here. */}
               {!dateFrom && !dateTo && (
                 <p className="w-fit rounded-full bg-muted px-2.5 py-1 text-xs text-muted-foreground tabular-nums">
                   {formatDate(billing.dateFrom, lang)} – {formatDate(billing.dateTo, lang)}

@@ -2,8 +2,8 @@ import { useMemo, useState } from 'react'
 
 function startOfWeek(date: Date): Date {
   const d = new Date(date)
-  const day = d.getDay() // 0 = Sunday
-  const diff = day === 0 ? -6 : 1 - day // shift to Monday
+  const day = d.getDay()
+  const diff = day === 0 ? -6 : 1 - day
   d.setDate(d.getDate() + diff)
   d.setHours(0, 0, 0, 0)
   return d
@@ -16,7 +16,6 @@ export function toIsoDate(d: Date): string {
   return `${year}-${month}-${day}`
 }
 
-/** Tracks a Monday-Sunday week window as ISO date strings, with prev/next/today navigation. */
 export function useWeekRange() {
   const [anchor, setAnchor] = useState(() => startOfWeek(new Date()))
 

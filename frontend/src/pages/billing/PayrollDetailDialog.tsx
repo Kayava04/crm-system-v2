@@ -76,8 +76,6 @@ export function PayrollDetailDialog({
               <span className="text-muted-foreground">{t('billing.payroll.detail.period')}</span>
               <span>{row.period}</span>
             </div>
-            {/* A staff payroll (row.teacherId is null) is just the flat Salary for the period -
-             * base salary / lessons rate / lessons count are a teacher-only breakdown. */}
             {detail && row.teacherId && (
               <>
                 <div className="flex justify-between">

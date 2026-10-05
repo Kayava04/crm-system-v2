@@ -64,11 +64,6 @@ export function InvoicesListPage() {
 
   const resolved = useResolvedInvoices(data?.items ?? [])
 
-  /** `GET /api/billing/invoices` has no free-text search or courseId filter
-   * param (only studentId/enrollmentId/period/status), so search and the
-   * course filter are applied client-side over the already-resolved current
-   * page rather than sent to the server - a documented backend limitation,
-   * same pattern as useResolvedInvoices/useResolvedEnrollments above. */
   const { data: courses } = useQuery({
     queryKey: ['courses', 'lookup-all'],
     queryFn: getAllCoursesForLookup,

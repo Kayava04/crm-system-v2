@@ -1,10 +1,6 @@
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
 
-/** The one magnitude ranking on the dashboard — a single series, so it stays
- * one hue (a brand gradient) rather than the categorical palette. Plain markup
- * instead of an SVG chart: long course names stay readable at any width, and
- * every value is printed rather than hidden behind a tooltip. */
 export function RankingBars({ data }: { data: { name: string; value: number }[] }) {
   const [active, setActive] = useState<number | null>(null)
 
@@ -15,7 +11,6 @@ export function RankingBars({ data }: { data: { name: string; value: number }[] 
   const max = Math.max(1, ...data.map((d) => d.value))
 
   return (
-    // Two columns only when the list has the room (full-width card), not in a half.
     <div className="@container">
       <ol className="grid grid-cols-1 gap-x-8 gap-y-1 @3xl:grid-cols-2">
         {data.map((d, i) => (

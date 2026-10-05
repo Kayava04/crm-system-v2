@@ -9,19 +9,6 @@ export interface CourseTeacher {
   name: string
 }
 
-/**
- * There is no direct "teachers of this course" endpoint or field on the
- * Course entity — a teacher is only ever assigned at the study-group level
- * (GroupListResponse.teacherId) or per individual lesson (Schedule.teacherId,
- * for enrollments that aren't part of any group). A course can therefore be
- * taught by more than one teacher at once: e.g. two parallel groups of the
- * same course with different teachers, or a mix of group and individual
- * (1:1) enrollments. This assembles the full, deduplicated set the same way
- * useStudentLessons does for a student's lesson history — by composing
- * several already-permitted staff endpoints client-side, since no single
- * backend endpoint returns it directly. A real gap worth raising with
- * backend if a "teachers taught" field/endpoint is ever added to Courses.
- */
 export function useCourseTeachers(courseId: string) {
   const groupsQuery = useQuery({
     queryKey: ['study-groups', { courseId, forTeacherLookup: true }],
@@ -30,8 +17,6 @@ export function useCourseTeachers(courseId: string) {
   })
   const groups = groupsQuery.data?.items ?? []
 
-  // Group membership (which enrollments are covered by a group) so the
-  // remaining, non-grouped enrollments can be checked individually below.
   const groupDetailQueries = useQueries({
     queries: groups.map((g) => ({
       queryKey: ['study-groups', g.id, 'membership-lookup'],

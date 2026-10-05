@@ -31,12 +31,6 @@ export function updateMyContact(input: Schemas['UpdateMyContactRequest']) {
   return unwrap(api.PUT('/api/auth/me/contact', { body: input }))
 }
 
-/** Creates a login account for an existing Student or Teacher profile and
- * links it via `/api/auth/register`'s profileType/profileId mechanism - the
- * same endpoint `registerStaff` uses for Admin accounts, just with the role
- * and profile link set to the student/teacher instead. Requires
- * CanManageAdmins (the endpoint's own authorization, not CanManageStudents/
- * CanManageTeachers - confirmed by reading RegisterEndpoint.cs). */
 export function createProfileAccount(input: CreateProfileAccountInput) {
   return unwrap(
     api.POST('/api/auth/register', {

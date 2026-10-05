@@ -13,19 +13,6 @@ export interface StudentLessonRow {
   groupName?: string
 }
 
-/**
- * There is no `GET /api/schedules?studentId=` filter on the backend — a
- * schedule row carries either an enrollmentId (individual lesson) or a
- * groupId (group lesson), never a studentId directly (confirmed against
- * Scheduling.Domain.Entities.Schedule, which models this as "exactly one of
- * EnrollmentId/GroupId is set"). So a student's lesson history is assembled
- * from two sources: (1) the individual schedules of their own enrollments,
- * and (2) the schedules of any study group one of those enrollments has
- * been added to as a member. This composes several endpoints because the
- * backend has no single "lessons for this student" endpoint — a real gap,
- * not a frontend shortcut, and one worth raising with backend if a proper
- * filter is ever added there.
- */
 export function useStudentLessons(studentId: string) {
   const enrollmentsQuery = useQuery({
     queryKey: ['enrollments', { studentId, forLessons: true }],
@@ -146,10 +133,6 @@ export function useStudentLessons(studentId: string) {
       })
     }
   }
-  // Ascending (earliest first), matching the backend's own default
-  // order for GET /api/schedules (ScheduleRepository's filtered
-  // GetAllAsync orders by ScheduledDate ascending) — the same order the
-  // teacher's Lessons tab shows, since it reads that endpoint directly.
   rows.sort((a, b) => a.row.scheduledDate.localeCompare(b.row.scheduledDate))
 
   const isLoading =

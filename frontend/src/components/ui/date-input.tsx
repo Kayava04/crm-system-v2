@@ -12,9 +12,6 @@ type DateInputProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, 'type'> 
   type?: 'date' | 'datetime-local'
 }
 
-// The native input stays the single source of truth (react-hook-form refs,
-// controlled values, typing, validation all keep working); the calendar just
-// writes into it the way a user would, so React sees a regular input event.
 function writeNativeValue(el: HTMLInputElement, value: string) {
   const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')?.set
   setter?.call(el, value)
@@ -28,8 +25,6 @@ function parseDatePart(value: string | number | readonly string[] | undefined) {
   return isValid(d) ? d : null
 }
 
-/** Date / datetime-local input whose picker matches the rest of the UI instead
- * of the browser's native popup. Drop-in for `<Input type="date">`. */
 export const DateInput = React.forwardRef<HTMLInputElement, DateInputProps>(
   ({ type = 'date', className, disabled, readOnly, min, max, ...props }, ref) => {
     const { t } = useTranslation()

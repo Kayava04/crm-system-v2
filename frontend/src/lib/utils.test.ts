@@ -26,8 +26,6 @@ describe('cn', () => {
 
 describe('formatCurrency', () => {
   it('formats a numeric-string amount as UAH', () => {
-    // Both locales format UAH with the ₴ sign; assert the digits/symbol survive
-    // rather than pinning exact locale punctuation, which varies across ICU versions.
     const result = formatCurrency('1500', 'uk')
     expect(result).toContain('1')
     expect(result).toContain('500')

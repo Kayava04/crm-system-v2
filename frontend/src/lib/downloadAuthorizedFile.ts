@@ -8,8 +8,6 @@ function filenameFromContentDisposition(header: string | null): string | null {
   return match ? decodeURIComponent(match[1].replace(/"/g, '')) : null
 }
 
-/** Downloads a file that needs the Authorization header (exports, import
- * templates) and saves it via a temporary <a download>. */
 export async function downloadAuthorizedFile(path: string, fallbackFilename: string) {
   const token = tokenStore.getAccessToken()
   const res = await fetch(`${API_BASE_URL}${path}`, {

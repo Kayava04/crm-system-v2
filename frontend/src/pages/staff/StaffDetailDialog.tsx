@@ -183,10 +183,6 @@ export function StaffDetailDialog({
   )
 }
 
-/** Set or clear an administrator's salary — CanManageAdmins-only and never
- * self-service (the caller cannot open this dialog for their own account to
- * begin with: StaffListPage never lists the signed-in user). Keyed by
- * member.id from the parent, same reasoning as PermissionsEditor below. */
 function SalaryEditor({ member, onChanged }: { member: StaffMember; onChanged: () => void }) {
   const { t, i18n } = useTranslation()
   const lang = i18n.language === 'en' ? 'en' : 'uk'
@@ -254,9 +250,6 @@ function SalaryEditor({ member, onChanged }: { member: StaffMember; onChanged: (
   )
 }
 
-/** Keyed by member.id from the parent so a fresh instance (and fresh local
- * selection state) mounts whenever the selected staff member changes — avoids
- * syncing props into state via an effect. */
 function PermissionsEditor({
   member,
   options,

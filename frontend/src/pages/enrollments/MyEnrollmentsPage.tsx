@@ -172,8 +172,6 @@ function MyEnrollmentCard({
           <span>{formatCurrency(enrollment.effectivePrice, lang)}</span>
         </div>
 
-        {/* Its own action, separate from "view detail" — stop the click from
-            bubbling to the card so using it doesn't also open the dialog. */}
         <div onClick={(e) => e.stopPropagation()}>
           {editingSchedule ? (
             <div className="flex flex-col gap-2">

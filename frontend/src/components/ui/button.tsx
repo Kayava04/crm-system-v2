@@ -54,7 +54,6 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         aria-busy={loading || undefined}
         {...props}
       >
-        {/* Slot needs exactly one child, so the spinner only exists on a real <button>. */}
         {asChild ? (
           children
         ) : (

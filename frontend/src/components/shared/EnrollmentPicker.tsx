@@ -12,16 +12,10 @@ interface EnrollmentPickerProps {
   value: { id: string; label: string } | null
   onChange: (value: { id: string; label: string } | null) => void
   studentSearchPlaceholder?: string
-  /** Restrict results to enrollments in this course (e.g. a study group's course). */
   courseId?: string
-  /** Overrides the "no results" message shown once a student is picked but has no
-   * (matching, when courseId is set) enrollments. */
   emptyMessage?: string
 }
 
-/** Search a student, then pick one of their enrollments by id. Used wherever
- * a dialog needs a specific enrollmentId (there is no direct "search
- * enrollments" endpoint, so this goes through the student first). */
 export function EnrollmentPicker({
   value,
   onChange,

@@ -21,9 +21,6 @@ import { CalendarEventDialog } from './CalendarEventDialog'
 interface CalendarEventsPanelProps {
   from: string
   to: string
-  /** Staff view triggers "add" from its own toolbar (see StaffCalendarView) instead of
-   * from this panel's own header, since one merged "+ New event" button up there replaces
-   * both this panel's create actions and the lesson-creation button that used to live there. */
   showAddButton?: boolean
 }
 
@@ -31,10 +28,6 @@ export interface CalendarEventsPanelHandle {
   openCreate: (visibility: 'Personal' | 'Everyone') => void
 }
 
-/** A compact list of arbitrary calendar entries (not lessons) for the week
- * currently shown by the parent view: the caller's own personal reminders,
- * plus every school-wide notice. Mounted by both MyCalendarView and
- * StaffCalendarView, sharing the same from/to as their own lesson grid. */
 export const CalendarEventsPanel = forwardRef<CalendarEventsPanelHandle, CalendarEventsPanelProps>(
   function CalendarEventsPanel({ from, to, showAddButton = true }, ref) {
     const { t, i18n } = useTranslation()
@@ -44,7 +37,9 @@ export const CalendarEventsPanel = forwardRef<CalendarEventsPanelHandle, Calenda
 
     const [dialogOpen, setDialogOpen] = useState(false)
     const [editing, setEditing] = useState<CalendarEvent | null>(null)
-    const [creatingVisibility, setCreatingVisibility] = useState<'Personal' | 'Everyone'>('Personal')
+    const [creatingVisibility, setCreatingVisibility] = useState<'Personal' | 'Everyone'>(
+      'Personal',
+    )
     const [deleting, setDeleting] = useState<CalendarEvent | null>(null)
 
     const { data, isLoading } = useQuery({
@@ -77,7 +72,9 @@ export const CalendarEventsPanel = forwardRef<CalendarEventsPanelHandle, Calenda
         refresh()
       } catch (err) {
         toast.error(
-          err instanceof ApiError ? err.detail || t('common.unknownError') : t('common.networkError'),
+          err instanceof ApiError
+            ? err.detail || t('common.unknownError')
+            : t('common.networkError'),
         )
       }
     }
@@ -106,8 +103,6 @@ export const CalendarEventsPanel = forwardRef<CalendarEventsPanelHandle, Calenda
             <p className="text-sm text-muted-foreground">{t('calendarEvents.empty')}</p>
           )}
           {events.map((event) => {
-            // Mirrors the server's own rule (see CalendarEventAccess): a personal event is
-            // manageable by its owner, an everyone event by any schedule manager.
             const canManage = event.isMine || (event.visibility === 'Everyone' && canManageSchedule)
 
             return (
@@ -119,7 +114,9 @@ export const CalendarEventsPanel = forwardRef<CalendarEventsPanelHandle, Calenda
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="font-medium">{event.title}</span>
                     <Badge variant={event.visibility === 'Everyone' ? 'default' : 'secondary'}>
-                      {event.visibility === 'Everyone' ? t('calendarEvents.everyone') : t('calendarEvents.mine')}
+                      {event.visibility === 'Everyone'
+                        ? t('calendarEvents.everyone')
+                        : t('calendarEvents.mine')}
                     </Badge>
                   </div>
                   <span className="text-sm text-muted-foreground">
@@ -133,7 +130,12 @@ export const CalendarEventsPanel = forwardRef<CalendarEventsPanelHandle, Calenda
                 </div>
                 {canManage && (
                   <div className="flex gap-2">
-                    <Button size="icon" variant="ghost" aria-label={t('calendarEvents.edit')} onClick={() => openEdit(event)}>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      aria-label={t('calendarEvents.edit')}
+                      onClick={() => openEdit(event)}
+                    >
                       <Pencil className="size-4" />
                     </Button>
                     <Button

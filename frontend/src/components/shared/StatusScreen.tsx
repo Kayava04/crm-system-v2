@@ -4,7 +4,6 @@ import { cn } from '@/lib/utils'
 
 interface StatusScreenProps {
   icon: LucideIcon
-  /** Background + foreground classes for the icon badge. */
   iconClassName?: string
   title: ReactNode
   description: ReactNode
@@ -12,7 +11,6 @@ interface StatusScreenProps {
   className?: string
 }
 
-/** Full-height message for error and access states (404, 403, crash). */
 export function StatusScreen({
   icon: Icon,
   iconClassName = 'bg-muted text-muted-foreground',

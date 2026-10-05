@@ -21,15 +21,6 @@ interface ReassignSelectedLessonsDialogProps {
   onReassigned: () => void
 }
 
-/** Reassigns the teacher on individually selected lessons rather than all of
- * one teacher's lessons at once. The backend has no bulk-by-id endpoint for
- * this (only bulk-by-teacher via PUT /api/schedules/reassign-teacher), so
- * each lesson is updated individually with PUT /api/schedules/{id} - the
- * same endpoint the single-lesson edit flow would use. That endpoint
- * replaces the whole record (teacher, duration, notes), so each lesson's
- * current duration/notes are read first via GET /api/schedules/{id} to
- * avoid blanking them out. Lessons that are no longer open (completed or
- * cancelled) are rejected by the backend and counted as failures. */
 export function ReassignSelectedLessonsDialog({
   open,
   onOpenChange,

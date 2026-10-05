@@ -1,5 +1,3 @@
-/* Frosted surfaces for floating UI only (header, popovers, dialogs, toasts).
-   Content surfaces stay opaque so body text never sits on a busy backdrop. */
 @utility glass {
   background-color: var(--glass-bg);
   border: 1px solid var(--glass-edge);
@@ -20,7 +18,6 @@
   }
 }
 
-/* Same material without the floating shadow, for bars pinned to an edge. */
 @utility glass-bar {
   background-color: var(--glass-bg);
   -webkit-backdrop-filter: blur(16px) saturate(180%);
@@ -47,8 +44,6 @@
   }
 }
 
-/* Soft brand-tinted wash behind standalone glass cards (auth screens), so the
-   frosted surface has something to refract instead of a flat fill. */
 @utility backdrop-wash {
   background-color: var(--background);
   background-image:

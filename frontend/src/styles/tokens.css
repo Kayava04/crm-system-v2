@@ -3,7 +3,6 @@
 :root {
   --radius: 0.75rem;
 
-  /* Surfaces */
   --background: oklch(0.985 0.002 250);
   --foreground: oklch(0.21 0.02 255);
 
@@ -13,7 +12,6 @@
   --popover: oklch(1 0 0);
   --popover-foreground: var(--foreground);
 
-  /* Accent */
   --primary: oklch(0.4 0.1 152);
   --primary-foreground: oklch(0.99 0.004 152);
 
@@ -26,7 +24,6 @@
   --accent: oklch(0.95 0.03 152);
   --accent-foreground: oklch(0.28 0.06 152);
 
-  /* Status */
   --destructive: oklch(0.52 0.21 25);
   --destructive-foreground: oklch(0.99 0.004 25);
 
@@ -48,7 +45,6 @@
   --sidebar-accent-foreground: oklch(0.22 0.02 255);
   --sidebar-border: oklch(0.92 0.005 250);
 
-  /* Glass surfaces */
   --glass-bg: oklch(1 0 0 / 0.72);
   --glass-bg-strong: oklch(1 0 0 / 0.88);
   --glass-bg-solid: oklch(1 0 0 / 0.96);
@@ -60,10 +56,6 @@
     0 24px 48px -12px oklch(0.2 0.02 255 / 0.12);
   --scrim: oklch(0.2 0.02 255 / 0.32);
 
-  /* Categorical chart series, slots 1-5 of a contrast-checked palette —
-     status charts here never need more than 5 categories. Slot 6 (green) is
-     deliberately skipped: it would read as the brand --primary color, and a
-     series must never impersonate the brand. */
   --chart-1: #2a78d6;
   --chart-2: #eb6834;
   --chart-3: #1baf7a;
@@ -72,13 +64,11 @@
   --chart-gradient-from: oklch(0.52 0.12 160);
   --chart-gradient-to: oklch(0.7 0.11 190);
 
-  /* Layers */
   --z-sticky: 30;
   --z-nav: 40;
   --z-overlay: 50;
   --z-toast: 60;
 
-  /* Motion */
   --duration-fast: 150ms;
   --duration-base: 200ms;
   --duration-slow: 300ms;
@@ -195,7 +185,6 @@
     'Inter Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue',
     Arial, sans-serif;
 
-  /* Type scale: size / line-height / tracking, tuned for Inter at UI sizes. */
   --text-2xs: 0.625rem;
   --text-2xs--line-height: 0.875rem;
   --text-2xs--letter-spacing: 0.02em;

@@ -22,8 +22,6 @@ export function StatTile({
   icon?: LucideIcon
   label: string
   value: ReactNode
-  /** A smaller, muted suffix next to the value — e.g. the currency symbol,
-   * kept visually secondary to the number itself. */
   unit?: string
   tone?: Tone
 }) {
@@ -52,8 +50,6 @@ export function StatTile({
   )
 }
 
-/** Renders a money StatTile with the currency unit visually smaller than the
- * number, instead of one same-size formatted string. */
 export function MoneyStatTile({
   label,
   amount,

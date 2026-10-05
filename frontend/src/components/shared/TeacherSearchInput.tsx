@@ -11,9 +11,6 @@ interface TeacherSearchInputProps {
   placeholder?: string
 }
 
-/** A small search-and-pick combobox for choosing a teacher by name/email,
- * used wherever a dialog needs a teacherId (there is no small bounded list
- * of teachers to render as a plain <Select>, unlike courses or groups). */
 export function TeacherSearchInput({ value, onChange, placeholder }: TeacherSearchInputProps) {
   const { t } = useTranslation()
   const [query, setQuery] = useState('')

@@ -29,8 +29,6 @@ export interface NavSection {
   items: NavItem[]
 }
 
-/** Single source of truth for the sidebar. Same list also drives which
- * permission/role each route requires (see App.tsx). */
 export const navSections: NavSection[] = [
   {
     items: [

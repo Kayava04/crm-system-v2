@@ -18,11 +18,6 @@ interface Section {
   labelKey: string
 }
 
-/** A settings-style profile page: an avatar/name header plus a vertical
- * section nav (horizontal pills on narrow screens) instead of the previous
- * horizontal Tabs switcher. Section choice still round-trips through the
- * `tab` search param, so old `/profile?tab=password` links keep working now
- * that the password shortcut was removed from the user menu dropdown. */
 export function ProfilePage() {
   const { t } = useTranslation()
   const { user } = useAuth()
@@ -63,9 +58,7 @@ export function ProfilePage() {
           <AvatarFallback className="text-base">{initials}</AvatarFallback>
         </Avatar>
         <div className="flex flex-col">
-          <h1>
-            {displayName || t('profile.title')}
-          </h1>
+          <h1>{displayName || t('profile.title')}</h1>
           {user?.email && <p className="text-sm text-muted-foreground">{user.email}</p>}
         </div>
       </div>

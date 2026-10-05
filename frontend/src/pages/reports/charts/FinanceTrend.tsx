@@ -28,9 +28,6 @@ function capitalize(s: string) {
   return s.charAt(0).toUpperCase() + s.slice(1)
 }
 
-/** Income and expenses month by month. There is no time-series endpoint, so
- * the existing period summary is asked once per month — each point is exact,
- * and the requests share the dashboard's react-query cache. */
 export function FinanceTrend({ lang }: { lang: string }) {
   const { t } = useTranslation()
   const locale = lang === 'en' ? 'en-US' : 'uk-UA'

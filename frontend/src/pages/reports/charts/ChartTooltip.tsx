@@ -7,7 +7,6 @@ export interface TooltipRow {
   color?: string
 }
 
-/** Frosted tooltip body shared by the dashboard's Recharts charts. */
 export function ChartTooltip({ title, rows }: { title: ReactNode; rows: TooltipRow[] }) {
   return (
     <div className="glass min-w-40 animate-fade-in rounded-xl px-3 py-2.5 text-xs [--glass-bg:var(--glass-bg-strong)]">
